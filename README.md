@@ -1,92 +1,80 @@
-# PPO
+# ППО
 
+## Название проекта
 
+Maweituo
 
-## Getting started
+## Краткое описание идеи проекта
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Интернет-сервис объявлений о товарах.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Предоставить возможность выкладывать объявления о товарах, вступать в обсуждения и договариваться о выполнении объявлений других пользователей.
 
-## Add your files
+## Краткое описание предметной области
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+Предметная область - объявления о товарах.
 
-```
-cd existing_repo
-git remote add origin https://git.iu7.bmstu.ru/via21u815/ppo.git
-git branch -M main
-git push -uf origin main
-```
+Интернет-сервис объявлений о товарах - это онлайн платформа, где пользователи могут размещать и просматривать объявления о продаже или покупке различных товаров и услуг. Сервис обеспечивает удобный способ поиска необходимого товара, сравнения цен, общения с продавцами и заключения сделок. Пользователи могут использовать фильтры, чтобы быстро найти интересующий их товар и оставлять отзывы о продавцах и товарах.
 
-## Integrate with your tools
+## Краткий анализ аналогичных решений по 4 критериям
 
-- [ ] [Set up project integrations](https://git.iu7.bmstu.ru/via21u815/ppo/-/settings/integrations)
+|решение|предметная область|Обеспечение безопасности|Кто может выставлять объявления|Агрегация|
+|--|--|--|--|--|
+|Avito|Товары,услуги|Автоматически, ручная модерация|Любой пользователь|+|
+|Циан|Недвижимость|Ручная модерация|Подтвержденные лица|+|
+|Auto.ru|Автомобили|Ручная модерация|Подтвержденные лица|+|
+|Перепродажа одежды N|Одежда|Ручная модерация|Любой человек|-|
 
-## Collaborate with your team
+## Актуальность 
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Интернет-сервисы объявлений о товарах предсотавляют людям возможность догавариваться о покупке или продаже товаров дистанционно. Однако, на популярных торговых площадках, такие как Авито, оперирует большое число мошенников. Это вынуждает мелкие компании создавать свои площадки, к примеру, через чат-ботов. Этот проект может использоваться в качестве такого сервиса, предоставляя стандартные способы обработки объявлений.
 
-## Test and Deploy
+## Описание ролей
 
-Use the built-in continuous integration in GitLab.
+**Гость** - неавторизованый пользователь, который имеет возможность просматривать все объявления на сайте, зарегестрироваться и авторизоваться.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+**Пользователь** - авторизованый пользователь. Соответсвет одному человеку, который может выложить обьявления, видные всем на сайте, связываться и отвечать на объявления других пользователей.
 
-***
+**Модератор** - авторизованый пользователь с особыми правами управления и модерации над объявлениями пользователей.
 
-# Editing this README
+## Use-Case диаграмма
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+![Use-case](img/use-case.png)
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## ER диаграмма
 
-## Name
-Choose a self-explaining name for your project.
+![ER](img/er.png)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Сложные сценарии
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+#### Алгоритм рекомендации
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Batch-задача, производящая анализ истории покупок и просмотров пользователем объявлений и составляющая список похожих объявлений, которые будут предложены пользователю как похожие.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+#### Обсуждение объявления
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Пользователь должен иметь возможность вступить в чат с другим пользователем для обсуждения условий его объявления. Если обсуждение было успешно, пользователи договариваются и фиксуируют выполнение условий объявления, занося его в историю.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## Пользовательские сценарии
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+**Гость** может:
+- посмотреть все объявления на сайте
+- авторизоваться
+- зарегестрироваться
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+После авторизации гость становится *пользователем*.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+**Пользователь** может:
+- посмотреть все объявления на сайте
+- выложить объявление
+- удалить объявления
+- начать обсуждение по объявлению другого пользователя
+- фиксировать выполнение объявления
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+**Модератор** может:
+- удалить объявление произвольного пользователя 
+- заблокировать аккаунт пользователя
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## BPMN-диаграмма
 
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+![BPMN](img/bpmn.png)

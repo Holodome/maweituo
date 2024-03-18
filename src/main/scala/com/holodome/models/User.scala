@@ -1,4 +1,4 @@
-package com.holodome.repositories.models
+package com.holodome.models
 
 import java.util.UUID
 import java.time.Instant

@@ -12,7 +12,7 @@ object CassandraRepositories {
     new CassandraRepositories[F](config) {}
 }
 
-sealed abstract class CassandraRepositories[F[_]: Async] private(
+sealed abstract class CassandraRepositories[F[_]: Async] private (
     config: CassandraConfig
 ) extends Repositories[F] {
   private val connector =

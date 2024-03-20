@@ -23,6 +23,7 @@ val DerevoVersion = "0.12.8"
 val RefinedVersion = "0.11.1"
 val EnumeratumVersion = "1.7.3"
 val CirisVersion = "3.5.0"
+val NewtypeVersion = "0.4.4"
 
 libraryDependencies += "org.typelevel" %% "cats-core" % CatsVersion
 libraryDependencies += "org.typelevel" %% "cats-effect" % CatsEffectVersion
@@ -47,3 +48,4 @@ libraryDependencies += "com.beachape" %% "enumeratum" % EnumeratumVersion
 libraryDependencies += "is.cir" %% "ciris" % CirisVersion
 libraryDependencies += "is.cir" %% "ciris-enumeratum" % CirisVersion
 libraryDependencies += "is.cir" %% "ciris-refined" % CirisVersion
+libraryDependencies += "io.estatico" %% "newtype" % NewtypeVersion

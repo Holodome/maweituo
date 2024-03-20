@@ -4,10 +4,10 @@ import com.holodome.domain.auth._
 import com.holodome.domain.User
 import com.holodome.repositories.UserRepository
 import cats._
+import cats.effect.Sync
 import cats.syntax.all._
-import com.holodome.effects.GenUUID
+import com.holodome.auth.PasswordHashing
 
-import java.security.MessageDigest
 import java.time.Instant
 import java.util.UUID
 
@@ -22,8 +22,9 @@ trait UserService[F[_]] {
 }
 
 object UserService {
-  private class UserServiceInterpreter[F[_]: MonadThrow: GenUUID](repo: UserRepository[F])
-      extends UserService[F] {
+  private class UserServiceInterpreter[F[_]: MonadThrow: Sync](
+      repo: UserRepository[F]
+  ) extends UserService[F] {
     override def login(
         body: LoginRequest
     ): F[UUID] =
@@ -45,30 +46,22 @@ object UserService {
         _ <- repo
           .findByName(body.name)
           .getOrElse(UserNameInUse(body.name).raiseError[F, Unit])
-        salt <- GenUUID[F].make
+        salt <- PasswordHashing.genSalt[F]
         user = User.CreateUser(
           body.name,
           body.email,
-          hashString(body.password),
-          salt.toString,
+          PasswordHashing.hashSaltPassword(body.password, salt),
+          salt,
           Instant.now
         )
       } yield user
       user.flatMap(u => repo.create(u))
     }
   }
-  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F]): UserService[F] =
+
+  def make[F[_]: MonadThrow: Sync](repo: UserRepository[F]): UserService[F] =
     new UserServiceInterpreter(repo)
 
-  private def hashString(str: String): String =
-    MessageDigest
-      .getInstance("SHA-256")
-      .digest(str.getBytes("UTF-8"))
-      .map("%02x".format(_))
-      .mkString
-
-  private def passwordsMatch(user: User, password: String): Boolean =
-    hashString(password + user.salt) == user.hashedPassword
-
-  private def genSalt: String = UUID.randomUUID().toString
+  private def passwordsMatch(user: User, str: Password): Boolean =
+    user.hashedPassword == PasswordHashing.hashSaltPassword(str, user.salt)
 }

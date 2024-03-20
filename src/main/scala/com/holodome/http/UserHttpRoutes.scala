@@ -14,12 +14,11 @@ final case class UserHttpRoutes[F[_]: JsonDecoder: MonadThrow](
     userService: UserService[F]
 ) extends Http4sDsl[F] {
 
-  val routes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case req @ POST -> Root / "login" =>
-      req.decodeR[LoginRequest] { login =>
-        userService
-          .login(login)
-          .flatMap(Created(_))
-      }
+  val routes: HttpRoutes[F] = HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
+    req.decodeR[LoginRequest] { login =>
+      userService
+        .login(login)
+        .flatMap(Created(_))
+    }
   }
 }

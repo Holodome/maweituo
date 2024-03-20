@@ -1,7 +1,7 @@
 package com.holodome.http
 
 import cats.MonadThrow
-import com.holodome.domain.auth._
+import com.holodome.domain.users._
 import com.holodome.services.UserService
 import org.http4s.HttpRoutes
 import org.http4s.circe.JsonDecoder

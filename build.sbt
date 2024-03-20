@@ -1,6 +1,10 @@
 version := "0.1.0-SNAPSHOT"
 scalaVersion := "2.13.11"
-scalacOptions += "-Ymacro-annotations"
+scalacOptions ++= Seq(
+  "-Ymacro-annotations",
+  "-feature",
+  "-language:implicitConversions"
+)
 organization := "com.holodome"
 
 enablePlugins(JavaAppPackaging)
@@ -37,6 +41,7 @@ libraryDependencies += "io.circe" %% "circe-shapes" % CirceVersion
 libraryDependencies += "io.circe" %% "circe-parser" % CirceVersion
 libraryDependencies += "io.circe" %% "circe-generic-extras" % CirceVersion
 libraryDependencies += "io.circe" %% "circe-derivation" % "0.13.0-M5"
+libraryDependencies += "io.circe" %% "circe-refined" % CirceVersion
 libraryDependencies += "com.outworkers" %% "phantom-dsl" % PhantomVersion
 libraryDependencies += "tf.tofu" %% "derevo-core" % DerevoVersion
 libraryDependencies += "tf.tofu" %% "derevo-circe" % DerevoVersion

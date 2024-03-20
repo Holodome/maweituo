@@ -3,7 +3,7 @@ package com.holodome.auth
 import cats.data.State
 import cats.effect.Sync
 import cats.effect.kernel.Async
-import com.holodome.domain.auth._
+import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
 import cats.syntax.all._
 

@@ -1,7 +1,6 @@
 package com.holodome.services
 
-import com.holodome.domain.auth._
-import com.holodome.domain.User
+import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
 import cats._
 import cats.effect.Sync
@@ -47,7 +46,7 @@ object UserService {
           .findByName(body.name)
           .getOrElse(UserNameInUse(body.name).raiseError[F, Unit])
         salt <- PasswordHashing.genSalt[F]
-        user = User.CreateUser(
+        user = CreateUser(
           body.name,
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),

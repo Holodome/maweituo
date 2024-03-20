@@ -9,7 +9,14 @@ import com.outworkers.phantom.dsl._
 
 import java.util.UUID
 
-class CassandraUserRepository(db: UsersDatabase) extends UserRepository[IO] {
+object CassandraUserRepository {
+  def make(db: UsersDatabase): UserRepository[IO] = new CassandraUserRepository(
+    db
+  )
+}
+
+final class CassandraUserRepository private (db: UsersDatabase)
+    extends UserRepository[IO] {
   import db.{session, space}
 
   override def create(request: User.CreateUser): IO[UUID] = ???

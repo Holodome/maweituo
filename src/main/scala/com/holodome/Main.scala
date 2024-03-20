@@ -16,7 +16,7 @@ object Main extends IOApp.Simple {
 
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
   override def run: IO[Unit] = {
-    val userRepo = new CassandraUserRepository(
+    val userRepo = CassandraUserRepository.make(
       new UsersDatabase(connectors.ContactPoint.local.keySpace("aboba"))
     )
     val services = Services.make[IO](userRepo)

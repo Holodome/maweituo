@@ -22,7 +22,7 @@ trait UserService[F[_]] {
 }
 
 object UserService {
-  private class Impl[F[_]: MonadThrow: GenUUID](repo: UserRepository[F])
+  private class UserServiceInterpreter[F[_]: MonadThrow: GenUUID](repo: UserRepository[F])
       extends UserService[F] {
     override def login(
         body: LoginRequest
@@ -58,7 +58,7 @@ object UserService {
     }
   }
   def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F]): UserService[F] =
-    new Impl(repo)
+    new UserServiceInterpreter(repo)
 
   private def hashString(str: String): String =
     MessageDigest

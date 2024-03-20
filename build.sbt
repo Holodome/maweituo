@@ -3,9 +3,13 @@ scalaVersion := "2.13.11"
 scalacOptions += "-Ymacro-annotations"
 organization := "com.holodome"
 
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+dockerExposedPorts ++= Seq(9000, 9001)
+
 lazy val root = (project in file("."))
   .settings(
-    name := "backend"
+    name := "maweituo"
   )
 
 val CatsVersion = "2.9.0"

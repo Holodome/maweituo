@@ -2,10 +2,6 @@ package com.holodome.domain
 
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import io.circe._
-import io.circe._
-import io.circe.syntax._
-import io.circe.parser._
 
 import scala.util.control.NoStackTrace
 

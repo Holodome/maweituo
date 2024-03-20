@@ -1,7 +1,5 @@
 package com.holodome.services
 
-import cats.data.{EitherT, OptionT, Reader}
-import cats.effect.IO
 import com.holodome.domain.auth._
 import com.holodome.domain.User
 import com.holodome.repositories.UserRepository

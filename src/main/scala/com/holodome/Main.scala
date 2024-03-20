@@ -1,21 +1,15 @@
 package com.holodome
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{IO, IOApp}
 
-import scala.concurrent.ExecutionContext
-import com.holodome.config.Config
 import com.holodome.http.Routes
-import com.holodome.repositories.UserRepository
 import com.holodome.repositories.cassandra.cql.UsersDatabase
-import com.outworkers.phantom.connectors.ContactPoints
-import com.outworkers.phantom.dsl.CassandraConnection
 import com.holodome.repositories.cassandra.CassandraUserRepository
 import com.holodome.resources.MkHttpServer
 import com.outworkers.phantom.connectors
 import org.http4s.HttpApp
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
-import org.http4s.server.middleware.Logger
-import org.typelevel.log4cats.{Logger, SelfAwareStructuredLogger}
+import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 
 object Main extends IOApp.Simple {

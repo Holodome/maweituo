@@ -1,4 +1,4 @@
-package com.holodome.models
+package com.holodome.domain
 
 import java.util.UUID
 import java.time.Instant
@@ -14,5 +14,5 @@ case class User(
 )
 
 object User {
-  case class CreateUser(name: String, email: String, password: String)
+  case class CreateUser(name: String, email: String, password: String, salt: String, time: Instant)
 }

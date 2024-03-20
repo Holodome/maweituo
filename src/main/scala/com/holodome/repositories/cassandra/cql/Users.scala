@@ -1,6 +1,6 @@
 package com.holodome.repositories.cassandra.cql
 
-import com.holodome.models.User
+import com.holodome.domain.User
 import com.outworkers.phantom.dsl._
 
 abstract class Users extends Table[Users, User] {

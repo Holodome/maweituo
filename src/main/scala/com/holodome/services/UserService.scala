@@ -1,42 +1,76 @@
 package com.holodome.services
 
-import cats.Applicative
-import cats.data.{EitherT, Reader}
+import cats.data.{EitherT, OptionT, Reader}
 import cats.effect.IO
-import com.holodome.models.auth.Login
-import com.holodome.models.{LoginError, User}
+import com.holodome.domain.auth._
+import com.holodome.domain.User
 import com.holodome.repositories.UserRepository
+import cats._
+import cats.syntax.all._
+import com.holodome.effects.GenUUID
 
 import java.security.MessageDigest
+import java.time.Instant
+import java.util.UUID
 
 trait UserService[F[_]] {
   def login(
-      body: Login.Request
-  ): Reader[UserRepository[F], EitherT[F, LoginError, Unit]]
+      body: LoginRequest
+  ): F[UUID]
+
+  def register(
+      body: RegisterRequest
+  ): F[UUID]
 }
 
-object UserService extends UserService[IO] {
-  override def login(
-      body: Login.Request
-  ): Reader[UserRepository[IO], EitherT[IO, LoginError, Unit]] =
-    Reader { repo =>
+object UserService {
+  private class Impl[F[_]: MonadThrow: GenUUID](repo: UserRepository[F])
+      extends UserService[F] {
+    override def login(
+        body: LoginRequest
+    ): F[UUID] =
       repo
-        .findByEmail(body.email)
-        .toRight(LoginError("User not found"))
+        .findByName(body.name)
+        .getOrElseF(NoUserFound(body.name).raiseError[F, User])
         .flatMap {
-          case u if passwordsMatch(u, body.password) =>
-            EitherT.right(IO.pure(()))
-          case _ => EitherT.leftT(LoginError("Invalid password"))
+          case u if passwordsMatch(u, body.password) => u.id.pure[F]
+          case _                                     => InvalidPassword(body.name).raiseError[F, UUID]
         }
-    }
 
-  private def passwordHash(password: String, salt: String): String =
+    override def register(
+        body: RegisterRequest
+    ): F[UUID] = {
+      val user = for {
+        _ <- repo
+          .findByEmail(body.email)
+          .getOrElse(UserEmailInUse(body.email).raiseError[F, Unit])
+        _ <- repo
+          .findByName(body.name)
+          .getOrElse(UserNameInUse(body.name).raiseError[F, Unit])
+        salt <- GenUUID[F].make
+        user = User.CreateUser(
+          body.name,
+          body.email,
+          hashString(body.password),
+          salt.toString,
+          Instant.now
+        )
+      } yield user
+      user.flatMap(u => repo.create(u))
+    }
+  }
+  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F]): UserService[F] =
+    new Impl(repo)
+
+  private def hashString(str: String): String =
     MessageDigest
       .getInstance("SHA-256")
-      .digest((password + salt).getBytes("UTF-8"))
+      .digest(str.getBytes("UTF-8"))
       .map("%02x".format(_))
       .mkString
 
   private def passwordsMatch(user: User, password: String): Boolean =
-    passwordHash(password, user.salt) == user.hashedPassword
+    hashString(password + user.salt) == user.hashedPassword
+
+  private def genSalt: String = UUID.randomUUID().toString
 }

@@ -21,6 +21,8 @@ val javaDriverVersion = "4.9.0"
 val PhantomVersion = "2.59.0"
 val DerevoVersion = "0.12.8"
 val RefinedVersion = "0.11.1"
+val EnumeratumVersion = "1.7.3"
+val CirisVersion = "3.5.0"
 
 libraryDependencies += "org.typelevel" %% "cats-core" % CatsVersion
 libraryDependencies += "org.typelevel" %% "cats-effect" % CatsEffectVersion
@@ -41,3 +43,7 @@ libraryDependencies += "tf.tofu" %% "derevo-cats" % DerevoVersion
 libraryDependencies += "tf.tofu" %% "derevo-circe-magnolia" % DerevoVersion
 libraryDependencies += "eu.timepit" %% "refined" % RefinedVersion
 libraryDependencies += "eu.timepit" %% "refined-cats" % RefinedVersion
+libraryDependencies += "com.beachape" %% "enumeratum" % EnumeratumVersion
+libraryDependencies += "is.cir" %% "ciris" % CirisVersion
+libraryDependencies += "is.cir" %% "ciris-enumeratum" % CirisVersion
+libraryDependencies += "is.cir" %% "ciris-refined" % CirisVersion

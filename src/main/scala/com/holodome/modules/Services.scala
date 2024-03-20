@@ -1,4 +1,4 @@
-package com.holodome
+package com.holodome.modules
 
 import cats.MonadThrow
 import com.holodome.effects.GenUUID
@@ -7,10 +7,11 @@ import com.holodome.services.UserService
 
 object Services {
   def make[F[_]: MonadThrow: GenUUID](
-      userRepo: UserRepository[F]
+      repositories: Repositories[F]
   ): Services[F] = {
     new Services[F] {
-      override val users: UserService[F] = UserService.make(userRepo)
+      override val users: UserService[F] =
+        UserService.make(repositories.userRepository)
     }
   }
 }

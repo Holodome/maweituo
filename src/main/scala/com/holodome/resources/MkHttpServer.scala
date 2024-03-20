@@ -3,13 +3,17 @@ package com.holodome.resources
 import org.http4s.HttpApp
 import cats.effect.{Async, Resource}
 import com.comcast.ip4s.IpLiteralSyntax
+import com.holodome.config.types.HttpServerConfig
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server
 import org.http4s.server.defaults.Banner
 import org.typelevel.log4cats.Logger
 
 trait MkHttpServer[F[_]] {
-  def newEmber(httpApp: HttpApp[F]): Resource[F, Server]
+  def newEmber(
+      config: HttpServerConfig,
+      httpApp: HttpApp[F]
+  ): Resource[F, Server]
 }
 
 object MkHttpServer {
@@ -21,11 +25,12 @@ object MkHttpServer {
     )
 
   implicit def forAsyncLogger[F[_]: Async: Logger]: MkHttpServer[F] =
-    (httpApp: HttpApp[F]) => EmberServerBuilder
-      .default[F]
-      .withHost(host"localhost")
-      .withPort(port"8080")
-      .withHttpApp(httpApp)
-      .build
-      .evalTap(showEmberBanner[F])
+    (config: HttpServerConfig, httpApp: HttpApp[F]) =>
+      EmberServerBuilder
+        .default[F]
+        .withHost(config.host)
+        .withPort(config.port)
+        .withHttpApp(httpApp)
+        .build
+        .evalTap(showEmberBanner[F])
 }

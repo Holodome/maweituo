@@ -1,8 +1,9 @@
 package com.holodome
 
+import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp}
-
-import com.holodome.http.Routes
+import com.holodome.config.Config
+import com.holodome.modules.{HttpApi, Repositories, Services}
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.cassandra.CassandraUserRepository
 import com.holodome.resources.MkHttpServer
@@ -16,12 +17,18 @@ object Main extends IOApp.Simple {
 
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
   override def run: IO[Unit] = {
-    val userRepo = CassandraUserRepository.make(
-      new UsersDatabase(connectors.ContactPoint.local.keySpace("aboba"))
-    )
-    val services = Services.make[IO](userRepo)
-    val routes = new Routes[IO](services).routes
-    val httpApp: HttpApp[IO] = routes.orNotFound
-    MkHttpServer[IO].newEmber(httpApp).useForever
+    Config.load[IO] flatMap { cfg =>
+      Logger[IO].info(s"Loaded config $cfg") >>
+        Supervisor[IO].use { implicit _ =>
+          {
+            val repositories = Repositories.make[IO](cfg.databaseConfig)
+            val services = Services.make[IO](repositories)
+            val api = HttpApi.make[IO](services)
+            MkHttpServer[IO]
+              .newEmber(cfg.httpServerConfig, api.httpApp)
+              .useForever
+          }
+        }
+    }
   }
 }

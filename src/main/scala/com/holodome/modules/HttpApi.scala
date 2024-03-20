@@ -1,7 +1,7 @@
-package com.holodome.http
+package com.holodome.modules
 
 import cats.effect.Async
-import com.holodome.Services
+import com.holodome.http.UserHttpRoutes
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}
 

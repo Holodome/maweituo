@@ -1,7 +1,8 @@
 package com.holodome.repositories.cassandra
 
 import cats.data.OptionT
-import cats.effect.IO
+import cats.effect.{Async, IO}
+import cats.syntax.all._
 import com.holodome.domain.User
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.UserRepository
@@ -10,24 +11,25 @@ import com.outworkers.phantom.dsl._
 import java.util.UUID
 
 object CassandraUserRepository {
-  def make(db: UsersDatabase): UserRepository[IO] = new CassandraUserRepository(
-    db
-  )
+  def make[F[_]: Async](db: UsersDatabase): UserRepository[F] =
+    new CassandraUserRepository(
+      db
+    )
 }
 
-final class CassandraUserRepository private (db: UsersDatabase)
-    extends UserRepository[IO] {
+sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
+    extends UserRepository[F] {
   import db.{session, space}
 
-  override def create(request: User.CreateUser): IO[UUID] = ???
+  override def create(request: User.CreateUser): F[UUID] = ???
 
-  override def all(): IO[List[User]] =
-    IO.fromFuture(IO(db.users.select.all().fetch()))
+  override def all(): F[List[User]] =
+    Async[F].fromFuture(db.users.select.all().fetch().pure[F])
 
-  override def find(userId: UUID): OptionT[IO, User] = ???
+  override def find(userId: UUID): OptionT[F, User] = ???
 
-  override def findByEmail(email: String): OptionT[IO, User] = ???
+  override def findByEmail(email: String): OptionT[F, User] = ???
 
-  override def findByName(name: String): OptionT[IO, User] = ???
+  override def findByName(name: String): OptionT[F, User] = ???
 
 }

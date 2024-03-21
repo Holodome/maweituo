@@ -14,9 +14,9 @@ trait AuthService[F[_]] {
 
 object AuthService {
   private final class AuthServiceInterpreter[F[_]: MonadThrow](
-                                                                userService: UserService[F],
-                                                                jwtRepo: JwtRepository[F],
-                                                                tokens: JwtTokens[F]
+      userService: UserService[F],
+      jwtRepo: JwtRepository[F],
+      tokens: JwtTokens[F]
   ) extends AuthService[F] {
     override def login(username: Username, password: Password): F[JwtToken] =
       userService

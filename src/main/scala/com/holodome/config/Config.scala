@@ -1,28 +1,35 @@
 package com.holodome.config
 
 import cats.effect.Async
-import cats.syntax.all._
-import ciris.{ConfigValue, default, env}
+import ciris._
 import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types._
-import com.holodome.config.types.{AppConfig, HttpServerConfig}
+import eu.timepit.refined.auto._
+
+import scala.concurrent.duration.DurationInt
 
 object Config {
   def load[F[_]: Async]: F[AppConfig] =
     env("MW_APP_ENV")
       .as[AppEnvironment]
       .flatMap {
-        case AppEnvironment.Test => ConfigValue.default(default)
+        case AppEnvironment.Test => default[F]
         case AppEnvironment.Prod => ???
       }
       .load[F]
 
-  private def default: AppConfig =
-    AppConfig(
-      HttpServerConfig(
-        host"0.0.0.0",
-        port"8080"
-      ),
-      CassandraConfig("maweituo")
-    )
+  private def default[F[_]]: ConfigValue[F, AppConfig] = {
+    env("MW_JWT_SECRET_KEY").as[JwtAccessSecret].secret map { jwtAccessSecret =>
+      AppConfig(
+        HttpServerConfig(
+          host"0.0.0.0",
+          port"8080"
+        ),
+        CassandraConfig("maweituo"),
+        JwtTokenExpiration(30.minutes),
+        jwtAccessSecret,
+        RedisConfig(RedisURI("redis://localhost"))
+      )
+    }
+  }
 }

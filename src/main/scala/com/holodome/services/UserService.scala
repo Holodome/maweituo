@@ -9,8 +9,6 @@ import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
 
-import java.time.LocalDateTime
-
 trait UserService[F[_]] {
   def find(id: Username): OptionT[F, User]
 

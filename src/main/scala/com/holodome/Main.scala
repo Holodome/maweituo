@@ -17,7 +17,7 @@ object Main extends IOApp.Simple {
       Logger[IO].info(s"Loaded config $cfg") >>
         Supervisor[IO].use { implicit _ =>
           {
-            val repositories = Repositories.make[IO](cfg.databaseConfig)
+            val repositories = Repositories.make[IO](cfg.cassandraConfig)
             val services = Services.make[IO](repositories)
             val api = HttpApi.make[IO](services)
             MkHttpServer[IO]

@@ -2,7 +2,6 @@ package com.holodome.resources
 
 import org.http4s.HttpApp
 import cats.effect.{Async, Resource}
-import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types.HttpServerConfig
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server

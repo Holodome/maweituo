@@ -5,7 +5,6 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 
-import java.time.Instant
 import java.util.UUID
 
 object advertisements {

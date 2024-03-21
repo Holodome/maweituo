@@ -1,15 +1,11 @@
 package com.holodome.repositories.cassandra
 
 import cats.data.OptionT
-import cats.effect.{Async, IO}
-import cats.syntax.all._
+import cats.effect.{Async, Sync}
 import com.holodome.domain.users._
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.UserRepository
-import com.outworkers.phantom.builder.syntax.CQLSyntax.eqs
 import com.outworkers.phantom.dsl._
-
-import java.util.UUID
 
 object CassandraUserRepository {
   def make[F[_]: Async](db: UsersDatabase): UserRepository[F] =
@@ -24,7 +20,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
 
   override def create(value: User): F[Unit] =
     Async[F].fromFuture(
-      Async[F].delay(
+      Sync[F].delay(
         db.users
           .insert()
           .value(_.id, value.id.value)()
@@ -38,19 +34,19 @@ sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
     )
 
   override def all(): F[List[User]] =
-    Async[F].fromFuture(Async[F].delay(db.users.select.all().fetch()))
+    Async[F].fromFuture(Sync[F].delay(db.users.select.all().fetch()))
 
   override def find(userId: UserId): OptionT[F, User] =
     OptionT(
-      Async[F].fromFuture(Async[F].delay(db.users.select.where(_.id eqs userId.value).one()))
+      Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.id eqs userId.value).one()))
     )
 
   override def findByEmail(email: Email): OptionT[F, User] =
     OptionT(
-      Async[F].fromFuture(Async[F].delay(db.users.select.where(_.email eqs email.value).one()))
+      Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.email eqs email.value).one()))
     )
 
   override def findByName(name: Username): OptionT[F, User] =
-    OptionT(Async[F].fromFuture(Async[F].delay(db.users.select.where(_.name eqs name.value).one())))
+    OptionT(Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.name eqs name.value).one())))
 
 }

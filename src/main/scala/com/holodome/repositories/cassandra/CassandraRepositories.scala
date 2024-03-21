@@ -1,10 +1,10 @@
-package com.holodome.repositories.cassandra.cql
+package com.holodome.repositories.cassandra
 
 import cats.effect.Async
 import com.holodome.config.types._
 import com.holodome.modules.Repositories
 import com.holodome.repositories.UserRepository
-import com.holodome.repositories.cassandra.CassandraUserRepository
+import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.outworkers.phantom.connectors
 
 object CassandraRepositories {

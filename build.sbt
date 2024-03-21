@@ -9,7 +9,7 @@ organization := "com.holodome"
 
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
-dockerExposedPorts ++= Seq(9000, 9001)
+dockerExposedPorts ++= Seq(8080)
 
 lazy val root = (project in file("."))
   .settings(
@@ -28,6 +28,7 @@ val RefinedVersion = "0.11.1"
 val EnumeratumVersion = "1.7.3"
 val CirisVersion = "3.5.0"
 val NewtypeVersion = "0.4.4"
+val LogbackVersion = "1.3.5"
 
 libraryDependencies += "org.typelevel" %% "cats-core" % CatsVersion
 libraryDependencies += "org.typelevel" %% "cats-effect" % CatsEffectVersion
@@ -54,3 +55,4 @@ libraryDependencies += "is.cir" %% "ciris" % CirisVersion
 libraryDependencies += "is.cir" %% "ciris-enumeratum" % CirisVersion
 libraryDependencies += "is.cir" %% "ciris-refined" % CirisVersion
 libraryDependencies += "io.estatico" %% "newtype" % NewtypeVersion
+libraryDependencies += "ch.qos.logback" % "logback-classic" % LogbackVersion

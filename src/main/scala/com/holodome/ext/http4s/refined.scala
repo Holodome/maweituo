@@ -20,7 +20,7 @@ object refined {
       req: Request[F]
   ) extends Http4sDsl[F] {
     def decodeR[A: Decoder](f: A => F[Response[F]]): F[Response[F]] =
-      req.asJsonDecode[A].attempt.flatMap {
+      req.asJsonDecode[A].attempt flatMap {
         case Left(e) =>
           Option(e.getCause) match {
             case Some(c) if c.getMessage.startsWith("Predicate") =>

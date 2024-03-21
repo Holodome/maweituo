@@ -12,8 +12,8 @@ object Config {
     env("MW_APP_ENV")
       .as[AppEnvironment]
       .flatMap {
-        case AppEnvironment.Test => ???
-        case AppEnvironment.Prod => ConfigValue.default(default)
+        case AppEnvironment.Test => ConfigValue.default(default)
+        case AppEnvironment.Prod => ???
       }
       .load[F]
 

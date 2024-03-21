@@ -21,7 +21,7 @@ trait UserService[F[_]] {
 }
 
 object UserService {
-  private class UserServiceInterpreter[F[_]: MonadThrow: Sync](
+  private final class UserServiceInterpreter[F[_]: MonadThrow: Sync](
       repo: UserRepository[F]
   ) extends UserService[F] {
     override def login(

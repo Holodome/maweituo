@@ -3,7 +3,7 @@ package com.holodome.modules
 import cats.effect.Async
 import com.holodome.config.types._
 import com.holodome.repositories.UserRepository
-import com.holodome.repositories.cassandra.cql.CassandraRepositories
+import com.holodome.repositories.cassandra.CassandraRepositories
 
 trait Repositories[F[_]] {
   val userRepository: UserRepository[F]

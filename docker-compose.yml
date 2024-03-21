@@ -1,0 +1,26 @@
+version: "3.4"
+
+services:
+  scylla:
+    image: 'scylladb/scylla:latest'
+    container_name: maweituo-scylla
+    restart: always
+    ports:
+      - '9042:9042'
+    networks:
+      - backend
+
+  backend:
+    image: 'maweituo:0.1.0-SNAPSHOT'
+    container_name: "maweituo"
+    restart: always
+    ports:
+      - '8080:8080'
+    environment:
+      - MW_APP_ENV=test
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

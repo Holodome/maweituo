@@ -1,5 +1,6 @@
 package com.holodome.domain
 
+import com.holodome.domain.users.UserId
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
@@ -21,7 +22,6 @@ object advertisements {
       id: AdvertisementId,
       title: AdvertisementTitle,
       tags: List[AdvertisementTag],
-      createdAt: Instant,
-      updatedAt: Instant
+      authorId: UserId
   )
 }

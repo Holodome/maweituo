@@ -1,6 +1,17 @@
 package com.holodome.repositories.cassandra.cql
 
 import com.outworkers.phantom.dsl._
+import com.holodome.domain.users.User
+
+abstract class Users extends Table[Users, User] {
+  override def tableName: String = "users"
+
+  object id       extends UUIDColumn with PartitionKey
+  object name     extends StringColumn
+  object email    extends StringColumn
+  object password extends StringColumn
+  object salt     extends StringColumn
+}
 
 class UsersDatabase(override val connector: CassandraConnection)
     extends Database[UsersDatabase](connector) {

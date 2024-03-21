@@ -5,7 +5,7 @@ import com.holodome.domain.users._
 
 import java.util.UUID
 
-abstract class UserRepository[F[_]] {
+trait UserRepository[F[_]] {
   def create(request: User): F[Unit]
   def all(): F[List[User]]
   def find(userId: UserId): OptionT[F, User]

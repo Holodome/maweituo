@@ -12,11 +12,7 @@ import com.holodome.domain.Id
 import java.time.LocalDateTime
 
 trait UserService[F[_]] {
-  def find(id: UserId): OptionT[F, User]
-
-  def login(
-      body: LoginRequest
-  ): F[UserId]
+  def find(id: Username): OptionT[F, User]
 
   def register(
       body: RegisterRequest
@@ -24,22 +20,15 @@ trait UserService[F[_]] {
 }
 
 object UserService {
+
+  def make[F[_]: MonadThrow: Sync](repo: UserRepository[F]): UserService[F] =
+    new UserServiceInterpreter(repo)
+
   private final class UserServiceInterpreter[F[_]: MonadThrow: Sync](
       repo: UserRepository[F]
   ) extends UserService[F] {
-    override def find(id: UserId): OptionT[F, User] =
-      repo.find(id)
-
-    override def login(
-        body: LoginRequest
-    ): F[UserId] =
-      repo
-        .findByName(body.name)
-        .getOrElseF(NoUserFound(body.name).raiseError[F, User])
-        .flatMap {
-          case u if passwordsMatch(u, body.password) => u.id.pure[F]
-          case _                                     => InvalidPassword(body.name).raiseError[F, UserId]
-        }
+    override def find(id: Username): OptionT[F, User] =
+      repo.findByName(id)
 
     override def register(
         body: RegisterRequest
@@ -65,9 +54,4 @@ object UserService {
     }
   }
 
-  def make[F[_]: MonadThrow: Sync](repo: UserRepository[F]): UserService[F] =
-    new UserServiceInterpreter(repo)
-
-  private def passwordsMatch(user: User, str: Password): Boolean =
-    user.hashedPassword == PasswordHashing.hashSaltPassword(str, user.salt)
 }

@@ -1,6 +1,6 @@
 package com.holodome.domain
 
-import derevo.cats.eqv
+import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import eu.timepit.refined.api.Refined
@@ -17,7 +17,7 @@ object users {
   @derive(decoder, encoder, uuid)
   @newtype case class UserId(value: UUID)
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, show)
   @newtype case class Username(value: String)
 
   @derive(decoder, encoder)

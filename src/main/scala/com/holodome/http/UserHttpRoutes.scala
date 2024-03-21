@@ -16,9 +16,7 @@ final case class UserHttpRoutes[F[_]: JsonDecoder: MonadThrow](
 
   val routes: HttpRoutes[F] = HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
     req.decodeR[LoginRequest] { login =>
-      userService
-        .login(login)
-        .flatMap(Created(_))
+      ???
     }
   }
 }

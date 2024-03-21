@@ -3,8 +3,14 @@ package com.holodome.config
 import com.comcast.ip4s.{Host, Port}
 import enumeratum.EnumEntry.Lowercase
 import enumeratum.{CirisEnum, Enum, EnumEntry}
+import io.estatico.newtype.macros.newtype
+
+import scala.concurrent.duration.FiniteDuration
 
 object types {
+  @newtype case class JwtAccessSecret(value: String)
+  @newtype case class JwtTokenExpiration(value: FiniteDuration)
+
   sealed trait DatabaseConfig
 
   // Currently we support only local Cassandra installations with 1 server. OC this will be changed

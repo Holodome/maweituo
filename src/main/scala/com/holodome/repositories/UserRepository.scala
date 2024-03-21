@@ -6,9 +6,9 @@ import com.holodome.domain.users._
 import java.util.UUID
 
 abstract class UserRepository[F[_]] {
-  def create(request: CreateUser): F[UUID]
+  def create(request: User): F[Unit]
   def all(): F[List[User]]
-  def find(userId: UUID): OptionT[F, User]
+  def find(userId: UserId): OptionT[F, User]
   def findByEmail(email: Email): OptionT[F, User]
   def findByName(name: Username): OptionT[F, User]
 }

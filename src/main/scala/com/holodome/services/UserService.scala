@@ -6,18 +6,17 @@ import cats._
 import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
-
-import java.time.Instant
-import java.util.UUID
+import com.holodome.domain.Id
+import java.time.LocalDateTime
 
 trait UserService[F[_]] {
   def login(
       body: LoginRequest
-  ): F[UUID]
+  ): F[UserId]
 
   def register(
       body: RegisterRequest
-  ): F[UUID]
+  ): F[Unit]
 }
 
 object UserService {
@@ -26,18 +25,18 @@ object UserService {
   ) extends UserService[F] {
     override def login(
         body: LoginRequest
-    ): F[UUID] =
+    ): F[UserId] =
       repo
         .findByName(body.name)
         .getOrElseF(NoUserFound(body.name).raiseError[F, User])
         .flatMap {
           case u if passwordsMatch(u, body.password) => u.id.pure[F]
-          case _                                     => InvalidPassword(body.name).raiseError[F, UUID]
+          case _                                     => InvalidPassword(body.name).raiseError[F, UserId]
         }
 
     override def register(
         body: RegisterRequest
-    ): F[UUID] = {
+    ): F[Unit] = {
       val user = for {
         _ <- repo
           .findByEmail(body.email)
@@ -46,12 +45,14 @@ object UserService {
           .findByName(body.name)
           .getOrElse(UserNameInUse(body.name).raiseError[F, Unit])
         salt <- PasswordHashing.genSalt[F]
-        user = CreateUser(
+        id   <- Id.make[F, UserId]
+        time = LocalDateTime.now
+        user = User(
+          id,
           body.name,
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),
           salt,
-          Instant.now
         )
       } yield user
       user.flatMap(u => repo.create(u))

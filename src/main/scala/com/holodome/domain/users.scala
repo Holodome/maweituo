@@ -5,22 +5,23 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.predicates.all._
-import io.circe.refined._
+import com.holodome.optics.uuid
 
 import scala.util.control.NoStackTrace
 import io.estatico.newtype.macros.newtype
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime}
 import java.util.UUID
 
 object users {
+  @derive(decoder, encoder, uuid)
+  @newtype case class UserId(value: UUID)
+
   @derive(decoder, encoder)
   @newtype case class Username(value: String)
 
-  private type EmailT = String Refined MatchesRegex["""[a-z0-9]+@[a-z0-9]+\\.[a-z0-9]{2,}"""]
-
   @derive(decoder, encoder)
-  @newtype case class Email(value: EmailT)
+  @newtype case class Email(value: String)
 
   @derive(decoder, encoder, eqv)
   @newtype
@@ -50,20 +51,10 @@ object users {
   case class InvalidPassword(username: Username) extends NoStackTrace
 
   case class User(
-      id: UUID,
+      id: UserId,
       name: Username,
       email: Email,
       hashedPassword: HashedSaltedPassword,
-      salt: PasswordSalt,
-      createdAt: Instant,
-      updatedAt: Instant
-  )
-
-  case class CreateUser(
-      name: Username,
-      email: Email,
-      password: HashedSaltedPassword,
-      salt: PasswordSalt,
-      time: Instant
+      salt: PasswordSalt
   )
 }

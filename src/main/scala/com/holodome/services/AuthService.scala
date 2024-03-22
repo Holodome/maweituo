@@ -35,6 +35,7 @@ object AuthService {
               .getOrElseF(tokens.create flatMap { t =>
                 jwtRepo.storeToken(username, t).map(_ => t)
               })
+
           } else {
             InvalidPassword(username).raiseError[F, JwtToken]
           }

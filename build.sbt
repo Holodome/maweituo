@@ -8,6 +8,8 @@ scalacOptions ++= Seq(
 )
 organization := "com.holodome"
 
+scalafmtOnCompile := true
+
 enablePlugins(JavaAppPackaging)
 enablePlugins(DockerPlugin)
 dockerExposedPorts ++= Seq(8080)
@@ -66,3 +68,5 @@ libraryDependencies += "dev.optics"     %% "monocle-macro"         % MonocleVers
 libraryDependencies += "dev.profunktor" %% "http4s-jwt-auth"       % Http4sJwtAuthVersion
 libraryDependencies += "dev.profunktor" %% "redis4cats-effects"    % Redis4CatsVersion
 libraryDependencies += "dev.profunktor" %% "redis4cats-log4cats"   % Redis4CatsVersion
+
+addCommandAlias("runLinter", ";scalafixAll --rules OrganizeImports")

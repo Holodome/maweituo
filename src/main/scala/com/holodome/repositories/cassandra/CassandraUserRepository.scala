@@ -1,17 +1,16 @@
 package com.holodome.repositories.cassandra
 
 import cats.data.OptionT
-import cats.effect.{Async, Sync}
+import cats.effect.Async
 import com.holodome.domain.users._
+import com.holodome.ext.phantom.catsInterop.liftFuture
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.UserRepository
 import com.outworkers.phantom.dsl._
 
 object CassandraUserRepository {
   def make[F[_]: Async](db: UsersDatabase): UserRepository[F] =
-    new CassandraUserRepository(
-      db
-    )
+    new CassandraUserRepository(db)
 }
 
 sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
@@ -19,34 +18,31 @@ sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
   import db.{session, space}
 
   override def create(value: User): F[Unit] =
-    Async[F].fromFuture(
-      Sync[F].delay(
-        db.users
-          .insert()
-          .value(_.id, value.id.value)()
-          .value(_.name, value.name.value)()
-          .value(_.email, value.email.value)()
-          .value(_.password, value.hashedPassword.value)()
-          .value(_.salt, value.salt.value)()
-          .future()
-          .map(_ => ())
-      )
+    liftFuture(
+      db.users
+        .insert()
+        .value(_.id, value.id.value)()
+        .value(_.name, value.name.value)()
+        .value(_.email, value.email.value)()
+        .value(_.password, value.hashedPassword.value)()
+        .value(_.salt, value.salt.value)()
+        .future()
+        .map(_ => ())
     )
 
   override def all(): F[List[User]] =
-    Async[F].fromFuture(Sync[F].delay(db.users.select.all().fetch()))
+    liftFuture(db.users.select.all().fetch())
 
   override def find(userId: UserId): OptionT[F, User] =
     OptionT(
-      Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.id eqs userId.value).one()))
+      liftFuture(db.users.select.where(_.id eqs userId.value).one())
     )
 
   override def findByEmail(email: Email): OptionT[F, User] =
     OptionT(
-      Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.email eqs email.value).one()))
+      liftFuture(db.users.select.where(_.email eqs email.value).one())
     )
 
   override def findByName(name: Username): OptionT[F, User] =
-    OptionT(Async[F].fromFuture(Sync[F].delay(db.users.select.where(_.name eqs name.value).one())))
-
+    OptionT(liftFuture(db.users.select.where(_.name eqs name.value).one()))
 }

@@ -1,8 +1,9 @@
 package com.holodome.repositories.cassandra
 
 import cats.effect.Resource
-import cats.effect.kernel.{Sync, Async}
+import cats.effect.kernel.{Async, Sync}
 import com.holodome.config.types.CassandraConfig
+import com.holodome.ext.phantom.catsInterop.makeDbResource
 import com.holodome.repositories.UserRepository
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.outworkers.phantom.connectors
@@ -24,6 +25,5 @@ object CassandraResources {
     )
   }
 
-  private def makeDbResource[F[_]: Sync, D <: Database[D]](db: => D): Resource[F, D] =
-    Resource.make(Sync[F].blocking(db))(db => Sync[F].blocking(db.shutdown()))
+
 }

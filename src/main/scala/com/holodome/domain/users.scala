@@ -5,7 +5,7 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.predicates.all._
-import com.holodome.optics.uuid
+import com.holodome.optics.{naiveString, uuid}
 
 import scala.util.control.NoStackTrace
 import io.estatico.newtype.macros.newtype
@@ -17,7 +17,7 @@ object users {
   @derive(decoder, encoder, uuid)
   @newtype case class UserId(value: UUID)
 
-  @derive(decoder, encoder, show)
+  @derive(decoder, encoder, show, naiveString)
   @newtype case class Username(value: String)
 
   @derive(decoder, encoder)
@@ -57,4 +57,6 @@ object users {
       hashedPassword: HashedSaltedPassword,
       salt: PasswordSalt
   )
+
+  @newtype case class AuthedUser(name: Username)
 }

@@ -22,7 +22,7 @@ object Services {
           override val users: UserService[F] =
             UserService.make(repositories.userRepository)
           override val auth: AuthService[F] =
-            AuthService.make(users, repositories.jwtRepository, tokens)
+            AuthService.make(users, repositories.jwtRepository, ???, tokens)
         }
       }
   }

@@ -1,7 +1,9 @@
 package com.holodome.modules
 
 import cats.effect.Async
+import com.holodome.domain.users.AuthedUser
 import com.holodome.http.auth.LoginRoutes
+import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}
 

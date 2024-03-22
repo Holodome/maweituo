@@ -17,7 +17,7 @@ object types {
   @newtype case class JwtAccessSecret(value: String)
   @newtype case class JwtTokenExpiration(value: FiniteDuration)
 
-  @newtype case class RedisURI(value: NonEmptyString)
+  @newtype case class RedisURI(value: String)
   @newtype case class RedisConfig(uri: RedisURI)
 
   // Currently we support only local Cassandra installations with 1 server. OC this will be changed

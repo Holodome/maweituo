@@ -1,6 +1,18 @@
 version: "3.4"
 
 services:
+  redis:
+    image: 'redis:6.2-alpine'
+    container_name: 'redis'
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - .data/redis/:/data
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - backend
+
   scylla:
     image: 'scylladb/scylla:latest'
     container_name: maweituo-scylla

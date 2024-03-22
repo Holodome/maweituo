@@ -13,6 +13,12 @@ trait AuthService[F[_]] {
 }
 
 object AuthService {
+  def make[F[_]: MonadThrow](
+      userService: UserService[F],
+      jwtRepo: JwtRepository[F],
+      tokens: JwtTokens[F]
+  ): AuthService[F] = new AuthServiceInterpreter(userService, jwtRepo, tokens)
+
   private final class AuthServiceInterpreter[F[_]: MonadThrow](
       userService: UserService[F],
       jwtRepo: JwtRepository[F],

@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.repositories.redis
 
 import cats.data.OptionT
 import com.holodome.config.types.JwtTokenExpiration
@@ -7,6 +7,7 @@ import dev.profunktor.auth.jwt
 import dev.profunktor.redis4cats.RedisCommands
 import cats.syntax.all._
 import cats._
+import com.holodome.repositories.JwtRepository
 
 object RedisJwtRepository {
   def make[F[_]: Functor](

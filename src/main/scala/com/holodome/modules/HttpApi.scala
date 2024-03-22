@@ -1,21 +1,46 @@
 package com.holodome.modules
 
 import cats.effect.Async
-import com.holodome.domain.users.AuthedUser
-import com.holodome.http.auth.LoginRoutes
+import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
+import com.holodome.http.auth.{LoginRoutes, LogoutRoutes}
 import dev.profunktor.auth.JwtAuthMiddleware
+import dev.profunktor.auth.jwt.JwtAuth
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}
+import org.http4s.server.middleware.{AutoSlash, CORS, RequestLogger, ResponseLogger, Timeout}
+
+import scala.concurrent.duration.DurationInt
 
 object HttpApi {
-  def make[F[_]: Async](services: Services[F]): HttpApi[F] =
-    new HttpApi[F](services) {}
+  def make[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth): HttpApi[F] =
+    new HttpApi[F](services, userJwtAuth) {}
 }
 
-sealed abstract class HttpApi[F[_]: Async](services: Services[F]) {
-  private val authRoutes = LoginRoutes[F](services.auth).routes
+sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth) {
+  private val usersMiddleware =
+    JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
-  private val routes: HttpRoutes[F] = authRoutes
+  private val loginRoutes = LoginRoutes[F](services.auth).routes
+  private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
 
-  val httpApp: HttpApp[F] = routes.orNotFound
+  private val routes: HttpRoutes[F] = loginRoutes
+  private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
+    { http: HttpRoutes[F] =>
+      AutoSlash(http)
+    } andThen { http: HttpRoutes[F] =>
+      CORS(http)
+    } andThen { http: HttpRoutes[F] =>
+      Timeout(60.seconds)(http)
+    }
+  }
+
+  private val loggers: HttpApp[F] => HttpApp[F] = {
+    { http: HttpApp[F] =>
+      RequestLogger.httpApp(logHeaders = true, logBody = true)(http)
+    } andThen { http: HttpApp[F] =>
+      ResponseLogger.httpApp(logHeaders = true, logBody = true)(http)
+    }
+  }
+
+  val httpApp: HttpApp[F] = loggers(middleware(routes).orNotFound)
 }

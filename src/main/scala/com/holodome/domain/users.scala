@@ -6,6 +6,7 @@ import derevo.derive
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.predicates.all._
 import com.holodome.optics.{naiveString, uuid}
+import dev.profunktor.auth.jwt.JwtSymmetricAuth
 
 import scala.util.control.NoStackTrace
 import io.estatico.newtype.macros.newtype
@@ -59,4 +60,5 @@ object users {
   )
 
   @newtype case class AuthedUser(name: Username)
+  @newtype case class UserJwtAuth(value: JwtSymmetricAuth)
 }

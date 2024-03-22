@@ -10,7 +10,7 @@ import org.typelevel.log4cats.Logger
 
 sealed abstract class AppResources[F[_]](
     val redis: RedisCommands[F, String, String],
-    val cassandra: CassandraResources[F]
+    val cassandra: CassandraResources
 )
 
 object AppResources {

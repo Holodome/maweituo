@@ -8,18 +8,18 @@ import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.outworkers.phantom.connectors
 import com.outworkers.phantom.dsl.Database
 
-sealed abstract class CassandraResources[F[_]] {
-  val userRepository: UserRepository[F]
+sealed abstract class CassandraResources {
+  val userDb: UsersDatabase
 }
 
 object CassandraResources {
-  def make[F[_]: Async](config: CassandraConfig): Resource[F, CassandraResources[F]] = {
+  def make[F[_]: Async](config: CassandraConfig): Resource[F, CassandraResources] = {
     val connector = connectors.ContactPoint.local.keySpace(config.keyspace)
     val userDb    = makeDbResource(new UsersDatabase(connector))
 
-    userDb.map(userDb =>
-      new CassandraResources[F] {
-        override val userRepository: UserRepository[F] = CassandraUserRepository.make(userDb)
+    userDb.map(userDb_ =>
+      new CassandraResources {
+        override val userDb: UsersDatabase = userDb_
       }
     )
   }

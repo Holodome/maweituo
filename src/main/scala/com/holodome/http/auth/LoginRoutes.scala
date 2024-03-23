@@ -4,18 +4,19 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.users._
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
+import com.holodome.ext.jwt.jwt._
 import com.holodome.services.AuthService
-import dev.profunktor.auth.jwt.JwtToken
 import org.http4s._
-import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
+import org.http4s.server.Router
 
 final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
     authService: AuthService[F]
 ) extends Http4sDsl[F] {
+  private val prefixPath = "/auth"
 
-  val routes: HttpRoutes[F] = HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
+  private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
     req.decodeR[LoginRequest] { login =>
       authService
         .login(login.name, login.password)
@@ -26,5 +27,7 @@ final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
     }
   }
 
-  implicit def jwtEncoder: EntityEncoder[F, JwtToken] = EntityEncoder[F, String].contramap(_.value)
+  val routes: HttpRoutes[F] = Router(
+    prefixPath -> httpRoutes
+  )
 }

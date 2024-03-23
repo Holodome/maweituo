@@ -11,16 +11,19 @@ import org.http4s._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthService[F])
     extends Http4sDsl[F] {
+
+  private val prefixPath = "/auth"
+
   private val httpRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "logout" as user =>
       AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.name, _)) *> NoContent()
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] = authMiddleware(
-    httpRoutes
-  )
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
+    Router(prefixPath -> authMiddleware(httpRoutes))
+
 }

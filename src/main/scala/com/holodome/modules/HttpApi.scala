@@ -1,10 +1,10 @@
 package com.holodome.modules
 
 import cats.effect.Async
+import cats.implicits.toSemigroupKOps
 import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
 import com.holodome.http.auth.{LoginRoutes, LogoutRoutes}
 import dev.profunktor.auth.JwtAuthMiddleware
-import dev.profunktor.auth.jwt.JwtAuth
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.server.middleware.{AutoSlash, CORS, RequestLogger, ResponseLogger, Timeout}
@@ -23,7 +23,7 @@ sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: U
   private val loginRoutes = LoginRoutes[F](services.auth).routes
   private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
 
-  private val routes: HttpRoutes[F] = loginRoutes
+  private val routes: HttpRoutes[F] = loginRoutes <+> logoutRoutes
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

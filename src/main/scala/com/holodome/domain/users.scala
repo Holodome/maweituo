@@ -33,7 +33,7 @@ object users {
   @newtype
   case class PasswordSalt(value: String)
 
-  @derive(decoder, encoder)
+  @derive(decoder)
   final case class LoginRequest(name: Username, password: Password)
 
   @derive(decoder, encoder)

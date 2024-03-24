@@ -9,14 +9,13 @@ import com.holodome.domain.users.UserId
 import com.holodome.repositories.{ChatRepository, MessageRepository}
 
 trait MessageService[F[_]] {
-  def find(id: ChatId): F[Chat]
   def createChat(adId: AdvertisementId, clientId: UserId): F[Unit]
   def findByAdvertisement(adId: AdvertisementId): F[List[Chat]]
   def findByClient(uid: UserId): F[List[Chat]]
   def findByAuthor(uid: UserId): F[List[Chat]]
 
-  def send(message: Message): F[Unit]
-  def history(chat: ChatId): F[List[Message]]
+  def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit]
+  def history(chatId: ChatId, requester: UserId): F[HistoryResponse]
 }
 
 object MessageService {
@@ -33,11 +32,14 @@ object MessageService {
       adService: AdvertisementService[F]
   ) extends MessageService[F] {
 
-    override def send(message: Message): F[Unit] = ???
+    override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
+      findChatAndCheckAccess(chatId, senderId).flatMap {
+        _ => msgRepo.send(chatId, senderId, req.text)
+      }
 
-    override def history(chat: ChatId): F[List[Message]] = ???
-
-    override def find(id: ChatId): F[Chat] = ???
+    override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
+      findChatAndCheckAccess(chatId, requester)
+        .flatMap(_ => msgRepo.chatHistory(chatId).map(HistoryResponse.apply))
 
     override def createChat(adId: AdvertisementId, clientId: UserId): F[Unit] =
       adService
@@ -49,7 +51,7 @@ object MessageService {
         }
         .flatTap { ad =>
           chatRepo
-            .getByAdAndClient(ad.id, clientId)
+            .findByAdAndClient(ad.id, clientId)
             .getOrElseF(ChatAlreadyExists().raiseError[F, Any])
         }
         .flatMap { ad =>
@@ -62,5 +64,20 @@ object MessageService {
     override def findByClient(uid: UserId): F[List[Chat]] = ???
 
     override def findByAuthor(uid: UserId): F[List[Chat]] = ???
+
+    private def findChat(chatId: ChatId): F[Chat] =
+      chatRepo
+        .find(chatId)
+        .getOrElseF(InvalidChatId().raiseError[F, Chat])
+
+    private def findChatAndCheckAccess(chatId: ChatId, userId: UserId): F[Chat] =
+      findChat(chatId).flatMap {
+        case chat if userHasAccessToChat(chat, userId) =>
+          ChatAccessForbidden().raiseError[F, Chat]
+        case chat => Monad[F].pure(chat)
+      }
+
+    private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
+      user === chat.adAuthor && user === chat.client
   }
 }

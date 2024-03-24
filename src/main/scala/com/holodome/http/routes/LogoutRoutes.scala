@@ -13,7 +13,7 @@ import org.http4s.server.AuthMiddleware
 final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthService[F])
     extends Http4sDsl[F] {
 
-  val httpRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
+  private val httpRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "logout" as user =>
       AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.id, _)) *> NoContent()
   }

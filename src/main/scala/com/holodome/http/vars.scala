@@ -2,7 +2,7 @@ package com.holodome.http
 
 import cats.syntax.all._
 import com.holodome.domain.advertisements.AdvertisementId
-import com.holodome.domain.chats.ChatId
+import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 
 import java.util.UUID

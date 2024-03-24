@@ -1,6 +1,6 @@
 package com.holodome.repositories.redis
 
-import cats.{Functor, Monad, Show}
+import cats.Monad
 import cats.data.OptionT
 import com.holodome.repositories.DictionaryRepository
 import dev.profunktor.redis4cats.RedisCommands

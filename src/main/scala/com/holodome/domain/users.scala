@@ -12,7 +12,7 @@ import io.estatico.newtype.macros.newtype
 import java.util.UUID
 
 object users {
-  @derive(decoder, encoder, uuid)
+  @derive(decoder, encoder, uuid, eqv)
   @newtype case class UserId(value: UUID)
 
   @derive(decoder, encoder, show)

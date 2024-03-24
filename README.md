@@ -132,7 +132,8 @@ POST    /ads                    - create advertisement
 GET     /ads/{ad_id}            - get advertisement info
 PUT     /ads/{ad_id}            - update advertisement
 DELETE  /ads/{ad_id}            - delete advertisement
-POST    /ads/{ad_id}/resolved   - mark advertisement as resolved
+POST    /ads/{ad_id}/resolved   - mark advertisement as resolved, only by author
+POST    /ads/{ad_id}/discuss    - create chat 
 
 GET     /tags                   - get all tags 
 GET     /tags/{tag_id}          - get all advertisements with given tag

@@ -3,7 +3,6 @@ package com.holodome.services
 import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.advertisements._
-import com.holodome.domain.chats.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.repositories.AdvertisementRepository
 
@@ -11,7 +10,6 @@ trait AdvertisementService[F[_]] {
   def find(id: AdvertisementId): F[Advertisement]
   def all(): F[List[Advertisement]]
   def findByAuthor(authorId: UserId): F[List[Advertisement]]
-  def getChatIds(adId: AdvertisementId): F[List[ChatId]]
   def create(authorId: UserId, create: CreateAdRequest): F[Unit]
 }
 
@@ -25,8 +23,6 @@ object AdvertisementService {
     override def all(): F[List[Advertisement]] = repo.all()
 
     override def findByAuthor(authorId: UserId): F[List[Advertisement]] = ???
-
-    override def getChatIds(adId: AdvertisementId): F[List[ChatId]] = ???
 
     override def create(authorId: UserId, create: CreateAdRequest): F[Unit] = ???
   }

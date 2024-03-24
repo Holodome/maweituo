@@ -3,15 +3,12 @@ package com.holodome.domain
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.predicates.all._
 import com.holodome.optics.{naiveString, uuid}
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
 
 import scala.util.control.NoStackTrace
 import io.estatico.newtype.macros.newtype
 
-import java.time.{Instant, LocalDateTime}
 import java.util.UUID
 
 object users {
@@ -24,7 +21,7 @@ object users {
   @derive(decoder, encoder)
   @newtype case class Email(value: String)
 
-  @derive(decoder, encoder, eqv)
+  @derive(decoder, encoder, eqv, show)
   @newtype
   case class Password(value: String)
 

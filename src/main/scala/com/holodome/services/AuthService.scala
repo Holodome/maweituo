@@ -49,7 +49,7 @@ object AuthService {
       jwtRepo.delete(username) *> authedUserRepo.delete(token)
 
     override def authed(token: JwtToken): OptionT[F, AuthedUser] =
-      authedUserRepo.get(token).map(AuthedUser(_))
+      authedUserRepo.get(token).map(AuthedUser.apply)
   }
 
   private def passwordsMatch(user: User, str: Password): Boolean =

@@ -1,22 +1,21 @@
 package com.holodome.http.advertisements
 
-import cats.{Monad, MonadThrow}
-import cats.data.OptionT
+import cats.Monad
 import com.holodome.domain.advertisements.AdvertisementParam
 import com.holodome.services.AdvertisementService
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.HttpRoutes
 import cats.syntax.all._
-import org.http4s._
 import org.http4s.circe.CirceEntityEncoder._
+import org.http4s.server.Router
 
-class AdvertisementRoutes[F[_]: JsonDecoder: MonadThrow: Monad](
+class AdvertisementRoutes[F[_]: Monad](
     advertisementService: AdvertisementService[F]
 ) extends Http4sDsl[F] {
-  private val prefixPath = "/advertisements";
+  private val prefixPath = "/advertisements"
 
-  object AdQueryParam extends OptionalQueryParamDecoderMatcher[AdvertisementParam]("ad")
+  private object AdQueryParam extends OptionalQueryParamDecoderMatcher[AdvertisementParam]("ad")
 
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case GET -> Root :? AdQueryParam(ad) =>
     ad match {
@@ -32,4 +31,8 @@ class AdvertisementRoutes[F[_]: JsonDecoder: MonadThrow: Monad](
         }
     }
   }
+
+  val routes: HttpRoutes[F] = Router(
+    prefixPath -> httpRoutes
+  )
 }

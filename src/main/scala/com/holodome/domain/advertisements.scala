@@ -9,6 +9,7 @@ import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
 import scala.util.Try
+import scala.util.control.NoStackTrace
 
 object advertisements {
   @derive(decoder, encoder)
@@ -31,7 +32,7 @@ object advertisements {
   @derive(queryParam)
   @newtype case class AdvertisementParam(value: String) {
     def toDomain: Option[AdvertisementId] =
-      Try(UUID.fromString(value)).map(AdvertisementId(_)).toOption
+      Try(UUID.fromString(value)).map(AdvertisementId.apply).toOption
   }
 
   object AdvertisementParam {
@@ -40,4 +41,6 @@ object advertisements {
     implicit val jsonDecoder: Decoder[AdvertisementParam] =
       Decoder.forProduct1("id")(AdvertisementParam.apply)
   }
+
+  final case class InvalidAdId(id: AdvertisementId) extends NoStackTrace
 }

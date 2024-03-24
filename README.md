@@ -104,8 +104,8 @@ Batch-задача, производящая анализ истории пок�
 ## Описание типа приложения и выранного технологического стека
 
 Язык: Scala
-Интерфейс: MPA 
-СУБД: Apache Cassandra, Apache Spark 
+Интерфейс: SPA 
+СУБД: ScyllaDB, Apache Spark 
 
 ## Верхнеуровневое разбиение на компоненты
 
@@ -113,3 +113,31 @@ Batch-задача, производящая анализ истории пок�
 
 ## UML
 
+## API 
+
+```
+POST    /register  
+POST    /login 
+POST    /logout 
+
+GET     /me                     - get current user
+PUT     /me                     - update current user
+GET     /me/chats               - get chats information
+
+GET     /users/{user_id}        - get user info
+GET     /users/{user_id}/ads    - get user advertisements
+
+GET     /ads                    - get all advertisements
+POST    /ads                    - create advertisement
+GET     /ads/{ad_id}            - get advertisement info
+PUT     /ads/{ad_id}            - update advertisement
+DELETE  /ads/{ad_id}            - delete advertisement
+POST    /ads/{ad_id}/resolved   - mark advertisement as resolved
+
+GET     /tags                   - get all tags 
+GET     /tags/{tag_id}          - get all advertisements with given tag
+
+POST    /msg/{chat_id}          - send message
+GET     /msg/{chat_id}          - get chat history
+
+```

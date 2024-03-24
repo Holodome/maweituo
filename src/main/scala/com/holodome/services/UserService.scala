@@ -10,7 +10,7 @@ import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
 
 trait UserService[F[_]] {
-  def find(id: Username): OptionT[F, User]
+  def find(name: Username): F[User]
 
   def register(
       body: RegisterRequest
@@ -25,8 +25,8 @@ object UserService {
   private final class UserServiceInterpreter[F[_]: MonadThrow: Sync](
       repo: UserRepository[F]
   ) extends UserService[F] {
-    override def find(id: Username): OptionT[F, User] =
-      repo.findByName(id)
+    override def find(name: Username): F[User] =
+      repo.findByName(name).getOrElseF(NoUserFound(name).raiseError[F, User])
 
     override def register(
         body: RegisterRequest

@@ -5,13 +5,11 @@ import com.comcast.ip4s.{Host, Port}
 import derevo.derive
 import enumeratum.EnumEntry.Lowercase
 import enumeratum.{CirisEnum, Enum, EnumEntry}
-import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
 
 import scala.concurrent.duration.FiniteDuration
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
-import dev.profunktor.auth.jwt.JwtAuth
 
 object types {
   @derive(configDecoder, show)

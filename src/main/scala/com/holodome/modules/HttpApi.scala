@@ -20,7 +20,7 @@ sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: U
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
-  private val loginRoutes = LoginRoutes[F](services.auth).routes
+  private val loginRoutes  = LoginRoutes[F](services.auth).routes
   private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] = loginRoutes <+> logoutRoutes

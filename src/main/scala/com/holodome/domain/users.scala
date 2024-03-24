@@ -3,7 +3,7 @@ package com.holodome.domain
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import com.holodome.optics.{naiveString, uuid}
+import com.holodome.optics.{uuid}
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
 
 import scala.util.control.NoStackTrace
@@ -15,7 +15,7 @@ object users {
   @derive(decoder, encoder, uuid)
   @newtype case class UserId(value: UUID)
 
-  @derive(decoder, encoder, show, naiveString)
+  @derive(decoder, encoder, show)
   @newtype case class Username(value: String)
 
   @derive(decoder, encoder)
@@ -56,6 +56,6 @@ object users {
       salt: PasswordSalt
   )
 
-  @newtype case class AuthedUser(name: Username)
+  case class AuthedUser(id: UserId)
   @newtype case class UserJwtAuth(value: JwtSymmetricAuth)
 }

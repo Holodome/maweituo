@@ -10,7 +10,7 @@ import com.holodome.auth.{JwtTokens, PasswordHashing}
 
 trait AuthService[F[_]] {
   def login(username: Username, password: Password): F[JwtToken]
-  def logout(username: Username, token: JwtToken): F[Unit]
+  def logout(uid: UserId, token: JwtToken): F[Unit]
   def authed(token: JwtToken): OptionT[F, AuthedUser]
 }
 
@@ -34,18 +34,18 @@ object AuthService {
         .flatMap { user =>
           if (passwordsMatch(user, password)) {
             jwtRepo
-              .get(username)
+              .get(user.id)
               .getOrElseF(tokens.create flatMap { t =>
-                jwtRepo.store(username, t) *>
-                  authedUserRepo.store(t, username).map(_ => t)
+                jwtRepo.store(user.id, t) *>
+                  authedUserRepo.store(t, user.id).map(_ => t)
               })
           } else {
             InvalidPassword(username).raiseError[F, JwtToken]
           }
         }
 
-    override def logout(username: Username, token: JwtToken): F[Unit] =
-      jwtRepo.delete(username) *> authedUserRepo.delete(token)
+    override def logout(uid: UserId, token: JwtToken): F[Unit] =
+      jwtRepo.delete(uid) *> authedUserRepo.delete(token)
 
     override def authed(token: JwtToken): OptionT[F, AuthedUser] =
       authedUserRepo.get(token).map(AuthedUser.apply)

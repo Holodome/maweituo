@@ -21,12 +21,17 @@ object advertisements {
   @derive(decoder, encoder)
   @newtype case class AdvertisementTag(value: String)
 
-  @derive(decoder, encoder)
+  @derive(encoder)
   case class Advertisement(
       id: AdvertisementId,
       title: AdvertisementTitle,
       tags: List[AdvertisementTag],
       authorId: UserId
+  )
+
+  @derive(decoder, encoder)
+  case class CreateAdRequest(
+      title: AdvertisementTitle
   )
 
   @derive(queryParam)

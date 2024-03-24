@@ -15,7 +15,7 @@ final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthSe
 
   val httpRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "logout" as user =>
-      AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.name, _)) *> NoContent()
+      AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.id, _)) *> NoContent()
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =

@@ -12,6 +12,7 @@ trait AdvertisementService[F[_]] {
   def all(): F[List[Advertisement]]
   def findByAuthor(authorId: UserId): F[List[Advertisement]]
   def getChatIds(adId: AdvertisementId): F[List[ChatId]]
+  def create(authorId: UserId, create: CreateAdRequest): F[Unit]
 }
 
 object AdvertisementService {
@@ -26,5 +27,7 @@ object AdvertisementService {
     override def findByAuthor(authorId: UserId): F[List[Advertisement]] = ???
 
     override def getChatIds(adId: AdvertisementId): F[List[ChatId]] = ???
+
+    override def create(authorId: UserId, create: CreateAdRequest): F[Unit] = ???
   }
 }

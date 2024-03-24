@@ -3,7 +3,8 @@ package com.holodome.modules
 import cats.effect.Async
 import cats.implicits.toSemigroupKOps
 import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
-import com.holodome.http.auth.{LoginRoutes, LogoutRoutes}
+import com.holodome.http.routes.{LoginRoutes, LogoutRoutes}
+import com.holodome.http.routes
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}

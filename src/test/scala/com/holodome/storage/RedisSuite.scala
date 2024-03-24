@@ -62,16 +62,15 @@ class RedisSuite extends ResourceSuite {
 
 protected class TestUserService(un: Username) extends UserService[IO] {
 
-  override def find(name: Username): OptionT[IO, User] =
-    OptionT {
-      IO.pure {
-        (name === un)
-          .guard[Option]
-          .as(
-            User(UserId(UUID.randomUUID), un, Email(""), HashedSaltedPassword(""), PasswordSalt(""))
-          )
-      }
-    }
+  override def find(name: Username): IO[User] =
+    (name === un)
+      .guard[Option]
+      .as(
+        IO {
+          User(UserId(UUID.randomUUID), un, Email(""), HashedSaltedPassword(""), PasswordSalt(""))
+        }
+      )
+      .getOrElse(NoUserFound(name).raiseError[IO, User])
 
   override def register(body: RegisterRequest): IO[Unit] = IO.pure { () }
 }

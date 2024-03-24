@@ -1,16 +1,16 @@
-package com.holodome.http.advertisements
+package com.holodome.http.routes.ads
 
-import cats.Monad
+import cats.{Monad, MonadThrow}
 import com.holodome.domain.advertisements.AdvertisementParam
 import com.holodome.services.AdvertisementService
-import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.HttpRoutes
 import cats.syntax.all._
+import com.holodome.domain.users.NoUserFound
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.server.Router
 
-class AdvertisementRoutes[F[_]: Monad](
+class AdvertisementRoutes[F[_]: MonadThrow](
     advertisementService: AdvertisementService[F]
 ) extends Http4sDsl[F] {
   private val prefixPath = "/advertisements"
@@ -26,8 +26,10 @@ class AdvertisementRoutes[F[_]: Monad](
           case Some(id) =>
             advertisementService
               .find(id)
-              .fold(NotFound())(Ok(_))
-              .flatten
+              .flatMap(Ok(_))
+              .recoverWith { case NoUserFound(_) =>
+                BadRequest()
+              }
         }
     }
   }

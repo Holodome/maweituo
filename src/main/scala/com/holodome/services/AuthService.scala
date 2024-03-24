@@ -31,7 +31,6 @@ object AuthService {
     override def login(username: Username, password: Password): F[JwtToken] =
       userService
         .find(username)
-        .getOrElseF(NoUserFound(username).raiseError[F, User])
         .flatMap { user =>
           if (passwordsMatch(user, password)) {
             jwtRepo

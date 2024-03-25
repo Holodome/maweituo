@@ -3,6 +3,7 @@ package com.holodome.domain
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.queryParam
+import com.holodome.optics.uuid
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.{Decoder, Encoder}
@@ -11,7 +12,6 @@ import io.estatico.newtype.macros.newtype
 import java.util.UUID
 import scala.util.Try
 import scala.util.control.NoStackTrace
-import com.holodome.optics.uuid
 
 object advertisements {
   @derive(decoder, encoder, uuid)

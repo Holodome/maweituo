@@ -13,6 +13,8 @@ trait AdvertisementService[F[_]] {
   def all(): F[List[Advertisement]]
   def create(authorId: UserId, create: CreateAdRequest): F[Unit]
   def delete(id: AdvertisementId, userId: UserId): F[Unit]
+
+  def authorizeModification(id: AdvertisementId, userId: UserId): F[Unit]
 }
 
 object AdvertisementService {
@@ -35,12 +37,12 @@ object AdvertisementService {
       } yield ()
 
     override def delete(id: AdvertisementId, userId: UserId): F[Unit] =
-      checkIfAuthor(id, userId) *> repo.delete(id)
+      authorizeModification(id, userId) *>  repo.delete(id)
 
-    private def checkIfAuthor(adID: AdvertisementId, userId: UserId): F[Advertisement] =
-      repo.find(adID).getOrElseF(InvalidAdId(adID).raiseError[F, Advertisement]).flatMap {
-        case ad if ad.authorId === userId => Monad[F].pure(ad)
-        case _                            => NotAnAuthor().raiseError[F, Advertisement]
+    override def authorizeModification(id: AdvertisementId, userId: UserId): F[Unit] =
+      repo.find(id).getOrElseF(InvalidAdId(id).raiseError[F, Advertisement]).flatMap {
+        case ad if ad.authorId === userId => Monad[F].unit
+        case _                            => NotAnAuthor().raiseError[F, Unit]
       }
   }
 }

@@ -5,13 +5,7 @@ import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.AppConfig
-import com.holodome.services.{
-  AdvertisementService,
-  AuthService,
-  ChatService,
-  MessageService,
-  UserService
-}
+import com.holodome.services._
 
 sealed abstract class Services[F[_]] private {
   val users: UserService[F]
@@ -19,6 +13,7 @@ sealed abstract class Services[F[_]] private {
   val ads: AdvertisementService[F]
   val chats: ChatService[F]
   val messages: MessageService[F]
+  val images: ImageService[F]
 }
 
 object Services {
@@ -45,6 +40,8 @@ object Services {
           override val chats: ChatService[F] = ChatService.make[F](repositories.chatRepository, ads)
           override val messages: MessageService[F] =
             MessageService.make[F](repositories.messageRepository, chats)
+          override val images: ImageService[F] =
+            ImageService.make[F](repositories.imageRepository, ads)
         }
       }
   }

@@ -1,16 +1,15 @@
 package com.holodome.domain
 
 import com.holodome.domain.advertisements.AdvertisementId
+import com.holodome.optics.uuid
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import com.holodome.optics.uuid
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
-
-import scala.util.control.NoStackTrace
 import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
+import scala.util.control.NoStackTrace
 
 object users {
   @derive(decoder, encoder, uuid, eqv)

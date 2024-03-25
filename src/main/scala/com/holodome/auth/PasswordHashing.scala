@@ -1,12 +1,9 @@
 package com.holodome.auth
 
-import cats.data.State
-import cats.effect.Sync
-import cats.effect.kernel.Async
-import com.holodome.domain.users._
-import com.holodome.effects.GenUUID
 import cats.syntax.all._
 import cats.Functor
+import com.holodome.domain.users._
+import com.holodome.effects.GenUUID
 
 import java.security.MessageDigest
 

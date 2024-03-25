@@ -2,11 +2,11 @@ package com.holodome.services
 
 import cats.MonadThrow
 import cats.data.OptionT
+import cats.syntax.all._
+import com.holodome.auth.{JwtTokens, PasswordHashing}
 import com.holodome.domain.users._
 import com.holodome.repositories.{AuthedUserRepository, JwtRepository}
 import dev.profunktor.auth.jwt.JwtToken
-import cats.syntax.all._
-import com.holodome.auth.{JwtTokens, PasswordHashing}
 
 trait AuthService[F[_]] {
   def login(username: Username, password: Password): F[JwtToken]

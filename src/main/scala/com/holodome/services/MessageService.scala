@@ -1,12 +1,10 @@
 package com.holodome.services
 
-import cats.{Monad, MonadThrow}
-import cats.instances.unit
+import cats.MonadThrow
 import cats.syntax.all._
-import com.holodome.domain.advertisements._
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.{ChatRepository, MessageRepository}
+import com.holodome.repositories.MessageRepository
 
 trait MessageService[F[_]] {
   def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit]
@@ -27,13 +25,13 @@ object MessageService {
 
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
       chatService
-        .findChatAndCheckAccess(chatId, senderId)
-        .flatMap(_ => msgRepo.send(chatId, senderId, req.text))
+        .authorizeChatAccess(chatId, senderId) *> msgRepo.send(chatId, senderId, req.text)
 
     override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
       chatService
-        .findChatAndCheckAccess(chatId, requester)
-        .flatMap(_ => msgRepo.chatHistory(chatId).map(HistoryResponse.apply))
+        .authorizeChatAccess(chatId, requester) *> msgRepo
+        .chatHistory(chatId)
+        .map(HistoryResponse.apply)
 
   }
 }

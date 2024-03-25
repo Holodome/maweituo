@@ -4,14 +4,14 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.advertisements._
 import com.holodome.domain.users.{AuthedUser, NoUserFound}
+import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.AdIdVar
-import com.holodome.services.{AdvertisementService, ChatService, MessageService}
-import org.http4s.dsl.Http4sDsl
+import com.holodome.services.{AdvertisementService, ChatService}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._
-import org.http4s.server.{AuthMiddleware, Router}
-import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import org.http4s.circe.JsonDecoder
+import org.http4s.dsl.Http4sDsl
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F],
@@ -49,7 +49,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
       advertisementService.delete(adId, user.id) *> NoContent()
 
     case POST -> Root / AdIdVar(adId) / "chats" as user =>
-      chatService.createChat(adId, user.id).flatMap(Ok(_)).recoverWith {
+      chatService.create(adId, user.id).flatMap(Ok(_)).recoverWith {
         case InvalidAdId(_) | CannotCreateChatWithMyself() => BadRequest()
       }
   }

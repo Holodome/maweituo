@@ -4,7 +4,6 @@ import cats.effect.Async
 import ciris._
 import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types._
-import eu.timepit.refined.auto._
 
 import scala.concurrent.duration.DurationInt
 

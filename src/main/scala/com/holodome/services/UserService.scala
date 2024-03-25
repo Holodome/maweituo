@@ -1,14 +1,12 @@
 package com.holodome.services
 
-import com.holodome.domain.users._
-import com.holodome.repositories.UserRepository
 import cats._
-import cats.data.OptionT
-import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
+import com.holodome.domain.users._
 import com.holodome.domain.Id
 import com.holodome.effects.GenUUID
+import com.holodome.repositories.UserRepository
 
 trait UserService[F[_]] {
   def find(id: UserId): F[User]

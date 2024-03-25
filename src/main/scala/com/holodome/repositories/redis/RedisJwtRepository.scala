@@ -1,12 +1,11 @@
 package com.holodome.repositories.redis
 
-import com.holodome.config.types.JwtTokenExpiration
-import dev.profunktor.redis4cats.RedisCommands
 import cats._
+import com.holodome.config.types.JwtTokenExpiration
 import com.holodome.domain.users._
 import com.holodome.repositories.JwtRepository
 import dev.profunktor.auth.jwt.JwtToken
-import com.holodome.ext.jwt.jwt._
+import dev.profunktor.redis4cats.RedisCommands
 
 object RedisJwtRepository {
   def make[F[_]: Monad](

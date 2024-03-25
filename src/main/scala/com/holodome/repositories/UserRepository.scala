@@ -3,8 +3,6 @@ package com.holodome.repositories
 import cats.data.OptionT
 import com.holodome.domain.users._
 
-import java.util.UUID
-
 trait UserRepository[F[_]] extends {
   def create(request: User): F[Unit]
   def all(): F[List[User]]

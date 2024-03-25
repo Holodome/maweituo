@@ -1,16 +1,16 @@
 package com.holodome.http.routes
 
 import cats.MonadThrow
+import cats.syntax.all._
 import com.holodome.domain.users._
+import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.UserIdVar
 import com.holodome.services.UserService
-import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes}
-import org.http4s.server.{AuthMiddleware, Router}
-import cats.syntax.all._
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
-import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import org.http4s.circe.JsonDecoder
+import org.http4s.dsl.Http4sDsl
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
     extends Http4sDsl[F] {

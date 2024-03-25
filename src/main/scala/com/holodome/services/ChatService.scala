@@ -1,16 +1,17 @@
 package com.holodome.services
 
 import cats.{Monad, MonadThrow}
+import cats.syntax.all._
 import com.holodome.domain.advertisements._
 import com.holodome.domain.messages.{Chat, ChatAccessForbidden, ChatId, InvalidChatId}
 import com.holodome.domain.users.UserId
 import com.holodome.repositories.ChatRepository
-import cats.syntax.all._
 
 trait ChatService[F[_]] {
-  def createChat(adId: AdvertisementId, clientId: UserId): F[Unit]
+  def create(adId: AdvertisementId, clientId: UserId): F[Unit]
   def find(chatId: ChatId): F[Chat]
-  def findChatAndCheckAccess(chatId: ChatId, userId: UserId): F[Chat]
+
+  def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit]
 }
 
 object ChatService {
@@ -24,13 +25,13 @@ object ChatService {
       chatRepo: ChatRepository[F],
       adService: AdvertisementService[F]
   ) extends ChatService[F] {
-    override def createChat(adId: AdvertisementId, clientId: UserId): F[Unit] =
+    override def create(adId: AdvertisementId, clientId: UserId): F[Unit] =
       adService
         .find(adId)
-        .flatMap {
+        .flatTap {
           case ad if ad.authorId === clientId =>
-            CannotCreateChatWithMyself().raiseError[F, Advertisement]
-          case ad => Monad[F].pure(ad)
+            CannotCreateChatWithMyself().raiseError[F, Unit]
+          case _ => Monad[F].unit
         }
         .flatTap { ad =>
           chatRepo
@@ -47,11 +48,11 @@ object ChatService {
         .find(chatId)
         .getOrElseF(InvalidChatId().raiseError[F, Chat])
 
-    override def findChatAndCheckAccess(chatId: ChatId, userId: UserId): F[Chat] =
+    override def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit] =
       find(chatId).flatMap {
         case chat if userHasAccessToChat(chat, userId) =>
-          ChatAccessForbidden().raiseError[F, Chat]
-        case chat => Monad[F].pure(chat)
+          ChatAccessForbidden().raiseError[F, Unit]
+        case _ => Monad[F].unit
       }
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =

@@ -2,7 +2,6 @@ package com.holodome.ext.jwt
 
 import cats.Show
 import dev.profunktor.auth.jwt.JwtToken
-import monocle.Iso
 import org.http4s.EntityEncoder
 
 object jwt {

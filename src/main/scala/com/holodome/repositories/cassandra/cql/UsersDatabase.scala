@@ -1,7 +1,7 @@
 package com.holodome.repositories.cassandra.cql
 
-import com.outworkers.phantom.dsl._
 import com.holodome.domain.users.User
+import com.outworkers.phantom.dsl._
 
 abstract class Users extends Table[Users, User] {
   override def tableName: String = "users"

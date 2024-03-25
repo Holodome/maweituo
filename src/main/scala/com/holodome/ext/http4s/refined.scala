@@ -2,7 +2,6 @@ package com.holodome.ext.http4s
 
 import cats.MonadThrow
 import cats.syntax.all._
-import org.http4s.{ParseFailure, QueryParamDecoder}
 import eu.timepit.refined._
 import eu.timepit.refined.api.{Refined, Validate}
 import io.circe.Decoder

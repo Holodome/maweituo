@@ -1,10 +1,9 @@
 package com.holodome.domain
 
 import cats.Functor
-import cats.effect.Sync
+import cats.syntax.all._
 import com.holodome.effects.GenUUID
 import com.holodome.optics.IsUUID
-import cats.syntax.all._
 
 object Id {
   def make[F[_]: Functor: GenUUID, A: IsUUID]: F[A] =

@@ -1,16 +1,12 @@
 package com.holodome.repositories.redis
 
-import cats.Functor
 import cats.effect.Sync
 import com.holodome.config.types.JwtTokenExpiration
-import com.holodome.domain.users.{UserId, Username}
+import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.repositories.AuthedUserRepository
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
-import com.holodome.ext.jwt.jwt._
-import com.holodome.optics.IsUUID
-import com.holodome.repositories.AuthedUserRepository
-import monocle.Iso
 
 object RedisAuthedUserRepository {
   def make[F[_]: Sync](

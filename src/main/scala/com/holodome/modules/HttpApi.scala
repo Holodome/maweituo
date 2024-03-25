@@ -2,13 +2,12 @@ package com.holodome.modules
 
 import cats.effect.Async
 import cats.implicits.toSemigroupKOps
-import com.holodome.domain.users.{AuthedUser, RegisterRequest, UserJwtAuth}
-import com.holodome.http.routes.{AdvertisementRoutes, LoginRoutes, LogoutRoutes, MessageRoutes, RegisterRoutes, UserRoutes}
-import com.holodome.http.routes
+import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
+import com.holodome.http.routes._
 import dev.profunktor.auth.JwtAuthMiddleware
-import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.{HttpApp, HttpRoutes}
-import org.http4s.server.middleware.{AutoSlash, CORS, RequestLogger, ResponseLogger, Timeout}
+import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
+import org.http4s.server.middleware._
 
 import scala.concurrent.duration.DurationInt
 
@@ -21,16 +20,16 @@ sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: U
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
-  private val loginRoutes  = LoginRoutes[F](services.auth).routes
-  private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
+  private val loginRoutes    = LoginRoutes[F](services.auth).routes
+  private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
   private val registerRoutes = RegisterRoutes[F](services.users).routes
   private val advertisementRoutes =
     AdvertisementRoutes[F](services.ads, services.chats).routes(usersMiddleware)
-  private val msgRoutes = MessageRoutes[F](services.messages).routes(usersMiddleware)
+  private val msgRoutes  = MessageRoutes[F](services.messages).routes(usersMiddleware)
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> msgRoutes <+> userRoutes
+    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> msgRoutes <+> userRoutes <+> registerRoutes
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

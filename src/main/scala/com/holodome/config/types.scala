@@ -2,14 +2,14 @@ package com.holodome.config
 
 import ciris.Secret
 import com.comcast.ip4s.{Host, Port}
+import com.holodome.ext.ciris.configDecoder
+import derevo.cats.show
 import derevo.derive
-import enumeratum.EnumEntry.Lowercase
 import enumeratum.{CirisEnum, Enum, EnumEntry}
+import enumeratum.EnumEntry.Lowercase
 import io.estatico.newtype.macros.newtype
 
 import scala.concurrent.duration.FiniteDuration
-import com.holodome.ext.ciris.configDecoder
-import derevo.cats.show
 
 object types {
   @derive(configDecoder, show)

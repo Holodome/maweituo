@@ -1,13 +1,12 @@
 package com.holodome.domain
 
-import derevo.circe.magnolia.{decoder, encoder}
 import com.holodome.domain.advertisements.AdvertisementId
 import com.holodome.domain.users.UserId
-import derevo.derive
-import io.estatico.newtype.macros.newtype
 import com.holodome.optics.uuid
+import derevo.circe.magnolia.{decoder, encoder}
+import derevo.derive
 import io.circe.{Encoder, Json}
-import io.circe.derivation.deriveEncoder
+import io.estatico.newtype.macros.newtype
 
 import java.time.Instant
 import java.util.UUID

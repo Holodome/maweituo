@@ -1,12 +1,12 @@
 package com.holodome.auth
 
 import cats.Monad
+import cats.syntax.all._
 import com.holodome.config.types._
 import com.holodome.effects.GenUUID
 import dev.profunktor.auth.jwt.{jwtEncode, JwtSecretKey, JwtToken}
-import pdi.jwt.{JwtAlgorithm, JwtClaim}
-import cats.syntax.all._
 import io.circe.syntax.EncoderOps
+import pdi.jwt.{JwtAlgorithm, JwtClaim}
 
 trait JwtTokens[F[_]] {
   def create: F[JwtToken]

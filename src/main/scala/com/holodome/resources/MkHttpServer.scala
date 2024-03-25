@@ -1,8 +1,8 @@
 package com.holodome.resources
 
-import org.http4s.HttpApp
 import cats.effect.{Async, Resource}
 import com.holodome.config.types.HttpServerConfig
+import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server
 import org.http4s.server.defaults.Banner

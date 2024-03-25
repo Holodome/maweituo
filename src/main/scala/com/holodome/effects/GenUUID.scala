@@ -1,9 +1,9 @@
 package com.holodome.effects
 
 import cats.ApplicativeThrow
+import cats.effect.Sync
 
 import java.util.UUID
-import cats.effect.Sync
 
 trait GenUUID[F[_]] {
   def make: F[UUID]

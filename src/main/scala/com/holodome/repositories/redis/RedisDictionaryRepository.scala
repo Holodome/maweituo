@@ -2,9 +2,9 @@ package com.holodome.repositories.redis
 
 import cats.Monad
 import cats.data.OptionT
+import cats.syntax.all._
 import com.holodome.repositories.DictionaryRepository
 import dev.profunktor.redis4cats.RedisCommands
-import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 

@@ -1,18 +1,18 @@
-package com.holodome.repositories.redis
+package com.holodome.infrastructure.redis
 
 import cats.Monad
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.repositories.DictionaryRepository
+import com.holodome.infrastructure.EphemeralDictionary
 import dev.profunktor.redis4cats.RedisCommands
 
 import scala.concurrent.duration.FiniteDuration
 
-private[redis] class RedisDictionaryRepository[F[_]: Monad, A, B](
+private[redis] class RedisEphemeralDictionary[F[_]: Monad, A, B](
     redis: RedisCommands[F, String, String],
     expire: FiniteDuration
 )(aString: A => String, bString: B => String, stringB: String => F[B])
-    extends DictionaryRepository[F, A, B] {
+    extends EphemeralDictionary[F, A, B] {
 
   override def store(a: A, b: B): F[Unit] =
     redis.setEx(aString(a), bString(b), expire)

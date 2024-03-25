@@ -5,7 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.advertisements._
 import com.holodome.domain.users.{AuthedUser, NoUserFound}
 import com.holodome.http.vars.AdIdVar
-import com.holodome.services.{AdvertisementService, MessageService}
+import com.holodome.services.{AdvertisementService, ChatService, MessageService}
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._
@@ -15,7 +15,8 @@ import org.http4s.circe.JsonDecoder
 
 class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F],
-    messageService: MessageService[F]
+    messageService: MessageService[F],
+    chatService: ChatService[F]
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"
 
@@ -46,7 +47,7 @@ class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
       }
 
     case POST -> Root / AdIdVar(adId) / "discuss" as user =>
-      messageService.createChat(adId, user.id).flatMap(Ok(_)).recoverWith {
+      chatService.createChat(adId, user.id).flatMap(Ok(_)).recoverWith {
         case CannotCreateChatWithMyself() => BadRequest()
       }
   }

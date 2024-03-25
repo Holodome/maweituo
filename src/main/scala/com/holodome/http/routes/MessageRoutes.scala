@@ -13,7 +13,8 @@ import com.holodome.domain.messages._
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 
-class MsgRoutes[F[_]: MonadThrow: JsonDecoder](msgService: MessageService[F]) extends Http4sDsl[F] {
+final case class MessageRoutes[F[_]: MonadThrow: JsonDecoder](msgService: MessageService[F])
+    extends Http4sDsl[F] {
   private val prefixPath = "/msg"
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

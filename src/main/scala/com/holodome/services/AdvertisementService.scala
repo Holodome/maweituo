@@ -14,6 +14,9 @@ trait AdvertisementService[F[_]] {
 }
 
 object AdvertisementService {
+  def make[F[_]: MonadThrow](repo: AdvertisementRepository[F]): AdvertisementService[F] =
+    new AdvertisementServiceInterpreter(repo)
+
   private final class AdvertisementServiceInterpreter[F[_]: MonadThrow](
       repo: AdvertisementRepository[F]
   ) extends AdvertisementService[F] {

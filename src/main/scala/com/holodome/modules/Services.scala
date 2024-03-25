@@ -5,9 +5,21 @@ import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.AppConfig
-import com.holodome.effects.GenUUID
-import com.holodome.repositories.UserRepository
-import com.holodome.services.{AuthService, UserService}
+import com.holodome.services.{
+  AdvertisementService,
+  AuthService,
+  ChatService,
+  MessageService,
+  UserService
+}
+
+sealed abstract class Services[F[_]] private {
+  val users: UserService[F]
+  val auth: AuthService[F]
+  val ads: AdvertisementService[F]
+  val chats: ChatService[F]
+  val messages: MessageService[F]
+}
 
 object Services {
   def make[F[_]: MonadThrow: Sync](
@@ -22,13 +34,18 @@ object Services {
           override val users: UserService[F] =
             UserService.make(repositories.userRepository)
           override val auth: AuthService[F] =
-            AuthService.make(users, repositories.jwtRepository, ???, tokens)
+            AuthService.make(
+              users,
+              repositories.jwtRepository,
+              repositories.authedUserRepository,
+              tokens
+            )
+          override val ads: AdvertisementService[F] =
+            AdvertisementService.make[F](repositories.advertisementRepository)
+          override val chats: ChatService[F] = ChatService.make[F](repositories.chatRepository, ads)
+          override val messages: MessageService[F] =
+            MessageService.make[F](repositories.messageRepository, chats)
         }
       }
   }
-}
-
-sealed abstract class Services[F[_]] private {
-  val users: UserService[F]
-  val auth: AuthService[F]
 }

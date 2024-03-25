@@ -13,9 +13,8 @@ import org.http4s.server.{AuthMiddleware, Router}
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import org.http4s.circe.JsonDecoder
 
-class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
+final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F],
-    messageService: MessageService[F],
     chatService: ChatService[F]
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"

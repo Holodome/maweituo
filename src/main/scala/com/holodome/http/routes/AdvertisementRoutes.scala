@@ -45,9 +45,12 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
         advertisementService.create(user.id, create).flatMap(Ok(_))
       }
 
-    case POST -> Root / AdIdVar(adId) / "discuss" as user =>
+    case DELETE -> Root / AdIdVar(adId) as user =>
+      advertisementService.delete(adId, user.id) *> NoContent()
+
+    case POST -> Root / AdIdVar(adId) / "chats" as user =>
       chatService.createChat(adId, user.id).flatMap(Ok(_)).recoverWith {
-        case CannotCreateChatWithMyself() => BadRequest()
+        case InvalidAdId(_) | CannotCreateChatWithMyself() => BadRequest()
       }
   }
 

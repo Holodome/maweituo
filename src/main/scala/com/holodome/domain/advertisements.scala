@@ -11,9 +11,10 @@ import io.estatico.newtype.macros.newtype
 import java.util.UUID
 import scala.util.Try
 import scala.util.control.NoStackTrace
+import com.holodome.optics.uuid
 
 object advertisements {
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, uuid)
   @newtype case class AdvertisementId(value: UUID)
 
   @derive(decoder, encoder)
@@ -52,4 +53,5 @@ object advertisements {
   final case class InvalidAdId(id: AdvertisementId) extends NoStackTrace
   final case class CannotCreateChatWithMyself() extends NoStackTrace
   final case class ChatAlreadyExists() extends NoStackTrace
+  final case class NotAnAuthor() extends NoStackTrace
 }

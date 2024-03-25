@@ -8,9 +8,13 @@ import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
+import com.holodome.effects.GenUUID
 
 trait UserService[F[_]] {
-  def find(name: Username): F[User]
+  def find(id: UserId): F[User]
+  def findByName(name: Username): F[User]
+  def delete(subject: UserId, authorized: UserId): F[Unit]
+  def update(update: UpdateUser, authorized: UserId): F[Unit]
 
   def register(
       body: RegisterRequest
@@ -19,14 +23,32 @@ trait UserService[F[_]] {
 
 object UserService {
 
-  def make[F[_]: MonadThrow: Sync](repo: UserRepository[F]): UserService[F] =
+  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F]): UserService[F] =
     new UserServiceInterpreter(repo)
 
-  private final class UserServiceInterpreter[F[_]: MonadThrow: Sync](
+  private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID](
       repo: UserRepository[F]
   ) extends UserService[F] {
-    override def find(name: Username): F[User] =
-      repo.findByName(name).getOrElseF(NoUserFound(name).raiseError[F, User])
+
+    override def update(update: UpdateUser, authorized: UserId): F[Unit] =
+      if (authorized === update.id) {
+        repo.update(update);
+      } else {
+        InvalidAccess().raiseError[F, Unit]
+      }
+
+    def delete(subject: UserId, authorized: UserId): F[Unit] =
+      if (authorized === subject) {
+        repo.delete(subject)
+      } else {
+        InvalidAccess().raiseError[F, Unit]
+      }
+
+    override def find(id: UserId): F[User] =
+      repo.find(id).getOrElseF(InvalidUserId().raiseError)
+
+    override def findByName(name: Username): F[User] =
+      repo.findByName(name).getOrElseF(NoUserFound(name).raiseError)
 
     override def register(
         body: RegisterRequest
@@ -45,7 +67,8 @@ object UserService {
           body.name,
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),
-          salt
+          salt,
+          List()
         )
       } yield user
       user.flatMap(u => repo.create(u))

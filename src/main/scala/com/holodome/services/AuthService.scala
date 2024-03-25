@@ -30,7 +30,7 @@ object AuthService {
   ) extends AuthService[F] {
     override def login(username: Username, password: Password): F[JwtToken] =
       userService
-        .find(username)
+        .findByName(username)
         .flatMap { user =>
           if (passwordsMatch(user, password)) {
             jwtRepo

@@ -1,9 +1,10 @@
 package com.holodome.domain
 
+import com.holodome.domain.advertisements.AdvertisementId
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import com.holodome.optics.{uuid}
+import com.holodome.optics.uuid
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
 
 import scala.util.control.NoStackTrace
@@ -43,19 +44,43 @@ object users {
       password: Password
   )
 
+  case class InvalidUserId()                     extends NoStackTrace
   case class NoUserFound(username: Username)     extends NoStackTrace
   case class UserNameInUse(username: Username)   extends NoStackTrace
   case class UserEmailInUse(email: Email)        extends NoStackTrace
   case class InvalidPassword(username: Username) extends NoStackTrace
+  case class InvalidAccess()                     extends NoStackTrace
 
   case class User(
       id: UserId,
       name: Username,
       email: Email,
       hashedPassword: HashedSaltedPassword,
-      salt: PasswordSalt
+      salt: PasswordSalt,
+      ads: List[AdvertisementId]
   )
+
+  @derive(encoder)
+  case class UserPublicInfo(
+      id: UserId,
+      name: Username,
+      email: Email,
+      ads: List[AdvertisementId]
+  )
+
+  object UserPublicInfo {
+    def fromUser(user: User): UserPublicInfo =
+      UserPublicInfo(user.id, user.name, user.email, user.ads)
+  }
 
   case class AuthedUser(id: UserId)
   @newtype case class UserJwtAuth(value: JwtSymmetricAuth)
+
+  @derive(decoder)
+  case class UpdateUser(
+      id: UserId,
+      name: Option[Username],
+      email: Option[Email],
+      password: Option[Password]
+  )
 }

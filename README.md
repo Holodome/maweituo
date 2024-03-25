@@ -116,29 +116,31 @@ Batch-задача, производящая анализ истории пок�
 ## API 
 
 ```
-POST    /register  
-POST    /login 
-POST    /logout 
+POST   /register  
+POST   /login 
+POST   /logout 
 
-GET     /me                     - get current user
-PUT     /me                     - update current user
-GET     /me/chats               - get chats information
+GET    /users/{user_id}          - get user info
+DELETE /users/{user_id}          - delete user 
+PUT    /users/{user_id}          - update user  
+GET    /users/{user_id}/chats    - get chats information
 
-GET     /users/{user_id}        - get user info
-GET     /users/{user_id}/ads    - get user advertisements
+GET    /ads                      - get all advertisements
+POST   /ads                      - create advertisement
+GET    /ads/{ad_id}              - get advertisement info
+PUT    /ads/{ad_id}              - update advertisement
+DELETE /ads/{ad_id}              - delete advertisement
+POST   /ads/{ad_id}/img          - upload image
+GET    /ads/{ad_id}/img/{img_id} - get image 
+DELETE /ads/{ad_id}/img/{img_id} - delete image 
+POST   /ads/{ad_id}/tags         - add tags 
+POST   /ads/{ad_id}/resolved     - mark advertisement as resolved
+POST   /ads/{ad_id}/chats        - create chat 
 
-GET     /ads                    - get all advertisements
-POST    /ads                    - create advertisement
-GET     /ads/{ad_id}            - get advertisement info
-PUT     /ads/{ad_id}            - update advertisement
-DELETE  /ads/{ad_id}            - delete advertisement
-POST    /ads/{ad_id}/resolved   - mark advertisement as resolved, only by author
-POST    /ads/{ad_id}/discuss    - create chat 
+GET    /tags                     - get all tags 
+GET    /tags/{tag_id}            - get all advertisements with given tag
 
-GET     /tags                   - get all tags 
-GET     /tags/{tag_id}          - get all advertisements with given tag
-
-POST    /msg/{chat_id}          - send message
-GET     /msg/{chat_id}          - get chat history
+POST   /msg/{chat_id}            - send message
+GET    /msg/{chat_id}            - get chat history
 
 ```

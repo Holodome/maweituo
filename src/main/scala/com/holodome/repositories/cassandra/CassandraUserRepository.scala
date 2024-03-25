@@ -45,4 +45,9 @@ sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
 
   override def findByName(name: Username): OptionT[F, User] =
     OptionT(liftFuture(db.users.select.where(_.name eqs name.value).one()))
+
+  override def delete(id: UserId): F[Unit] =
+    liftFuture(db.users.delete().where(_.id eqs id.value).future().map(_ => ()))
+
+  override def update(update: UpdateUser): F[Unit] = ???
 }

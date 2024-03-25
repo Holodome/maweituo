@@ -9,7 +9,6 @@ import com.holodome.domain.users.UserId
 import com.holodome.repositories.{ChatRepository, MessageRepository}
 
 trait MessageService[F[_]] {
-
   def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit]
   def history(chatId: ChatId, requester: UserId): F[HistoryResponse]
 }
@@ -17,19 +16,19 @@ trait MessageService[F[_]] {
 object MessageService {
   def make[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
-      chatService: ChatService[F],
+      chatService: ChatService[F]
   ): MessageService[F] =
     new MessageServiceInterpreter(msgRepo, chatService)
 
   private final class MessageServiceInterpreter[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
-      chatService: ChatService[F],
+      chatService: ChatService[F]
   ) extends MessageService[F] {
 
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
-      chatService.findChatAndCheckAccess(chatId, senderId).flatMap { _ =>
-        msgRepo.send(chatId, senderId, req.text)
-      }
+      chatService
+        .findChatAndCheckAccess(chatId, senderId)
+        .flatMap(_ => msgRepo.send(chatId, senderId, req.text))
 
     override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
       chatService

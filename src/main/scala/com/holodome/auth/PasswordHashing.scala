@@ -6,6 +6,7 @@ import cats.effect.kernel.Async
 import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
 import cats.syntax.all._
+import cats.Functor
 
 import java.security.MessageDigest
 
@@ -15,7 +16,7 @@ object PasswordHashing {
       salt: PasswordSalt
   ): HashedSaltedPassword = HashedSaltedPassword(sha256(password.value + salt.value))
 
-  def genSalt[F[_]: Sync]: F[PasswordSalt] =
+  def genSalt[F[_]: GenUUID: Functor]: F[PasswordSalt] =
     GenUUID[F].make map { uuid => PasswordSalt(uuid.toString) }
 
   private lazy val digest = MessageDigest.getInstance("SHA-256")

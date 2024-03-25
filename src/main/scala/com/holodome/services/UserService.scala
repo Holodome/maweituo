@@ -18,7 +18,7 @@ trait UserService[F[_]] {
 
   def register(
       body: RegisterRequest
-  ): F[Unit]
+  ): F[UserId]
 }
 
 object UserService {
@@ -52,7 +52,7 @@ object UserService {
 
     override def register(
         body: RegisterRequest
-    ): F[Unit] = {
+    ): F[UserId] = {
       val user = for {
         _ <- repo
           .findByEmail(body.email)
@@ -71,7 +71,7 @@ object UserService {
           List()
         )
       } yield user
-      user.flatMap(u => repo.create(u))
+      user.flatTap(repo.create).map(_.id)
     }
   }
 

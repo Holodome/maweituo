@@ -2,8 +2,8 @@ package com.holodome.modules
 
 import cats.effect.Async
 import cats.implicits.toSemigroupKOps
-import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
-import com.holodome.http.routes.{AdvertisementRoutes, LoginRoutes, LogoutRoutes, MessageRoutes}
+import com.holodome.domain.users.{AuthedUser, RegisterRequest, UserJwtAuth}
+import com.holodome.http.routes.{AdvertisementRoutes, LoginRoutes, LogoutRoutes, MessageRoutes, RegisterRoutes, UserRoutes}
 import com.holodome.http.routes
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -23,12 +23,14 @@ sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: U
 
   private val loginRoutes  = LoginRoutes[F](services.auth).routes
   private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
+  private val registerRoutes = RegisterRoutes[F](services.users).routes
   private val advertisementRoutes =
     AdvertisementRoutes[F](services.ads, services.chats).routes(usersMiddleware)
   private val msgRoutes = MessageRoutes[F](services.messages).routes(usersMiddleware)
+  private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> msgRoutes
+    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> msgRoutes <+> userRoutes
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

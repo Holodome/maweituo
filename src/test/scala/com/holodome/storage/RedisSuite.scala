@@ -79,7 +79,7 @@ protected class TestUserService(un: Username) extends UserService[IO] {
       )
       .getOrElse(NoUserFound(name).raiseError[IO, User])
 
-  override def register(body: RegisterRequest): IO[Unit] = IO.pure { () }
+  override def register(body: RegisterRequest): IO[UserId] = ???
 
   override def find(id: UserId): IO[User] = ???
 

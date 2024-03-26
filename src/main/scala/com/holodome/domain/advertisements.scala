@@ -1,5 +1,6 @@
 package com.holodome.domain
 
+import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.queryParam
@@ -28,6 +29,7 @@ object advertisements {
       id: AdvertisementId,
       title: AdvertisementTitle,
       tags: List[AdvertisementTag],
+      images: List[ImageId],
       chats: List[ChatId],
       authorId: UserId
   )
@@ -51,7 +53,7 @@ object advertisements {
   }
 
   final case class InvalidAdId(id: AdvertisementId) extends NoStackTrace
-  final case class CannotCreateChatWithMyself() extends NoStackTrace
-  final case class ChatAlreadyExists() extends NoStackTrace
-  final case class NotAnAuthor() extends NoStackTrace
+  final case class CannotCreateChatWithMyself()     extends NoStackTrace
+  final case class ChatAlreadyExists()              extends NoStackTrace
+  final case class NotAnAuthor()                    extends NoStackTrace
 }

@@ -32,13 +32,13 @@ object ImageService {
     override def upload(
         uploader: UserId,
         adId: AdvertisementId,
-        contents: ImageContentsx
+        contents: ImageContents
     ): F[ImageId] =
       for {
-        _       <- adService.authorizeModification(adId, uploader)
         id      <- ObjectStorageIdGen.make
         _       <- objectStorage.put(id, contents.value)
         imageId <- imageRepo.create(adId, ObjectId.toImageUrl(id))
+        _       <- adService.addImage(adId, imageId, uploader)
       } yield imageId
 
     override def delete(imageId: ImageId, authenticated: UserId): F[Unit] =

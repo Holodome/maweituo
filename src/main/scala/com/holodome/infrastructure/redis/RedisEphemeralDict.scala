@@ -3,23 +3,30 @@ package com.holodome.infrastructure.redis
 import cats.Monad
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.infrastructure.EphemeralDictionary
+import com.holodome.infrastructure.EphemeralDict
 import dev.profunktor.redis4cats.RedisCommands
 
 import scala.concurrent.duration.FiniteDuration
 
-private[redis] class RedisEphemeralDictionary[F[_]: Monad, A, B](
+final class RedisEphemeralDict[F[_]: Monad](
     redis: RedisCommands[F, String, String],
     expire: FiniteDuration
-)(aString: A => String, bString: B => String, stringB: String => F[B])
-    extends EphemeralDictionary[F, A, B] {
+) extends EphemeralDict[F, String, String] {
 
-  override def store(a: A, b: B): F[Unit] =
-    redis.setEx(aString(a), bString(b), expire)
+  override def store(a: String, b: String): F[Unit] =
+    redis.setEx(a, b, expire)
 
-  override def delete(a: A): F[Unit] =
-    redis.get(aString(a)).map(_ => ())
+  override def delete(a: String): F[Unit] =
+    redis.get(a).map(_ => ())
 
-  override def get(a: A): OptionT[F, B] =
-    OptionT(redis.get(aString(a))).flatMap(str => OptionT(stringB(str).map(Some(_))))
+  override def get(a: String): OptionT[F, String] =
+    OptionT(redis.get(a))
+}
+
+object RedisEphemeralDict {
+  def make[F[_]: Monad](
+      redis: RedisCommands[F, String, String],
+      expire: FiniteDuration
+  ): EphemeralDict[F, String, String] =
+    new RedisEphemeralDict(redis, expire)
 }

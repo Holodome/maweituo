@@ -32,12 +32,12 @@ object ImageService {
       adService.authorizeModification(adId, uploader) *> imageRepo.create(adId, contents)
 
     override def delete(imageId: ImageId, authenticated: UserId): F[Unit] =
-      authorizeDelete(imageId, authenticated) *> imageRepo.delete(imageId)
+      authorizeModificationByImageId(imageId, authenticated) *> imageRepo.delete(imageId)
 
     override def get(imageId: ImageId): F[ImageContents] =
       imageRepo.getContents(imageId)
 
-    private def authorizeDelete(imageId: ImageId, userId: UserId): F[Unit] =
+    private def authorizeModificationByImageId(imageId: ImageId, userId: UserId): F[Unit] =
       imageRepo
         .getMeta(imageId)
         .map(_.adId)

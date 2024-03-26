@@ -24,9 +24,9 @@ object Main extends IOApp.Simple {
             .make[IO](cfg)
             .evalMap { res =>
               val repositories =
-                Repositories.make[IO](res.cassandra, res.redis, cfg.jwtTokenExpiration)
+                Repositories.make[IO](res.cassandra)
               for {
-                services <- Services.make[IO](repositories, cfg)
+                services <- Services.make[IO](repositories, cfg, res.redis)
                 api = HttpApi.make[IO](
                   services,
                   UserJwtAuth(JwtAuth.hmac(cfg.jwtAccessSecret.value.value, JwtAlgorithm.HS256))

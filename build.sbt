@@ -23,6 +23,7 @@ val Fs2Version             = "3.1.3"
 val Redis4CatsVersion      = "1.1.1"
 val CirceDerivationVersion = "0.13.0-M5"
 val WeaverVersion          = "0.8.4"
+val MinioVersion           = "8.5.9"
 
 lazy val root = (project in file("."))
   .enablePlugins(JavaAppPackaging)
@@ -65,6 +66,7 @@ lazy val root = (project in file("."))
       "dev.profunktor"      %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
       "dev.profunktor"      %% "redis4cats-effects"    % Redis4CatsVersion,
       "dev.profunktor"      %% "redis4cats-log4cats"   % Redis4CatsVersion,
+      "io.minio"             % "minio"                 % MinioVersion,
       "com.disneystreaming" %% "weaver-cats"           % WeaverVersion   % Test,
       "com.disneystreaming" %% "weaver-discipline"     % WeaverVersion   % Test,
       "com.disneystreaming" %% "weaver-scalacheck"     % WeaverVersion   % Test,

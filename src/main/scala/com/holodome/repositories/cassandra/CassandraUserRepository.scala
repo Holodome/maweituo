@@ -3,7 +3,7 @@ package com.holodome.repositories.cassandra
 import cats.data.OptionT
 import cats.effect.Async
 import com.holodome.domain.users._
-import com.holodome.ext.phantom.catsInterop.liftFuture
+import com.holodome.ext.catsInterop.liftFuture
 import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.UserRepository
 import com.outworkers.phantom.dsl._

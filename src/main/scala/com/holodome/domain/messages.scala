@@ -27,7 +27,7 @@ object messages {
   @derive(encoder, decoder)
   @newtype case class MessageText(value: String)
 
-  case class InvalidChatId() extends NoStackTrace
+  case class InvalidChatId()       extends NoStackTrace
   case class ChatAccessForbidden() extends NoStackTrace
 
   @derive(encoder)
@@ -43,9 +43,10 @@ object messages {
   case class HistoryResponse(messages: List[Message])
 
   object HistoryResponse {
-    implicit val encoder: Encoder[HistoryResponse] = (a: HistoryResponse) => Json.obj(
-      ("messages", Json.fromValues(a.messages.map(Encoder[Message].apply(_))))
-    )
+    implicit val encoder: Encoder[HistoryResponse] = (a: HistoryResponse) =>
+      Json.obj(
+        ("messages", Json.fromValues(a.messages.map(Encoder[Message].apply(_))))
+      )
   }
 
   @derive(decoder)

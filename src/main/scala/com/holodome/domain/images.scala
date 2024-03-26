@@ -26,7 +26,9 @@ object images {
         Try(Base64.getDecoder.decode(str)).map(ImageContents.apply)
       )
     implicit val jsonEncoder: Encoder[ImageContents] =
-      Encoder.encodeString.contramap[ImageContents](img => Base64.getEncoder.encodeToString(img.value))
+      Encoder.encodeString.contramap[ImageContents](img =>
+        Base64.getEncoder.encodeToString(img.value)
+      )
   }
 
   @derive(encoder)

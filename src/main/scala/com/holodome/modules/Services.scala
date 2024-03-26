@@ -53,7 +53,7 @@ object Services {
           override val messages: MessageService[F] =
             MessageService.make[F](repositories.messageRepository, chats)
           override val images: ImageService[F] =
-            ImageService.make[F](repositories.imageRepository, ads)
+            ImageService.make[F](repositories.imageRepository, ads, ???)
         }
       }
   }

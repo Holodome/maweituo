@@ -19,7 +19,7 @@ final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: User
       userService
         .register(register)
         .flatMap(uid =>
-          Ok().map {
+          Created().map {
             val header = Location(Uri(path = Root / Segment("users") / Segment(uid.toString)))
             _.putHeaders(header)
           }

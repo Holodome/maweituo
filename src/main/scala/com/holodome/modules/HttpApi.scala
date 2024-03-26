@@ -24,12 +24,13 @@ sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: U
   private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
   private val registerRoutes = RegisterRoutes[F](services.users).routes
   private val advertisementRoutes =
-    AdvertisementRoutes[F](services.ads, services.chats, services.images).routes(usersMiddleware)
-  private val msgRoutes  = MessageRoutes[F](services.messages).routes(usersMiddleware)
+    AdvertisementRoutes[F](services.ads, services.chats, services.messages, services.images).routes(
+      usersMiddleware
+    )
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> msgRoutes <+> userRoutes <+> registerRoutes
+    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> userRoutes <+> registerRoutes
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

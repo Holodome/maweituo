@@ -47,7 +47,7 @@ Maweituo
 
 ## ER диаграмма рекомендательной системы
 
-![ER](docs/img/er.png)
+![ER](docs/img/algo-er.png)
 
 ## Сложные сценарии
 
@@ -111,7 +111,9 @@ Batch-задача, производящая анализ истории пок�
 ## Описание типа приложения и выранного технологического стека
 
 Язык: Scala
-Интерфейс: SPA 
+
+Интерфейс: SPA
+
 СУБД: ScyllaDB, Apache Spark 
 
 ## Верхнеуровневое разбиение на компоненты
@@ -129,27 +131,27 @@ POST   /register
 POST   /login 
 POST   /logout 
 
-GET    /users/{user_id}          - get user info
-DELETE /users/{user_id}          - delete user 
-PUT    /users/{user_id}          - update user  
-GET    /users/{user_id}/chats    - get chats information
+GET    /users/{user_id}           - get user info
+DELETE /users/{user_id}           - delete user 
+PUT    /users/{user_id}           - update user  
+GET    /users/{user_id}/chats     - get chats information
 
-GET    /ads                      - get all advertisements
-POST   /ads                      - create advertisement
-GET    /ads/{ad_id}              - get advertisement info
-PUT    /ads/{ad_id}              - update advertisement
-DELETE /ads/{ad_id}              - delete advertisement
-POST   /ads/{ad_id}/img          - upload image
-GET    /ads/{ad_id}/img/{img_id} - get image 
-DELETE /ads/{ad_id}/img/{img_id} - delete image 
-POST   /ads/{ad_id}/tags         - add tags 
-POST   /ads/{ad_id}/resolved     - mark advertisement as resolved
-POST   /ads/{ad_id}/chats        - create chat 
+GET    /ads                       - get all advertisements
+POST   /ads                       - create advertisement
+GET    /ads/{ad_id}               - get advertisement info
+PUT    /ads/{ad_id}               - update advertisement
+DELETE /ads/{ad_id}               - delete advertisement
+POST   /ads/{ad_id}/img           - upload image
+GET    /ads/{ad_id}/img/{img_id}  - get image 
+DELETE /ads/{ad_id}/img/{img_id}  - delete image 
+POST   /ads/{ad_id}/tags          - add tags 
+POST   /ads/{ad_id}/resolved      - mark advertisement as resolved
+POST   /ads/{ad_id}/msg           - create chat 
+POST   /msg/{ad_id}/msg/{chat_id} - send message
+GET    /msg/{ad_id}/msg/{chat_id} - get chat history
 
-GET    /tags                     - get all tags 
-GET    /tags/{tag_id}            - get all advertisements with given tag
+GET    /tags                      - get all tags 
+GET    /tags/{tag_id}             - get all advertisements with given tag
 
-POST   /msg/{chat_id}            - send message
-GET    /msg/{chat_id}            - get chat history
 
 ```

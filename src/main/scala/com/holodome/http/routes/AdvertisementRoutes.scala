@@ -4,19 +4,24 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.advertisements._
 import com.holodome.domain.images.ImageContents
+import com.holodome.domain.messages.{InvalidChatId, SendMessageRequest}
 import com.holodome.domain.users.{AuthedUser, NoUserFound}
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.vars.{AdIdVar, ImageIdVar}
-import com.holodome.services.{AdvertisementService, ChatService, ImageService}
+import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
+import org.http4s.headers.Location
+import com.holodome.services.{AdvertisementService, ChatService, ImageService, MessageService}
+import org.http4s.Uri
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.Uri.Path.Segment
 
 final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F],
     chatService: ChatService[F],
+    msgService: MessageService[F],
     imageService: ImageService[F]
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"
@@ -53,10 +58,40 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     case DELETE -> Root / AdIdVar(adId) as user =>
       advertisementService.delete(adId, user.id) *> NoContent()
 
-    case POST -> Root / AdIdVar(adId) / "chats" as user =>
-      chatService.create(adId, user.id).flatMap(Ok(_)).recoverWith {
-        case InvalidAdId(_) | CannotCreateChatWithMyself() => BadRequest()
+    case GET -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
+      msgService
+        .history(chatId, user.id)
+        .flatMap(Ok(_))
+        .recoverWith { case InvalidChatId() =>
+          BadRequest()
+        }
+    case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
+      ar.req.decodeR[SendMessageRequest] { msg =>
+        msgService
+          .send(chatId, user.id, msg)
+          .flatMap(Ok(_))
+          .recoverWith { case InvalidChatId() =>
+            BadRequest()
+          }
       }
+
+    case POST -> Root / AdIdVar(adId) / "msg" as user =>
+      chatService
+        .create(adId, user.id)
+        .flatMap(chatId =>
+          Created().map {
+            val header =
+              Location(
+                Uri(path =
+                  Root / Segment(adId.toString) / Segment("msg") / Segment(chatId.toString)
+                )
+              )
+            _.putHeaders(header)
+          }
+        )
+        .recoverWith { case InvalidAdId(_) | CannotCreateChatWithMyself() =>
+          BadRequest()
+        }
 
     case ar @ POST -> Root / AdIdVar(adIdVar) / "img" as user =>
       ar.req.decodeR[ImageContents] { contents =>

@@ -8,7 +8,7 @@ import com.holodome.domain.users.UserId
 import com.holodome.repositories.ChatRepository
 
 trait ChatService[F[_]] {
-  def create(adId: AdvertisementId, clientId: UserId): F[Unit]
+  def create(adId: AdvertisementId, clientId: UserId): F[ChatId]
   def find(chatId: ChatId): F[Chat]
 
   def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit]
@@ -25,7 +25,7 @@ object ChatService {
       chatRepo: ChatRepository[F],
       adService: AdvertisementService[F]
   ) extends ChatService[F] {
-    override def create(adId: AdvertisementId, clientId: UserId): F[Unit] =
+    override def create(adId: AdvertisementId, clientId: UserId): F[ChatId] =
       adService
         .find(adId)
         .flatTap {
@@ -41,7 +41,6 @@ object ChatService {
         .flatMap { ad =>
           chatRepo.create(adId, ad.authorId, clientId)
         }
-        .map(_ => ())
 
     override def find(chatId: ChatId): F[Chat] =
       chatRepo

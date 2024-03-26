@@ -12,7 +12,7 @@ trait UserService[F[_]] {
   def find(id: UserId): F[User]
   def findByName(name: Username): F[User]
   def delete(subject: UserId, authorized: UserId): F[Unit]
-  def update(update: UpdateUser, authorized: UserId): F[Unit]
+  def update(update: UpdateUserRequest, authorized: UserId): F[Unit]
 
   def register(
       body: RegisterRequest
@@ -28,9 +28,20 @@ object UserService {
       repo: UserRepository[F]
   ) extends UserService[F] {
 
-    override def update(update: UpdateUser, authorized: UserId): F[Unit] =
+    override def update(update: UpdateUserRequest, authorized: UserId): F[Unit] =
       if (authorized === update.id) {
-        repo.update(update);
+        for {
+          old <- find(update.id)
+          updateUserInternal = UpdateUserInternal(
+            update.id,
+            update.name,
+            update.email,
+            update.password.map(
+              PasswordHashing.hashSaltPassword(_, old.salt)
+            )
+          )
+          _ <- repo.update(updateUserInternal)
+        } yield ()
       } else {
         InvalidAccess().raiseError[F, Unit]
       }

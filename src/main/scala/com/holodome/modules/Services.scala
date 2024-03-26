@@ -11,7 +11,6 @@ import com.holodome.infrastructure.redis.RedisEphemeralDict
 import com.holodome.services._
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
-import io.circe.Json
 
 sealed abstract class Services[F[_]] private {
   val users: UserService[F]

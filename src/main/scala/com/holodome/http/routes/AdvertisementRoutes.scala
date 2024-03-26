@@ -8,8 +8,8 @@ import com.holodome.domain.messages.{InvalidChatId, SendMessageRequest}
 import com.holodome.domain.users.{AuthedUser, NoUserFound}
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
+import com.holodome.services._
 import org.http4s.headers.Location
-import com.holodome.services.{AdvertisementService, ChatService, ImageService, MessageService}
 import org.http4s.Uri
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._

@@ -49,5 +49,5 @@ sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
   override def delete(id: UserId): F[Unit] =
     liftFuture(db.users.delete().where(_.id eqs id.value).future().map(_ => ()))
 
-  override def update(update: UpdateUser): F[Unit] = ???
+  override def update(update: UpdateUserInternal): F[Unit] = ???
 }

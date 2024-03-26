@@ -73,7 +73,7 @@ lazy val root = (project in file("."))
       "org.typelevel"       %% "log4cats-noop"         % Log4CatsVersion % Test,
       "org.typelevel"       %% "cats-laws"             % CatsVersion     % Test,
       "dev.optics"          %% "monocle-law"           % MonocleVersion  % Test,
-      "eu.timepit"          %% "refined-scalacheck"    % RefinedVersion  % Test
+      "eu.timepit"          %% "refined-scalacheck"    % RefinedVersion  % Test,
     )
   )
 

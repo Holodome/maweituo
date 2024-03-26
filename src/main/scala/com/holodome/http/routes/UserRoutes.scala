@@ -25,7 +25,7 @@ final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserServ
     case DELETE -> Root / UserIdVar(userId) as user =>
       userService.delete(userId, user.id) *> NoContent()
     case ar @ PUT -> Root / UserIdVar(userId) as user =>
-      ar.req.decodeR[UpdateUser] { update =>
+      ar.req.decodeR[UpdateUserRequest] { update =>
         // This check is here only because we are restful
         if (userId === update.id) {
           userService

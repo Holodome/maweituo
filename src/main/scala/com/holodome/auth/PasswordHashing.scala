@@ -16,9 +16,9 @@ object PasswordHashing {
   def genSalt[F[_]: GenUUID: Functor]: F[PasswordSalt] =
     GenUUID[F].make map { uuid => PasswordSalt(uuid.toString) }
 
-  private lazy val digest = MessageDigest.getInstance("SHA-256")
   private def sha256(string: String): String =
-    digest
+    MessageDigest
+      .getInstance("SHA-256")
       .digest(string.getBytes("UTF-8"))
       .map("%02x".format(_))
       .mkString

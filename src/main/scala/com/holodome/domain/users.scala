@@ -12,13 +12,13 @@ import java.util.UUID
 import scala.util.control.NoStackTrace
 
 object users {
-  @derive(decoder, encoder, uuid, eqv)
+  @derive(decoder, encoder, uuid, eqv, show)
   @newtype case class UserId(value: UUID)
 
-  @derive(decoder, encoder, show)
+  @derive(decoder, encoder, show, eqv)
   @newtype case class Username(value: String)
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, eqv, show)
   @newtype case class Email(value: String)
 
   @derive(decoder, encoder, eqv, show)
@@ -36,7 +36,7 @@ object users {
   @derive(decoder)
   final case class LoginRequest(name: Username, password: Password)
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, show)
   final case class RegisterRequest(
       name: Username,
       email: Email,
@@ -75,11 +75,18 @@ object users {
   case class AuthedUser(id: UserId)
   @newtype case class UserJwtAuth(value: JwtSymmetricAuth)
 
-  @derive(decoder)
-  case class UpdateUser(
+  @derive(decoder, show)
+  case class UpdateUserRequest(
       id: UserId,
       name: Option[Username],
       email: Option[Email],
       password: Option[Password]
+  )
+
+  case class UpdateUserInternal(
+      id: UserId,
+      name: Option[Username],
+      email: Option[Email],
+      password: Option[HashedSaltedPassword]
   )
 }

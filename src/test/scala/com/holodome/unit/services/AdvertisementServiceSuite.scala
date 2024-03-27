@@ -2,7 +2,7 @@ package com.holodome.unit.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.advertisements.{InvalidAdId, NotAnAuthor}
+import com.holodome.domain.ads.{InvalidAdId, NotAnAuthor}
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 import com.holodome.services.{AdvertisementService, IAMService, UserService}
 import com.holodome.utils.generators.{createAdRequestGen, imageIdGen, registerGen}

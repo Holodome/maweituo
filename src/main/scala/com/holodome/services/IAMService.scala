@@ -1,7 +1,7 @@
 package com.holodome.services
 
-import com.holodome.domain.advertisements._
-import com.holodome.domain.messages._
+import com.holodome.domain.ads._
+import com.holodome.domain.messages.{ChatAccessForbidden, _}
 import com.holodome.domain.users.{InvalidAccess, UserId}
 import cats.syntax.all._
 import cats.{Applicative, Monad, MonadThrow}
@@ -35,8 +35,8 @@ object IAMService {
         .getOrElseF(InvalidChatId().raiseError[F, Chat])
         .flatMap {
           case chat if userHasAccessToChat(chat, userId) =>
-            ChatAccessForbidden().raiseError[F, Unit]
-          case _ => Applicative[F].unit
+            Applicative[F].unit
+          case _ => ChatAccessForbidden().raiseError[F, Unit]
         }
 
     override def authorizeAdModification(advertisementId: AdId, userId: UserId): F[Unit] =
@@ -54,7 +54,7 @@ object IAMService {
         .fold(InvalidAccess().raiseError[F, Unit])(_ => Applicative[F].unit)
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
-      user === chat.adAuthor && user === chat.client
+      user === chat.adAuthor || user === chat.client
 
     override def authorizeImageDelete(imageId: ImageId, userId: UserId): F[Unit] =
       imageRepo

@@ -1,7 +1,8 @@
 package com.holodome.utils
 
-import com.holodome.domain.advertisements.{AdTitle, CreateAdRequest}
+import com.holodome.domain.ads.{AdTitle, CreateAdRequest}
 import com.holodome.domain.images.ImageId
+import com.holodome.domain.messages.{MessageText, SendMessageRequest}
 import com.holodome.domain.users._
 import org.scalacheck.Gen
 
@@ -56,4 +57,12 @@ object generators {
 
   def imageIdGen: Gen[ImageId] =
     idGen(ImageId.apply)
+
+  def msgTextGen: Gen[MessageText] =
+    nesGen(MessageText.apply)
+
+  def sendMessageRequestGen: Gen[SendMessageRequest] =
+    for {
+      msg <- msgTextGen
+    } yield SendMessageRequest(msg)
 }

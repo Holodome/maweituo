@@ -1,8 +1,9 @@
 package com.holodome.domain
 
-import com.holodome.domain.advertisements.AdId
+import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.optics.uuid
+import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.{Encoder, Json}
@@ -13,7 +14,7 @@ import java.util.UUID
 import scala.util.control.NoStackTrace
 
 object messages {
-  @derive(uuid, encoder, decoder)
+  @derive(uuid, encoder, decoder, eqv)
   @newtype case class ChatId(id: UUID)
 
   case class Chat(
@@ -25,7 +26,7 @@ object messages {
 
   @derive(uuid, encoder, decoder)
   @newtype case class MessageId(value: UUID)
-  @derive(encoder, decoder)
+  @derive(encoder, decoder, show, eqv)
   @newtype case class MessageText(value: String)
 
   case class InvalidChatId()       extends NoStackTrace
@@ -35,7 +36,7 @@ object messages {
   case class Message(
       id: MessageId,
       sender: UserId,
-      ad: AdId,
+      chat: ChatId,
       text: MessageText,
       at: Instant
   )
@@ -50,6 +51,6 @@ object messages {
       )
   }
 
-  @derive(decoder)
+  @derive(decoder, show, eqv)
   case class SendMessageRequest(text: MessageText)
 }

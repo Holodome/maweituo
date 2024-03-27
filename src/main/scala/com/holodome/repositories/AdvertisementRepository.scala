@@ -1,7 +1,7 @@
 package com.holodome.repositories
 
 import cats.data.OptionT
-import com.holodome.domain.advertisements._
+import com.holodome.domain.ads._
 import com.holodome.domain.images.ImageId
 
 trait AdvertisementRepository[F[_]] {

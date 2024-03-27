@@ -2,10 +2,9 @@ package com.holodome.unit.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.advertisements.{CannotCreateChatWithMyself, ChatAlreadyExists}
+import com.holodome.domain.ads.{CannotCreateChatWithMyself, ChatAlreadyExists}
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 import com.holodome.services.{AdvertisementService, ChatService, IAMService, UserService}
-import com.holodome.unit.services.AdvertisementServiceSuite.{expect, test}
 import com.holodome.utils.generators.{createAdRequestGen, registerGen}
 import com.holodome.utils.repositories.{
   InMemoryAdRepository,

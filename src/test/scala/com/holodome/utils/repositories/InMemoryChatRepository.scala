@@ -3,7 +3,7 @@ package com.holodome.utils.repositories
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all._
-import com.holodome.domain.{advertisements, users}
+import com.holodome.domain.{ads, users}
 import com.holodome.domain.messages._
 import com.holodome.repositories.ChatRepository
 
@@ -19,7 +19,7 @@ final class InMemoryChatRepository[F[_]: Sync] extends ChatRepository[F] {
     OptionT(Sync[F].delay { map.get(chatId) })
 
   override def findByAdAndClient(
-      adId: advertisements.AdId,
+      adId: ads.AdId,
       client: users.UserId
   ): OptionT[F, ChatId] =
     OptionT(Sync[F].delay {

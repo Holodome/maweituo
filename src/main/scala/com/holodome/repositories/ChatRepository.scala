@@ -1,7 +1,7 @@
 package com.holodome.repositories
 
 import cats.data.OptionT
-import com.holodome.domain.advertisements.AdId
+import com.holodome.domain.ads.AdId
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
 

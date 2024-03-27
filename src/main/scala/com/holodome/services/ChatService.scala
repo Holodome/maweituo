@@ -3,7 +3,7 @@ package com.holodome.services
 import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.domain.advertisements._
+import com.holodome.domain.ads._
 import com.holodome.domain.messages.{Chat, ChatId, InvalidChatId}
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
@@ -36,18 +36,19 @@ object ChatService {
         } >>
         adService
           .find(adId)
+          .map(_.authorId)
           .flatTap {
-            case ad if ad.authorId === clientId =>
+            case author if author === clientId =>
               CannotCreateChatWithMyself().raiseError[F, Unit]
             case _ => Applicative[F].unit
           }
-          .flatMap { ad =>
+          .flatMap { author =>
             for {
               id <- Id.make[F, ChatId]
               chat = Chat(
                 id,
                 adId,
-                ad.authorId,
+                author,
                 clientId
               )
               _ <- chatRepo.create(chat)

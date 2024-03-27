@@ -2,7 +2,7 @@ package com.holodome.http.routes
 
 import cats.MonadThrow
 import cats.syntax.all._
-import com.holodome.domain.advertisements._
+import com.holodome.domain.ads._
 import com.holodome.domain.images.ImageContents
 import com.holodome.domain.messages.{InvalidChatId, SendMessageRequest}
 import com.holodome.domain.users.{AuthedUser, NoUserFound}

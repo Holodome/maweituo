@@ -1,7 +1,7 @@
 package com.holodome.http
 
 import cats.syntax.all._
-import com.holodome.domain.advertisements.AdId
+import com.holodome.domain.ads.AdId
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId

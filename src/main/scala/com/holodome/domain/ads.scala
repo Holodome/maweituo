@@ -15,7 +15,7 @@ import java.util.UUID
 import scala.util.Try
 import scala.util.control.NoStackTrace
 
-object advertisements {
+object ads {
   @derive(decoder, encoder, uuid, eqv)
   @newtype case class AdId(value: UUID)
 

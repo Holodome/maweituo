@@ -1,6 +1,6 @@
 package com.holodome.domain
 
-import com.holodome.domain.advertisements.AdId
+import com.holodome.domain.ads.AdId
 import com.holodome.optics.uuid
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}

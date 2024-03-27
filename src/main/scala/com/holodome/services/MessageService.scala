@@ -4,6 +4,8 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
+import com.holodome.domain.Id
+import com.holodome.effects.{Clock, GenUUID}
 import com.holodome.repositories.MessageRepository
 
 trait MessageService[F[_]] {
@@ -12,19 +14,34 @@ trait MessageService[F[_]] {
 }
 
 object MessageService {
-  def make[F[_]: MonadThrow](
+  def make[F[_]: MonadThrow: GenUUID](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
-  ): MessageService[F] =
+  )(implicit clock: Clock[F]): MessageService[F] =
     new MessageServiceInterpreter(msgRepo, iam)
 
-  private final class MessageServiceInterpreter[F[_]: MonadThrow](
+  private final class MessageServiceInterpreter[F[_]: MonadThrow: GenUUID](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
-  ) extends MessageService[F] {
+  )(implicit clock: Clock[F])
+      extends MessageService[F] {
 
-    override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
-      iam.authorizeChatAccess(chatId, senderId) >> msgRepo.send(chatId, senderId, req.text)
+    override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {
+      iam.authorizeChatAccess(chatId, senderId) >> {
+        for {
+          id  <- Id.make[F, MessageId]
+          now <- clock.instant
+          msg = Message(
+            id,
+            senderId,
+            chatId,
+            req.text,
+            now
+          )
+          _ <- msgRepo.send(msg)
+        } yield ()
+      }
+    }
 
     override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
       iam.authorizeChatAccess(chatId, requester) >> msgRepo

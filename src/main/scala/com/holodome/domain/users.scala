@@ -1,6 +1,6 @@
 package com.holodome.domain
 
-import com.holodome.domain.advertisements.AdvertisementId
+import com.holodome.domain.advertisements.AdId
 import com.holodome.optics.uuid
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
@@ -56,7 +56,7 @@ object users {
       email: Email,
       hashedPassword: HashedSaltedPassword,
       salt: PasswordSalt,
-      ads: List[AdvertisementId]
+      ads: List[AdId]
   )
 
   @derive(encoder)
@@ -64,7 +64,7 @@ object users {
       id: UserId,
       name: Username,
       email: Email,
-      ads: List[AdvertisementId]
+      ads: List[AdId]
   )
 
   object UserPublicInfo {

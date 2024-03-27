@@ -1,7 +1,7 @@
 package com.holodome.domain
 
 import cats.syntax.all._
-import com.holodome.domain.advertisements.AdvertisementId
+import com.holodome.domain.advertisements.AdId
 import com.holodome.optics.uuid
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -34,7 +34,7 @@ object images {
   @derive(encoder)
   case class Image(
       id: ImageId,
-      adId: AdvertisementId,
+      adId: AdId,
       url: ImageUrl
   )
 }

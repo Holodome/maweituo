@@ -74,6 +74,7 @@ lazy val root = (project in file("."))
       "org.typelevel"       %% "cats-laws"             % CatsVersion     % Test,
       "dev.optics"          %% "monocle-law"           % MonocleVersion  % Test,
       "eu.timepit"          %% "refined-scalacheck"    % RefinedVersion  % Test,
+      "org.mockito"         %% "mockito-scala-cats"               % "1.17.30"       % Test
     )
   )
 

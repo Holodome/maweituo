@@ -13,6 +13,7 @@ import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 
 sealed abstract class Services[F[_]] private {
+  val iam: IAMService[F]
   val users: UserService[F]
   val auth: AuthService[F]
   val ads: AdvertisementService[F]
@@ -32,8 +33,10 @@ object Services {
       .map(JwtTokens.make[F](_, cfg.jwtAccessSecret.value, cfg.jwtTokenExpiration))
       .map { tokens =>
         new Services[F] {
+          override val iam: IAMService[F] =
+            IAMService.make[F](repositories.ads, repositories.chats, repositories.images)
           override val users: UserService[F] =
-            UserService.make(repositories.userRepository)
+            UserService.make(repositories.users, iam)
           override val auth: AuthService[F] =
             AuthService.make(
               users,
@@ -48,12 +51,12 @@ object Services {
               tokens
             )
           override val ads: AdvertisementService[F] =
-            AdvertisementService.make[F](repositories.advertisementRepository)
-          override val chats: ChatService[F] = ChatService.make[F](repositories.chatRepository, ads)
+            AdvertisementService.make[F](repositories.ads, iam)
+          override val chats: ChatService[F] = ChatService.make[F](repositories.chats, ads)
           override val messages: MessageService[F] =
-            MessageService.make[F](repositories.messageRepository, chats)
+            MessageService.make[F](repositories.messages, iam)
           override val images: ImageService[F] =
-            ImageService.make[F](repositories.imageRepository, ads, ???)
+            ImageService.make[F](repositories.images, ads, ???, iam)
         }
       }
   }

@@ -6,11 +6,11 @@ import com.holodome.repositories._
 import com.holodome.repositories.cassandra.{CassandraResources, CassandraUserRepository}
 
 trait Repositories[F[_]] {
-  val userRepository: UserRepository[F]
-  val advertisementRepository: AdvertisementRepository[F]
-  val chatRepository: ChatRepository[F]
-  val messageRepository: MessageRepository[F]
-  val imageRepository: ImageRepository[F]
+  val users: UserRepository[F]
+  val ads: AdvertisementRepository[F]
+  val chats: ChatRepository[F]
+  val messages: MessageRepository[F]
+  val images: ImageRepository[F]
 }
 
 object Repositories {
@@ -18,12 +18,12 @@ object Repositories {
       cassandraResources: CassandraResources
   ): Repositories[F] = {
     new Repositories[F] {
-      override val userRepository: UserRepository[F] =
+      override val users: UserRepository[F] =
         CassandraUserRepository.make[F](cassandraResources.userDb)
-      override val messageRepository: MessageRepository[F]             = ???
-      override val chatRepository: ChatRepository[F]                   = ???
-      override val advertisementRepository: AdvertisementRepository[F] = ???
-      override val imageRepository: ImageRepository[F]                 = ???
+      override val messages: MessageRepository[F]  = ???
+      override val chats: ChatRepository[F]        = ???
+      override val ads: AdvertisementRepository[F] = ???
+      override val images: ImageRepository[F]      = ???
     }
   }
 }

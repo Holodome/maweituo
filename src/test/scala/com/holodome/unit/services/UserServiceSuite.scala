@@ -3,19 +3,27 @@ package com.holodome.unit.services
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.users.{InvalidAccess, InvalidUserId, UserId}
+import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 import com.holodome.utils.generators.{registerGen, updateUserGen, userIdGen}
-import com.holodome.repositories.InMemoryUserRepository
-import com.holodome.services.UserService
+import com.holodome.services.{IAMService, UserService}
+import com.holodome.utils.repositories.InMemoryUserRepository
+import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 import java.util.UUID
 
 object UserServiceSuite extends SimpleIOSuite with Checkers {
+  private val iam = IAMService.make(
+    mock[AdvertisementRepository[IO]],
+    mock[ChatRepository[IO]],
+    mock[ImageRepository[IO]]
+  )
+
   test("register user works") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         _ <- serv.register(register)
       } yield expect.all(true)
@@ -25,7 +33,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         id <- serv.register(register)
         u  <- serv.find(id)
@@ -36,7 +44,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find by name work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         id <- serv.register(register)
         u  <- serv.findByName(register.name)
@@ -47,7 +55,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and delete work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         id <- serv.register(register)
         _  <- serv.delete(id, id)
@@ -61,16 +69,17 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
 
   test("user delete by other person is forbidden") {
     val gen = for {
-      r  <- registerGen
-      id <- userIdGen
-    } yield r -> id
-    forall(gen) { case (register, id) =>
+      r     <- registerGen
+      other <- registerGen
+    } yield r -> other
+    forall(gen) { case (register, other) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
-        newId <- serv.register(register)
+        newId   <- serv.register(register)
+        otherId <- serv.register(other)
         x <- serv
-          .delete(newId, id)
+          .delete(newId, otherId)
           .map(Some(_))
           .recover { case InvalidAccess() =>
             None
@@ -87,7 +96,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd)
     forall(gen) { case (register, upd) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         newId <- serv.register(register)
         newUpd = upd.copy(id = newId)
@@ -110,12 +119,19 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd, id)
     forall(gen) { case (register, upd, id) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo)
+      val serv = UserService.make(repo, iam)
       for {
         newId <- serv.register(register)
         newUpd = upd.copy(id = newId)
-        x <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess() => None }
-      } yield expect.all(x.isEmpty)
+        prior <- serv.find(newId)
+        x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess() => None }
+        got   <- serv.find(newId)
+      } yield expect.all(
+        x.isEmpty,
+        got.hashedPassword === prior.hashedPassword,
+        got.name === prior.name,
+        got.email === prior.email
+      )
     }
   }
 }

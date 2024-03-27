@@ -278,7 +278,7 @@
                 <mxCell id="80" value="User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
                     <mxGeometry x="230" y="-210" width="160" height="150" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="+ id: UserId&#10;+ name: Username&#10;+ email: Email&#10;+ hashedPassword:&#10;    HashedSaltedPassword&#10;+ salt: PasswordSalt&#10;+ ads: List[AdvertisementId]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="80">
+                <mxCell id="81" value="+ id: UserId&#10;+ name: Username&#10;+ email: Email&#10;+ hashedPassword:&#10;    HashedSaltedPassword&#10;+ salt: PasswordSalt&#10;+ ads: List[AdId]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="80">
                     <mxGeometry y="26" width="160" height="124" as="geometry"/>
                 </mxCell>
                 <mxCell id="85" value="Advertisement" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">

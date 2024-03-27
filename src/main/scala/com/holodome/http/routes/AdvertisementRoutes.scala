@@ -26,7 +26,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"
 
-  private object AdQueryParam extends OptionalQueryParamDecoderMatcher[AdvertisementParam]("ad")
+  private object AdQueryParam extends OptionalQueryParamDecoderMatcher[AdParam]("ad")
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? AdQueryParam(ad) =>
@@ -56,7 +56,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
       }
 
     case DELETE -> Root / AdIdVar(adId) as user =>
-      advertisementService.delete(adId, user.id) *> NoContent()
+      advertisementService.delete(adId, user.id) >> NoContent()
 
     case GET -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
       msgService

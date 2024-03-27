@@ -21,15 +21,16 @@ trait UserService[F[_]] {
 
 object UserService {
 
-  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F]): UserService[F] =
-    new UserServiceInterpreter(repo)
+  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F], iam: IAMService[F]): UserService[F] =
+    new UserServiceInterpreter(repo, iam)
 
   private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID](
-      repo: UserRepository[F]
+      repo: UserRepository[F],
+      iam: IAMService[F]
   ) extends UserService[F] {
 
     override def update(update: UpdateUserRequest, authorized: UserId): F[Unit] =
-      if (authorized === update.id) {
+      iam.authorizeUserModification(update.id, authorized) >> {
         for {
           old <- find(update.id)
           updateUserInternal = UpdateUserInternal(
@@ -42,16 +43,10 @@ object UserService {
           )
           _ <- repo.update(updateUserInternal)
         } yield ()
-      } else {
-        InvalidAccess().raiseError[F, Unit]
       }
 
     def delete(subject: UserId, authorized: UserId): F[Unit] =
-      if (authorized === subject) {
-        repo.delete(subject)
-      } else {
-        InvalidAccess().raiseError[F, Unit]
-      }
+      iam.authorizeUserModification(subject, authorized) >> repo.delete(subject)
 
     override def find(id: UserId): F[User] =
       repo.find(id).getOrElseF(InvalidUserId().raiseError)

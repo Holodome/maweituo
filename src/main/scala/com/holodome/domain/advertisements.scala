@@ -16,19 +16,19 @@ import scala.util.control.NoStackTrace
 
 object advertisements {
   @derive(decoder, encoder, uuid)
-  @newtype case class AdvertisementId(value: UUID)
+  @newtype case class AdId(value: UUID)
 
   @derive(decoder, encoder)
-  @newtype case class AdvertisementTitle(value: String)
+  @newtype case class AdTitle(value: String)
 
   @derive(decoder, encoder)
-  @newtype case class AdvertisementTag(value: String)
+  @newtype case class AdTag(value: String)
 
   @derive(encoder)
   case class Advertisement(
-      id: AdvertisementId,
-      title: AdvertisementTitle,
-      tags: List[AdvertisementTag],
+      id: AdId,
+      title: AdTitle,
+      tags: List[AdTag],
       images: List[ImageId],
       chats: List[ChatId],
       authorId: UserId
@@ -36,24 +36,24 @@ object advertisements {
 
   @derive(decoder, encoder)
   case class CreateAdRequest(
-      title: AdvertisementTitle
+      title: AdTitle
   )
 
   @derive(queryParam)
-  @newtype case class AdvertisementParam(value: String) {
-    def toDomain: Option[AdvertisementId] =
-      Try(UUID.fromString(value)).map(AdvertisementId.apply).toOption
+  @newtype case class AdParam(value: String) {
+    def toDomain: Option[AdId] =
+      Try(UUID.fromString(value)).map(AdId.apply).toOption
   }
 
-  object AdvertisementParam {
-    implicit val jsonEncoder: Encoder[AdvertisementParam] =
+  object AdParam {
+    implicit val jsonEncoder: Encoder[AdParam] =
       Encoder.forProduct1("id")(_.value)
-    implicit val jsonDecoder: Decoder[AdvertisementParam] =
-      Decoder.forProduct1("id")(AdvertisementParam.apply)
+    implicit val jsonDecoder: Decoder[AdParam] =
+      Decoder.forProduct1("id")(AdParam.apply)
   }
 
-  final case class InvalidAdId(id: AdvertisementId) extends NoStackTrace
-  final case class CannotCreateChatWithMyself()     extends NoStackTrace
-  final case class ChatAlreadyExists()              extends NoStackTrace
-  final case class NotAnAuthor()                    extends NoStackTrace
+  final case class InvalidAdId(id: AdId)        extends NoStackTrace
+  final case class CannotCreateChatWithMyself() extends NoStackTrace
+  final case class ChatAlreadyExists()          extends NoStackTrace
+  final case class NotAnAuthor()                extends NoStackTrace
 }

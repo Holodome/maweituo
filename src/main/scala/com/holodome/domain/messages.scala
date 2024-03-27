@@ -1,6 +1,6 @@
 package com.holodome.domain
 
-import com.holodome.domain.advertisements.AdvertisementId
+import com.holodome.domain.advertisements.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.optics.uuid
 import derevo.circe.magnolia.{decoder, encoder}
@@ -17,7 +17,7 @@ object messages {
   @newtype case class ChatId(id: UUID)
 
   case class Chat(
-      adId: AdvertisementId,
+      adId: AdId,
       adAuthor: UserId,
       client: UserId
   )
@@ -34,7 +34,7 @@ object messages {
   case class Message(
       id: MessageId,
       sender: UserId,
-      ad: AdvertisementId,
+      ad: AdId,
       text: MessageText,
       at: Instant
   )

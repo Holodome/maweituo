@@ -1,12 +1,13 @@
 package com.holodome.infrastructure
 
+import cats.data.OptionT
 import com.holodome.domain.images.ImageUrl
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.estatico.newtype.macros.newtype
 
 trait ObjectStorage[F[_]] {
   def put(id: ObjectId, data: Array[Byte]): F[Unit]
-  def get(id: ObjectId): F[Array[Byte]]
+  def get(id: ObjectId): OptionT[F, Array[Byte]]
   def delete(id: ObjectId): F[Unit]
 }
 

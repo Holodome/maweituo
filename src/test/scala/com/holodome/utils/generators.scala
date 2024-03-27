@@ -1,7 +1,7 @@
 package com.holodome.utils
 
 import com.holodome.domain.ads.{AdTitle, CreateAdRequest}
-import com.holodome.domain.images.ImageId
+import com.holodome.domain.images.{ImageContents, ImageId}
 import com.holodome.domain.messages.{MessageText, SendMessageRequest}
 import com.holodome.domain.users._
 import org.scalacheck.Gen
@@ -16,6 +16,11 @@ object generators {
 
   def nesGen[A](f: String => A): Gen[A] =
     nonEmptyStringGen map f
+
+  def byteArrayGen: Gen[Array[Byte]] =
+    Gen
+      .chooseNum(32, 64)
+      .flatMap(Gen.listOfN(_, Gen.chooseNum(0, 255).map(_.byteValue)).map(_.toArray))
 
   def idGen[A](f: UUID => A): Gen[A] = Gen.uuid map f
 
@@ -65,4 +70,7 @@ object generators {
     for {
       msg <- msgTextGen
     } yield SendMessageRequest(msg)
+
+  def imageContentsGen: Gen[ImageContents] =
+    byteArrayGen.map(ImageContents.apply)
 }

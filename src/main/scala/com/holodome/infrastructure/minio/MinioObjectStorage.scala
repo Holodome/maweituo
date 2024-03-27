@@ -1,6 +1,7 @@
 package com.holodome.infrastructure.minio
 
 import cats.{Applicative, Monad}
+import cats.data.OptionT
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.holodome.ext.catsInterop.liftJavaFuture
@@ -43,10 +44,12 @@ final class MinioObjectStorage[F[_]: Async: Monad] private (
     )
   }
 
-  override def get(id: ObjectId): F[Array[Byte]] =
-    liftJavaFuture(
-      client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
-    ).map(IOUtils.toByteArray(_))
+  override def get(id: ObjectId): OptionT[F, Array[Byte]] =
+    OptionT(
+      liftJavaFuture(
+        client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
+      ).map(IOUtils.toByteArray(_).some)
+    )
 
   override def delete(id: ObjectId): F[Unit] =
     liftJavaFuture(

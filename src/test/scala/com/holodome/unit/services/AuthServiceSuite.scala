@@ -4,7 +4,6 @@ import cats.effect.IO
 import com.holodome.auth.JwtTokens
 import com.holodome.domain.users.{NoUserFound, UserId}
 import com.holodome.infrastructure.EphemeralDict
-import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 import com.holodome.services.{AuthService, IAMService, UserService}
 import cats.syntax.all._
@@ -15,6 +14,7 @@ import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 import com.holodome.ext.jwt.jwt.jwtTokenShow
+import com.holodome.utils.infrastructure.InMemoryEphemeralDict
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
 

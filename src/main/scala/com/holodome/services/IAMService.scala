@@ -1,11 +1,12 @@
 package com.holodome.services
 
 import com.holodome.domain.ads._
+import com.holodome.domain.images.InvalidImageId
 import com.holodome.domain.messages.{ChatAccessForbidden, _}
 import com.holodome.domain.users.{InvalidAccess, UserId}
 import cats.syntax.all._
 import cats.{Applicative, Monad, MonadThrow}
-import com.holodome.domain.images.ImageId
+import com.holodome.domain.images.{Image, ImageId}
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 
 trait IAMService[F[_]] {
@@ -59,6 +60,7 @@ object IAMService {
     override def authorizeImageDelete(imageId: ImageId, userId: UserId): F[Unit] =
       imageRepo
         .getMeta(imageId)
+        .getOrElseF(InvalidImageId().raiseError[F, Image])
         .flatMap(image => authorizeAdModification(image.adId, userId))
   }
 }

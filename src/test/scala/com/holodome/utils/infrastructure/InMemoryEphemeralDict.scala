@@ -1,4 +1,4 @@
-package com.holodome.infrastructure.inmemory
+package com.holodome.utils.infrastructure
 
 import cats.data.OptionT
 import cats.effect.kernel.Sync

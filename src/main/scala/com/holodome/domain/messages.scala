@@ -17,6 +17,7 @@ object messages {
   @newtype case class ChatId(id: UUID)
 
   case class Chat(
+      id: ChatId,
       adId: AdId,
       adAuthor: UserId,
       client: UserId

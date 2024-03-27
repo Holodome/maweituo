@@ -1,10 +1,13 @@
 package com.holodome.services
 
-import cats.{Monad, MonadThrow}
+import cats.{Applicative, Monad, MonadThrow}
+import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.domain.advertisements._
 import com.holodome.domain.messages.{Chat, ChatId, InvalidChatId}
 import com.holodome.domain.users.UserId
+import com.holodome.domain.Id
+import com.holodome.effects.GenUUID
 import com.holodome.repositories.ChatRepository
 
 trait ChatService[F[_]] {
@@ -13,32 +16,43 @@ trait ChatService[F[_]] {
 }
 
 object ChatService {
-  def make[F[_]: MonadThrow](
+  def make[F[_]: MonadThrow: GenUUID](
       chatRepo: ChatRepository[F],
       adService: AdvertisementService[F]
   ): ChatService[F] =
     new ChatServiceImpl(chatRepo, adService)
 
-  private final class ChatServiceImpl[F[_]: MonadThrow](
+  private final class ChatServiceImpl[F[_]: MonadThrow: GenUUID](
       chatRepo: ChatRepository[F],
       adService: AdvertisementService[F]
   ) extends ChatService[F] {
     override def create(adId: AdId, clientId: UserId): F[ChatId] =
-      adService
-        .find(adId)
-        .flatTap {
-          case ad if ad.authorId === clientId =>
-            CannotCreateChatWithMyself().raiseError[F, Unit]
-          case _ => Monad[F].unit
-        }
-        .flatTap { ad =>
-          chatRepo
-            .findByAdAndClient(ad.id, clientId)
-            .getOrElseF(ChatAlreadyExists().raiseError[F, Any])
-        }
-        .flatMap { ad =>
-          chatRepo.create(adId, ad.authorId, clientId)
-        }
+      chatRepo
+        .findByAdAndClient(adId, clientId)
+        .value
+        .flatMap {
+          case Some(_) => ChatAlreadyExists().raiseError[F, Unit]
+          case None    => Applicative[F].unit
+        } >>
+        adService
+          .find(adId)
+          .flatTap {
+            case ad if ad.authorId === clientId =>
+              CannotCreateChatWithMyself().raiseError[F, Unit]
+            case _ => Applicative[F].unit
+          }
+          .flatMap { ad =>
+            for {
+              id <- Id.make[F, ChatId]
+              chat = Chat(
+                id,
+                adId,
+                ad.authorId,
+                clientId
+              )
+              _ <- chatRepo.create(chat)
+            } yield id
+          }
 
     override def find(chatId: ChatId): F[Chat] =
       chatRepo

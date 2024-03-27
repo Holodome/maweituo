@@ -3,6 +3,7 @@ package com.holodome.domain
 import cats.syntax.all._
 import com.holodome.domain.advertisements.AdId
 import com.holodome.optics.uuid
+import derevo.cats.show
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.{Decoder, Encoder}
@@ -12,7 +13,7 @@ import java.util.{Base64, UUID}
 import scala.util.Try
 
 object images {
-  @derive(uuid, encoder, decoder)
+  @derive(uuid, encoder, decoder, show)
   @newtype case class ImageId(id: UUID)
 
   @derive(encoder, decoder)

@@ -12,7 +12,7 @@ import com.holodome.repositories.AdvertisementRepository
 trait AdvertisementService[F[_]] {
   def find(id: AdId): F[Advertisement]
   def all(): F[List[Advertisement]]
-  def create(authorId: UserId, create: CreateAdRequest): F[Unit]
+  def create(authorId: UserId, create: CreateAdRequest): F[AdId]
   def delete(id: AdId, userId: UserId): F[Unit]
   def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
 }
@@ -33,12 +33,12 @@ object AdvertisementService {
 
     override def all(): F[List[Advertisement]] = repo.all()
 
-    override def create(authorId: UserId, create: CreateAdRequest): F[Unit] =
+    override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {
         id <- Id.make[F, AdId]
         ad = Advertisement(id, create.title, List(), List(), List(), authorId)
         _ <- repo.create(ad)
-      } yield ()
+      } yield id
 
     override def delete(id: AdId, userId: UserId): F[Unit] =
       iam.authorizeAdModification(id, userId) >> repo.delete(id)

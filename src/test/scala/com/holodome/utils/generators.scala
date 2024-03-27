@@ -1,5 +1,7 @@
 package com.holodome.utils
 
+import com.holodome.domain.advertisements.{AdTitle, CreateAdRequest}
+import com.holodome.domain.images.ImageId
 import com.holodome.domain.users._
 import org.scalacheck.Gen
 
@@ -43,4 +45,15 @@ object generators {
       email    <- Gen.option(emailGen)
       password <- Gen.option(passwordGen)
     } yield UpdateUserRequest(id, name, email, password)
+
+  def adTitleGen: Gen[AdTitle] =
+    nesGen(AdTitle.apply)
+
+  def createAdRequestGen: Gen[CreateAdRequest] =
+    for {
+      title <- adTitleGen
+    } yield CreateAdRequest(title)
+
+  def imageIdGen: Gen[ImageId] =
+    idGen(ImageId.apply)
 }

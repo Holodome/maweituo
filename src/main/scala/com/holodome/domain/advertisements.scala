@@ -5,6 +5,7 @@ import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.queryParam
 import com.holodome.optics.uuid
+import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.{Decoder, Encoder}
@@ -15,13 +16,13 @@ import scala.util.Try
 import scala.util.control.NoStackTrace
 
 object advertisements {
-  @derive(decoder, encoder, uuid)
+  @derive(decoder, encoder, uuid, eqv)
   @newtype case class AdId(value: UUID)
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, eqv, show)
   @newtype case class AdTitle(value: String)
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, eqv)
   @newtype case class AdTag(value: String)
 
   @derive(encoder)
@@ -34,7 +35,7 @@ object advertisements {
       authorId: UserId
   )
 
-  @derive(decoder, encoder)
+  @derive(decoder, encoder, show)
   case class CreateAdRequest(
       title: AdTitle
   )

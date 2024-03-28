@@ -1,16 +1,18 @@
 package com.holodome.modules
 
 import cats.MonadThrow
-import cats.effect.Sync
+import cats.effect.{Async, Sync}
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.AppConfig
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.infrastructure.minio.MinioObjectStorage
 import com.holodome.infrastructure.redis.RedisEphemeralDict
 import com.holodome.services._
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
+import io.minio.MinioAsyncClient
 
 sealed abstract class Services[F[_]] private {
   val iam: IAMService[F]
@@ -23,10 +25,11 @@ sealed abstract class Services[F[_]] private {
 }
 
 object Services {
-  def make[F[_]: MonadThrow: Sync](
+  def make[F[_]: MonadThrow: Async](
       repositories: Repositories[F],
       cfg: AppConfig,
-      redis: RedisCommands[F, String, String]
+      redis: RedisCommands[F, String, String],
+      minio: MinioAsyncClient
   ): F[Services[F]] = {
     JwtExpire
       .make[F]
@@ -56,7 +59,12 @@ object Services {
           override val messages: MessageService[F] =
             MessageService.make[F](repositories.messages, iam)
           override val images: ImageService[F] =
-            ImageService.make[F](repositories.images, ads, ???, iam)
+            ImageService.make[F](
+              repositories.images,
+              ads,
+              MinioObjectStorage.make[F](minio, cfg.minio.bucket),
+              iam
+            )
         }
       }
   }

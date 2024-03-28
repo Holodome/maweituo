@@ -27,7 +27,8 @@ object Config {
         CassandraConfig(host"localhost", port"9042", "datacenter1", "maweituo"),
         JwtTokenExpiration(30.minutes),
         jwtAccessSecret,
-        RedisConfig(RedisURI("redis://localhost"))
+        RedisConfig(RedisURI("redis://localhost")),
+        MinioConfig("http://localhost:9000", "aboba", "aboba", "maweituo")
       )
     }
   }

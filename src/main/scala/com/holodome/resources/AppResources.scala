@@ -2,19 +2,23 @@ package com.holodome.resources
 
 import cats.effect.{Async, Concurrent, Resource}
 import cats.syntax.all._
+import cats.Applicative
+import cats.effect.kernel.Sync
 import com.datastax.oss.driver.api.core.CqlSession
-import com.holodome.config.types.{AppConfig, CassandraConfig, RedisConfig}
+import com.holodome.config.types.{AppConfig, CassandraConfig, MinioConfig, RedisConfig}
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import dev.profunktor.redis4cats.effect.MkRedis
+import io.minio.MinioAsyncClient
 import org.typelevel.log4cats.Logger
 
 import java.net.InetSocketAddress
 
 sealed abstract class AppResources[F[_]](
     val redis: RedisCommands[F, String, String],
-    val cassandra: CassandraSession[F]
+    val cassandra: CassandraSession[F],
+    val minio: MinioAsyncClient
 )
 
 object AppResources {
@@ -50,7 +54,14 @@ object AppResources {
       CassandraSession.connect(builder).evalTap(checkCassandraConnection)
     }
 
-    (mkRedisResource(cfg.redis), mkCassandraResource(cfg.cassandra))
-      .parMapN(new AppResources[F](_, _) {})
+    def mkMinioResource(c: MinioConfig): Resource[F, MinioAsyncClient] =
+      Resource.make[F, MinioAsyncClient](
+        Sync[F].delay(
+          MinioAsyncClient.builder().endpoint(c.endpoint).credentials(c.userId, c.password).build()
+        )
+      )(_ => Applicative[F].unit)
+
+    (mkRedisResource(cfg.redis), mkCassandraResource(cfg.cassandra), mkMinioResource(cfg.minio))
+      .parMapN(new AppResources[F](_, _, _) {})
   }
 }

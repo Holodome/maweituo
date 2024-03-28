@@ -21,6 +21,7 @@ object types {
   @newtype case class RedisConfig(uri: RedisURI)
 
   case class CassandraConfig(host: Host, port: Port, datacenter: String, keyspace: String)
+  case class MinioConfig(endpoint: String, userId: String, password: String, bucket: String)
 
   case class HttpServerConfig(
       host: Host,
@@ -32,7 +33,8 @@ object types {
       cassandra: CassandraConfig,
       jwtTokenExpiration: JwtTokenExpiration,
       jwtAccessSecret: Secret[JwtAccessSecret],
-      redis: RedisConfig
+      redis: RedisConfig,
+      minio: MinioConfig
   )
 
   sealed abstract class AppEnvironment extends EnumEntry with Lowercase

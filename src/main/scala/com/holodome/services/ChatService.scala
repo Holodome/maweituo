@@ -57,6 +57,6 @@ object ChatService {
     override def find(chatId: ChatId): F[Chat] =
       chatRepo
         .find(chatId)
-        .getOrElseF(InvalidChatId().raiseError[F, Chat])
+        .getOrRaise(InvalidChatId())
   }
 }

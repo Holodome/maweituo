@@ -1,7 +1,7 @@
 package com.holodome.domain
 
 import com.holodome.domain.ads.AdId
-import com.holodome.optics.{cassandraReads, uuid}
+import com.holodome.optics.{cassandraReads, uuidIso}
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -12,7 +12,7 @@ import java.util.UUID
 import scala.util.control.NoStackTrace
 
 object users {
-  @derive(decoder, encoder, uuid, eqv, show, cassandraReads)
+  @derive(decoder, encoder, uuidIso, eqv, show, cassandraReads)
   @newtype case class UserId(value: UUID)
 
   @derive(decoder, encoder, show, eqv, cassandraReads)
@@ -56,35 +56,15 @@ object users {
       email: Email,
       hashedPassword: HashedSaltedPassword,
       salt: PasswordSalt,
-      ads: List[AdId]
+      ads: Set[AdId]
   )
-
-  case class UserRaw(
-      id: UUID,
-      name: String,
-      email: String,
-      hashedPassword: String,
-      salt: String,
-      ads: List[UUID]
-  )
-
-  object UserRaw {
-    def toUser(raw: UserRaw): User = User(
-      UserId(raw.id),
-      Username(raw.name),
-      Email(raw.email),
-      HashedSaltedPassword(raw.hashedPassword),
-      PasswordSalt(raw.salt),
-      raw.ads.map(AdId.apply)
-    )
-  }
 
   @derive(encoder)
   case class UserPublicInfo(
       id: UserId,
       name: Username,
       email: Email,
-      ads: List[AdId]
+      ads: Set[AdId]
   )
 
   object UserPublicInfo {

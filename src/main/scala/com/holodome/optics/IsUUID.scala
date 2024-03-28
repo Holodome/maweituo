@@ -17,4 +17,4 @@ object IsUUID {
   }
 }
 
-object uuid extends Derive[IsUUID]
+object uuidIso extends Derive[IsUUID]

@@ -27,13 +27,13 @@ final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F] 
 
   override def addTag(id: AdId, tag: AdTag): F[Unit] =
     Sync[F].delay(map.get(id).map { ad =>
-      val newAd = ad.copy(tags = tag :: ad.tags)
+      val newAd = ad.copy(tags = ad.tags + tag)
       map.update(id, newAd)
     })
 
   override def addImage(id: AdId, image: ImageId): F[Unit] =
     Sync[F].delay(map.get(id).map { ad =>
-      val newAd = ad.copy(images = image :: ad.images)
+      val newAd = ad.copy(images = ad.images + image)
       map.update(id, newAd)
     })
 

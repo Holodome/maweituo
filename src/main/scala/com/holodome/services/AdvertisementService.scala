@@ -29,14 +29,14 @@ object AdvertisementService {
       iam: IAMService[F]
   ) extends AdvertisementService[F] {
     override def find(id: AdId): F[Advertisement] =
-      repo.find(id).getOrElseF(InvalidAdId(id).raiseError)
+      repo.find(id).getOrRaise(InvalidAdId(id))
 
     override def all(): F[List[Advertisement]] = repo.all()
 
     override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {
         id <- Id.make[F, AdId]
-        ad = Advertisement(id, create.title, List(), List(), List(), authorId)
+        ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId)
         _ <- repo.create(ad)
       } yield id
 

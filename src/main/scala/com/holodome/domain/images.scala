@@ -1,9 +1,8 @@
 package com.holodome.domain
 
-import cats.syntax.all._
 import cats.Show
 import com.holodome.domain.ads.AdId
-import com.holodome.optics.uuid
+import com.holodome.optics.{cassandraReads, uuidIso}
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -15,10 +14,10 @@ import scala.util.Try
 import scala.util.control.NoStackTrace
 
 object images {
-  @derive(uuid, encoder, decoder, show)
+  @derive(uuidIso, encoder, decoder, show, cassandraReads)
   @newtype case class ImageId(id: UUID)
 
-  @derive(encoder, decoder)
+  @derive(encoder, decoder, cassandraReads)
   @newtype case class ImageUrl(value: String)
 
   @newtype case class ImageContents(value: Array[Byte])

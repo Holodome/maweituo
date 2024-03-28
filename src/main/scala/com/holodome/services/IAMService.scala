@@ -33,7 +33,7 @@ object IAMService {
     override def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit] =
       chatRepo
         .find(chatId)
-        .getOrElseF(InvalidChatId().raiseError[F, Chat])
+        .getOrRaise(InvalidChatId())
         .flatMap {
           case chat if userHasAccessToChat(chat, userId) =>
             Applicative[F].unit
@@ -43,7 +43,7 @@ object IAMService {
     override def authorizeAdModification(advertisementId: AdId, userId: UserId): F[Unit] =
       adRepo
         .find(advertisementId)
-        .getOrElseF(InvalidAdId(advertisementId).raiseError[F, Advertisement])
+        .getOrRaise(InvalidAdId(advertisementId))
         .flatMap {
           case ad if ad.authorId === userId => Applicative[F].unit
           case _                            => NotAnAuthor().raiseError[F, Unit]
@@ -60,7 +60,7 @@ object IAMService {
     override def authorizeImageDelete(imageId: ImageId, userId: UserId): F[Unit] =
       imageRepo
         .getMeta(imageId)
-        .getOrElseF(InvalidImageId().raiseError[F, Image])
+        .getOrRaise(InvalidImageId())
         .flatMap(image => authorizeAdModification(image.adId, userId))
   }
 }

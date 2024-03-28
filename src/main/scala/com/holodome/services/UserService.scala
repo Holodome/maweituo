@@ -49,10 +49,10 @@ object UserService {
       iam.authorizeUserModification(subject, authorized) >> repo.delete(subject)
 
     override def find(id: UserId): F[User] =
-      repo.find(id).getOrElseF(InvalidUserId().raiseError)
+      repo.find(id).getOrRaise(InvalidUserId())
 
     override def findByName(name: Username): F[User] =
-      repo.findByName(name).getOrElseF(NoUserFound(name).raiseError)
+      repo.findByName(name).getOrRaise(NoUserFound(name))
 
     override def register(
         body: RegisterRequest
@@ -60,10 +60,10 @@ object UserService {
       val user = for {
         _ <- repo
           .findByEmail(body.email)
-          .getOrElse(UserEmailInUse(body.email).raiseError[F, Unit])
+          .getOrRaise(UserEmailInUse(body.email))
         _ <- repo
           .findByName(body.name)
-          .getOrElse(UserNameInUse(body.name).raiseError[F, Unit])
+          .getOrRaise(UserNameInUse(body.name))
         salt <- PasswordHashing.genSalt[F]
         id   <- Id.make[F, UserId]
         user = User(
@@ -72,7 +72,7 @@ object UserService {
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),
           salt,
-          List()
+          Set()
         )
       } yield user
       user.flatTap(repo.create).map(_.id)

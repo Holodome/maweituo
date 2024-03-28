@@ -14,13 +14,13 @@ trait MessageService[F[_]] {
 }
 
 object MessageService {
-  def make[F[_]: MonadThrow: GenUUID](
+  def make[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
   )(implicit clock: Clock[F]): MessageService[F] =
     new MessageServiceInterpreter(msgRepo, iam)
 
-  private final class MessageServiceInterpreter[F[_]: MonadThrow: GenUUID](
+  private final class MessageServiceInterpreter[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
   )(implicit clock: Clock[F])
@@ -29,10 +29,8 @@ object MessageService {
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {
       iam.authorizeChatAccess(chatId, senderId) >> {
         for {
-          id  <- Id.make[F, MessageId]
           now <- clock.instant
           msg = Message(
-            id,
             senderId,
             chatId,
             req.text,

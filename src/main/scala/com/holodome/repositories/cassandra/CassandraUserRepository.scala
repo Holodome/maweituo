@@ -6,7 +6,7 @@ import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
-import com.holodome.ext.cassandra4io.typeMapperUuid._
+import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql._
 import com.ringcentral.cassandra4io.cql.Reads._
@@ -16,7 +16,7 @@ object CassandraUserRepository {
     new CassandraUserRepository(session)
 }
 
-final class CassandraUserRepository[F[_]: Async] private (session: CassandraSession[F])
+sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSession[F])
     extends UserRepository[F] {
 
   override def create(request: User): F[Unit] = createQuery(request).execute(session).void
@@ -42,7 +42,9 @@ final class CassandraUserRepository[F[_]: Async] private (session: CassandraSess
   private def createQuery(req: User) =
     cql"insert into local.users (id, name, email, password, salt, ads) " ++
       cql"values (${req.id.value}, ${req.name.value}, ${req.email.value}, " ++
-      cql"${req.hashedPassword.value}, ${req.salt.value}, ${req.ads})"
+      cql"${req.hashedPassword.value}, ${req.salt.value}, ${req.ads})".config(
+        _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+      )
 
   private def allQuery =
     cql"select id, name, email, password, salt, ads from local.users"

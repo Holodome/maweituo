@@ -29,8 +29,13 @@ object AppResources {
       }
 
     def checkCassandraConnection(cassandra: CassandraSession[F]): F[Unit] =
-      cql"select release_version from system.local".as[String].select(cassandra).head.compile.last flatMap {
-        version => Logger[F].info(s"Connected to cassandra $version")
+      cql"select release_version from system.local"
+        .as[String]
+        .select(cassandra)
+        .head
+        .compile
+        .last flatMap { version =>
+        Logger[F].info(s"Connected to cassandra $version")
       }
 
     def mkRedisResource(c: RedisConfig): Resource[F, RedisCommands[F, String, String]] =

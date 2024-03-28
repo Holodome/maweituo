@@ -24,7 +24,7 @@ object Config {
           host"0.0.0.0",
           port"8080"
         ),
-        CassandraConfig("maweituo"),
+        CassandraConfig(host"localhost", port"9042", "datacenter1", "maweituo"),
         JwtTokenExpiration(30.minutes),
         jwtAccessSecret,
         RedisConfig(RedisURI("redis://localhost"))

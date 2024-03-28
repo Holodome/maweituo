@@ -1,7 +1,6 @@
 package com.holodome.services
 
-import cats.{Applicative, Monad, MonadThrow}
-import cats.data.OptionT
+import cats.{Applicative, MonadThrow}
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.messages.{Chat, ChatId, InvalidChatId}

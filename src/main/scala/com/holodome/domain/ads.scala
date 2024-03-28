@@ -4,7 +4,7 @@ import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.queryParam
-import com.holodome.optics.uuid
+import com.holodome.optics.{cassandraReads, uuid}
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -16,7 +16,7 @@ import scala.util.Try
 import scala.util.control.NoStackTrace
 
 object ads {
-  @derive(decoder, encoder, uuid, eqv)
+  @derive(decoder, encoder, uuid, eqv, cassandraReads)
   @newtype case class AdId(value: UUID)
 
   @derive(decoder, encoder, eqv, show)

@@ -31,7 +31,7 @@ object Main extends IOApp.Simple {
                   services,
                   UserJwtAuth(JwtAuth.hmac(cfg.jwtAccessSecret.value.value, JwtAlgorithm.HS256))
                 )
-              } yield cfg.httpServerConfig -> api.httpApp
+              } yield cfg.httpServer -> api.httpApp
             }
             .flatMap { case (cfg, httpApp) =>
               MkHttpServer[IO]

@@ -1,6 +1,5 @@
 package com.holodome.utils.repositories
 
-import cats.Applicative
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all._

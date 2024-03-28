@@ -5,7 +5,7 @@ import com.holodome.domain.images.InvalidImageId
 import com.holodome.domain.messages.{ChatAccessForbidden, _}
 import com.holodome.domain.users.{InvalidAccess, UserId}
 import cats.syntax.all._
-import cats.{Applicative, Monad, MonadThrow}
+import cats.{Applicative, MonadThrow}
 import com.holodome.domain.images.{Image, ImageId}
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 

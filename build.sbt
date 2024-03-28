@@ -9,8 +9,6 @@ val CatsEffectVersion      = "3.3.12"
 val Log4CatsVersion        = "2.6.0"
 val Http4sVersion          = "0.23.1"
 val CirceVersion           = "0.14.1"
-val javaDriverVersion      = "4.9.0"
-val PhantomVersion         = "2.59.0"
 val DerevoVersion          = "0.12.8"
 val RefinedVersion         = "0.11.1"
 val EnumeratumVersion      = "1.7.3"
@@ -24,6 +22,7 @@ val Redis4CatsVersion      = "1.1.1"
 val CirceDerivationVersion = "0.13.0-M5"
 val WeaverVersion          = "0.8.4"
 val MinioVersion           = "8.5.9"
+val Cassandra4IoVersion    = "0.1.14"
 
 lazy val root = (project in file("."))
   .enablePlugins(JavaAppPackaging)
@@ -48,7 +47,6 @@ lazy val root = (project in file("."))
       "io.circe"            %% "circe-generic-extras"  % CirceVersion,
       "io.circe"            %% "circe-derivation"      % CirceDerivationVersion,
       "io.circe"            %% "circe-refined"         % CirceVersion,
-      "com.outworkers"      %% "phantom-dsl"           % PhantomVersion,
       "tf.tofu"             %% "derevo-core"           % DerevoVersion,
       "tf.tofu"             %% "derevo-circe"          % DerevoVersion,
       "tf.tofu"             %% "derevo-cats"           % DerevoVersion,
@@ -67,6 +65,7 @@ lazy val root = (project in file("."))
       "dev.profunktor"      %% "redis4cats-effects"    % Redis4CatsVersion,
       "dev.profunktor"      %% "redis4cats-log4cats"   % Redis4CatsVersion,
       "io.minio"             % "minio"                 % MinioVersion,
+      "com.ringcentral"     %% "cassandra4io"          % Cassandra4IoVersion,
       "com.disneystreaming" %% "weaver-cats"           % WeaverVersion   % Test,
       "com.disneystreaming" %% "weaver-discipline"     % WeaverVersion   % Test,
       "com.disneystreaming" %% "weaver-scalacheck"     % WeaverVersion   % Test,
@@ -74,7 +73,7 @@ lazy val root = (project in file("."))
       "org.typelevel"       %% "cats-laws"             % CatsVersion     % Test,
       "dev.optics"          %% "monocle-law"           % MonocleVersion  % Test,
       "eu.timepit"          %% "refined-scalacheck"    % RefinedVersion  % Test,
-      "org.mockito"         %% "mockito-scala-cats"               % "1.17.30"       % Test
+      "org.mockito"         %% "mockito-scala-cats"    % "1.17.30"       % Test
     )
   )
 

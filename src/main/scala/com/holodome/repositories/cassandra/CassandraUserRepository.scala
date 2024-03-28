@@ -2,52 +2,83 @@ package com.holodome.repositories.cassandra
 
 import cats.data.OptionT
 import cats.effect.Async
+import cats.syntax.all._
+import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.domain.users._
-import com.holodome.ext.catsInterop.liftFuture
-import com.holodome.repositories.cassandra.cql.UsersDatabase
 import com.holodome.repositories.UserRepository
-import com.outworkers.phantom.dsl._
+import com.holodome.ext.cassandra4io.typeMapperUuid._
+import com.ringcentral.cassandra4io.CassandraSession
+import com.ringcentral.cassandra4io.cql._
+import com.ringcentral.cassandra4io.cql.Reads._
 
 object CassandraUserRepository {
-  def make[F[_]: Async](db: UsersDatabase): UserRepository[F] =
-    new CassandraUserRepository(db)
+  def make[F[_]: Async](session: CassandraSession[F]): UserRepository[F] =
+    new CassandraUserRepository(session)
 }
 
-sealed class CassandraUserRepository[F[_]: Async] private (db: UsersDatabase)
+final class CassandraUserRepository[F[_]: Async] private (session: CassandraSession[F])
     extends UserRepository[F] {
-  import db.{session, space}
 
-  override def create(value: User): F[Unit] =
-    liftFuture(
-      db.users
-        .insert()
-        .value(_.id, value.id.value)()
-        .value(_.name, value.name.value)()
-        .value(_.email, value.email.value)()
-        .value(_.password, value.hashedPassword.value)()
-        .value(_.salt, value.salt.value)()
-        .future()
-        .map(_ => ())
-    )
+  override def create(request: User): F[Unit] = createQuery(request).execute(session).void
 
   override def all(): F[List[User]] =
-    liftFuture(db.users.select.all().fetch())
+    allQuery.select(session).compile.toList
 
   override def find(userId: UserId): OptionT[F, User] =
-    OptionT(
-      liftFuture(db.users.select.where(_.id eqs userId.value).one())
-    )
+    OptionT(findQuery(userId).select(session).head.compile.last)
 
   override def findByEmail(email: Email): OptionT[F, User] =
-    OptionT(
-      liftFuture(db.users.select.where(_.email eqs email.value).one())
-    )
+    OptionT(findByEmailQuery(email).select(session).head.compile.last)
 
   override def findByName(name: Username): OptionT[F, User] =
-    OptionT(liftFuture(db.users.select.where(_.name eqs name.value).one()))
+    OptionT(findByNameQuery(name).select(session).head.compile.last)
 
   override def delete(id: UserId): F[Unit] =
-    liftFuture(db.users.delete().where(_.id eqs id.value).future().map(_ => ()))
+    deleteQuery(id).execute(session).void
 
-  override def update(update: UpdateUserInternal): F[Unit] = ???
+  override def update(update: UpdateUserInternal): F[Unit] =
+    updateQuery(update).execute(session).void
+
+  private def createQuery(req: User) =
+    cql"insert into local.users (id, name, email, password, salt, ads) " ++
+      cql"values (${req.id.value}, ${req.name.value}, ${req.email.value}, " ++
+      cql"${req.hashedPassword.value}, ${req.salt.value}, ${req.ads})"
+
+  private def allQuery =
+    cql"select id, name, email, password, salt, ads from local.users"
+      .as[User]
+
+  private def findQuery(id: UserId) =
+    cql"select id, name, email, password, salt, ads from local.users where id = $id"
+      .as[User]
+
+  private def findByEmailQuery(email: Email) = {
+    val e = email.value
+    cql"select id, name, email, password, salt, ads from local.users where email = $e"
+      .as[User]
+  }
+
+  private def findByNameQuery(name: Username) = {
+    val n = name.value
+    cql"select id, name, email, password, hashed_password, salt, ads from local.users where name = $n"
+      .as[User]
+  }
+
+  private def deleteQuery(id: UserId) =
+    cql"delete from local.users where id = $id".config(
+      _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+    )
+
+  private def updateQuery(update: UpdateUserInternal) = {
+    val sets = List(
+      update.name.map(_.value).fold(cql"")(name => cql"name = $name "),
+      update.email.map(_.value).fold(cql"")(email => cql"email = $email "),
+      update.password.map(_.value).fold(cql"")(password => cql"password = $password ")
+    )
+    assert(sets.nonEmpty)
+    val id = update.id
+    (cql"update local.users set " ++ sets.reduce(_ ++ cql"," ++ _) ++ cql" where id = $id").config(
+      _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+    )
+  }
 }

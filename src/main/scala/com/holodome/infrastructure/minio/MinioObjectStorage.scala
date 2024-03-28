@@ -4,7 +4,7 @@ import cats.{Applicative, Monad}
 import cats.data.OptionT
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
-import com.holodome.ext.catsInterop.liftJavaFuture
+import com.holodome.ext.cats.liftJavaFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.minio.{GetObjectArgs, MinioAsyncClient, PutObjectArgs, RemoveObjectArgs}

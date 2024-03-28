@@ -1,6 +1,6 @@
-package com.holodome.ext.jwt
+package com.holodome.ext
 
-import cats.Show
+import _root_.cats.Show
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.EntityEncoder
 

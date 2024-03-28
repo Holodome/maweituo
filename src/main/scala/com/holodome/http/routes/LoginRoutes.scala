@@ -4,7 +4,7 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.users.{InvalidPassword, LoginRequest, NoUserFound}
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.ext.jwt.jwt._
+import com.holodome.ext.jwt._
 import com.holodome.services.AuthService
 import org.http4s.HttpRoutes
 import org.http4s.circe.JsonDecoder

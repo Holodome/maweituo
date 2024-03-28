@@ -1,7 +1,7 @@
 package com.holodome.domain
 
 import com.holodome.domain.ads.AdId
-import com.holodome.optics.uuid
+import com.holodome.optics.{cassandraReads, uuid}
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -12,24 +12,24 @@ import java.util.UUID
 import scala.util.control.NoStackTrace
 
 object users {
-  @derive(decoder, encoder, uuid, eqv, show)
+  @derive(decoder, encoder, uuid, eqv, show, cassandraReads)
   @newtype case class UserId(value: UUID)
 
-  @derive(decoder, encoder, show, eqv)
+  @derive(decoder, encoder, show, eqv, cassandraReads)
   @newtype case class Username(value: String)
 
-  @derive(decoder, encoder, eqv, show)
+  @derive(decoder, encoder, eqv, show, cassandraReads)
   @newtype case class Email(value: String)
 
   @derive(decoder, encoder, eqv, show)
   @newtype
   case class Password(value: String)
 
-  @derive(decoder, encoder, eqv)
+  @derive(decoder, encoder, eqv, cassandraReads)
   @newtype
   case class HashedSaltedPassword(value: String)
 
-  @derive(decoder, encoder, eqv)
+  @derive(decoder, encoder, eqv, cassandraReads)
   @newtype
   case class PasswordSalt(value: String)
 
@@ -58,6 +58,26 @@ object users {
       salt: PasswordSalt,
       ads: List[AdId]
   )
+
+  case class UserRaw(
+      id: UUID,
+      name: String,
+      email: String,
+      hashedPassword: String,
+      salt: String,
+      ads: List[UUID]
+  )
+
+  object UserRaw {
+    def toUser(raw: UserRaw): User = User(
+      UserId(raw.id),
+      Username(raw.name),
+      Email(raw.email),
+      HashedSaltedPassword(raw.hashedPassword),
+      PasswordSalt(raw.salt),
+      raw.ads.map(AdId.apply)
+    )
+  }
 
   @derive(encoder)
   case class UserPublicInfo(

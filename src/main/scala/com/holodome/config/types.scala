@@ -10,6 +10,7 @@ import enumeratum.EnumEntry.Lowercase
 import io.estatico.newtype.macros.newtype
 
 import scala.concurrent.duration.FiniteDuration
+import scala.util.control.NoStackTrace
 
 object types {
   @derive(configDecoder, show)
@@ -19,8 +20,7 @@ object types {
   @newtype case class RedisURI(value: String)
   @newtype case class RedisConfig(uri: RedisURI)
 
-  // Currently we support only local Cassandra installations with 1 server. OC this will be changed
-  case class CassandraConfig(keyspace: String)
+  case class CassandraConfig(host: Host, port: Port, datacenter: String, keyspace: String)
 
   case class HttpServerConfig(
       host: Host,
@@ -28,11 +28,11 @@ object types {
   )
 
   case class AppConfig(
-      httpServerConfig: HttpServerConfig,
-      cassandraConfig: CassandraConfig,
+      httpServer: HttpServerConfig,
+      cassandra: CassandraConfig,
       jwtTokenExpiration: JwtTokenExpiration,
       jwtAccessSecret: Secret[JwtAccessSecret],
-      redisConfig: RedisConfig
+      redis: RedisConfig
   )
 
   sealed abstract class AppEnvironment extends EnumEntry with Lowercase
@@ -43,5 +43,7 @@ object types {
 
     override def values: IndexedSeq[AppEnvironment] = findValues
   }
+
+  case class InvalidConfig()
 
 }

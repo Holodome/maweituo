@@ -13,7 +13,7 @@ import dev.profunktor.auth.jwt.JwtToken
 import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import com.holodome.ext.jwt.jwt.jwtTokenShow
+import com.holodome.ext.jwt.jwtTokenShow
 import com.holodome.utils.infrastructure.InMemoryEphemeralDict
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats

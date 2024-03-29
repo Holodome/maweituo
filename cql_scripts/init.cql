@@ -1,3 +1,4 @@
+drop keyspace if exists local;
 create keyspace local with replication = {'class':'SimpleStrategy', 'replication_factor':1};
 
 create table local.users (
@@ -31,8 +32,8 @@ create table local.messages (
     sender_id uuid,
     chat_id uuid,
     msg text,
-    at timestamp
-    primary key ((chat_id, at))
+    at timestamp,
+    primary key (chat_id, at)
 ) with clustering order by (at asc);
 
 create table local.images (

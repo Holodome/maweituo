@@ -13,10 +13,10 @@ import scala.concurrent.duration.DurationInt
 
 object HttpApi {
   def make[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth): HttpApi[F] =
-    new HttpApi[F](services, userJwtAuth) {}
+    new HttpApi[F](services, userJwtAuth)
 }
 
-sealed abstract class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth) {
+sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth) {
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 

@@ -57,7 +57,11 @@ object AppResources {
     def mkMinioResource(c: MinioConfig): Resource[F, MinioAsyncClient] =
       Resource.make[F, MinioAsyncClient](
         Sync[F].delay(
-          MinioAsyncClient.builder().endpoint(c.endpoint).credentials(c.userId, c.password).build()
+          MinioAsyncClient
+            .builder()
+            .endpoint(c.endpoint)
+            .credentials(c.userId.value.toString(), c.password.value.toString())
+            .build()
         )
       )(_ => Applicative[F].unit)
 

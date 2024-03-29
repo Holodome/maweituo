@@ -7,6 +7,7 @@ import derevo.cats.show
 import derevo.derive
 import enumeratum.{CirisEnum, Enum, EnumEntry}
 import enumeratum.EnumEntry.Lowercase
+import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
 
 import scala.concurrent.duration.FiniteDuration
@@ -21,7 +22,12 @@ object types {
   @newtype case class RedisConfig(uri: RedisURI)
 
   case class CassandraConfig(host: Host, port: Port, datacenter: String, keyspace: String)
-  case class MinioConfig(endpoint: String, userId: String, password: String, bucket: String)
+  case class MinioConfig(
+      endpoint: String,
+      userId: Secret[NonEmptyString],
+      password: Secret[NonEmptyString],
+      bucket: String
+  )
 
   case class HttpServerConfig(
       host: Host,

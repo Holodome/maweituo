@@ -29,7 +29,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests)
+  .aggregate(core, tests, it)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
@@ -85,6 +85,7 @@ lazy val tests = (project in file("modules/tests"))
   .dependsOn(core)
   .settings(
     name := "maweituo-tests",
+    publish / skip := true,
     scalacOptions ++= Seq(
       "-Ymacro-annotations",
       "-feature",
@@ -103,4 +104,11 @@ lazy val tests = (project in file("modules/tests"))
       "eu.timepit"          %% "refined-scalacheck" % RefinedVersion,
       "org.mockito"         %% "mockito-scala-cats" % MockitoVersion
     )
+  )
+
+lazy val it = (project in file("modules/it"))
+  .dependsOn(tests)
+  .settings(
+    name := "maweituo-it",
+    publish / skip := true,
   )

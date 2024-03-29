@@ -37,7 +37,7 @@ services:
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
-      - MINIO_DEFAULT_BUCKETS=maweituo
+      - MINIO_DEFAULT_BUCKETS=maweituo-test
 
 networks:
   backend:

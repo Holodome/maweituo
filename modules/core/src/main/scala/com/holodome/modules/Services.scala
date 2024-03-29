@@ -1,7 +1,7 @@
 package com.holodome.modules
 
 import cats.MonadThrow
-import cats.effect.{Async, Sync}
+import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.AppConfig
@@ -31,10 +31,13 @@ object Services {
       redis: RedisCommands[F, String, String],
       minio: MinioAsyncClient
   ): F[Services[F]] = {
-    JwtExpire
-      .make[F]
-      .map(JwtTokens.make[F](_, cfg.jwtAccessSecret.value, cfg.jwtTokenExpiration))
-      .map { tokens =>
+    (
+      JwtExpire
+        .make[F]
+        .map(JwtTokens.make[F](_, cfg.jwtAccessSecret.value, cfg.jwtTokenExpiration)),
+      MinioObjectStorage.make[F](minio, cfg.minio.bucket)
+    )
+      .mapN { case (tokens, imageStorage) =>
         new Services[F] {
           override val iam: IAMService[F] =
             IAMService.make[F](repositories.ads, repositories.chats, repositories.images)
@@ -62,7 +65,7 @@ object Services {
             ImageService.make[F](
               repositories.images,
               ads,
-              MinioObjectStorage.make[F](minio, cfg.minio.bucket),
+              imageStorage,
               iam
             )
         }

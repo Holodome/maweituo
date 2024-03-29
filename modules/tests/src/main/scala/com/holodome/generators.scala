@@ -4,6 +4,7 @@ import com.holodome.domain.users._
 import com.holodome.domain.ads._
 import com.holodome.domain.images._
 import com.holodome.domain.messages._
+import com.holodome.infrastructure.ObjectStorage.ObjectId
 import org.scalacheck.Gen
 
 import java.util.UUID
@@ -21,6 +22,9 @@ object generators {
     Gen
       .chooseNum(32, 64)
       .flatMap(Gen.listOfN(_, Gen.chooseNum(0, 255).map(_.byteValue)).map(_.toArray))
+
+  def bigByteArrayGen: Gen[Array[Byte]] =
+    Gen.listOfN(5 * 1024 * 1024 + 1, Gen.chooseNum(0, 255).map(_.byteValue)).map(_.toArray)
 
   def idGen[A](f: UUID => A): Gen[A] = Gen.uuid map f
 
@@ -73,4 +77,7 @@ object generators {
 
   def imageContentsGen: Gen[ImageContents] =
     byteArrayGen.map(ImageContents.apply)
+
+  def objectIdGen: Gen[ObjectId] =
+    nesGen(ObjectId.apply)
 }

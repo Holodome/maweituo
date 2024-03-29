@@ -3,6 +3,8 @@ package com.holodome.infrastructure
 import cats.data.OptionT
 import com.holodome.domain.images.ImageUrl
 import com.holodome.infrastructure.ObjectStorage.ObjectId
+import derevo.cats.show
+import derevo.derive
 import io.estatico.newtype.macros.newtype
 
 trait ObjectStorage[F[_]] {
@@ -12,6 +14,7 @@ trait ObjectStorage[F[_]] {
 }
 
 object ObjectStorage {
+  @derive(show)
   @newtype case class ObjectId(value: String)
 
   object ObjectId {

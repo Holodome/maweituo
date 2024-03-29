@@ -1,23 +1,58 @@
 package com.holodome.infrastructure.minio
 
-import cats.{Applicative, Monad}
+import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.holodome.ext.cats.liftJavaFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import io.minio.{GetObjectArgs, MinioAsyncClient, PutObjectArgs, RemoveObjectArgs}
+import io.minio.{
+  BucketExistsArgs,
+  GetObjectArgs,
+  MakeBucketArgs,
+  MinioAsyncClient,
+  PutObjectArgs,
+  RemoveObjectArgs
+}
+import io.minio.errors.ErrorResponseException
 import org.apache.commons.io.IOUtils
 
 import java.io.ByteArrayInputStream
+import java.util.concurrent.CompletionException
+import scala.util.control.NonFatal
 
 object MinioObjectStorage {
-  def make[F[_]: Async: Monad](client: MinioAsyncClient, bucket: String): MinioObjectStorage[F] =
-    new MinioObjectStorage(client, bucket)
+  def make[F[_]: Async: MonadThrow](
+      client: MinioAsyncClient,
+      bucket: String
+  ): F[MinioObjectStorage[F]] =
+    ensureBucketIsCreated(client, bucket).map(_ => new MinioObjectStorage(client, bucket))
+
+  private def ensureBucketIsCreated[F[_]: Async: Monad](
+      minio: MinioAsyncClient,
+      bucket: String
+  ): F[Unit] = {
+    liftJavaFuture(
+      minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())
+    ).map(scala.Boolean.unbox)
+      .flatMap {
+        case true => Applicative[F].unit
+        case false =>
+          liftJavaFuture(
+            minio.makeBucket(
+              MakeBucketArgs
+                .builder()
+                .bucket(bucket)
+                .build()
+            )
+          ).map(_ => ())
+      }
+  }
+
 }
 
-final class MinioObjectStorage[F[_]: Async: Monad] private (
+final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
     client: MinioAsyncClient,
     bucket: String
 ) extends ObjectStorage[F] {
@@ -37,7 +72,7 @@ final class MinioObjectStorage[F[_]: Async: Monad] private (
               .bucket(bucket)
               .`object`(id.value)
               .contentType("binary/octet-stream")
-              .stream(bais, bais.available(), 1)
+              .stream(bais, bais.available(), -1)
               .build()
           )
       }.map(_ => ())
@@ -49,6 +84,10 @@ final class MinioObjectStorage[F[_]: Async: Monad] private (
       liftJavaFuture(
         client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
       ).map(IOUtils.toByteArray(_).some)
+        .recoverWith {
+          case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
+            Applicative[F].pure(None)
+        }
     )
 
   override def delete(id: ObjectId): F[Unit] =

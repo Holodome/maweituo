@@ -11,5 +11,5 @@ object cats {
     Async[F].fromFuture(Sync[F].delay(r))
 
   def liftJavaFuture[F[_]: Async, R](r: => CompletableFuture[R]): F[R] =
-    liftFuture(r.asScala)
+    Async[F].fromCompletableFuture(Sync[F].delay(r))
 }

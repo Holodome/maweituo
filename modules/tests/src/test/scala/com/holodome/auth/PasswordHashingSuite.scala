@@ -1,0 +1,20 @@
+package com.holodome.auth
+
+import cats.effect.IO
+import com.holodome.auth.PasswordHashing.{genSalt, hashSaltPassword}
+import weaver.SimpleIOSuite
+import weaver.scalacheck.Checkers
+import cats.syntax.all._
+import com.holodome.generators.passwordGen
+
+object PasswordHashingSuite extends SimpleIOSuite with Checkers {
+
+  test("basic usage") {
+    forall(passwordGen) { password =>
+      for {
+        salt <- genSalt[IO]
+        hashedSalted = hashSaltPassword(password, salt)
+      } yield expect.all(hashedSalted === hashSaltPassword(password, salt))
+    }
+  }
+}

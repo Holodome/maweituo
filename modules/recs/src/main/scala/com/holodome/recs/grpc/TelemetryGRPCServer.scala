@@ -1,4 +1,4 @@
-package com.holodome.grpc
+package com.holodome.recs.grpc
 
 import cats.Monad
 import com.holodome.effects.GenUUID
@@ -8,38 +8,39 @@ import cats.effect.Temporal
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
-import com.holodome.services.TelemetryService
+import com.holodome.proto
+import com.holodome.recs.services.TelemetryService
 import org.http4s.{Headers, HttpRoutes}
 
 object TelemetryGRPCServer {
   def make[F[_]: GenUUID: Temporal](service: TelemetryService[F]): HttpRoutes[F] =
-    rec.TelemetryService.toRoutes(new TelemetryGRPCServer(service))
+    proto.rec.TelemetryService.toRoutes(new TelemetryGRPCServer(service))
 }
 
 private final class TelemetryGRPCServer[F[_]: Monad: GenUUID](service: TelemetryService[F])
-    extends rec.TelemetryService[F] {
+    extends proto.rec.TelemetryService[F] {
 
-  override def userClicked(request: rec.UserAdAction, ctx: Headers): F[rec.Empty] =
+  override def userClicked(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
     act(request)(service.userClicked)
 
-  override def userBought(request: rec.UserAdAction, ctx: Headers): F[rec.Empty] =
+  override def userBought(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
     act(request)(service.userBought)
 
-  override def userDiscussed(request: rec.UserAdAction, ctx: Headers): F[rec.Empty] =
+  override def userDiscussed(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
     act(request)(service.userDiscussed)
 
-  private def act(request: rec.UserAdAction)(f: (UserId, AdId) => F[Unit]): F[rec.Empty] =
+  private def act(request: proto.rec.UserAdAction)(f: (UserId, AdId) => F[Unit]): F[proto.rec.Empty] =
     userAdActionToDomain(request)
       .flatMap { case (userId, adId) =>
         f(userId, adId)
       }
-      .map(_ => rec.Empty())
+      .map(_ => proto.rec.Empty())
 
-  private def userAdActionToDomain(request: rec.UserAdAction): F[(UserId, AdId)] =
+  private def userAdActionToDomain(request: proto.rec.UserAdAction): F[(UserId, AdId)] =
     OptionT
       .fromOption((request.user.map(_.value), request.ad.map(_.value)).tupled)
-      .getOrElse(rec.Empty())
-      .flatMap { case (u: rec.UUID, a: rec.UUID) =>
+      .getOrElse(proto.rec.Empty())
+      .flatMap { case (u: proto.rec.UUID, a: proto.rec.UUID) =>
         for {
           userId <- Id.read[F, UserId](u.value)
           adId   <- Id.read[F, AdId](a.value)

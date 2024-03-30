@@ -1,4 +1,4 @@
-package com.holodome.rec
+package com.holodome.recs.algo
 
 import com.holodome.domain.users.UserId
 

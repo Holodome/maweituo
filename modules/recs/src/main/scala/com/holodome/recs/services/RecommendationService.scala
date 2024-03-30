@@ -1,11 +1,11 @@
-package com.holodome.services
+package com.holodome.recs.services
 
-import cats.syntax.all._
 import cats.{Applicative, MonadThrow}
 import cats.effect.std.Random
+import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
-import com.holodome.rec.RecommendationAlgorithm
+import com.holodome.recs.algo.RecommendationAlgorithm
 import com.holodome.repositories.TelemetryRepository
 
 trait RecommendationService[F[_]] {

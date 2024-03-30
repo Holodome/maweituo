@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package rec;
+
+option java_package = "com.holodome.proto";
+
+message Empty {}
+
+message UUID {
+  string value = 1;
+}
+
+message UserId {
+  UUID value = 1;
+}
+
+message AdId {
+  UUID value = 1;
+}
+
+message Recommendations {
+  repeated AdId ads = 1;
+}
+
+message UserAdAction {
+  UserId user = 1;
+  AdId ad = 2;
+}
+
+service RecommendationService {
+  rpc learn(Empty) returns (Empty) {}
+  rpc getRecs(UserId) returns (Recommendations) {}
+}
+
+service TelemetryService {
+  rpc userClicked(UserAdAction) returns (Empty) {}
+  rpc userBought(UserAdAction) returns (Empty) {}
+  rpc userDiscussed(UserAdAction) returns (Empty) {}
+}

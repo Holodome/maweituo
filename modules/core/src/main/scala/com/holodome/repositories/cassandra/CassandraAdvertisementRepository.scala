@@ -14,8 +14,6 @@ import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.ringcentral.cassandra4io.cql.Reads._
 
-import java.util.UUID
-
 object CassandraAdvertisementRepository {
   def make[F[_]: Async](session: CassandraSession[F]): AdvertisementRepository[F] =
     new CassandraAdvertisementRepository(session)
@@ -36,9 +34,9 @@ sealed class CassandraAdvertisementRepository[F[_]: Async] private (session: Cas
       Advertisement(
         id,
         title,
-        tags.fold(Set[AdTag]())(s => s),
-        images.fold(Set[ImageId]())(s => s),
-        chats.fold(Set[ChatId]())(s => s),
+        tags.getOrElse(Set()),
+        images.getOrElse(Set()),
+        chats.getOrElse(Set()),
         authorId
       )
   }

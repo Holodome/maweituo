@@ -1,2 +1,3 @@
-addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.12")
-addSbtPlugin("org.scalameta"  % "sbt-scalafmt"        % "2.4.6")
+addSbtPlugin("com.github.sbt"    % "sbt-native-packager" % "1.9.12")
+addSbtPlugin("org.scalameta"     % "sbt-scalafmt"        % "2.4.6")
+addSbtPlugin("io.chrisdavenport" % "sbt-http4s-grpc"     % "0.0.1")

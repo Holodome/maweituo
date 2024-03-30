@@ -14,9 +14,9 @@ object CassandraAdvertisementRepositorySuite extends CassandraSuite {
       val repo = CassandraAdvertisementRepository.make[IO](cassandra)
       for {
         _ <- repo.create(ad)
-//        a <- repo.find(ad.id).getOrRaise(InvalidAdId(ad.id))
-//        _ <- repo.delete(ad.id)
-      } yield expect.all(true /*a.id === ad.id, a.authorId === ad.authorId, a.title === ad.title*/ )
+        a <- repo.find(ad.id).getOrRaise(InvalidAdId(ad.id))
+        _ <- repo.delete(ad.id)
+      } yield expect.all(a.id === ad.id, a.authorId === ad.authorId, a.title === ad.title)
     }
   }
 }

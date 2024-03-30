@@ -13,6 +13,7 @@ import com.ringcentral.cassandra4io.CassandraSession
 import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.ringcentral.cassandra4io.cql.Reads._
+import com.holodome.cql.codecs._
 
 object CassandraAdvertisementRepository {
   def make[F[_]: Async](session: CassandraSession[F]): AdvertisementRepository[F] =

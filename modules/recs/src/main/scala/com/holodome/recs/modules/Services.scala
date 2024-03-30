@@ -2,7 +2,6 @@ package com.holodome.recs.modules
 
 import cats.syntax.all._
 import cats.effect.std.Random
-import cats.Monad
 import cats.effect.Sync
 import com.holodome.recs.services.{RecommendationService, TelemetryService}
 

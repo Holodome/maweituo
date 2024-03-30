@@ -4,13 +4,13 @@ import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
-import com.holodome.domain.ads.AdId
 import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
 import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql._
 import com.ringcentral.cassandra4io.cql.Reads._
+import com.holodome.cql.codecs._
 
 object CassandraUserRepository {
   def make[F[_]: Async](session: CassandraSession[F]): UserRepository[F] =

@@ -7,7 +7,7 @@ import com.holodome.domain.images._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.effects.GenUUID
-import com.holodome.infrastructure.{ObjectStorage, ObjectStorageIdGen}
+import com.holodome.infrastructure.{ObjectStorage, GenObjectStorageId}
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.repositories.ImageRepository
 
@@ -18,14 +18,14 @@ trait ImageService[F[_]] {
 }
 
 object ImageService {
-  def make[F[_]: MonadThrow: GenUUID](
+  def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID](
       imageRepo: ImageRepository[F],
       adService: AdvertisementService[F],
       objectStorage: ObjectStorage[F],
       iam: IAMService[F]
   ): ImageService[F] = new ImageServiceInterpreter(imageRepo, adService, objectStorage, iam)
 
-  private final class ImageServiceInterpreter[F[_]: MonadThrow: GenUUID](
+  private final class ImageServiceInterpreter[F[_]: MonadThrow: GenObjectStorageId: GenUUID](
       imageRepo: ImageRepository[F],
       adService: AdvertisementService[F],
       objectStorage: ObjectStorage[F],
@@ -38,7 +38,7 @@ object ImageService {
         contents: ImageContents
     ): F[ImageId] =
       for {
-        objectId <- ObjectStorageIdGen.make
+        objectId <- GenObjectStorageId[F].make
         _        <- objectStorage.put(objectId, contents.value)
         imageId  <- Id.make[F, ImageId]
         image = Image(

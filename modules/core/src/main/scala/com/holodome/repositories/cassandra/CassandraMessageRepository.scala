@@ -7,6 +7,7 @@ import com.holodome.domain.messages.{ChatId, Message}
 import com.holodome.repositories.MessageRepository
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.ringcentral.cassandra4io.CassandraSession
+import com.holodome.cql.codecs._
 
 object CassandraMessageRepository {
   def make[F[_]: Async](session: CassandraSession[F]): MessageRepository[F] =

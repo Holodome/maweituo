@@ -7,6 +7,7 @@ import com.holodome.domain.images._
 import com.holodome.repositories.ImageRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
+import com.holodome.cql.codecs._
 
 object CassandraImageRepository {
   def make[F[_]: Async](session: CassandraSession[F]): ImageRepository[F] =

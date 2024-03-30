@@ -1,6 +1,5 @@
 package com.holodome.recs
 
-import cats.syntax.all._
 import cats.effect.{IO, IOApp}
 import cats.effect.std.Supervisor
 import com.holodome.recs.config.Config

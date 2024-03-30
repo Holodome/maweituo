@@ -8,14 +8,13 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.circe.{Encoder, Json}
 import io.estatico.newtype.macros.newtype
-import com.holodome.optics.cassandraReads
 
 import java.time.Instant
 import java.util.UUID
 import scala.util.control.NoStackTrace
 
 object messages {
-  @derive(uuidIso, encoder, decoder, eqv, cassandraReads)
+  @derive(uuidIso, encoder, decoder, eqv)
   @newtype case class ChatId(id: UUID)
 
   case class Chat(
@@ -25,7 +24,7 @@ object messages {
       client: UserId
   )
 
-  @derive(encoder, decoder, show, eqv, cassandraReads)
+  @derive(encoder, decoder, show, eqv)
   @newtype case class MessageText(value: String)
 
   case class InvalidChatId()       extends NoStackTrace

@@ -13,13 +13,7 @@ import scala.concurrent.duration.DurationInt
 
 object Config {
   def load[F[_]: Async]: F[AppConfig] =
-    env("MW_APP_ENV")
-      .as[AppEnvironment]
-      .flatMap {
-        case AppEnvironment.Test => default[F]
-        case AppEnvironment.Prod => ???
-      }
-      .load[F]
+    default[F].load[F]
 
   private def default[F[_]]: ConfigValue[F, AppConfig] = {
     (

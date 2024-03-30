@@ -34,6 +34,11 @@ object types {
       port: Port
   )
 
+  case class HttpClientConfig(
+      timeout: FiniteDuration,
+      idleTimeInPool: FiniteDuration
+  )
+
   case class AppConfig(
       httpServer: HttpServerConfig,
       cassandra: CassandraConfig,
@@ -42,16 +47,4 @@ object types {
       redis: RedisConfig,
       minio: MinioConfig
   )
-
-  sealed abstract class AppEnvironment extends EnumEntry with Lowercase
-
-  object AppEnvironment extends Enum[AppEnvironment] with CirisEnum[AppEnvironment] {
-    case object Test extends AppEnvironment
-    case object Prod extends AppEnvironment
-
-    override def values: IndexedSeq[AppEnvironment] = findValues
-  }
-
-  case class InvalidConfig()
-
 }

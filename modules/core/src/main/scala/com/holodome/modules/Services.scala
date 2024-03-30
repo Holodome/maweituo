@@ -14,7 +14,7 @@ import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient
 
-sealed abstract class Services[F[_]] private {
+sealed abstract class Services[F[_]] {
   val iam: IAMService[F]
   val users: UserService[F]
   val auth: AuthService[F]

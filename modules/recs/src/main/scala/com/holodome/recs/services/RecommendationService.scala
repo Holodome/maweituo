@@ -14,11 +14,17 @@ trait RecommendationService[F[_]] {
 }
 
 object RecommendationService {
+  def make[F[_]: MonadThrow](
+      closestUsersFinder: RecommendationAlgorithm[F],
+      telemetryRepository: TelemetryRepository[F]
+  )(implicit rng: Random[F]): RecommendationService[F] =
+    new RecommendationServiceInterpreter(closestUsersFinder, telemetryRepository)
+
   private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
       closestUsersFinder: RecommendationAlgorithm[F],
-      telemetryRepository: TelemetryRepository[F],
-      rng: Random[F]
-  ) extends RecommendationService[F] {
+      telemetryRepository: TelemetryRepository[F]
+  )(implicit rng: Random[F])
+      extends RecommendationService[F] {
     override def getRecs(user: UserId, count: Int): F[List[AdId]] = {
       collaborativeRecs(user, count)
         .flatMap {
@@ -28,8 +34,6 @@ object RecommendationService {
         }
         .map(_.toList)
     }
-
-    private def contentRecs(user: UserId, count: Int): F[Set[AdId]] = Applicative[F].pure(Set())
 
     private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] =
       closestUsersFinder
@@ -53,6 +57,8 @@ object RecommendationService {
           rng.elementOf(ads)
         }
     }
+
+    private def contentRecs(user: UserId, count: Int): F[Set[AdId]] = ???
 
     override def learn(): F[Unit] = ???
   }

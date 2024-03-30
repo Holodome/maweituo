@@ -86,7 +86,7 @@ lazy val core = (project in file("modules/core"))
       "com.thesamet.scalapb" %% "scalapb-runtime-grpc"  % scalapb.compiler.Version.scalapbVersion
     ),
     Compile / PB.protoSources += file("proto"),
-    Compile / PB.targets := Seq(
+    Compile / PB.targets ++= Seq(
       scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb"
     )
   )

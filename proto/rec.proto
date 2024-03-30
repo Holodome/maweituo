@@ -1,8 +1,6 @@
 syntax = "proto3";
 
-package rec;
-
-option java_package = "com.holodome.proto";
+package com.holodome.grpc;
 
 message Empty {}
 

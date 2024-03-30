@@ -1,7 +1,7 @@
 package com.holodome.services
 
 import cats.syntax.all._
-import cats.{Applicative, Functor, Monad, MonadThrow, Traverse}
+import cats.{Applicative, MonadThrow}
 import cats.effect.std.Random
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
@@ -10,6 +10,7 @@ import com.holodome.repositories.TelemetryRepository
 
 trait RecommendationService[F[_]] {
   def getRecs(user: UserId, count: Int): F[List[AdId]]
+  def learn(): F[Unit]
 }
 
 object RecommendationService {
@@ -52,5 +53,7 @@ object RecommendationService {
           rng.elementOf(ads)
         }
     }
+
+    override def learn(): F[Unit] = ???
   }
 }

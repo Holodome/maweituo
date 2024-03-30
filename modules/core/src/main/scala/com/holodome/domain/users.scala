@@ -1,6 +1,5 @@
 package com.holodome.domain
 
-import com.holodome.domain.ads.AdId
 import com.holodome.optics.{cassandraReads, uuidIso}
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
@@ -55,21 +54,19 @@ object users {
       name: Username,
       email: Email,
       hashedPassword: HashedSaltedPassword,
-      salt: PasswordSalt,
-      ads: Set[AdId]
+      salt: PasswordSalt
   )
 
   @derive(encoder)
   case class UserPublicInfo(
       id: UserId,
       name: Username,
-      email: Email,
-      ads: Set[AdId]
+      email: Email
   )
 
   object UserPublicInfo {
     def fromUser(user: User): UserPublicInfo =
-      UserPublicInfo(user.id, user.name, user.email, user.ads)
+      UserPublicInfo(user.id, user.name, user.email)
   }
 
   case class AuthedUser(id: UserId)

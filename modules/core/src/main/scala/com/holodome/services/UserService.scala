@@ -74,8 +74,7 @@ object UserService {
           body.name,
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),
-          salt,
-          Set()
+          salt
         )
       } yield user
       user.flatTap(repo.create).map(_.id)

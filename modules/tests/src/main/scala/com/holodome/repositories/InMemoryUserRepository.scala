@@ -38,8 +38,7 @@ final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F] {
           update.name.getOrElse(value.name),
           update.email.getOrElse(value.email),
           update.password.getOrElse(value.hashedPassword),
-          value.salt,
-          value.ads
+          value.salt
         )
         map.addOne(value.id -> newUser)
       }

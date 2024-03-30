@@ -7,19 +7,11 @@ import cats.syntax.all._
 import com.holodome.ext.cats.liftJavaFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import io.minio.{
-  BucketExistsArgs,
-  GetObjectArgs,
-  MakeBucketArgs,
-  MinioAsyncClient,
-  PutObjectArgs,
-  RemoveObjectArgs
-}
+import io.minio._
 import io.minio.errors.ErrorResponseException
-import org.apache.commons.io.IOUtils
+import _root_.org.apache.commons.io.IOUtils
 
 import java.io.ByteArrayInputStream
-import java.util.concurrent.CompletionException
 import scala.util.control.NonFatal
 
 object MinioObjectStorage {

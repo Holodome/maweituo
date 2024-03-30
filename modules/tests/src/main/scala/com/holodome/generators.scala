@@ -1,5 +1,6 @@
 package com.holodome
 
+import com.holodome.auth.PasswordHashing
 import com.holodome.domain.users._
 import com.holodome.domain.ads._
 import com.holodome.domain.images._
@@ -7,6 +8,7 @@ import com.holodome.domain.messages._
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import org.scalacheck.Gen
 
+import java.time.Instant
 import java.util.UUID
 
 object generators {
@@ -36,6 +38,9 @@ object generators {
   def passwordGen: Gen[Password] =
     nesGen(Password.apply)
 
+  def saltGen: Gen[PasswordSalt] =
+    nesGen(PasswordSalt.apply)
+
   def emailGen: Gen[Email] =
     for {
       prefix  <- nonEmptyStringGen
@@ -64,6 +69,9 @@ object generators {
       title <- adTitleGen
     } yield CreateAdRequest(title)
 
+  def adIdGen: Gen[AdId] =
+    idGen(AdId.apply)
+
   def imageIdGen: Gen[ImageId] =
     idGen(ImageId.apply)
 
@@ -80,4 +88,34 @@ object generators {
 
   def objectIdGen: Gen[ObjectId] =
     nesGen(ObjectId.apply)
+
+  def userGen: Gen[User] =
+    for {
+      id       <- userIdGen
+      name     <- usernameGen
+      email    <- emailGen
+      password <- passwordGen
+      salt     <- saltGen
+      hashedPassword = PasswordHashing.hashSaltPassword(password, salt)
+    } yield User(id, name, email, hashedPassword, salt)
+
+  def createAdGen: Gen[Advertisement] =
+    for {
+      id     <- adIdGen
+      title  <- adTitleGen
+      author <- userIdGen
+    } yield Advertisement(id, title, Set(), Set(), Set(), author)
+
+  def chatIdGen: Gen[ChatId] =
+    idGen(ChatId.apply)
+
+  private val minInstantSeconds: Long = 0L
+  private val maxInstantSeconds: Long = 1893456000L
+
+  def instantGen: Gen[Instant] = for {
+    seconds        <- Gen.choose(minInstantSeconds, maxInstantSeconds)
+    nanoAdjustment <- Gen.choose(0L, 999_999_999L)
+  } yield Instant.ofEpochSecond(seconds, nanoAdjustment)
+
+  def imageUrlGen: Gen[ImageUrl] = nesGen(ImageUrl.apply)
 }

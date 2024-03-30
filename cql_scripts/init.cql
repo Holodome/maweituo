@@ -7,9 +7,6 @@ create table local.users (
     name text,
     password text,
     salt text,
-    created_at timestamp,
-    updated_at text,
-    ads list<uuid>
 );
 
 create table local.advertisements (

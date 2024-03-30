@@ -14,10 +14,10 @@ import scala.util.Try
 import scala.util.control.NoStackTrace
 
 object images {
-  @derive(uuidIso, encoder, decoder, show, cassandraReads)
+  @derive(uuidIso, encoder, decoder, show, cassandraReads, eqv)
   @newtype case class ImageId(id: UUID)
 
-  @derive(encoder, decoder, cassandraReads)
+  @derive(encoder, decoder, cassandraReads, eqv)
   @newtype case class ImageUrl(value: String)
 
   @newtype case class ImageContents(value: Array[Byte])

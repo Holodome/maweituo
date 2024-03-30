@@ -4,6 +4,7 @@ import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
+import com.holodome.domain.ads.AdId
 import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
 import com.holodome.ext.cassandra4io.typeMappers._
@@ -40,34 +41,35 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
     updateQuery(update).execute(session).void
 
   private def createQuery(req: User) =
-    cql"insert into local.users (id, name, email, password, salt, ads) " ++
-      cql"values (${req.id.value}, ${req.name.value}, ${req.email.value}, " ++
-      cql"${req.hashedPassword.value}, ${req.salt.value}, ${req.ads})".config(
+    cql"""insert into users (id, name, email, password, salt) values
+         |(${req.id}, ${req.name.value}, ${req.email.value},
+         |${req.hashedPassword.value}, ${req.salt.value})""".stripMargin
+      .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
       )
 
   private def allQuery =
-    cql"select id, name, email, password, salt, ads from local.users"
+    cql"select id, name, email, password, salt from users"
       .as[User]
 
   private def findQuery(id: UserId) =
-    cql"select id, name, email, password, salt, ads from local.users where id = $id"
+    cql"select id, name, email, password, salt from users where id = $id"
       .as[User]
 
   private def findByEmailQuery(email: Email) = {
     val e = email.value
-    cql"select id, name, email, password, salt, ads from local.users where email = $e"
+    cql"select id, name, email, password, salt from users where email = $e"
       .as[User]
   }
 
   private def findByNameQuery(name: Username) = {
     val n = name.value
-    cql"select id, name, email, password, hashed_password, salt, ads from local.users where name = $n"
+    cql"select id, name, email, password, hashed_password, salt from users where name = $n"
       .as[User]
   }
 
   private def deleteQuery(id: UserId) =
-    cql"delete from local.users where id = $id".config(
+    cql"delete from users where id = $id".config(
       _.setConsistencyLevel(ConsistencyLevel.QUORUM)
     )
 
@@ -79,7 +81,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
     )
     assert(sets.nonEmpty)
     val id = update.id
-    (cql"update local.users set " ++ sets.reduce(_ ++ cql"," ++ _) ++ cql" where id = $id").config(
+    (cql"update users set " ++ sets.reduce(_ ++ cql"," ++ _) ++ cql" where id = $id").config(
       _.setConsistencyLevel(ConsistencyLevel.QUORUM)
     )
   }

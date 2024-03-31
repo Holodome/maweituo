@@ -1,8 +1,8 @@
 package com.holodome.recs.modules
 
 import cats.syntax.all._
-import cats.effect.std.Random
 import cats.effect.Sync
+import com.holodome.effects.MkRandom
 import com.holodome.recs.services.{RecommendationService, TelemetryService}
 
 sealed abstract class Services[F[_]] {
@@ -12,12 +12,13 @@ sealed abstract class Services[F[_]] {
 
 object Services {
 
-  def make[F[_]: Sync]: F[Services[F]] = {
-    Random.javaUtilRandom[F](new java.util.Random).map { implicit rng =>
+  def make[F[_]: Sync: MkRandom](repositories: Repositories[F]): F[Services[F]] = {
+    MkRandom[F].make.map { implicit rng =>
       new Services[F] {
-        override val telemetry: TelemetryService[F] = TelemetryService.make[F]
+        override val telemetry: TelemetryService[F] =
+          TelemetryService.make[F](repositories.telemetry)
         override val recs: RecommendationService[F] =
-          RecommendationService.make[F](???, ???, ???, ???)
+          RecommendationService.make[F](???, repositories.recs, ???)
       }
     }
   }

@@ -3,7 +3,7 @@ package com.holodome.recs
 import cats.effect.{IO, IOApp}
 import cats.effect.std.Supervisor
 import com.holodome.recs.config.Config
-import com.holodome.recs.modules.{GRPCApi, Services}
+import com.holodome.recs.modules.{GRPCApi, Repositories, Services}
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer
 import org.typelevel.log4cats.Logger
@@ -20,8 +20,9 @@ object Main extends IOApp.Simple {
           RecsResources
             .make[IO](cfg)
             .evalMap { res =>
+              val repositories = Repositories.make[IO](res.cassandra)
               for {
-                services <- Services.make[IO]
+                services <- Services.make[IO](repositories)
                 api = GRPCApi.make[IO](services)
               } yield cfg.grpc -> api.httpApp
             }

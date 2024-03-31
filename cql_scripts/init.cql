@@ -38,3 +38,51 @@ create table local.images (
     ad_id uuid,
     url text
 );
+
+drop keyspace if exists rec;
+create keyspace rec with replication = {'class':'SimpleStrategy', 'replication_factor':1};
+
+create table rec.user_bought_transactional (
+    id uuid primary key,
+    ad uuid
+);
+
+create table rec.user_clicked_transactional (
+    id uuid primary key,
+    ad uuid
+);
+
+create table rec.user_discussed_transactional (
+    id uuid primary key,
+    ad uuid
+);
+
+create table rec.user_bought_snapshot (
+    id uuid primary key,
+    ads frozen<set<uuid>>
+);
+
+create table rec.user_clicked_snapshot (
+    id uuid primary key,
+    ads frozen<set<uuid>>
+);
+
+create table rec.user_discussed_snapshot (
+    id uuid primary key,
+    ads frozen<set<uuid>>
+);
+
+create table rec.user_weights (
+    id uuid primary key,
+    weights frozen<list<float>>
+);
+
+create table rec.tags (
+    index int primary key,
+    tag text
+);
+
+create table rec.ads_snapshot (
+    tag text primary key,
+    ads frozen<list<uuid>>
+);

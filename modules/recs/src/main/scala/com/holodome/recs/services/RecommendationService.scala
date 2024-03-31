@@ -18,15 +18,13 @@ trait RecommendationService[F[_]] {
 object RecommendationService {
   def make[F[_]: MonadThrow](
       algo: RecommendationAlgorithm[F],
-      telemetryRepository: TelemetryRepository[F],
       recRepo: RecRepository[F],
       etl: RecETL[F]
   )(implicit rng: Random[F]): RecommendationService[F] =
-    new RecommendationServiceInterpreter(algo, telemetryRepository, recRepo, etl)
+    new RecommendationServiceInterpreter(algo, recRepo, etl)
 
   private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
       algo: RecommendationAlgorithm[F],
-      telemetryRepo: TelemetryRepository[F],
       recRepo: RecRepository[F],
       etl: RecETL[F]
   )(implicit rng: Random[F])
@@ -47,21 +45,19 @@ object RecommendationService {
         .flatMap { closest =>
           List(0 until count)
             .traverse(_ => rng.elementOf(closest))
-            .flatMap(_.traverse(generateRecommendationBasedOnUser))
+            .flatMap(_.traverse(u => generateRecommendationBasedOnUser(u).value).map(_.flatten))
         }
         .map(_.toSet)
 
-    private def generateRecommendationBasedOnUser(target: UserId): F[AdId] = {
-      rng
-        .betweenDouble(0, 1)
+    private def generateRecommendationBasedOnUser(target: UserId): OptionT[F, AdId] = {
+      OptionT
+        .liftF(rng.betweenDouble(0, 1))
         .flatMap {
-          case x if 0.0 <= x && x <= 0.1 => telemetryRepo.getUserClicked(target)
-          case x if 0.1 < x && x <= 0.4  => telemetryRepo.getUserDiscussed(target)
-          case _                         => telemetryRepo.getUserBought(target)
+          case x if 0.0 <= x && x <= 0.1 => recRepo.getUserClicked(target)
+          case x if 0.1 < x && x <= 0.4  => recRepo.getUserDiscussed(target)
+          case _                         => recRepo.getUserBought(target)
         }
-        .flatMap { ads =>
-          rng.elementOf(ads)
-        }
+        .flatMap(ads => OptionT.liftF(rng.elementOf(ads)))
     }
 
     private def contentRecs(user: UserId, count: Int): F[Set[AdId]] =
@@ -83,7 +79,8 @@ object RecommendationService {
           r <- OptionT.liftF(rng.betweenDouble(low, high))
           idx = values.takeWhile_(v => v < r).length
           tag <- recRepo.getTagByIdx(idx)
-          ad  <- OptionT.liftF(recRepo.getAdsByTag(tag, 10) >>= rng.elementOf)
+          ads <- recRepo.getAdsByTag(tag)
+          ad  <- OptionT.liftF(rng.elementOf(ads))
         } yield ad
       }
 

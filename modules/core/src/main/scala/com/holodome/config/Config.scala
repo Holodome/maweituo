@@ -2,12 +2,12 @@ package com.holodome.config
 
 import cats.effect.Async
 import cats.syntax.all._
-import ciris.refined._
 import ciris._
+import ciris.refined._
 import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types._
-import eu.timepit.refined.types.string.NonEmptyString
 import eu.timepit.refined.cats._
+import eu.timepit.refined.types.string.NonEmptyString
 
 import scala.concurrent.duration.DurationInt
 

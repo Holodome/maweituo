@@ -5,13 +5,9 @@ import com.comcast.ip4s.{Host, Port}
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
-import enumeratum.{CirisEnum, Enum, EnumEntry}
-import enumeratum.EnumEntry.Lowercase
 import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
-
 import scala.concurrent.duration.FiniteDuration
-import scala.util.control.NoStackTrace
 
 object types {
   @derive(configDecoder, show)

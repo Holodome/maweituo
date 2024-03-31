@@ -16,7 +16,8 @@ object Services {
     Random.javaUtilRandom[F](new java.util.Random).map { implicit rng =>
       new Services[F] {
         override val telemetry: TelemetryService[F] = TelemetryService.make[F]
-        override val recs: RecommendationService[F] = RecommendationService.make[F](???, ???)
+        override val recs: RecommendationService[F] =
+          RecommendationService.make[F](???, ???, ???, ???)
       }
     }
   }

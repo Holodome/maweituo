@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.recs.repositories
 
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId

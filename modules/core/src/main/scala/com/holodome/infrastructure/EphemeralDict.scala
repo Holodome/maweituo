@@ -1,7 +1,7 @@
 package com.holodome.infrastructure
 
-import cats.data.OptionT
 import cats.{Functor, Monad}
+import cats.data.OptionT
 import cats.syntax.all._
 
 trait EphemeralDict[F[_], A, B] {

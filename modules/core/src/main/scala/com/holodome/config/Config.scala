@@ -8,7 +8,6 @@ import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
-import org.http4s.Uri
 
 import scala.concurrent.duration.DurationInt
 

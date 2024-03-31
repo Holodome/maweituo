@@ -1,7 +1,5 @@
 package com.holodome.services
 
-import cats.syntax.all._
-import cats.effect.std.Supervisor
 import cats.Functor
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId

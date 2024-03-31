@@ -1,14 +1,12 @@
 package com.holodome.services
 
 import cats.{Applicative, MonadThrow}
-import cats.effect.Spawn
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.messages.{Chat, ChatId, InvalidChatId}
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.effects.GenUUID
-import com.holodome.grpc.TelemetryGRPCClient
 import com.holodome.repositories.ChatRepository
 
 trait ChatService[F[_]] {

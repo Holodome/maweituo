@@ -2,7 +2,6 @@ package com.holodome.modules
 
 import cats.MonadThrow
 import cats.effect.Async
-import cats.effect.std.Supervisor
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.AppConfig

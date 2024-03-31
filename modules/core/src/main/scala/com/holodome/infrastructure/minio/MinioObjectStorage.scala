@@ -1,5 +1,6 @@
 package com.holodome.infrastructure.minio
 
+import _root_.org.apache.commons.io.IOUtils
 import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
 import cats.effect.{Async, Resource}
@@ -9,7 +10,6 @@ import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.minio._
 import io.minio.errors.ErrorResponseException
-import _root_.org.apache.commons.io.IOUtils
 
 import java.io.ByteArrayInputStream
 import scala.util.control.NonFatal

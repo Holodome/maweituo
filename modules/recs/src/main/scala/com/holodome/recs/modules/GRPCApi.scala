@@ -1,7 +1,7 @@
 package com.holodome.recs.modules
 
-import cats.syntax.all._
 import cats.effect.Temporal
+import cats.syntax.all._
 import com.holodome.effects.GenUUID
 import com.holodome.recs.grpc.{RecommendationGRPCServer, TelemetryGRPCServer}
 import org.http4s.HttpApp

@@ -7,7 +7,6 @@ import derevo.cats.show
 import derevo.derive
 import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
-import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
 

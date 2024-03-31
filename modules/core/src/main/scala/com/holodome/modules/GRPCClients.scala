@@ -5,7 +5,7 @@ import cats.MonadThrow
 import com.comcast.ip4s.SocketAddress
 import com.holodome.config.types.GrpcConfig
 import com.holodome.effects.GenUUID
-import com.holodome.grpc.{RecommendationGRPCClient, TelemetryGRPCClient}
+import com.holodome.grpc.{TelemetryGRPCClientInterpreter, RecommendationGRPCClientInterpreter}
 import com.holodome.services.{RecommendationService, TelemetryService}
 import org.http4s.client.Client
 import org.http4s.Uri
@@ -22,8 +22,10 @@ object GRPCClients {
   ): GRPCClients[F] = {
     val uri = Uri.unsafeFromString(SocketAddress(cfg.host, cfg.port).toString())
     new GRPCClients[F] {
-      override val recs: RecommendationService[F] = RecommendationGRPCClient.make[F](client, uri)
-      override val telemetry: TelemetryService[F] = TelemetryGRPCClient.make[F](client, uri)
+      override val recs: RecommendationService[F] =
+        RecommendationGRPCClientInterpreter.make[F](client, uri)
+      override val telemetry: TelemetryService[F] =
+        TelemetryGRPCClientInterpreter.make[F](client, uri)
     }
   }
 }

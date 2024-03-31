@@ -6,7 +6,7 @@ import com.holodome.domain.messages._
 import com.holodome.domain.users.{InvalidAccess, UserId}
 import cats.syntax.all._
 import cats.{Applicative, MonadThrow}
-import com.holodome.domain.images.{Image, ImageId}
+import com.holodome.domain.images.ImageId
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 
 trait IAMService[F[_]] {

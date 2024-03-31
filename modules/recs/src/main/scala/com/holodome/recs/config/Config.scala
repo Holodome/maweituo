@@ -1,14 +1,14 @@
 package com.holodome.recs.config
 
-import cats.syntax.all._
 import cats.effect.Async
+import cats.syntax.all._
 import ciris.{env, ConfigValue}
+import ciris.refined._
 import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types.{CassandraConfig, HttpServerConfig, MinioConfig}
 import com.holodome.recs.config.types.RecsConfig
-import eu.timepit.refined.types.string.NonEmptyString
 import eu.timepit.refined.cats._
-import ciris.refined._
+import eu.timepit.refined.types.string.NonEmptyString
 
 object Config {
   def load[F[_]: Async]: F[RecsConfig] =

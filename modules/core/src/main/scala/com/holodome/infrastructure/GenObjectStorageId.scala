@@ -1,9 +1,9 @@
 package com.holodome.infrastructure
 
 import cats.Functor
+import cats.syntax.all._
 import com.holodome.effects.GenUUID
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import cats.syntax.all._
 
 trait GenObjectStorageId[F[_]] {
   def make: F[ObjectId]

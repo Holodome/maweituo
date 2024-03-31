@@ -2,14 +2,8 @@ package com.holodome.modules
 
 import cats.effect.Async
 import com.holodome.repositories._
+import com.holodome.repositories.cassandra._
 import com.ringcentral.cassandra4io.CassandraSession
-import com.holodome.repositories.cassandra.{
-  CassandraAdvertisementRepository,
-  CassandraChatRepository,
-  CassandraImageRepository,
-  CassandraMessageRepository,
-  CassandraUserRepository
-}
 
 trait Repositories[F[_]] {
   val users: UserRepository[F]

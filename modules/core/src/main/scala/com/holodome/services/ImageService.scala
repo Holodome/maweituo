@@ -1,7 +1,7 @@
 package com.holodome.services
 
 import cats.syntax.all._
-import cats.{Monad, MonadThrow}
+import cats.MonadThrow
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.images._
 import com.holodome.domain.users.UserId

@@ -4,8 +4,7 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
-import com.holodome.domain.Id
-import com.holodome.effects.{Clock, GenUUID}
+import com.holodome.effects.Clock
 import com.holodome.repositories.MessageRepository
 
 trait MessageService[F[_]] {

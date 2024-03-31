@@ -1,13 +1,13 @@
 package com.holodome.recs.grpc
 
 import cats.Monad
-import com.holodome.effects.GenUUID
-import cats.syntax.all._
 import cats.data.OptionT
 import cats.effect.Temporal
+import cats.syntax.all._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
+import com.holodome.effects.GenUUID
 import com.holodome.proto
 import com.holodome.services.TelemetryService
 import org.http4s.{Headers, HttpRoutes}

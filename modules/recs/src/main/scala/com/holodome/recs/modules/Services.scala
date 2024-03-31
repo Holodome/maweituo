@@ -1,7 +1,7 @@
 package com.holodome.recs.modules
 
-import cats.syntax.all._
 import cats.effect.Sync
+import cats.syntax.all._
 import com.holodome.effects.MkRandom
 import com.holodome.recs.services.{RecommendationServiceInterpreter, TelemetryServiceInterpreter}
 import com.holodome.services.{RecommendationService, TelemetryService}

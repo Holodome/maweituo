@@ -1,7 +1,7 @@
 package com.holodome.recs.resources
 
-import cats.syntax.all._
 import cats.effect.{Async, Resource}
+import cats.syntax.all._
 import com.holodome.recs.config.types.RecsConfig
 import com.holodome.resources.{MkCassandraClient, MkMinioClient}
 import com.ringcentral.cassandra4io.CassandraSession

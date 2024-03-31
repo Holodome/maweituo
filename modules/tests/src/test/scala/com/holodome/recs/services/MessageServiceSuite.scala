@@ -28,6 +28,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   private implicit def clockMock: Clock[IO] = new Clock[IO] {
     override def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
   }
+  private val telemetry = mock[TelemetryService[IO]]
 
   test("basic message works") {
     val gen = for {
@@ -44,7 +45,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, iam)
-      val chats    = ChatService.make[IO](chatRepo, ads)
+      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
         u1      <- users.register(reg)
@@ -80,7 +81,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, iam)
-      val chats    = ChatService.make[IO](chatRepo, ads)
+      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
         u1   <- users.register(reg1)
@@ -114,7 +115,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, iam)
-      val chats    = ChatService.make[IO](chatRepo, ads)
+      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
         u1   <- users.register(reg1)

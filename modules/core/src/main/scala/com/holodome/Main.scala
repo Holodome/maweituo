@@ -4,7 +4,7 @@ import cats.effect.{IO, IOApp}
 import cats.effect.std.Supervisor
 import com.holodome.config.Config
 import com.holodome.domain.users.UserJwtAuth
-import com.holodome.modules.{AppResources, HttpApi, Repositories, Services}
+import com.holodome.modules.{AppResources, GRPCClients, HttpApi, Repositories, Services}
 import com.holodome.resources.MkHttpServer
 import dev.profunktor.auth.jwt.JwtAuth
 import dev.profunktor.redis4cats.log4cats._
@@ -19,14 +19,14 @@ object Main extends IOApp.Simple {
   override def run: IO[Unit] = {
     Config.load[IO] flatMap { cfg =>
       Logger[IO].info(s"Loaded config $cfg") >>
-        Supervisor[IO].use { _ =>
+        Supervisor[IO](await = false).use { implicit sp =>
           AppResources
             .make[IO](cfg)
             .evalMap { res =>
-              val repositories =
-                Repositories.make[IO](res.cassandra)
+              val repositories = Repositories.make[IO](res.cassandra)
+              val grpc         = GRPCClients.make[IO](res.grpcClient, cfg.grpc)
               for {
-                services <- Services.make[IO](repositories, cfg, res.redis, res.minio)
+                services <- Services.make[IO](repositories, cfg, res.redis, res.minio, grpc)
                 api = HttpApi.make[IO](
                   services,
                   UserJwtAuth(JwtAuth.hmac(cfg.jwtAccessSecret.value.value, JwtAlgorithm.HS256))

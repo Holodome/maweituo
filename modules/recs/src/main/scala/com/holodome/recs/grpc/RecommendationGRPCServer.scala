@@ -1,14 +1,13 @@
 package com.holodome.recs.grpc
 
 import cats.syntax.all._
-import cats.{Applicative, Monad}
-import cats.data.OptionT
+import cats.Monad
 import cats.effect.Temporal
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.effects.GenUUID
 import com.holodome.proto
-import com.holodome.recs.services.RecommendationService
+import com.holodome.services.RecommendationService
 import org.http4s.{Headers, HttpRoutes}
 
 object RecommendationGRPCServer {
@@ -26,16 +25,12 @@ private final class RecommendationGRPCServer[F[_]: Monad: GenUUID](
     service.learn().map(_ => proto.rec.Empty())
 
   override def getRecs(request: proto.rec.UserId, ctx: Headers): F[proto.rec.Recommendations] = {
-    OptionT
-      .fromOption(request.value)
-      .fold(Applicative[F].pure(proto.rec.Recommendations(Seq()))) { uuid =>
-        for {
-          id     <- Id.read[F, UserId](uuid.value)
-          result <- service.getRecs(id, 10)
-        } yield proto.rec.Recommendations(
-          result.map(adId => proto.rec.AdId.apply(Some(proto.rec.UUID(adId.value.toString))))
-        )
-      }
-      .flatten
+    for {
+      id     <- Id.read[F, UserId](request.value)
+      result <- service.getRecs(id, 10)
+    } yield proto.rec
+      .Recommendations(
+        result.map(adId => proto.rec.AdId.apply(adId.value.toString))
+      )
   }
 }

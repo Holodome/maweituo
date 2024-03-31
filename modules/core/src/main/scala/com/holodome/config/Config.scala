@@ -8,6 +8,7 @@ import com.comcast.ip4s.IpLiteralSyntax
 import com.holodome.config.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
+import org.http4s.Uri
 
 import scala.concurrent.duration.DurationInt
 
@@ -31,7 +32,12 @@ object Config {
         JwtTokenExpiration(30.minutes),
         jwtAccessSecret,
         RedisConfig(RedisURI("redis://localhost")),
-        MinioConfig("http://localhost:9000", minioUser, minioPassword, "maweituo")
+        MinioConfig("http://localhost:9000", minioUser, minioPassword, "maweituo"),
+        GrpcConfig(
+          HttpClientConfig(timeout = 60.seconds, idleTimeInPool = 30.seconds),
+          host"127.0.0.1",
+          port"11223"
+        )
       )
     }
   }

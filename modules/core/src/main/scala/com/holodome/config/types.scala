@@ -7,6 +7,8 @@ import derevo.cats.show
 import derevo.derive
 import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
+import org.http4s.Uri
+
 import scala.concurrent.duration.FiniteDuration
 
 object types {
@@ -35,12 +37,19 @@ object types {
       idleTimeInPool: FiniteDuration
   )
 
+  case class GrpcConfig(
+      client: HttpClientConfig,
+      host: Host,
+      port: Port
+  )
+
   case class AppConfig(
       httpServer: HttpServerConfig,
       cassandra: CassandraConfig,
       jwtTokenExpiration: JwtTokenExpiration,
       jwtAccessSecret: Secret[JwtAccessSecret],
       redis: RedisConfig,
-      minio: MinioConfig
+      minio: MinioConfig,
+      grpc: GrpcConfig
   )
 }

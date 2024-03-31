@@ -9,7 +9,7 @@ import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
 import com.holodome.proto
-import com.holodome.recs.services.TelemetryService
+import com.holodome.services.TelemetryService
 import org.http4s.{Headers, HttpRoutes}
 
 object TelemetryGRPCServer {
@@ -29,7 +29,9 @@ private final class TelemetryGRPCServer[F[_]: Monad: GenUUID](service: Telemetry
   override def userDiscussed(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
     act(request)(service.userDiscussed)
 
-  private def act(request: proto.rec.UserAdAction)(f: (UserId, AdId) => F[Unit]): F[proto.rec.Empty] =
+  private def act(
+      request: proto.rec.UserAdAction
+  )(f: (UserId, AdId) => F[Unit]): F[proto.rec.Empty] =
     userAdActionToDomain(request)
       .flatMap { case (userId, adId) =>
         f(userId, adId)
@@ -40,10 +42,10 @@ private final class TelemetryGRPCServer[F[_]: Monad: GenUUID](service: Telemetry
     OptionT
       .fromOption((request.user.map(_.value), request.ad.map(_.value)).tupled)
       .getOrElse(proto.rec.Empty())
-      .flatMap { case (u: proto.rec.UUID, a: proto.rec.UUID) =>
+      .flatMap { case (u: String, a: String) =>
         for {
-          userId <- Id.read[F, UserId](u.value)
-          adId   <- Id.read[F, AdId](a.value)
+          userId <- Id.read[F, UserId](u)
+          adId   <- Id.read[F, AdId](a)
         } yield userId -> adId
       }
 }

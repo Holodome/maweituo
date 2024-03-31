@@ -4,16 +4,12 @@ package com.holodome.proto;
 
 message Empty {}
 
-message UUID {
+message UserId {
   string value = 1;
 }
 
-message UserId {
-  UUID value = 1;
-}
-
 message AdId {
-  UUID value = 1;
+  string value = 1;
 }
 
 message Recommendations {

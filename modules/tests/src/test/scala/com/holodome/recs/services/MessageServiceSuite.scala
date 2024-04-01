@@ -28,7 +28,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   private implicit def clockMock: Clock[IO] = new Clock[IO] {
     override def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
   }
-  private val telemetry = mock[TelemetryService[IO]]
+  private val telemetry = new TelemetryServiceStub[IO]
 
   test("basic message works") {
     val gen = for {

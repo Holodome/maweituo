@@ -26,6 +26,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
     etl: RecETL[F]
 )(implicit rng: Random[F])
     extends RecommendationService[F] {
+
   override def getRecs(user: UserId, count: Int): F[List[AdId]] = {
     collaborativeRecs(user, count)
       .flatMap {

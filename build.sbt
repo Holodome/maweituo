@@ -31,7 +31,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests, it, rec)
+  .aggregate(core, tests, it, recs)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(Http4sGrpcPlugin)
@@ -123,7 +123,7 @@ lazy val it = (project in file("modules/it"))
     publish / skip := true
   )
 
-lazy val rec = (project in file("modules/rec"))
+lazy val recs = (project in file("modules/rec"))
   .dependsOn(core)
   .settings(
     name := "maweituo-rec"

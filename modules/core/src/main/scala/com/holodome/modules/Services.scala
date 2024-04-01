@@ -56,12 +56,12 @@ object Services {
               users,
               RedisEphemeralDict
                 .make[F](redis, cfg.jwtTokenExpiration.value)
-                .aContramap[UserId](_.value.toString)
-                .bBimap[JwtToken](JwtToken.apply, _.value),
+                .keyContramap[UserId](_.value.toString)
+                .valueImap[JwtToken](JwtToken.apply, _.value),
               RedisEphemeralDict
                 .make[F](redis, cfg.jwtTokenExpiration.value)
-                .aContramap[JwtToken](_.value)
-                .bBiflatmap[UserId](Id.read[F, UserId], _.value.toString),
+                .keyContramap[JwtToken](_.value)
+                .valueIFlatmap[UserId](Id.read[F, UserId], _.value.toString),
               tokens
             )
           override val ads: AdvertisementService[F] =

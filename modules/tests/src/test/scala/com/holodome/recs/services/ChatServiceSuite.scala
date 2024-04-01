@@ -19,7 +19,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[F]): IAMService[IO] =
     IAMService.make(ad, chat, mock[ImageRepository[IO]])
 
-  private val telemetry: TelemetryService[IO] = mock[TelemetryService[IO]]
+  private val telemetry: TelemetryService[IO] = new TelemetryServiceStub[IO]
 
   test("create works") {
     val gen = for {

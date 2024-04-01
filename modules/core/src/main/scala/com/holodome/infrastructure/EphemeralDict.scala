@@ -9,7 +9,7 @@ trait EphemeralDict[F[_], A, B] {
   def delete(a: A): F[Unit]
   def get(a: A): OptionT[F, B]
 
-  def aContramap[U](f: U => A): EphemeralDict[F, U, B] = {
+  def keyContramap[U](f: U => A): EphemeralDict[F, U, B] = {
     val me = this
     new EphemeralDict[F, U, B] {
       override def store(a: U, b: B): F[Unit] =
@@ -23,7 +23,7 @@ trait EphemeralDict[F[_], A, B] {
     }
   }
 
-  def bBimap[V](to: B => V, from: V => B)(implicit func: Functor[F]): EphemeralDict[F, A, V] = {
+  def valueImap[V](to: B => V, from: V => B)(implicit func: Functor[F]): EphemeralDict[F, A, V] = {
     val me = this
     new EphemeralDict[F, A, V] {
       override def store(a: A, b: V): F[Unit] =
@@ -37,7 +37,7 @@ trait EphemeralDict[F[_], A, B] {
     }
   }
 
-  def bBiflatmap[V](to: B => F[V], from: V => B)(implicit
+  def valueIFlatmap[V](to: B => F[V], from: V => B)(implicit
       func: Monad[F]
   ): EphemeralDict[F, A, V] = {
     val me = this

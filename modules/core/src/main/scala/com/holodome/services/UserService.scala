@@ -58,7 +58,7 @@ object UserService {
     override def register(
         body: RegisterRequest
     ): F[UserId] = {
-      val user = for {
+      for {
         _ <- repo
           .findByEmail(body.email)
           .flatMap(_ => OptionT liftF UserEmailInUse(body.email).raiseError[F, Unit])
@@ -77,8 +77,7 @@ object UserService {
           salt
         )
       } yield user
-      user.flatTap(repo.create).map(_.id)
-    }
+    }.flatTap(repo.create).map(_.id)
   }
 
 }

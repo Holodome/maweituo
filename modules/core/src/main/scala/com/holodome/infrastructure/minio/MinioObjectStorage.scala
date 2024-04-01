@@ -38,7 +38,7 @@ object MinioObjectStorage {
                 .bucket(bucket)
                 .build()
             )
-          ).map(_ => ())
+          ).void
       }
   }
 
@@ -67,7 +67,7 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
               .stream(bais, bais.available(), -1)
               .build()
           )
-      }.map(_ => ())
+      }.void
     )
   }
 
@@ -85,5 +85,5 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
   override def delete(id: ObjectId): F[Unit] =
     liftJavaFuture(
       client.removeObject(RemoveObjectArgs.builder().bucket(bucket).`object`(id.value).build())
-    ).map(_ => ())
+    ).void
 }

@@ -30,11 +30,9 @@ object ChatService {
     override def create(adId: AdId, clientId: UserId): F[ChatId] = {
       chatRepo
         .findByAdAndClient(adId, clientId)
+        .semiflatTap(_ => ChatAlreadyExists().raiseError[F, Unit])
         .value
-        .flatMap {
-          case Some(_) => ChatAlreadyExists().raiseError[F, Unit]
-          case None    => Applicative[F].unit
-        } >>
+        .void >>
         adService
           .find(adId)
           .map(_.authorId)

@@ -21,7 +21,7 @@ import weaver.scalacheck.Checkers
 import java.time.Instant
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
-  private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[F]): IAMService[IO] =
+  private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[IO]): IAMService[IO] =
     IAMService.make(ad, chat, mock[ImageRepository[IO]])
 
   private val epoch: Long = 1711564995

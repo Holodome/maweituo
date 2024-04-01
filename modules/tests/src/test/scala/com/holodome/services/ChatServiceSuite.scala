@@ -3,14 +3,8 @@ package com.holodome.services
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.ads.{CannotCreateChatWithMyself, ChatAlreadyExists}
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
-import com.holodome.services.{AdvertisementService, ChatService, IAMService, UserService}
 import com.holodome.generators.{createAdRequestGen, registerGen}
-import com.holodome.repositories.{
-  InMemoryAdRepository,
-  InMemoryChatRepository,
-  InMemoryUserRepository
-}
+import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers

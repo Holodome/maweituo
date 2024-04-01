@@ -1,4 +1,5 @@
 package com.holodome.services
+
 import cats.Applicative
 import com.holodome.domain.{ads, users}
 

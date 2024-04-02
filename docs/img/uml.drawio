@@ -1,70 +1,73 @@
 <mxfile host="65bd71144e">
     <diagram id="IeFkLcC72xmeMf9-o3qL" name="Page-1">
-        <mxGraphModel dx="5015" dy="4155" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="2066" dy="2322" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="103" value="Recomendation" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
+                <mxCell id="125" value="Infrastructure Implementation" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="-640" y="1380" width="660" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="103" value="Recomendation" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2030" y="-390" width="860" height="1470" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" value="Infrastructure" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-640" y="1140" width="660" height="340" as="geometry"/>
+                <mxCell id="29" value="Infrastructure" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-640" y="1140" width="660" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="2" value="BL" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
+                <mxCell id="2" value="BL" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-360" y="-390" width="2340" height="1470" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;UserRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: User): F[UserID]&lt;br&gt;&amp;nbsp;+ all(): F[List[User]]&lt;br&gt;&amp;nbsp;+ find(id: UserId): OptionT[F, User]&lt;br&gt;&amp;nbsp;+ findByEmail(emai: Email): OptionT[F, User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): OptionT[F, User]&amp;nbsp;&lt;br&gt;&amp;nbsp;+ delete(id: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="9" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;UserRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: User): F[UserID]&lt;br&gt;&amp;nbsp;+ all(): F[List[User]]&lt;br&gt;&amp;nbsp;+ find(id: UserId): OptionT[F, User]&lt;br&gt;&amp;nbsp;+ findByEmail(emai: Email): OptionT[F, User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): OptionT[F, User]&amp;nbsp;&lt;br&gt;&amp;nbsp;+ delete(id: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="100" y="770" width="280" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AdvertisementRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: Advertisement): F[AdId]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ find(id: AdId): OptionT[F, Advertisement]&lt;br&gt;&amp;nbsp;+ delete(id: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ addTag(id: AdtId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, img: ImageId): F[Unit]&lt;br&gt;&amp;nbsp;+ addParam(id: AdId, tag: AdTag, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ removeTag(id: AdId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ removeImage(id: AdId, image: ImageId)&lt;br&gt;&amp;nbsp;+ removeParam(id: AdId, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateAd): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="10" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AdvertisementRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: Advertisement): F[AdId]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ find(id: AdId): OptionT[F, Advertisement]&lt;br&gt;&amp;nbsp;+ delete(id: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ addTag(id: AdtId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, img: ImageId): F[Unit]&lt;br&gt;&amp;nbsp;+ addParam(id: AdId, tag: AdTag, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ removeTag(id: AdId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ removeImage(id: AdId, image: ImageId)&lt;br&gt;&amp;nbsp;+ removeParam(id: AdId, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateAd): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="450" y="770" width="320" height="210" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ChatRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, author: UserId, client: UserId):&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[ChatD]&lt;br&gt;&amp;nbsp;+ find(id: ChatId): OptionT[F, Chat]&lt;br&gt;&amp;nbsp;+ findByAdAndClient(adId: AdId, client: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;OptionT[F, Chat]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="11" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ChatRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, author: UserId, client: UserId):&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[ChatD]&lt;br&gt;&amp;nbsp;+ find(id: ChatId): OptionT[F, Chat]&lt;br&gt;&amp;nbsp;+ findByAdAndClient(adId: AdId, client: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;OptionT[F, Chat]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="830" y="770" width="280" height="131" as="geometry"/>
                 </mxCell>
-                <mxCell id="72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="12" target="71">
+                <mxCell id="72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="1" source="12" target="71" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="12" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;MessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="12" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;MessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1200" y="770" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="13" target="75">
+                <mxCell id="76" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="1" source="13" target="75" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, url: ImageUrl): F[ImageId]&lt;br&gt;&amp;nbsp;+ getMeta(image: ImageId): F[Image]&lt;br&gt;&amp;nbsp;+ delete(image: ImageId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="13" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, url: ImageUrl): F[ImageId]&lt;br&gt;&amp;nbsp;+ getMeta(image: ImageId): F[Image]&lt;br&gt;&amp;nbsp;+ delete(image: ImageId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1590" y="770" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="14" value="DA" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
+                <mxCell id="14" value="DA" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" parent="1" vertex="1">
                     <mxGeometry x="70" y="1140" width="1910" height="340" as="geometry"/>
                 </mxCell>
-                <mxCell id="15" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraMessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="15" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraMessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="100" y="1220" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="16" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraAdvertisementRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: Advertisement): F[AdId]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ find(id: AdId): OptionT[F, Advertisement]&lt;br&gt;&amp;nbsp;+ delete(id: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ addTag(id: AdtId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, img: ImageId): F[Unit]&lt;br&gt;&amp;nbsp;+ addParam(id: AdId, tag: AdTag, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ removeTag(id: AdId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ removeImage(id: AdId, image: ImageId)&lt;br&gt;&amp;nbsp;+ removeParam(id: AdId, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateAd): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="16" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraAdvertisementRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(request: Advertisement): F[AdId]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ find(id: AdId): OptionT[F, Advertisement]&lt;br&gt;&amp;nbsp;+ delete(id: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ addTag(id: AdtId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, img: ImageId): F[Unit]&lt;br&gt;&amp;nbsp;+ addParam(id: AdId, tag: AdTag, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ removeTag(id: AdId, tag: AdTag): F[Unit]&lt;br&gt;&amp;nbsp;+ removeImage(id: AdId, image: ImageId)&lt;br&gt;&amp;nbsp;+ removeParam(id: AdId, param: AdParam): F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateAd): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="450" y="1220" width="320" height="210" as="geometry"/>
                 </mxCell>
-                <mxCell id="22" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraChatRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, author: UserId, client: UserId):&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[ChatD]&lt;br&gt;&amp;nbsp;+ find(id: ChatId): OptionT[F, Chat]&lt;br&gt;&amp;nbsp;+ findByAdAndClient(adId: AdId, client: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;OptionT[F, Chat]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="22" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraChatRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, author: UserId, client: UserId):&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[ChatD]&lt;br&gt;&amp;nbsp;+ find(id: ChatId): OptionT[F, Chat]&lt;br&gt;&amp;nbsp;+ findByAdAndClient(adId: AdId, client: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;OptionT[F, Chat]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="830" y="1230" width="280" height="131" as="geometry"/>
                 </mxCell>
-                <mxCell id="23" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraMessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="23" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraMessageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chat: ChatId, sender: UserId, &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;text: MessageText): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId): F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1200" y="1230" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraImageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, url: ImageUrl): F[ImageId]&lt;br&gt;&amp;nbsp;+ getMeta(image: ImageId): F[Image]&lt;br&gt;&amp;nbsp;+ delete(image: ImageId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="24" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraImageRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, url: ImageUrl): F[ImageId]&lt;br&gt;&amp;nbsp;+ getMeta(image: ImageId): F[Image]&lt;br&gt;&amp;nbsp;+ delete(image: ImageId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1590" y="1230" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="28" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;EmpemeralDict[F, A, B]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ store(a: A, b: B): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(a: A): F[Unit]&lt;br&gt;&amp;nbsp;+ get(a: A): OptionT[F, B]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="28" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;EmpemeralDict[F, A, B]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ store(a: A, b: B): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(a: A): F[Unit]&lt;br&gt;&amp;nbsp;+ get(a: A): OptionT[F, B]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-290" y="1200" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="30" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RedisEmpemeralDict[F, A, B]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ store(a: A, b: B): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(a: A): F[Unit]&lt;br&gt;&amp;nbsp;+ get(a: A): OptionT[F, B]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-290" y="1360" width="280" height="100" as="geometry"/>
+                <mxCell id="30" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RedisEmpemeralDict[F, A, B]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ store(a: A, b: B): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(a: A): F[Unit]&lt;br&gt;&amp;nbsp;+ get(a: A): OptionT[F, B]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-290" y="1430" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="31" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="30" target="28">
+                <mxCell id="31" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="30" target="28" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="60" y="1320" as="sourcePoint"/>
                         <mxPoint x="220" y="1320" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="78" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="32" target="75">
+                <mxCell id="78" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" parent="1" source="32" target="75" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="1280" y="1110" as="targetPoint"/>
                         <Array as="points">
@@ -75,25 +78,25 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="32" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ObjectStorage[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ put(id: ObjectId, data: Array[Byte]): F[Unit]&lt;br&gt;&amp;nbsp;+ get(id: ObjectId): F[Array[Byte]]&lt;br&gt;&amp;nbsp;+ delete(id: ObjectId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="32" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ObjectStorage[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ put(id: ObjectId, data: Array[Byte]): F[Unit]&lt;br&gt;&amp;nbsp;+ get(id: ObjectId): F[Array[Byte]]&lt;br&gt;&amp;nbsp;+ delete(id: ObjectId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-610" y="1200" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="33" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MinioObjectStorage[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ put(id: ObjectId, data: Array[Byte]): F[Unit]&lt;br&gt;&amp;nbsp;+ get(id: ObjectId): F[Array[Byte]]&lt;br&gt;&amp;nbsp;+ delete(id: ObjectId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="-610" y="1360" width="280" height="100" as="geometry"/>
+                <mxCell id="33" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MinioObjectStorage[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ put(id: ObjectId, data: Array[Byte]): F[Unit]&lt;br&gt;&amp;nbsp;+ get(id: ObjectId): F[Array[Byte]]&lt;br&gt;&amp;nbsp;+ delete(id: ObjectId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-610" y="1430" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="34" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="33" target="32">
+                <mxCell id="34" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="33" target="32" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="-350" y="1570" as="sourcePoint"/>
                         <mxPoint x="-190" y="1570" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="95" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.506;entryY=1.006;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;dashed=1;" edge="1" parent="1" source="35" target="81">
+                <mxCell id="95" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.506;entryY=1.006;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;dashed=1;" parent="1" source="35" target="81" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;UserService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: UserId): F[User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): F[User]&lt;br&gt;&amp;nbsp;+ delete(subject: UserId, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ register(body: RegisterInfo): F[UserId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="35" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;UserService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: UserId): F[User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): F[User]&lt;br&gt;&amp;nbsp;+ delete(subject: UserId, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ register(body: RegisterInfo): F[UserId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="100" y="250" width="280" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="36" target="67">
+                <mxCell id="70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="1" source="36" target="67" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="680" y="220"/>
@@ -103,7 +106,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="96" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.499;entryY=1.007;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="36" target="86">
+                <mxCell id="96" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.499;entryY=1.007;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="36" target="86" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="610" y="80"/>
@@ -111,10 +114,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="36" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AdvertisementService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: AdId): F[Advertisement]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ create(authorId: UserId, create: CreateAd): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(id: AdtId, userId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ authorizeModification(id: AdId,&amp;nbsp;userId: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, imageId: ImageId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="36" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AdvertisementService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: AdId): F[Advertisement]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ create(authorId: UserId, create: CreateAd): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(id: AdtId, userId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ authorizeModification(id: AdId,&amp;nbsp;userId: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, imageId: ImageId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="470" y="250" width="280" height="170" as="geometry"/>
                 </mxCell>
-                <mxCell id="73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" edge="1" parent="1" source="37" target="71">
+                <mxCell id="73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;endArrow=none;endFill=0;" parent="1" source="37" target="71" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1040" y="220"/>
@@ -124,7 +127,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="100" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.486;entryY=1.016;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="37" target="88">
+                <mxCell id="100" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.486;entryY=1.016;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="37" target="88" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="970" y="60"/>
@@ -132,10 +135,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="37" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ChatService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, clientId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ find(chatId: ChatId): F[Chat]&lt;br&gt;&amp;nbsp;+ authorizeChatAccess(chatId: ChatId,&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="37" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ChatService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, clientId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ find(chatId: ChatId): F[Chat]&lt;br&gt;&amp;nbsp;+ authorizeChatAccess(chatId: ChatId,&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="830" y="250" width="280" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.479;entryY=1.002;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="38" target="90">
+                <mxCell id="101" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.479;entryY=1.002;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="38" target="90" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1340" y="30"/>
@@ -143,10 +146,10 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="38" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;MessageService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chatId: ChatId, senderId: UserId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;req: SendMessage): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId, requester: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="38" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;MessageService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chatId: ChatId, senderId: UserId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;req: SendMessage): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId, requester: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[Message]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1200" y="250" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.479;entryY=1.027;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="39" target="99">
+                <mxCell id="102" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.479;entryY=1.027;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="39" target="99" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1730" y="-30"/>
@@ -154,109 +157,109 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="39" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ upload(uploader: UserId, adId: AdId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;contents: ImageContents): F[ImageId]&lt;br&gt;&amp;nbsp;+ delete(imageId: ImageId, user: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ get(imageId: ImageId): F[ImageContents]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="39" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ upload(uploader: UserId, adId: AdId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;contents: ImageContents): F[ImageId]&lt;br&gt;&amp;nbsp;+ delete(imageId: ImageId, user: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ get(imageId: ImageId): F[ImageContents]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1590" y="250" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="49" style="edgeStyle=none;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="40" target="9">
+                <mxCell id="49" style="edgeStyle=none;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" parent="1" source="40" target="9" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="40" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;UserServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: UserId): F[User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): F[User]&lt;br&gt;&amp;nbsp;+ delete(subject: UserId, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ register(body: RegisterInfo): F[UserId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="40" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;UserServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: UserId): F[User]&lt;br&gt;&amp;nbsp;+ findByName(name: Username): F[User]&lt;br&gt;&amp;nbsp;+ delete(subject: UserId, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ update(update: UpdateUser, authorized: UserId):&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ register(body: RegisterInfo): F[UserId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="100" y="500" width="280" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="50" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="40" target="35">
+                <mxCell id="50" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="40" target="35" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="420" y="490" as="sourcePoint"/>
                         <mxPoint x="580" y="490" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="51" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="15" target="9">
+                <mxCell id="51" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="15" target="9" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="300" y="1110" as="sourcePoint"/>
                         <mxPoint x="460" y="1110" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="52" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="16" target="10">
+                <mxCell id="52" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="16" target="10" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="620" y="1100" as="sourcePoint"/>
                         <mxPoint x="780" y="1100" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="53" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="22" target="11">
+                <mxCell id="53" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="22" target="11" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="960" y="1100" as="sourcePoint"/>
                         <mxPoint x="1120" y="1100" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="54" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="23" target="12">
+                <mxCell id="54" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="23" target="12" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1400" y="1110" as="sourcePoint"/>
                         <mxPoint x="1560" y="1110" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="55" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="24" target="13">
+                <mxCell id="55" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="24" target="13" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1710" y="1100" as="sourcePoint"/>
                         <mxPoint x="1870" y="1100" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="56" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AuthService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ login(username: Username, password:&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;Password): F[JwtToken]&lt;br&gt;&amp;nbsp;+ logout(uid: UserId, token: JwtToken): F[Unit]&lt;br&gt;&amp;nbsp;+ authed(token: JwtToken): OptionT[F, AuthedUser]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="56" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;AuthService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ login(username: Username, password:&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;Password): F[JwtToken]&lt;br&gt;&amp;nbsp;+ logout(uid: UserId, token: JwtToken): F[Unit]&lt;br&gt;&amp;nbsp;+ authed(token: JwtToken): OptionT[F, AuthedUser]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-240" y="-310" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="58" target="35">
+                <mxCell id="60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="58" target="35" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="58" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AuthServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ login(username: Username, password:&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;Password): F[JwtToken]&lt;br&gt;&amp;nbsp;+ logout(uid: UserId, token: JwtToken): F[Unit]&lt;br&gt;&amp;nbsp;+ authed(token: JwtToken): OptionT[F, AuthedUser]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="58" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AuthServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ login(username: Username, password:&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;Password): F[JwtToken]&lt;br&gt;&amp;nbsp;+ logout(uid: UserId, token: JwtToken): F[Unit]&lt;br&gt;&amp;nbsp;+ authed(token: JwtToken): OptionT[F, AuthedUser]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="-240" y="-60" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="59" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="58" target="56">
+                <mxCell id="59" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="58" target="56" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="-40" y="-100" as="sourcePoint"/>
                         <mxPoint x="120" y="-100" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="62" value="JwtDict" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;jumpSize=21;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="58" target="28">
+                <mxCell id="62" value="JwtDict" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;jumpSize=21;exitX=0.25;exitY=1;exitDx=0;exitDy=0;" parent="1" source="58" target="28" edge="1">
                     <mxGeometry x="-1" relative="1" as="geometry">
                         <mxPoint x="-470" y="300" as="sourcePoint"/>
                         <mxPoint x="-170" y="1190" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="63" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" connectable="0" vertex="1" parent="62">
+                <mxCell id="63" value="1" style="edgeLabel;resizable=0;html=1;align=left;verticalAlign=bottom;" parent="62" connectable="0" vertex="1">
                     <mxGeometry x="-1" relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="64" target="10">
+                <mxCell id="65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="64" target="10" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="64" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AdvertisementServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: AdId): F[Advertisement]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ create(authorId: UserId, create: CreateAd): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(id: AdtId, userId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ authorizeModification(id: AdId,&amp;nbsp;userId: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, imageId: ImageId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="64" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;AdvertisementServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ find(id: AdId): F[Advertisement]&lt;br&gt;&amp;nbsp;+ all(): F[List[Advertisement]]&lt;br&gt;&amp;nbsp;+ create(authorId: UserId, create: CreateAd): F[Unit]&lt;br&gt;&amp;nbsp;+ delete(id: AdtId, userId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ authorizeModification(id: AdId,&amp;nbsp;userId: UserId): &lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[Unit]&lt;br&gt;&amp;nbsp;+ addImage(id: AdId, imageId: ImageId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]&amp;nbsp;" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="470" y="495" width="280" height="170" as="geometry"/>
                 </mxCell>
-                <mxCell id="66" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="64" target="36">
+                <mxCell id="66" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="64" target="36" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="730" y="460" as="sourcePoint"/>
                         <mxPoint x="890" y="460" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="67" target="11">
+                <mxCell id="69" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="67" target="11" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="67" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;ChatServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, clientId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ find(chatId: ChatId): F[Chat]&lt;br&gt;&amp;nbsp;+ authorizeChatAccess(chatId: ChatId,&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="67" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;ChatServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ create(adId: AdId, clientId: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ find(chatId: ChatId): F[Chat]&lt;br&gt;&amp;nbsp;+ authorizeChatAccess(chatId: ChatId,&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;userId: UserId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="830" y="495" width="280" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="68" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="67" target="37">
+                <mxCell id="68" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="67" target="37" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1150" y="450" as="sourcePoint"/>
                         <mxPoint x="1310" y="450" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="71" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MessageServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chatId: ChatId, senderId: UserId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;req: SendMessage): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId, requester: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[HistoryResponse]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="71" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;MessageServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ send(chatId: ChatId, senderId: UserId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;req: SendMessage): F[Unit]&lt;br&gt;&amp;nbsp;+ history(chatId: ChatId, requester: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[HistoryResponse]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1200" y="500" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="74" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="71" target="38">
+                <mxCell id="74" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="71" target="38" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="1470" y="460" as="sourcePoint"/>
                         <mxPoint x="1630" y="460" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=none;endFill=0;" edge="1" parent="1" source="75" target="36">
+                <mxCell id="77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=none;endFill=0;" parent="1" source="75" target="36" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1660" y="670"/>
@@ -266,109 +269,109 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="75" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageServiceIntrerpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ upload(uploader: UserId, adId: AdId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;contents: ImageContents): F[ImageId]&lt;br&gt;&amp;nbsp;+ delete(imageId: ImageId, user: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ get(imageId: ImageId): F[ImageContents]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="75" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;ImageServiceIntrerpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ upload(uploader: UserId, adId: AdId,&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;contents: ImageContents): F[ImageId]&lt;br&gt;&amp;nbsp;+ delete(imageId: ImageId, user: UserId): F[Unit]&lt;br&gt;&amp;nbsp;+ get(imageId: ImageId): F[ImageContents]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1590" y="500" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="79" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="75" target="39">
+                <mxCell id="79" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="75" target="39" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="2290" y="510" as="sourcePoint"/>
                         <mxPoint x="2450" y="510" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="80" value="User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                <mxCell id="80" value="User" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
                     <mxGeometry x="230" y="-210" width="160" height="150" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="+ id: UserId&#10;+ name: Username&#10;+ email: Email&#10;+ hashedPassword:&#10;    HashedSaltedPassword&#10;+ salt: PasswordSalt&#10;+ ads: List[AdId]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="80">
+                <mxCell id="81" value="+ id: UserId&#10;+ name: Username&#10;+ email: Email&#10;+ hashedPassword:&#10;    HashedSaltedPassword&#10;+ salt: PasswordSalt&#10;+ ads: List[AdId]" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="80" vertex="1">
                     <mxGeometry y="26" width="160" height="124" as="geometry"/>
                 </mxCell>
-                <mxCell id="85" value="Advertisement" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                <mxCell id="85" value="Advertisement" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
                     <mxGeometry x="410" y="-210" width="160" height="130" as="geometry"/>
                 </mxCell>
-                <mxCell id="86" value="+ id: AdId&#10;+ title: AdTitle&#10;+ tags: List[AdTag]&#10;+ images: List[ImageId]&#10;+ chats: List[ChatId]&#10;+ authorId: UserId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="85">
+                <mxCell id="86" value="+ id: AdId&#10;+ title: AdTitle&#10;+ tags: List[AdTag]&#10;+ images: List[ImageId]&#10;+ chats: List[ChatId]&#10;+ authorId: UserId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="85" vertex="1">
                     <mxGeometry y="26" width="160" height="104" as="geometry"/>
                 </mxCell>
-                <mxCell id="87" value="Chat" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                <mxCell id="87" value="Chat" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
                     <mxGeometry x="590" y="-210" width="160" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="88" value="+ id: ChatId&#10;+ adId: AdId&#10;+ adAuthor: AdAuthor&#10;+ client: UserId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="87">
+                <mxCell id="88" value="+ id: ChatId&#10;+ adId: AdId&#10;+ adAuthor: AdAuthor&#10;+ client: UserId" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="87" vertex="1">
                     <mxGeometry y="26" width="160" height="74" as="geometry"/>
                 </mxCell>
-                <mxCell id="89" value="Message" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                <mxCell id="89" value="Message" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
                     <mxGeometry x="770" y="-210" width="160" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="90" value="+ id: MessageId&#10;+ sender: UserId&#10;+ ad: AdId&#10;+ text: MessageText&#10;+ at: Instant" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="89">
+                <mxCell id="90" value="+ id: MessageId&#10;+ sender: UserId&#10;+ ad: AdId&#10;+ text: MessageText&#10;+ at: Instant" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="89" vertex="1">
                     <mxGeometry y="26" width="160" height="94" as="geometry"/>
                 </mxCell>
-                <mxCell id="94" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RecomendationService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ getRecomendations(userId: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[AdId]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="94" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RecomendationService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ getRecomendations(userId: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[AdId]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2160" y="240" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="98" value="Image" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" vertex="1" parent="1">
+                <mxCell id="98" value="Image" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=none;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="1" vertex="1">
                     <mxGeometry x="950" y="-210" width="160" height="90" as="geometry"/>
                 </mxCell>
-                <mxCell id="99" value="+ id: ImageId&#10;+ adId: AdId&#10;+ url: ImageUrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="98">
+                <mxCell id="99" value="+ id: ImageId&#10;+ adId: AdId&#10;+ url: ImageUrl" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="98" vertex="1">
                     <mxGeometry y="26" width="160" height="64" as="geometry"/>
                 </mxCell>
-                <mxCell id="104" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RecomendationGenerator[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ generate(user: UserId): List[AdId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="104" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RecomendationGenerator[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ generate(user: UserId): List[AdId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2160" y="770" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="105" value="Spark DA" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" vertex="1" parent="1">
+                <mxCell id="105" value="Spark DA" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2095" y="1140" width="785" height="340" as="geometry"/>
                 </mxCell>
-                <mxCell id="112" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="106" target="109">
+                <mxCell id="112" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="106" target="109" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="106" target="111">
+                <mxCell id="113" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="106" target="111" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="106" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;SparkRecomendationGenerator[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ generate(user: UserId): List[AdId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="106" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;SparkRecomendationGenerator[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ generate(user: UserId): List[AdId]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2160" y="1210" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="108" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="106" target="104">
+                <mxCell id="108" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="106" target="104" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="2410" y="1120" as="sourcePoint"/>
                         <mxPoint x="2570" y="1120" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="109" value="SparkDataAccess" style="html=1;" vertex="1" parent="1">
+                <mxCell id="109" value="SparkDataAccess" style="html=1;" parent="1" vertex="1">
                     <mxGeometry x="2170" y="1410" width="110" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="111" value="Spark ML" style="html=1;" vertex="1" parent="1">
+                <mxCell id="111" value="Spark ML" style="html=1;" parent="1" vertex="1">
                     <mxGeometry x="2310" y="1410" width="110" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="116" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="114" target="104">
+                <mxCell id="116" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="114" target="104" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="114" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RecomendationServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ getRecomendations(userId: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[AdId]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="114" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RecomendationServiceInterpreter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ getRecomendations(userId: UserId):&amp;nbsp;&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#9;&lt;/span&gt;F[List[AdId]]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2160" y="510" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="117" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="114" target="94">
+                <mxCell id="117" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="114" target="94" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="2620" y="460" as="sourcePoint"/>
                         <mxPoint x="2780" y="460" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="118" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="118" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryService[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2510" y="240" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="119" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="119" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2510" y="770" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="120" target="119">
+                <mxCell id="122" style="edgeStyle=orthogonalEdgeStyle;rounded=0;jumpSize=21;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=none;startFill=0;endArrow=classic;endFill=1;" parent="1" source="120" target="119" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="120" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryServiceInterpter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="120" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;TelemeteryServiceInterpter[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2510" y="510" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="121" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="120" target="118">
+                <mxCell id="121" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="120" target="118" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="2720" y="480" as="sourcePoint"/>
                         <mxPoint x="2880" y="480" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="123" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraTelemeteryRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" vertex="1" parent="1">
+                <mxCell id="123" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CassandraTelemeteryRepository[F]&lt;/b&gt;&lt;/p&gt;&lt;hr&gt;&amp;nbsp;+ userClicked(userId: UserId, ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userBought(userId: UserId: ad: AdId): F[Unit]&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;&amp;nbsp;+ userDiscussed(userId: UserId, ad: AdId): F[Unit]" style="verticalAlign=top;align=left;overflow=fill;fontSize=12;fontFamily=Helvetica;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2510" y="1210" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="124" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="123" target="119">
+                <mxCell id="124" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;jumpSize=21;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="123" target="119" edge="1">
                     <mxGeometry width="160" relative="1" as="geometry">
                         <mxPoint x="2950" y="1070" as="sourcePoint"/>
                         <mxPoint x="3110" y="1070" as="targetPoint"/>

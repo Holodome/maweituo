@@ -39,50 +39,55 @@ create table local.images (
     url text
 );
 
-drop keyspace if exists rec;
-create keyspace rec with replication = {'class':'SimpleStrategy', 'replication_factor':1};
+drop keyspace if exists recs;
+create keyspace recs with replication = {'class':'SimpleStrategy', 'replication_factor':1};
 
-create table rec.user_bought_transactional (
+create table recs.user_bought_transactional (
     id uuid primary key,
     ad uuid
 );
 
-create table rec.user_clicked_transactional (
+create table recs.user_clicked_transactional (
     id uuid primary key,
     ad uuid
 );
 
-create table rec.user_discussed_transactional (
+create table recs.user_discussed_transactional (
     id uuid primary key,
     ad uuid
 );
 
-create table rec.user_bought_snapshot (
+create table recs.user_bought_snapshot (
     id uuid primary key,
     ads frozen<set<uuid>>
 );
 
-create table rec.user_clicked_snapshot (
+create table recs.user_clicked_snapshot (
     id uuid primary key,
     ads frozen<set<uuid>>
 );
 
-create table rec.user_discussed_snapshot (
+create table recs.user_discussed_snapshot (
     id uuid primary key,
     ads frozen<set<uuid>>
 );
 
-create table rec.user_weights (
+create table recs.user_weights (
     id uuid primary key,
     weights frozen<list<float>>
 );
 
-create table rec.tags (
+create table recs.tags (
     index int primary key,
     tag text
 );
 
-create table rec.ads_snapshot (
+create table recs.ads_snapshot (
     tag text primary key,
     ads frozen<list<uuid>>
+);
+
+create table recs.ads_tags_snapshot (
+    id uuid primary key,
+    tags frozen<set<text>>
 );

@@ -15,6 +15,9 @@ trait AdvertisementService[F[_]] {
   def create(authorId: UserId, create: CreateAdRequest): F[AdId]
   def delete(id: AdId, userId: UserId): F[Unit]
   def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
+  def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
+  def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
+  def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
 }
 
 object AdvertisementService {
@@ -45,5 +48,14 @@ object AdvertisementService {
 
     override def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
       iam.authorizeAdModification(id, userId) >> repo.addImage(id, imageId)
+
+    override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
+      iam.authorizeAdModification(id, userId) >> repo.addTag(id, tag)
+
+    override def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
+      iam.authorizeAdModification(id, userId) >> repo.removeImage(id, imageId)
+
+    override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
+      iam.authorizeAdModification(id, userId) >> repo.removeTag(id, tag)
   }
 }

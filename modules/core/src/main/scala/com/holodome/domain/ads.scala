@@ -22,7 +22,7 @@ object ads {
   @derive(decoder, encoder, eqv, show)
   @newtype case class AdTitle(value: String)
 
-  @derive(decoder, encoder, eqv, stringIso)
+  @derive(decoder, encoder, eqv, stringIso, show)
   @newtype case class AdTag(value: String)
 
   @derive(encoder)
@@ -38,6 +38,11 @@ object ads {
   @derive(decoder, encoder, show)
   case class CreateAdRequest(
       title: AdTitle
+  )
+
+  @derive(decoder, encoder, show)
+  case class AddTagRequest(
+      tag: AdTag
   )
 
   @derive(queryParam)

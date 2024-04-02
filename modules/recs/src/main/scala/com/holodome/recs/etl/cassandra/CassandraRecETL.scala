@@ -11,7 +11,6 @@ import com.holodome.domain.users.UserId
 import com.holodome.recs.etl.RecETL
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
-import scala.collection.mutable.Map
 
 private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F])
     extends RecETL[F] {

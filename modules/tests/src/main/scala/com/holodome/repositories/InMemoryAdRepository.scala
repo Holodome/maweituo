@@ -41,4 +41,10 @@ final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F] 
       val newAd = ad.copy(tags = ad.tags.filter(testTag => testTag =!= tag))
       map.update(id, newAd)
     })
+
+  override def removeImage(id: AdId, image: ImageId): F[Unit] =
+    Sync[F].delay(map.get(id).map { ad =>
+      val newAd = ad.copy(images = ad.images.filter(test => test =!= image))
+      map.update(id, newAd)
+    })
 }

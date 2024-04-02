@@ -15,13 +15,14 @@ trait ObjectStorage[F[_]] {
 
 object ObjectStorage {
   @derive(show)
-  @newtype case class ObjectId(value: String)
+  @newtype case class ObjectId(value: String) {
+    def toImageUrl: ImageUrl =
+      ImageUrl(value)
+
+  }
 
   object ObjectId {
     def fromImageUrl(domain: ImageUrl): ObjectId =
       ObjectId(domain.value)
-
-    def toImageUrl(objectId: ObjectId): ImageUrl =
-      ImageUrl(objectId.value)
   }
 }

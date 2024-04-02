@@ -61,6 +61,9 @@ sealed class CassandraAdvertisementRepository[F[_]: Async] private (session: Cas
   override def removeTag(id: AdId, tag: AdTag): F[Unit] =
     removeTagQuery(id, tag).execute(session).void
 
+  def removeImage(id: AdId, image: ImageId): F[Unit] =
+    removeImageQuery(id, image).execute(session).void
+
   private def createQuery(ad: Advertisement) = {
     cql"""insert into advertisements (id, author_id, title, tags, images, chats)
          |values (${ad.id.value}, ${ad.authorId}, ${ad.title.value}, ${ad.tags},
@@ -91,5 +94,8 @@ sealed class CassandraAdvertisementRepository[F[_]: Async] private (session: Cas
 
   private def removeTagQuery(id: AdId, tag: AdTag) =
     cql"update advertisements set tags = tags - {${tag.value}} where id = ${id.value}"
+
+  private def removeImageQuery(id: AdId, image: ImageId) =
+    cql"update advertisements set images = images - {${image.id}} where id = ${id.value}"
 
 }

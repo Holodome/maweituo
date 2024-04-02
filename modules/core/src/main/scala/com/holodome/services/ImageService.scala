@@ -46,7 +46,7 @@ object ImageService {
         image = Image(
           imageId,
           adId,
-          ObjectId.toImageUrl(objectId)
+          objectId.toImageUrl
         )
         _ <- imageRepo.create(image)
         _ <- adService.addImage(adId, imageId, uploader)

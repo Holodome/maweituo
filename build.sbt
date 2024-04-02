@@ -123,8 +123,8 @@ lazy val it = (project in file("modules/it"))
     publish / skip := true
   )
 
-lazy val recs = (project in file("modules/rec"))
+lazy val recs = (project in file("modules/recs"))
   .dependsOn(core)
   .settings(
-    name := "maweituo-rec"
+    name := "maweituo-recs"
   )

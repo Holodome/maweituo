@@ -6,12 +6,14 @@ import com.holodome.domain.ads._
 import com.holodome.domain.images._
 import com.holodome.domain.messages._
 import com.holodome.infrastructure.ObjectStorage.ObjectId
+import com.holodome.optics.{IsString, IsUUID}
 import org.scalacheck.Gen
 
 import java.time.Instant
 import java.util.UUID
 
 object generators {
+
   def nonEmptyStringGen: Gen[String] =
     Gen
       .chooseNum(21, 40)
@@ -118,4 +120,6 @@ object generators {
   } yield Instant.ofEpochSecond(seconds, nanoAdjustment)
 
   def imageUrlGen: Gen[ImageUrl] = nesGen(ImageUrl.apply)
+
+  def adTagGen: Gen[AdTag] = nesGen(AdTag.apply)
 }

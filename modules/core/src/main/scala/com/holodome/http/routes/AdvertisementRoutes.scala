@@ -100,6 +100,16 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
 
     case DELETE -> Root / AdIdVar(_) / "img" / ImageIdVar(img) as user =>
       imageService.delete(img, user.id).flatMap(Ok(_))
+
+    case ar @ POST -> Root / AdIdVar(adId) / "tag" as user =>
+      ar.req.decodeR[AddTagRequest] { tag =>
+        advertisementService.addTag(adId, tag.tag, user.id).flatMap(Ok(_))
+      }
+
+    case ar @ DELETE -> Root / AdIdVar(adId) / "tag" as user =>
+      ar.req.decodeR[AddTagRequest] { tag =>
+        advertisementService.removeTag(adId, tag.tag, user.id).flatMap(Ok(_))
+      }
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =

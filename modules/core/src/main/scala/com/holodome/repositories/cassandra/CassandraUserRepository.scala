@@ -8,7 +8,6 @@ import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql._
-import com.ringcentral.cassandra4io.cql.Reads._
 import com.holodome.cql.codecs._
 
 object CassandraUserRepository {

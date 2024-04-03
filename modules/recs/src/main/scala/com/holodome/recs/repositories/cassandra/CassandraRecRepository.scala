@@ -3,7 +3,6 @@ package com.holodome.recs.repositories.cassandra
 import cats.data.OptionT
 import cats.effect.Async
 import com.holodome.domain.{ads, users}
-import com.ringcentral.cassandra4io.cql.Reads._
 import com.holodome.cql.codecs._
 import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.users.UserId

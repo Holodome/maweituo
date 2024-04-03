@@ -9,7 +9,6 @@ import com.holodome.domain.users.UserId
 import com.holodome.domain.ads.AdId
 import com.holodome.repositories.ChatRepository
 import com.ringcentral.cassandra4io.CassandraSession
-import com.ringcentral.cassandra4io.cql.Reads._
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.holodome.cql.codecs._
 

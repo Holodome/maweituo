@@ -31,7 +31,7 @@ object UserService {
   ) extends UserService[F] {
 
     override def update(update: UpdateUserRequest, authorized: UserId): F[Unit] =
-      iam.authorizeUserModification(update.id, authorized) >> {
+      iam.authorizeUserModification(update.id, authorized) *> {
         for {
           old <- find(update.id)
           updateUserInternal = UpdateUserInternal(
@@ -47,7 +47,7 @@ object UserService {
       }
 
     def delete(subject: UserId, authorized: UserId): F[Unit] =
-      iam.authorizeUserModification(subject, authorized) >> repo.delete(subject)
+      iam.authorizeUserModification(subject, authorized) *> repo.delete(subject)
 
     override def find(id: UserId): F[User] =
       repo.find(id).getOrRaise(InvalidUserId())

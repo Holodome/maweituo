@@ -32,7 +32,7 @@ object ChatService {
         .findByAdAndClient(adId, clientId)
         .semiflatTap(_ => ChatAlreadyExists().raiseError[F, Unit])
         .value
-        .void >>
+        .void *>
         adService
           .find(adId)
           .map(_.authorId)

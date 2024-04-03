@@ -56,7 +56,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
       }
 
     case DELETE -> Root / AdIdVar(adId) as user =>
-      advertisementService.delete(adId, user.id) >> NoContent()
+      advertisementService.delete(adId, user.id) *> NoContent()
 
     case GET -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
       msgService

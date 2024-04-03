@@ -26,7 +26,7 @@ object MessageService {
       extends MessageService[F] {
 
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {
-      iam.authorizeChatAccess(chatId, senderId) >> {
+      iam.authorizeChatAccess(chatId, senderId) *> {
         for {
           now <- clock.instant
           msg = Message(
@@ -41,7 +41,7 @@ object MessageService {
     }
 
     override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
-      iam.authorizeChatAccess(chatId, requester) >> msgRepo
+      iam.authorizeChatAccess(chatId, requester) *> msgRepo
         .chatHistory(chatId)
         .map(HistoryResponse.apply)
 

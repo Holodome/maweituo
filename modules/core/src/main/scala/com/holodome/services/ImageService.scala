@@ -53,7 +53,7 @@ object ImageService {
       } yield imageId
 
     override def delete(imageId: ImageId, authenticated: UserId): F[Unit] =
-      iam.authorizeImageDelete(imageId, authenticated) >> {
+      iam.authorizeImageDelete(imageId, authenticated) *> {
         find(imageId)
           .flatMap { image =>
             objectStorage.delete(ObjectId.fromImageUrl(image.url))

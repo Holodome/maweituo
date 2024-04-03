@@ -44,18 +44,18 @@ object AdvertisementService {
       } yield id
 
     override def delete(id: AdId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) >> repo.delete(id)
+      iam.authorizeAdModification(id, userId) *> repo.delete(id)
 
     override def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) >> repo.addImage(id, imageId)
+      iam.authorizeAdModification(id, userId) *> repo.addImage(id, imageId)
 
     override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) >> repo.addTag(id, tag)
+      iam.authorizeAdModification(id, userId) *> repo.addTag(id, tag)
 
     override def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) >> repo.removeImage(id, imageId)
+      iam.authorizeAdModification(id, userId) *> repo.removeImage(id, imageId)
 
     override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) >> repo.removeTag(id, tag)
+      iam.authorizeAdModification(id, userId) *> repo.removeTag(id, tag)
   }
 }

@@ -5,7 +5,6 @@ import cats.syntax.all._
 import cats.{Applicative, Parallel}
 import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
-import com.holodome.ext.cassandra4io.typeMappers._
 import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.users.UserId
 import com.holodome.recs.etl.RecETL

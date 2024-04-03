@@ -2,7 +2,6 @@ package com.holodome.recs.repositories.cassandra
 
 import cats.syntax.all._
 import cats.effect.kernel.Async
-import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.cql.Reads._
 import com.holodome.cql.codecs._
 import com.holodome.domain.{ads, users}

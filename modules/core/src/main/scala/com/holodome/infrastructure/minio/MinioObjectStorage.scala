@@ -5,7 +5,7 @@ import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
-import com.holodome.ext.cats.liftJavaFuture
+import com.holodome.ext.cats.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.minio._
@@ -25,13 +25,13 @@ object MinioObjectStorage {
       minio: MinioAsyncClient,
       bucket: String
   ): F[Unit] = {
-    liftJavaFuture(
+    liftCompletableFuture(
       minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())
     ).map(scala.Boolean.unbox)
       .flatMap {
         case true => Applicative[F].unit
         case false =>
-          liftJavaFuture(
+          liftCompletableFuture(
             minio.makeBucket(
               MakeBucketArgs
                 .builder()
@@ -56,7 +56,7 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
         Applicative[F].unit
       }
     res.use(bais =>
-      liftJavaFuture {
+      liftCompletableFuture {
         client
           .putObject(
             PutObjectArgs
@@ -73,7 +73,7 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
 
   override def get(id: ObjectId): OptionT[F, Array[Byte]] =
     OptionT(
-      liftJavaFuture(
+      liftCompletableFuture(
         client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
       ).map(IOUtils.toByteArray(_).some)
         .recoverWith {
@@ -83,7 +83,7 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
     )
 
   override def delete(id: ObjectId): F[Unit] =
-    liftJavaFuture(
+    liftCompletableFuture(
       client.removeObject(RemoveObjectArgs.builder().bucket(bucket).`object`(id.value).build())
     ).void
 }

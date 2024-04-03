@@ -6,7 +6,6 @@ import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.domain.users._
 import com.holodome.repositories.UserRepository
-import com.holodome.ext.cassandra4io.typeMappers._
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql._
 import com.ringcentral.cassandra4io.cql.Reads._
@@ -42,7 +41,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
 
   private def createQuery(req: User) =
     cql"""insert into users (id, name, email, password, salt) values
-         |(${req.id}, ${req.name.value}, ${req.email.value},
+         |(${req.id}, ${req.name.value}, ${req.email.value.value},
          |${req.hashedPassword.value}, ${req.salt.value})""".stripMargin
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
@@ -58,7 +57,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
 
   private def findByEmailQuery(email: Email) = {
     val e = email.value
-    cql"select id, name, email, password, salt from users where email = $e"
+    cql"select id, name, email, password, salt from users where email = ${e.value}"
       .as[User]
   }
 
@@ -76,7 +75,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
   private def updateQuery(update: UpdateUserInternal) = {
     val sets = List(
       update.name.map(_.value).fold(cql"")(name => cql"name = $name "),
-      update.email.map(_.value).fold(cql"")(email => cql"email = $email "),
+      update.email.map(_.value).fold(cql"")(email => cql"email = ${email.value} "),
       update.password.map(_.value).fold(cql"")(password => cql"password = $password ")
     )
     assert(sets.nonEmpty)

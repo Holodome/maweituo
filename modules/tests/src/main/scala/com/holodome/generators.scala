@@ -1,5 +1,6 @@
 package com.holodome
 
+import com.holodome.domain.users._
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.users._
 import com.holodome.domain.ads._
@@ -7,6 +8,7 @@ import com.holodome.domain.images._
 import com.holodome.domain.messages._
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.optics.{IsString, IsUUID}
+import eu.timepit.refined.api.Refined
 import org.scalacheck.Gen
 
 import java.time.Instant
@@ -47,7 +49,7 @@ object generators {
     for {
       prefix  <- nonEmptyStringGen
       postfix <- nonEmptyStringGen
-    } yield Email(prefix + "@" + postfix)
+    } yield Email(Refined.unsafeApply(prefix + "@" + postfix))
 
   def registerGen: Gen[RegisterRequest] =
     for {

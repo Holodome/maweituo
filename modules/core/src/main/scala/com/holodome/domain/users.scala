@@ -3,9 +3,15 @@ package com.holodome.domain
 import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
+import io.circe.refined._
 import derevo.derive
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.cats._
+import eu.timepit.refined.predicates.all.MatchesRegex
 import io.estatico.newtype.macros.newtype
+import eu.timepit.refined.string._
+import eu.timepit.refined.W
 
 import java.util.UUID
 import scala.util.control.NoStackTrace
@@ -18,7 +24,9 @@ object users {
   @newtype case class Username(value: String)
 
   @derive(decoder, encoder, eqv, show)
-  @newtype case class Email(value: String)
+  @newtype case class Email(
+      value: String Refined MatchesRegex[W.`"""(?=[^\\s]+)(?=(\\w+)@([\\w\\.]+))"""`.T]
+  )
 
   @derive(decoder, encoder, eqv, show)
   @newtype

@@ -35,9 +35,9 @@ object AuthService {
           if (passwordsMatch(user, password)) {
             jwtDict
               .get(user.id)
-              .getOrElseF(tokens.create flatMap { t =>
+              .getOrElseF(tokens.create flatTap { t =>
                 jwtDict.store(user.id, t) &>
-                  authedUserDict.store(t, user.id).map(_ => t)
+                  authedUserDict.store(t, user.id)
               })
           } else {
             InvalidPassword(username).raiseError[F, JwtToken]

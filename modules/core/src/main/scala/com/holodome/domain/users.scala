@@ -43,7 +43,7 @@ object users {
   @derive(decoder)
   final case class LoginRequest(name: Username, password: Password)
 
-  @derive(decoder, encoder, show)
+  @derive(decoder, show)
   final case class RegisterRequest(
       name: Username,
       email: Email,

@@ -24,7 +24,7 @@ object MkRedisClient {
           }
         }
 
-      override def newClient(c: RedisConfig): Resource[F, RedisCommands[F, String, String]] =
-        Redis[F].utf8(c.uri.value).evalTap(checkRedisConnection)
+      override def newClient(cfg: RedisConfig): Resource[F, RedisCommands[F, String, String]] =
+        Redis[F].utf8(s"redis://${cfg.host}").evalTap(checkRedisConnection)
     }
 }

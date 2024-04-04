@@ -3,7 +3,7 @@ package com.holodome.modules
 import cats.effect.Concurrent
 import cats.MonadThrow
 import com.comcast.ip4s.SocketAddress
-import com.holodome.config.types.GrpcConfig
+import com.holodome.config.types.RecsClientConfig
 import com.holodome.effects.GenUUID
 import com.holodome.grpc.{TelemetryGRPCClientInterpreter, RecommendationGRPCClientInterpreter}
 import com.holodome.services.{RecommendationService, TelemetryService}
@@ -18,7 +18,7 @@ sealed abstract class GRPCClients[F[_]] {
 object GRPCClients {
   def make[F[_]: Concurrent: GenUUID: MonadThrow](
       client: Client[F],
-      cfg: GrpcConfig
+      cfg: RecsClientConfig
   ): GRPCClients[F] = {
     val uri = Uri.unsafeFromString(SocketAddress(cfg.host, cfg.port).toString())
     new GRPCClients[F] {

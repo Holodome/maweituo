@@ -24,7 +24,7 @@ object Main extends IOApp.Simple {
               for {
                 services <- Services.make[IO](repositories)
                 api = GRPCApi.make[IO](services)
-              } yield cfg.grpc -> api.httpApp
+              } yield cfg.recsServer -> api.httpApp
             }
             .flatMap { case (cfg, httpApp) =>
               MkHttpServer[IO].newEmber(cfg, httpApp)

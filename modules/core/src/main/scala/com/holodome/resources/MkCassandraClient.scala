@@ -33,7 +33,7 @@ object MkCassandraClient {
         val builder = CqlSession
           .builder()
           .addContactPoint(InetSocketAddress.createUnresolved(c.host.toString, c.port.value))
-          .withLocalDatacenter(c.datacenter)
+          .withLocalDatacenter(c.datacenter.value)
           .withKeyspace(c.keyspace)
         CassandraSession.connect(builder).evalTap(checkCassandraConnection)
       }

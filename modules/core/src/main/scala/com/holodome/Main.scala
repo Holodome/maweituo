@@ -24,12 +24,12 @@ object Main extends IOApp.Simple {
             .make[IO](cfg)
             .evalMap { res =>
               val repositories = Repositories.make[IO](res.cassandra)
-              val grpc         = GRPCClients.make[IO](res.grpcClient, cfg.grpc)
+              val grpc         = GRPCClients.make[IO](res.grpcClient, cfg.recs)
               for {
                 services <- Services.make[IO](repositories, cfg, res.redis, res.minio, grpc)
                 api = HttpApi.make[IO](
                   services,
-                  UserJwtAuth(JwtAuth.hmac(cfg.jwtAccessSecret.value.value, JwtAlgorithm.HS256))
+                  UserJwtAuth(JwtAuth.hmac(cfg.jwt.accessSecret.value.value, JwtAlgorithm.HS256))
                 )
               } yield cfg.httpServer -> api.httpApp
             }

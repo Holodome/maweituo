@@ -2,13 +2,11 @@ package com.holodome.recs.config
 
 import cats.effect.Async
 import cats.syntax.all._
-import ciris.{env, ConfigValue}
-import ciris.refined._
-import com.comcast.ip4s.IpLiteralSyntax
-import com.holodome.config.types.{CassandraConfig, HttpServerConfig, MinioConfig}
+import ciris._
+import com.comcast.ip4s.{Host, Port}
+import com.holodome.config.types.HttpServerConfig
 import com.holodome.recs.config.types.RecsConfig
-import eu.timepit.refined.cats._
-import eu.timepit.refined.types.string.NonEmptyString
+import com.holodome.ext.ip4s.codecs._
 
 object Config {
   def load[F[_]: Async]: F[RecsConfig] =
@@ -16,15 +14,14 @@ object Config {
 
   private def default[F[_]: Async]: ConfigValue[F, RecsConfig] =
     (
-      env("MW_CASSANDRA_KEYSPACE"),
-      env("MW_MINIO_USER").as[NonEmptyString].secret,
-      env("MW_MINIO_PASSWORD").as[NonEmptyString].secret
-    )
-      .parMapN { case (cassandraKeyspace, minioUser, minioPassword) =>
-        RecsConfig(
-          CassandraConfig(host"localhost", port"9042", "datacenter1", cassandraKeyspace),
-          MinioConfig("http://localhost:9000", minioUser, minioPassword, "maweituo"),
-          HttpServerConfig(host"0.0.0.0", port"11221")
-        )
-      }
+      com.holodome.config.Config.cassandraConfig,
+      com.holodome.config.Config.minioConfig,
+      recsServerConfig
+    ).parMapN(RecsConfig.apply)
+
+  def recsServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
+    (
+      prop("recs.host").as[Host],
+      prop("recs.port").as[Port]
+    ).parMapN(HttpServerConfig.apply)
 }

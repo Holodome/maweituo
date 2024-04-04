@@ -14,13 +14,13 @@ object MkMinioClient {
   def apply[F[_]: MkMinioClient]: MkMinioClient[F] = implicitly
 
   implicit def forSync[F[_]: Sync]: MkMinioClient[F] = new MkMinioClient[F] {
-    override def newClient(c: MinioConfig): Resource[F, MinioAsyncClient] =
+    override def newClient(cfg: MinioConfig): Resource[F, MinioAsyncClient] =
       Resource.make[F, MinioAsyncClient](
         Sync[F].delay(
           MinioAsyncClient
             .builder()
-            .endpoint(c.endpoint)
-            .credentials(c.userId.value.toString(), c.password.value.toString())
+            .endpoint(s"http://${cfg.host}:${cfg.port}")
+            .credentials(cfg.userId.value.toString(), cfg.password.value.toString())
             .build()
         )
       )(_ => Applicative[F].unit)

@@ -24,7 +24,7 @@ object AppResources {
       MkRedisClient[F].newClient(cfg.redis),
       MkCassandraClient[F].newClient(cfg.cassandra),
       MkMinioClient[F].newClient(cfg.minio),
-      MkHttpClient[F].newEmber(cfg.grpc.client)
+      MkHttpClient[F].newEmber(cfg.recs.client)
     )
       .parMapN(new AppResources[F](_, _, _, _) {})
   }

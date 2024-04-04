@@ -38,8 +38,8 @@ object Services {
     (
       JwtExpire
         .make[F]
-        .map(JwtTokens.make[F](_, cfg.jwtAccessSecret.value, cfg.jwtTokenExpiration)),
-      MinioObjectStorage.make[F](minio, cfg.minio.bucket)
+        .map(JwtTokens.make[F](_, cfg.jwt)),
+      MinioObjectStorage.make[F](minio, cfg.minio.bucket.value)
     )
       .mapN { case (tokens, imageStorage) =>
         new Services[F] {
@@ -55,11 +55,11 @@ object Services {
             AuthService.make(
               users,
               RedisEphemeralDict
-                .make[F](redis, cfg.jwtTokenExpiration.value)
+                .make[F](redis, cfg.jwt.tokenExpiration.value)
                 .keyContramap[UserId](_.value.toString)
                 .valueImap[JwtToken](JwtToken.apply, _.value),
               RedisEphemeralDict
-                .make[F](redis, cfg.jwtTokenExpiration.value)
+                .make[F](redis, cfg.jwt.tokenExpiration.value)
                 .keyContramap[JwtToken](_.value)
                 .valueIFlatmap[UserId](Id.read[F, UserId], _.value.toString),
               tokens

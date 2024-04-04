@@ -6,6 +6,6 @@ object types {
   case class RecsConfig(
       cassandra: CassandraConfig,
       minio: MinioConfig,
-      grpc: HttpServerConfig
+      recsServer: HttpServerConfig
   )
 }

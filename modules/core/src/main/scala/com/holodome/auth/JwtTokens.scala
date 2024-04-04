@@ -15,14 +15,13 @@ trait JwtTokens[F[_]] {
 object JwtTokens {
   def make[F[_]: GenUUID: Monad](
       jwtExpire: JwtExpire[F],
-      secret: JwtAccessSecret,
-      exp: JwtTokenExpiration
+      cfg: JwtConfig
   ): JwtTokens[F] =
     new JwtTokens[F] {
       override def create: F[JwtToken] = for {
         uuid  <- GenUUID[F].make
-        claim <- jwtExpire.expiresIn(JwtClaim(uuid.asJson.noSpaces), exp)
-        secretKey = JwtSecretKey(secret.value)
+        claim <- jwtExpire.expiresIn(JwtClaim(uuid.asJson.noSpaces), cfg.tokenExpiration)
+        secretKey = JwtSecretKey(cfg.accessSecret.value.value)
         token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
       } yield token
     }

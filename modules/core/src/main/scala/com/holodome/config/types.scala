@@ -1,6 +1,6 @@
 package com.holodome.config
 
-import ciris.Secret
+import ciris.{ConfigDecoder, Secret}
 import com.comcast.ip4s.{Host, Port}
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
@@ -15,15 +15,18 @@ object types {
   @newtype case class JwtAccessSecret(value: String)
   @newtype case class JwtTokenExpiration(value: FiniteDuration)
 
-  @newtype case class RedisURI(value: String)
-  @newtype case class RedisConfig(uri: RedisURI)
+  implicit val jwtTokenExpirationDecoder: ciris.ConfigDecoder[String, JwtTokenExpiration] =
+    ciris.ConfigDecoder.stringFiniteDurationConfigDecoder.map(JwtTokenExpiration.apply)
 
-  case class CassandraConfig(host: Host, port: Port, datacenter: String, keyspace: String)
+  @newtype case class RedisConfig(host: Host)
+
+  case class CassandraConfig(host: Host, port: Port, datacenter: NonEmptyString, keyspace: String)
   case class MinioConfig(
-      endpoint: String,
+      host: Host,
+      port: Port,
       userId: Secret[NonEmptyString],
       password: Secret[NonEmptyString],
-      bucket: String
+      bucket: NonEmptyString
   )
 
   case class HttpServerConfig(
@@ -36,19 +39,23 @@ object types {
       idleTimeInPool: FiniteDuration
   )
 
-  case class GrpcConfig(
+  case class RecsClientConfig(
       client: HttpClientConfig,
       host: Host,
       port: Port
   )
 
+  case class JwtConfig(
+      tokenExpiration: JwtTokenExpiration,
+      accessSecret: Secret[JwtAccessSecret]
+  )
+
   case class AppConfig(
       httpServer: HttpServerConfig,
       cassandra: CassandraConfig,
-      jwtTokenExpiration: JwtTokenExpiration,
-      jwtAccessSecret: Secret[JwtAccessSecret],
+      jwt: JwtConfig,
       redis: RedisConfig,
       minio: MinioConfig,
-      grpc: GrpcConfig
+      recs: RecsClientConfig
   )
 }

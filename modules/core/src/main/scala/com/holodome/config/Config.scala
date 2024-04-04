@@ -6,17 +6,22 @@ import ciris._
 import ciris.refined._
 import com.comcast.ip4s._
 import com.holodome.config.types._
+import com.holodome.ext.ciris.JsonConfig
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
 import com.holodome.ext.ip4s.codecs._
-
-import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import java.nio.file.Paths
+import scala.concurrent.duration.FiniteDuration
 
 object Config {
   def load[F[_]: Async]: F[AppConfig] =
-    default[F].load[F]
+    JsonConfig
+      .fromFile[F](Paths.get("maweituo-config.json"))
+      .flatMap { implicit json =>
+        default[F].load[F]
+      }
 
-  def default[F[_]]: ConfigValue[F, AppConfig] =
+  def default[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
     (
       httpServerConfig,
       cassandraConfig,
@@ -26,46 +31,46 @@ object Config {
       recsServerConfig
     ).parMapN(AppConfig.apply)
 
-  def cassandraConfig[F[_]]: ConfigValue[F, CassandraConfig] =
+  def cassandraConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, CassandraConfig] =
     (
-      prop("cassandra.host").as[Host],
-      prop("cassandra.port").as[Port],
-      prop("cassandra.detacenter").as[NonEmptyString],
+      file.stringField("cassandra.host").as[Host],
+      file.stringField("cassandra.port").as[Port],
+      file.stringField("cassandra.datacenter").as[NonEmptyString],
       env("MW_CASSANDRA_KEYSPACE")
     ).parMapN(CassandraConfig.apply)
 
-  def httpServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
+  def httpServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (
-      prop("http.host").as[Host],
-      prop("http.port").as[Port]
+      file.stringField("http.host").as[Host],
+      file.stringField("http.port").as[Port]
     ).parMapN(HttpServerConfig)
 
-  def jwtConfig[F[_]]: ConfigValue[F, JwtConfig] =
+  def jwtConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, JwtConfig] =
     (
-      prop("jwt.expire").as[JwtTokenExpiration],
+      file.stringField("jwt.expire").as[JwtTokenExpiration],
       env("MW_JWT_SECRET_KEY").as[JwtAccessSecret].secret
     ).parMapN(JwtConfig.apply)
 
-  def redisConfig[F[_]]: ConfigValue[F, RedisConfig] =
+  def redisConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RedisConfig] =
     (
-      prop("redis.uri").as[Host]
+      file.stringField("redis.host").as[Host]
     ).map(RedisConfig.apply)
 
-  def minioConfig[F[_]]: ConfigValue[F, MinioConfig] =
+  def minioConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, MinioConfig] =
     (
-      prop("minio.host").as[Host],
-      prop("minio.port").as[Port],
+      file.stringField("minio.host").as[Host],
+      file.stringField("minio.port").as[Port],
       env("MW_MINIO_USER").as[NonEmptyString].secret,
       env("MW_MINIO_PASSWORD").as[NonEmptyString].secret,
-      prop("minio.bucket").as[NonEmptyString]
+      file.stringField("minio.bucket").as[NonEmptyString]
     ).parMapN(MinioConfig.apply)
 
-  def recsServerConfig[F[_]]: ConfigValue[F, RecsClientConfig] =
+  def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RecsClientConfig] =
     (
-      prop("recs_client.timeout").as[FiniteDuration],
-      prop("recs_client.idle_time_in_pool").as[FiniteDuration],
-      prop("recs.host").as[Host],
-      prop("recs.port").as[Port]
+      file.stringField("recs_client.timeout").as[FiniteDuration],
+      file.stringField("recs_client.idle_time_in_pool").as[FiniteDuration],
+      file.stringField("recs.host").as[Host],
+      file.stringField("recs.port").as[Port]
     ).parMapN { case (timeout, idle, host, port) =>
       RecsClientConfig(HttpClientConfig(timeout, idle), host, port)
     }

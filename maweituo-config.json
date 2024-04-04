@@ -1,0 +1,30 @@
+{
+  "cassandra": {
+    "port": "9042",
+    "host": "localhost",
+    "datacenter": "datacenter1"
+  },
+  "http": {
+    "port": "8080",
+    "host": "localhost"
+  },
+  "jwt": {
+    "expire": "1 hour"
+  },
+  "redis": {
+    "host": "localhost"
+  },
+  "minio": {
+    "port": "9000",
+    "host": "localhost",
+    "bucket": "maweituo"
+  },
+  "recs_client": {
+    "timeout": "60 seconds",
+    "idle_time_in_pool": "30 seconds"
+  },
+  "recs": {
+    "host": "localhost",
+    "port": "11223"
+  }
+}

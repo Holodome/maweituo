@@ -5,23 +5,31 @@ import cats.syntax.all._
 import ciris._
 import com.comcast.ip4s.{Host, Port}
 import com.holodome.config.types.HttpServerConfig
+import com.holodome.effects.RelativeFile
+import com.holodome.ext.ciris.JsonConfig
 import com.holodome.recs.config.types.RecsConfig
 import com.holodome.ext.ip4s.codecs._
 
+import java.nio.file.{Path, Paths}
+
 object Config {
   def load[F[_]: Async]: F[RecsConfig] =
-    default[F].load[F]
+    JsonConfig
+      .fromFile[F](Paths.get("maweituo-config.json"))
+      .flatMap { implicit json =>
+        default[F].load[F]
+      }
 
-  private def default[F[_]: Async]: ConfigValue[F, RecsConfig] =
+  private def default[F[_]: Async](implicit file: JsonConfig): ConfigValue[F, RecsConfig] =
     (
       com.holodome.config.Config.cassandraConfig,
       com.holodome.config.Config.minioConfig,
       recsServerConfig
     ).parMapN(RecsConfig.apply)
 
-  def recsServerConfig[F[_]]: ConfigValue[F, HttpServerConfig] =
+  def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (
-      prop("recs.host").as[Host],
-      prop("recs.port").as[Port]
+      file.stringField("recs.host").as[Host],
+      file.stringField("recs.port").as[Port]
     ).parMapN(HttpServerConfig.apply)
 }

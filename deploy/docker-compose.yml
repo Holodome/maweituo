@@ -1,0 +1,50 @@
+version: "3.4"
+
+services:
+  redis:
+    image: 'redis:6.2-alpine'
+    container_name: maweituo-redis
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - backend
+
+  scylla:
+    image: 'scylladb/scylla:latest'
+    container_name: maweituo-scylla
+    restart: always
+    ports:
+      - '9042:9042'
+    networks:
+      - backend
+
+  minio:
+    image: 'minio/minio:latest'
+    container_name: maweituo-minio
+    command: 'minio server /local --console-address :9001'
+    restart: always
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - backend
+    volumes:
+      - 'minio_data:/local'
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DEFAULT_BUCKETS=maweituo
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  redis_data:
+    driver: local

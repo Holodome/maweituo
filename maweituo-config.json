@@ -25,6 +25,7 @@
   },
   "recs": {
     "host": "localhost",
-    "port": "11223"
+    "port": "11223",
+    "uri": "http://localhost:11223"
   }
 }

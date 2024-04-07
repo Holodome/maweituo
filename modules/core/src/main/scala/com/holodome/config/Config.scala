@@ -3,13 +3,15 @@ package com.holodome.config
 import cats.effect.Async
 import cats.syntax.all._
 import ciris._
+import ciris.http4s._
 import ciris.refined._
 import com.comcast.ip4s._
 import com.holodome.config.types._
 import com.holodome.ext.ciris.JsonConfig
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
-import com.holodome.ext.ip4s.codecs._
+import org.http4s.Uri
+
 import java.nio.file.Paths
 import scala.concurrent.duration.FiniteDuration
 
@@ -28,7 +30,7 @@ object Config {
       jwtConfig,
       redisConfig,
       minioConfig,
-      recsServerConfig
+      recsClientConfig
     ).parMapN(AppConfig.apply)
 
   def cassandraConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, CassandraConfig] =
@@ -65,13 +67,13 @@ object Config {
       file.stringField("minio.bucket").as[NonEmptyString]
     ).parMapN(MinioConfig.apply)
 
-  def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RecsClientConfig] =
+  def recsClientConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RecsClientConfig] =
     (
       file.stringField("recs_client.timeout").as[FiniteDuration],
       file.stringField("recs_client.idle_time_in_pool").as[FiniteDuration],
-      file.stringField("recs.host").as[Host],
-      file.stringField("recs.port").as[Port]
-    ).parMapN { case (timeout, idle, host, port) =>
-      RecsClientConfig(HttpClientConfig(timeout, idle), host, port)
+      file.stringField("recs.uri").as[Uri],
+      env("MW_NO_RECS").option.map(_.fold(false)(_ => true))
+    ).parMapN { case (timeout, idle, uri, noRecs) =>
+      RecsClientConfig(HttpClientConfig(timeout, idle), uri, noRecs)
     }
 }

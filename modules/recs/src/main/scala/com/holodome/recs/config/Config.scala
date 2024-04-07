@@ -5,12 +5,11 @@ import cats.syntax.all._
 import ciris._
 import com.comcast.ip4s.{Host, Port}
 import com.holodome.config.types.HttpServerConfig
-import com.holodome.effects.RelativeFile
 import com.holodome.ext.ciris.JsonConfig
 import com.holodome.recs.config.types.RecsConfig
-import com.holodome.ext.ip4s.codecs._
+import ciris.http4s._
 
-import java.nio.file.{Path, Paths}
+import java.nio.file.Paths
 
 object Config {
   def load[F[_]: Async]: F[RecsConfig] =

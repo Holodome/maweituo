@@ -5,18 +5,22 @@ import com.comcast.ip4s.{Host, Port}
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
+import enumeratum.EnumEntry._
+import enumeratum._
 import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
+import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
 
 object types {
+  sealed abstract class AppEnvironment extends EnumEntry with Lowercase
+
   @derive(configDecoder, show)
   @newtype case class JwtAccessSecret(value: String)
-  @newtype case class JwtTokenExpiration(value: FiniteDuration)
 
-  implicit val jwtTokenExpirationDecoder: ciris.ConfigDecoder[String, JwtTokenExpiration] =
-    ciris.ConfigDecoder.stringFiniteDurationConfigDecoder.map(JwtTokenExpiration.apply)
+  @derive(configDecoder, show)
+  @newtype case class JwtTokenExpiration(value: FiniteDuration)
 
   @newtype case class RedisConfig(host: Host)
 
@@ -41,8 +45,8 @@ object types {
 
   case class RecsClientConfig(
       client: HttpClientConfig,
-      host: Host,
-      port: Port
+      uri: Uri,
+      noRecs: Boolean
   )
 
   case class JwtConfig(

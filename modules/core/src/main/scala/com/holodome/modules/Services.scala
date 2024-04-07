@@ -33,7 +33,7 @@ object Services {
       cfg: AppConfig,
       redis: RedisCommands[F, String, String],
       minio: MinioAsyncClient,
-      grpc: GRPCClients[F]
+      grpc: RecsClients[F]
   ): F[Services[F]] = {
     (
       JwtExpire

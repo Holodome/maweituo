@@ -72,6 +72,7 @@ lazy val core = (project in file("modules/core"))
       "is.cir"               %% "ciris"                 % CirisVersion,
       "is.cir"               %% "ciris-enumeratum"      % CirisVersion,
       "is.cir"               %% "ciris-refined"         % CirisVersion,
+      "is.cir"               %% "ciris-http4s"          % CirisVersion,
       "io.estatico"          %% "newtype"               % NewtypeVersion,
       "ch.qos.logback"        % "logback-classic"       % LogbackVersion,
       "dev.optics"           %% "monocle-core"          % MonocleVersion,
@@ -96,13 +97,6 @@ lazy val tests = (project in file("modules/tests"))
   .settings(
     name := "maweituo-tests",
     publish / skip := true,
-    scalacOptions ++= Seq(
-      "-Ymacro-annotations",
-      "-feature",
-      "-language:implicitConversions",
-      "-deprecation"
-    ),
-    scalafmtOnCompile := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     libraryDependencies ++= Seq(
       "com.disneystreaming" %% "weaver-cats"        % WeaverVersion,

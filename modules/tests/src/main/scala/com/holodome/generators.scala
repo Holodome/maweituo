@@ -49,7 +49,10 @@ object generators {
     for {
       prefix  <- nonEmptyStringGen
       postfix <- nonEmptyStringGen
-    } yield Email(Refined.unsafeApply(prefix + "@" + postfix))
+      domain <- Gen
+        .chooseNum(2, 4)
+        .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
+    } yield Email(Refined.unsafeApply(prefix + "@" + postfix + "." + domain))
 
   def registerGen: Gen[RegisterRequest] =
     for {
@@ -124,4 +127,17 @@ object generators {
   def imageUrlGen: Gen[ImageUrl] = nesGen(ImageUrl.apply)
 
   def adTagGen: Gen[AdTag] = nesGen(AdTag.apply)
+
+  def loginRequestGen: Gen[LoginRequest] =
+    for {
+      name     <- usernameGen
+      password <- passwordGen
+    } yield LoginRequest(name, password)
+
+  def registerRequestGen: Gen[RegisterRequest] =
+    for {
+      name     <- usernameGen
+      email    <- emailGen
+      password <- passwordGen
+    } yield RegisterRequest(name, email, password)
 }

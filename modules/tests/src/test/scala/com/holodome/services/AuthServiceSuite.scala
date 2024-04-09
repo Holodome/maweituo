@@ -17,8 +17,12 @@ import com.holodome.ext.jwt.jwtTokenShow
 import com.holodome.infrastructure.InMemoryEphemeralDict
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.Logger
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private val iam = IAMService.make(
     mock[AdvertisementRepository[IO]],
     mock[ChatRepository[IO]],

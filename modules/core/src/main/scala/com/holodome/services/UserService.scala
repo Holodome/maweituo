@@ -57,7 +57,7 @@ object UserService {
 
     override def register(
         body: RegisterRequest
-    ): F[UserId] = {
+    ): F[UserId] =
       for {
         _ <- repo
           .findByEmail(body.email)
@@ -76,8 +76,8 @@ object UserService {
           PasswordHashing.hashSaltPassword(body.password, salt),
           salt
         )
-      } yield user
-    }.flatTap(repo.create).map(_.id)
+        _ <- repo.create(user)
+      } yield user.id
   }
 
 }

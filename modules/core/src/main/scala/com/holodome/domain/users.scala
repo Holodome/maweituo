@@ -25,7 +25,7 @@ object users {
 
   @derive(decoder, encoder, eqv, show)
   @newtype case class Email(
-      value: String Refined MatchesRegex[W.`"""(?=[^\\s]+)(?=(\\w+)@([\\w\\.]+))"""`.T]
+      value: String Refined MatchesRegex[W.`"""(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"""`.T]
   )
 
   @derive(decoder, encoder, eqv, show)
@@ -40,10 +40,10 @@ object users {
   @newtype
   case class PasswordSalt(value: String)
 
-  @derive(decoder)
+  @derive(decoder, encoder, show)
   final case class LoginRequest(name: Username, password: Password)
 
-  @derive(decoder, show)
+  @derive(decoder, show, encoder)
   final case class RegisterRequest(
       name: Username,
       email: Email,

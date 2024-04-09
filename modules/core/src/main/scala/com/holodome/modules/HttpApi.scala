@@ -30,7 +30,7 @@ sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAut
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    loginRoutes <+> logoutRoutes <+> advertisementRoutes <+> userRoutes <+> registerRoutes
+    loginRoutes <+> registerRoutes <+> advertisementRoutes <+> userRoutes <+> logoutRoutes
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

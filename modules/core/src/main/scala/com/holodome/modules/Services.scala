@@ -14,6 +14,7 @@ import com.holodome.services._
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient
+import org.typelevel.log4cats.Logger
 
 sealed abstract class Services[F[_]] {
   val iam: IAMService[F]
@@ -28,7 +29,7 @@ sealed abstract class Services[F[_]] {
 }
 
 object Services {
-  def make[F[_]: MonadThrow: Async: Background: NonEmptyParallel](
+  def make[F[_]: MonadThrow: Async: Background: NonEmptyParallel: Logger](
       repositories: Repositories[F],
       cfg: AppConfig,
       redis: RedisCommands[F, String, String],
@@ -38,7 +39,7 @@ object Services {
     (
       JwtExpire
         .make[F]
-        .map(JwtTokens.make[F](_, cfg.jwt)),
+        .map(JwtTokens.make[F](_, cfg.jwt.accessSecret.value, cfg.jwt.tokenExpiration)),
       MinioObjectStorage.make[F](minio, cfg.minio.bucket.value)
     )
       .mapN { case (tokens, imageStorage) =>

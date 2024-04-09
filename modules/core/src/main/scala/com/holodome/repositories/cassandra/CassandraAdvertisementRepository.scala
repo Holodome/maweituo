@@ -43,7 +43,7 @@ sealed class CassandraAdvertisementRepository[F[_]: Async] private (session: Cas
   override def create(ad: Advertisement): F[Unit] =
     createQuery(ad).execute(session).void
 
-  override def all(): F[List[Advertisement]] =
+  override def all: F[List[Advertisement]] =
     allQuery.select(session).compile.toList.map(_.map(_.toDomain))
 
   override def find(id: AdId): OptionT[F, Advertisement] =

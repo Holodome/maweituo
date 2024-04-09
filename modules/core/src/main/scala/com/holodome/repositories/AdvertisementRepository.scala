@@ -6,7 +6,7 @@ import com.holodome.domain.images.ImageId
 
 trait AdvertisementRepository[F[_]] {
   def create(ad: Advertisement): F[Unit]
-  def all(): F[List[Advertisement]]
+  def all: F[List[Advertisement]]
   def find(id: AdId): OptionT[F, Advertisement]
   def delete(id: AdId): F[Unit]
   def addTag(id: AdId, tag: AdTag): F[Unit]

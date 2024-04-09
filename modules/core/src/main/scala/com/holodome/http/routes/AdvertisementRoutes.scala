@@ -31,13 +31,13 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? AdQueryParam(ad) =>
       ad match {
-        case None => Ok(advertisementService.all())
+        case None => Ok(advertisementService.all)
         case Some(param) =>
           param.toDomain match {
             case None => BadRequest()
             case Some(id) =>
               advertisementService
-                .find(id)
+                .get(id)
                 .flatMap(Ok(_))
                 .recoverWith { case NoUserFound(_) =>
                   BadRequest()

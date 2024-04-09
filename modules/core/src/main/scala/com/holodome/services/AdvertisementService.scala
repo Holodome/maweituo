@@ -10,8 +10,8 @@ import com.holodome.effects.GenUUID
 import com.holodome.repositories.AdvertisementRepository
 
 trait AdvertisementService[F[_]] {
-  def find(id: AdId): F[Advertisement]
-  def all(): F[List[Advertisement]]
+  def get(id: AdId): F[Advertisement]
+  def all: F[List[Advertisement]]
   def create(authorId: UserId, create: CreateAdRequest): F[AdId]
   def delete(id: AdId, userId: UserId): F[Unit]
   def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
@@ -31,10 +31,10 @@ object AdvertisementService {
       repo: AdvertisementRepository[F],
       iam: IAMService[F]
   ) extends AdvertisementService[F] {
-    override def find(id: AdId): F[Advertisement] =
+    override def get(id: AdId): F[Advertisement] =
       repo.find(id).getOrRaise(InvalidAdId(id))
 
-    override def all(): F[List[Advertisement]] = repo.all()
+    override def all: F[List[Advertisement]] = repo.all
 
     override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {

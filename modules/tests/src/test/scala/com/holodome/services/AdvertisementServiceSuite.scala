@@ -27,7 +27,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       for {
         userId <- users.register(reg)
         adId   <- serv.create(userId, createAd)
-        ad     <- serv.find(adId)
+        ad     <- serv.get(adId)
       } yield expect.all(
         ad.title === createAd.title,
         ad.id === adId,
@@ -53,9 +53,9 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       for {
         userId <- users.register(reg)
         adId   <- serv.create(userId, createAd)
-        _      <- serv.find(adId)
+        _      <- serv.get(adId)
         _      <- serv.delete(adId, userId)
-        x      <- serv.find(adId).map(Some(_)).recoverWith { case InvalidAdId(_) => None.pure[IO] }
+        x      <- serv.get(adId).map(Some(_)).recoverWith { case InvalidAdId(_) => None.pure[IO] }
       } yield expect.all(x.isEmpty)
     }
   }
@@ -76,11 +76,11 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         userId  <- users.register(reg)
         otherId <- users.register(otherReg)
         adId    <- serv.create(userId, createAd)
-        _       <- serv.find(adId)
+        _       <- serv.get(adId)
         x <- serv.delete(adId, otherId).map(Some(_)).recoverWith { case NotAnAuthor() =>
           None.pure[IO]
         }
-        _ <- serv.find(adId)
+        _ <- serv.get(adId)
       } yield expect.all(x.isEmpty)
     }
   }
@@ -101,7 +101,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         userId <- users.register(reg)
         adId   <- serv.create(userId, createAd)
         _      <- serv.addImage(adId, imageId, userId)
-        ad     <- serv.find(adId)
+        ad     <- serv.get(adId)
       } yield expect.all(ad.images === Set(imageId))
     }
   }
@@ -123,7 +123,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         adId   <- serv.create(userId, createAd)
         _      <- serv.addImage(adId, imageId, userId)
         _      <- serv.removeImage(adId, imageId, userId)
-        ad     <- serv.find(adId)
+        ad     <- serv.get(adId)
       } yield expect.all(ad.images === Set())
     }
   }
@@ -144,7 +144,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         userId <- users.register(reg)
         adId   <- serv.create(userId, createAd)
         _      <- serv.addTag(adId, tag, userId)
-        ad     <- serv.find(adId)
+        ad     <- serv.get(adId)
       } yield expect.all(ad.tags === Set(tag))
     }
   }
@@ -166,7 +166,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         adId   <- serv.create(userId, createAd)
         _      <- serv.addTag(adId, tag, userId)
         _      <- serv.removeTag(adId, tag, userId)
-        ad     <- serv.find(adId)
+        ad     <- serv.get(adId)
       } yield expect.all(ad.tags === Set())
     }
   }

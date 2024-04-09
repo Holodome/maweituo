@@ -2,6 +2,7 @@ package com.holodome.resources
 
 import cats.syntax.all._
 import cats.effect.{Async, Resource}
+import cats.Applicative
 import com.datastax.oss.driver.api.core.CqlSession
 import com.holodome.config.types.CassandraConfig
 import com.ringcentral.cassandra4io.CassandraSession
@@ -25,8 +26,10 @@ object MkCassandraClient {
           .select(cassandra)
           .head
           .compile
-          .last flatMap { version =>
-          Logger[F].info(s"Connected to cassandra $version")
+          .last flatMap {
+          case Some(version) =>
+            Logger[F].info(s"Connected to cassandra $version")
+          case _ => Applicative[F].unit
         }
 
       override def newClient(c: CassandraConfig): Resource[F, CassandraSession[F]] = {

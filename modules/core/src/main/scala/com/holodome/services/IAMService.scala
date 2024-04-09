@@ -1,12 +1,11 @@
 package com.holodome.services
 
+import cats.{Applicative, MonadThrow}
+import cats.syntax.all._
 import com.holodome.domain.ads._
-import com.holodome.domain.images.InvalidImageId
+import com.holodome.domain.images.{ImageId, InvalidImageId}
 import com.holodome.domain.messages._
 import com.holodome.domain.users.{InvalidAccess, UserId}
-import cats.syntax.all._
-import cats.{Applicative, MonadThrow}
-import com.holodome.domain.images.ImageId
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 
 trait IAMService[F[_]] {

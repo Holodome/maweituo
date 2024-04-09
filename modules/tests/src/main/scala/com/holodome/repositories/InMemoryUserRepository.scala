@@ -15,7 +15,7 @@ final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F] {
   override def create(request: users.User): F[Unit] =
     Sync[F].delay { map.addOne(request.id -> request) }
 
-  override def all(): F[List[users.User]] =
+  override def all: F[List[users.User]] =
     Sync[F].delay { map.values.toList }
 
   override def find(userId: users.UserId): OptionT[F, users.User] =

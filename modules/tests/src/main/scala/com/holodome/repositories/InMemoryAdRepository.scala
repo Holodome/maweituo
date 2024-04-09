@@ -15,7 +15,7 @@ final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F] 
   override def create(ad: Advertisement): F[Unit] =
     Sync[F].delay { map.addOne(ad.id -> ad) }
 
-  override def all(): F[List[Advertisement]] =
+  override def all: F[List[Advertisement]] =
     Sync[F].delay { map.values.toList }
 
   override def find(id: AdId): OptionT[F, Advertisement] =

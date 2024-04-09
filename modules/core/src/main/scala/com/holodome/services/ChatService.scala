@@ -11,7 +11,7 @@ import com.holodome.repositories.ChatRepository
 
 trait ChatService[F[_]] {
   def create(adId: AdId, clientId: UserId): F[ChatId]
-  def find(chatId: ChatId): F[Chat]
+  def get(chatId: ChatId): F[Chat]
 }
 
 object ChatService {
@@ -34,7 +34,7 @@ object ChatService {
         .value
         .void *>
         adService
-          .find(adId)
+          .get(adId)
           .map(_.authorId)
           .flatTap {
             case author if author === clientId =>
@@ -55,7 +55,7 @@ object ChatService {
           }
     } <* telemetry.userDiscussed(clientId, adId)
 
-    override def find(chatId: ChatId): F[Chat] =
+    override def get(chatId: ChatId): F[Chat] =
       chatRepo
         .find(chatId)
         .getOrRaise(InvalidChatId())

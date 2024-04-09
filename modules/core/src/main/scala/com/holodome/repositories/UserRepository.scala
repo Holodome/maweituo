@@ -5,7 +5,7 @@ import com.holodome.domain.users._
 
 trait UserRepository[F[_]] extends {
   def create(request: User): F[Unit]
-  def all(): F[List[User]]
+  def all: F[List[User]]
   def find(userId: UserId): OptionT[F, User]
   def findByEmail(email: Email): OptionT[F, User]
   def findByName(name: Username): OptionT[F, User]

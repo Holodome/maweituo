@@ -36,7 +36,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val serv = UserService.make(repo, iam)
       for {
         id <- serv.register(register)
-        u  <- serv.find(id)
+        u  <- serv.get(id)
       } yield expect.all(u.id === id)
     }
   }
@@ -47,7 +47,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val serv = UserService.make(repo, iam)
       for {
         id <- serv.register(register)
-        u  <- serv.findByName(register.name)
+        u  <- serv.getByName(register.name)
       } yield expect.all(u.id === id)
     }
   }
@@ -60,7 +60,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
         id <- serv.register(register)
         _  <- serv.delete(id, id)
         found <- serv
-          .find(id)
+          .get(id)
           .map(Some(_))
           .recoverWith { case InvalidUserId() => None.pure[IO] }
       } yield expect.all(found.isEmpty)
@@ -84,7 +84,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
           .recover { case InvalidAccess() =>
             None
           }
-        _ <- serv.find(newId)
+        _ <- serv.get(newId)
       } yield expect.all(x.isEmpty)
     }
   }
@@ -100,9 +100,9 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       for {
         newId <- serv.register(register)
         newUpd = upd.copy(id = newId)
-        prior   <- serv.find(newId)
+        prior   <- serv.get(newId)
         _       <- serv.update(newUpd, newId)
-        updated <- serv.find(newId)
+        updated <- serv.get(newId)
       } yield expect.all(
         newUpd.email.fold(true)(_ === updated.email),
         newUpd.name.fold(true)(_ === updated.name),
@@ -123,9 +123,9 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       for {
         newId <- serv.register(register)
         newUpd = upd.copy(id = newId)
-        prior <- serv.find(newId)
+        prior <- serv.get(newId)
         x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess() => None }
-        got   <- serv.find(newId)
+        got   <- serv.get(newId)
       } yield expect.all(
         x.isEmpty,
         got.hashedPassword === prior.hashedPassword,

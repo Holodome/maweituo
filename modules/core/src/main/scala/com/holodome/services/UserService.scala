@@ -10,8 +10,8 @@ import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
 
 trait UserService[F[_]] {
-  def find(id: UserId): F[User]
-  def findByName(name: Username): F[User]
+  def get(id: UserId): F[User]
+  def getByName(name: Username): F[User]
   def delete(subject: UserId, authorized: UserId): F[Unit]
   def update(update: UpdateUserRequest, authorized: UserId): F[Unit]
 
@@ -33,7 +33,7 @@ object UserService {
     override def update(update: UpdateUserRequest, authorized: UserId): F[Unit] =
       iam.authorizeUserModification(update.id, authorized) *> {
         for {
-          old <- find(update.id)
+          old <- get(update.id)
           updateUserInternal = UpdateUserInternal(
             update.id,
             update.name,
@@ -49,10 +49,10 @@ object UserService {
     def delete(subject: UserId, authorized: UserId): F[Unit] =
       iam.authorizeUserModification(subject, authorized) *> repo.delete(subject)
 
-    override def find(id: UserId): F[User] =
+    override def get(id: UserId): F[User] =
       repo.find(id).getOrRaise(InvalidUserId())
 
-    override def findByName(name: Username): F[User] =
+    override def getByName(name: Username): F[User] =
       repo.findByName(name).getOrRaise(NoUserFound(name))
 
     override def register(

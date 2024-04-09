@@ -20,7 +20,7 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
 
   override def create(request: User): F[Unit] = createQuery(request).execute(session).void
 
-  override def all(): F[List[User]] =
+  override def all: F[List[User]] =
     allQuery.select(session).compile.toList
 
   override def find(userId: UserId): OptionT[F, User] =

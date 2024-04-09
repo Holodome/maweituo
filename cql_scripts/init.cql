@@ -9,6 +9,16 @@ create table local.users (
     salt text,
 );
 
+create materialized view local.users_by_name AS
+    select * from local.users
+    where name is not null
+    primary key (name, id);
+
+create materialized view local.users_by_email AS
+    select * from local.users
+    where email is not null
+    primary key (email, id);
+
 create table local.advertisements (
     id uuid primary key,
     author_id uuid,
@@ -78,7 +88,7 @@ create table recs.user_weights (
 );
 
 create table recs.tags (
-    index int primary key,
+    idx int primary key,
     tag text
 );
 

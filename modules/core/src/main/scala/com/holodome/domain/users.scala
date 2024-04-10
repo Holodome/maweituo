@@ -50,13 +50,6 @@ object users {
       password: Password
   )
 
-  case class InvalidUserId()                     extends NoStackTrace
-  case class NoUserFound(username: Username)     extends NoStackTrace
-  case class UserNameInUse(username: Username)   extends NoStackTrace
-  case class UserEmailInUse(email: Email)        extends NoStackTrace
-  case class InvalidPassword(username: Username) extends NoStackTrace
-  case class InvalidAccess()                     extends NoStackTrace
-
   case class User(
       id: UserId,
       name: Username,

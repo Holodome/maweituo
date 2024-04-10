@@ -3,7 +3,8 @@ package com.holodome.cassandra
 import cats.effect.IO
 import cats.syntax.all._
 import cats.Show
-import com.holodome.domain.ads.{Advertisement, InvalidAdId}
+import com.holodome.domain.ads.Advertisement
+import com.holodome.domain.errors.InvalidAdId
 import com.holodome.generators.createAdGen
 import com.holodome.repositories.cassandra.CassandraAdvertisementRepository
 

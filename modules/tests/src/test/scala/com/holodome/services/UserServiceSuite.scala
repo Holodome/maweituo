@@ -2,11 +2,10 @@ package com.holodome.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.users.{InvalidAccess, InvalidUserId, UserId}
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
+import com.holodome.domain.errors.{InvalidAccess, InvalidUserId}
+import com.holodome.domain.users.UserId
 import com.holodome.generators.{registerGen, updateUserGen, userIdGen}
-import com.holodome.services.{IAMService, UserService}
-import com.holodome.repositories.InMemoryUserRepository
+import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers

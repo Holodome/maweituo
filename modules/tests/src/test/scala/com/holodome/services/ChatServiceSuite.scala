@@ -2,7 +2,7 @@ package com.holodome.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.ads.{CannotCreateChatWithMyself, ChatAlreadyExists}
+import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists}
 import com.holodome.generators.{createAdRequestGen, registerGen}
 import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock

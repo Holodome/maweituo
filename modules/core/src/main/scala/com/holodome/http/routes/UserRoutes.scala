@@ -2,6 +2,7 @@ package com.holodome.http.routes
 
 import cats.MonadThrow
 import cats.syntax.all._
+import com.holodome.domain.errors.InvalidAccess
 import com.holodome.domain.users._
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.UserIdVar

@@ -1,14 +1,14 @@
 package com.holodome
 
-import cats.syntax.all._
 import cats.effect.IO
+import cats.syntax.all._
 import cats.Applicative
 import io.circe._
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.circe._
 import org.typelevel.log4cats.Logger
-import weaver.{Expectations, IOSuite, SimpleIOSuite, SourceLocation}
+import weaver.{Expectations, SimpleIOSuite, SourceLocation}
 import weaver.scalacheck.Checkers
 
 import java.nio.charset.StandardCharsets
@@ -54,13 +54,11 @@ trait HttpSuite extends SimpleIOSuite with Checkers {
       .run(req)
       .value
       .flatTap {
-        case Some(resp) => {
+        case Some(resp) =>
           resp.body.compile.toVector.flatMap { bodyVec =>
             val str = new String(bodyVec.toArray, StandardCharsets.UTF_8)
             l.info(s"$resp body '$str''")
           }
-
-        }
         case None => Applicative[F].unit
       }
       .map {

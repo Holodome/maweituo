@@ -3,9 +3,10 @@ package com.holodome.services
 import cats.{Applicative, MonadThrow}
 import cats.syntax.all._
 import com.holodome.domain.ads._
-import com.holodome.domain.images.{ImageId, InvalidImageId}
+import com.holodome.domain.errors.{ChatAccessForbidden, InvalidAccess, InvalidAdId, InvalidChatId, InvalidImageId, NotAnAuthor}
+import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages._
-import com.holodome.domain.users.{InvalidAccess, UserId}
+import com.holodome.domain.users.UserId
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
 
 trait IAMService[F[_]] {

@@ -1,7 +1,7 @@
 package com.holodome.http
 
 import cats.effect._
-import com.holodome.{HttpSuite, WeaverLogAdapter, IOLoggedTest}
+import com.holodome.{HttpSuite, IOLoggedTest}
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.{JwtAccessSecret, JwtTokenExpiration}
 import com.holodome.domain.users.{LoginRequest, UserId}

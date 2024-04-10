@@ -4,6 +4,7 @@ import cats.{MonadThrow, NonEmptyParallel}
 import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.auth.{JwtTokens, PasswordHashing}
+import com.holodome.domain.errors.InvalidPassword
 import com.holodome.domain.users._
 import com.holodome.infrastructure.EphemeralDict
 import dev.profunktor.auth.jwt.JwtToken

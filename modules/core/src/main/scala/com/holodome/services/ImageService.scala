@@ -6,6 +6,7 @@ import com.holodome.domain.ads.AdId
 import com.holodome.domain.images._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.domain.errors.{InternalImageUnsync, InvalidImageId}
 import com.holodome.effects.GenUUID
 import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
 import com.holodome.infrastructure.ObjectStorage.ObjectId

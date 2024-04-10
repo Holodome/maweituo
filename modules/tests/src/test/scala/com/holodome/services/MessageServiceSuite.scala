@@ -2,17 +2,10 @@ package com.holodome.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.messages.ChatAccessForbidden
+import com.holodome.domain.errors.ChatAccessForbidden
 import com.holodome.effects.Clock
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
-import com.holodome.services._
 import com.holodome.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
-import com.holodome.repositories.{
-  InMemoryAdRepository,
-  InMemoryChatRepository,
-  InMemoryMessageRepository,
-  InMemoryUserRepository
-}
+import com.holodome.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
 import weaver.SimpleIOSuite

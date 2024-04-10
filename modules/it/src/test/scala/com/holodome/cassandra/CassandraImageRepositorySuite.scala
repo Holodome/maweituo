@@ -1,12 +1,12 @@
 package com.holodome.cassandra
 
-import cats.syntax.all._
 import cats.effect.IO
+import cats.syntax.all._
 import cats.Show
-import com.holodome.domain.images.{Image, ImageUrl, InvalidImageId}
-import com.holodome.domain.messages.Message
+import com.holodome.domain.errors.InvalidImageId
+import com.holodome.domain.images.Image
 import com.holodome.generators._
-import com.holodome.repositories.cassandra.{CassandraImageRepository, CassandraMessageRepository}
+import com.holodome.repositories.cassandra.CassandraImageRepository
 
 object CassandraImageRepositorySuite extends CassandraSuite {
   private implicit val imageShow: Show[Image] = Show.show(_ => "Image")

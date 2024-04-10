@@ -5,6 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.domain.errors.InvalidAdId
 import com.holodome.domain.images.ImageId
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.AdvertisementRepository

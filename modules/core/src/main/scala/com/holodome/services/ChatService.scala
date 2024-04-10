@@ -3,9 +3,10 @@ package com.holodome.services
 import cats.{Applicative, MonadThrow}
 import cats.syntax.all._
 import com.holodome.domain.ads._
-import com.holodome.domain.messages.{Chat, ChatId, InvalidChatId}
+import com.holodome.domain.messages.{Chat, ChatId}
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists, InvalidChatId}
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.ChatRepository
 

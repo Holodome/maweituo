@@ -27,8 +27,6 @@ object messages {
   @derive(encoder, decoder, show, eqv)
   @newtype case class MessageText(value: String)
 
-  case class InvalidChatId()       extends NoStackTrace
-  case class ChatAccessForbidden() extends NoStackTrace
 
   @derive(encoder)
   case class Message(

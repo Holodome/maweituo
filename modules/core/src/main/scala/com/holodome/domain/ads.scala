@@ -58,8 +58,5 @@ object ads {
       Decoder.forProduct1("id")(AdParam.apply)
   }
 
-  final case class InvalidAdId(id: AdId)        extends NoStackTrace
-  final case class CannotCreateChatWithMyself() extends NoStackTrace
-  final case class ChatAlreadyExists()          extends NoStackTrace
-  final case class NotAnAuthor()                extends NoStackTrace
+
 }

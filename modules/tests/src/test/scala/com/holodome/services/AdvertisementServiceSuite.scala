@@ -2,7 +2,7 @@ package com.holodome.services
 
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.domain.ads.{InvalidAdId, NotAnAuthor}
+import com.holodome.domain.errors.{InvalidAdId, NotAnAuthor}
 import com.holodome.generators._
 import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock

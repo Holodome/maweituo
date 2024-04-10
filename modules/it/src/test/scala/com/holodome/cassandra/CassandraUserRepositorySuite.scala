@@ -1,16 +1,12 @@
 package com.holodome.cassandra
 
+import cats.effect.IO
 import cats.syntax.all._
-import cats.effect.{IO, Resource}
 import cats.Show
-import com.datastax.oss.driver.api.core.CqlSession
-import com.holodome.ResourceSuite
-import com.holodome.domain.users.{NoUserFound, User}
+import com.holodome.domain.errors.NoUserFound
+import com.holodome.domain.users.User
 import com.holodome.generators.userGen
 import com.holodome.repositories.cassandra.CassandraUserRepository
-import com.ringcentral.cassandra4io.CassandraSession
-
-import java.net.InetSocketAddress
 
 object CassandraUserRepositorySuite extends CassandraSuite {
 

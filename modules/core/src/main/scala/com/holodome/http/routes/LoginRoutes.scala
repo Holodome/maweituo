@@ -2,7 +2,8 @@ package com.holodome.http.routes
 
 import cats.MonadThrow
 import cats.syntax.all._
-import com.holodome.domain.users.{InvalidPassword, LoginRequest, NoUserFound}
+import com.holodome.domain.errors.{InvalidPassword, NoUserFound}
+import com.holodome.domain.users.LoginRequest
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.ext.jwt._
 import com.holodome.services.AuthService

@@ -3,15 +3,15 @@ package com.holodome.http.routes
 import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads._
+import com.holodome.domain.errors.{CannotCreateChatWithMyself, InvalidAdId, InvalidChatId, NoUserFound}
 import com.holodome.domain.images.ImageContents
-import com.holodome.domain.messages.{InvalidChatId, SendMessageRequest}
-import com.holodome.domain.users.{AuthedUser, NoUserFound}
+import com.holodome.domain.messages.SendMessageRequest
+import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
 import com.holodome.services._
 import org.http4s.headers.Location
-import org.http4s.Uri
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.{AuthedRoutes, HttpRoutes, Uri}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl

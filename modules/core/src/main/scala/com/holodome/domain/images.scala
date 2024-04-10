@@ -35,9 +35,6 @@ object images {
       )
   }
 
-  case class InvalidImageId()      extends NoStackTrace
-  case class InternalImageUnsync() extends NoStackTrace
-
   @derive(encoder)
   case class Image(
       id: ImageId,

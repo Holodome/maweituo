@@ -27,7 +27,6 @@ object messages {
   @derive(encoder, decoder, show, eqv)
   @newtype case class MessageText(value: String)
 
-
   @derive(encoder)
   case class Message(
       sender: UserId,

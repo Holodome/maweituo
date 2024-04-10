@@ -58,5 +58,4 @@ object ads {
       Decoder.forProduct1("id")(AdParam.apply)
   }
 
-
 }

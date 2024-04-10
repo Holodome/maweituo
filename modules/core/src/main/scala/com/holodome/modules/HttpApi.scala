@@ -2,8 +2,10 @@ package com.holodome.modules
 
 import cats.effect.Async
 import cats.implicits.toSemigroupKOps
+import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
 import com.holodome.http.routes._
+import com.holodome.http.HttpErrorHandler
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -12,11 +14,15 @@ import org.http4s.server.middleware._
 import scala.concurrent.duration.DurationInt
 
 object HttpApi {
-  def make[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth): HttpApi[F] =
+  def make[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): HttpApi[F] =
     new HttpApi[F](services, userJwtAuth)
 }
 
-sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth) {
+sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+    H: HttpErrorHandler[F, ApplicationError]
+) {
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
@@ -30,12 +36,14 @@ sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAut
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    loginRoutes <+> registerRoutes <+> advertisementRoutes <+> userRoutes <+> logoutRoutes
+    H.handle(loginRoutes <+> registerRoutes <+> advertisementRoutes <+> userRoutes <+> logoutRoutes)
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)
     } andThen { http: HttpRoutes[F] =>
-      CORS(http)
+      CORS.policy.withAllowOriginAll
+        .withAllowCredentials(false)
+        .apply(http)
     } andThen { http: HttpRoutes[F] =>
       Timeout(60.seconds)(http)
     }

@@ -2,6 +2,7 @@ package com.holodome.http
 
 import cats.effect._
 import com.holodome.{HttpSuite, IOLoggedTest}
+import com.holodome.http.ApplicationErrorHandler._
 import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types.{JwtAccessSecret, JwtTokenExpiration}
 import com.holodome.domain.users.{LoginRequest, UserId}
@@ -47,7 +48,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
       for {
         service <- makeAuthService(makeUserService)
         routes = LoginRoutes[IO](service).routes
-        r <- expectHttpStatusLogged(routes, req)(Status.Forbidden)
+        r <- expectHttpStatusLogged(routes, req)(Status.NotFound)
       } yield r
     }
   }

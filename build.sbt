@@ -26,6 +26,7 @@ val WeaverVersion          = "0.8.4"
 val MinioVersion           = "8.5.9"
 val Cassandra4IoVersion    = "0.1.14"
 val MockitoVersion         = "1.17.30"
+val MeowMtlVersion         = "0.5.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -84,7 +85,9 @@ lazy val core = (project in file("modules/core"))
       "com.ringcentral"      %% "cassandra4io"          % Cassandra4IoVersion,
       "com.thesamet.scalapb" %% "scalapb-runtime"       % scalapb.compiler.Version.scalapbVersion % "protobuf",
       "com.thesamet.scalapb" %% "compilerplugin"        % "0.11.11",
-      "com.thesamet.scalapb" %% "scalapb-runtime-grpc"  % scalapb.compiler.Version.scalapbVersion
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc"  % scalapb.compiler.Version.scalapbVersion,
+      "com.olegpy"           %% "meow-mtl-core"         % MeowMtlVersion,
+//      "com.olegpy"           %% "meow-mtl-effects"      % MeowMtlVersion
     ),
     Compile / PB.protoSources += file("proto"),
     Compile / PB.targets ++= Seq(

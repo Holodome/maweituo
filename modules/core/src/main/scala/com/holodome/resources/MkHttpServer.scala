@@ -2,6 +2,7 @@ package com.holodome.resources
 
 import cats.effect.{Async, Resource}
 import com.holodome.config.types.HttpServerConfig
+import fs2.io.net.Network
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.server.Server
@@ -23,7 +24,7 @@ object MkHttpServer {
       s"\n${Banner.mkString("\n")}\nHTTP Server started at ${s.address}"
     )
 
-  implicit def forAsyncLogger[F[_]: Async: Logger]: MkHttpServer[F] =
+  implicit def forAsyncLogger[F[_]: Async: Logger: Network]: MkHttpServer[F] =
     (config: HttpServerConfig, httpApp: HttpApp[F]) =>
       EmberServerBuilder
         .default[F]

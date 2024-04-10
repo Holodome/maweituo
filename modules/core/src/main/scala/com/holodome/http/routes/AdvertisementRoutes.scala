@@ -3,18 +3,19 @@ package com.holodome.http.routes
 import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads._
-import com.holodome.domain.errors.{CannotCreateChatWithMyself, InvalidAdId, InvalidChatId, NoUserFound}
+import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.images.ImageContents
 import com.holodome.domain.messages.SendMessageRequest
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
+import com.holodome.http.HttpErrorHandler
 import com.holodome.services._
-import org.http4s.headers.Location
 import org.http4s.{AuthedRoutes, HttpRoutes, Uri}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
+import org.http4s.headers.Location
 import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.Uri.Path.Segment
 
@@ -23,6 +24,8 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     chatService: ChatService[F],
     msgService: MessageService[F],
     imageService: ImageService[F]
+)(implicit
+    H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"
 
@@ -39,9 +42,6 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
               advertisementService
                 .get(id)
                 .flatMap(Ok(_))
-                .recoverWith { case NoUserFound(_) =>
-                  BadRequest()
-                }
           }
       }
 
@@ -62,17 +62,11 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
       msgService
         .history(chatId, user.id)
         .flatMap(Ok(_))
-        .recoverWith { case InvalidChatId() =>
-          BadRequest()
-        }
     case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
       ar.req.decodeR[SendMessageRequest] { msg =>
         msgService
           .send(chatId, user.id, msg)
           .flatMap(Ok(_))
-          .recoverWith { case InvalidChatId() =>
-            BadRequest()
-          }
       }
 
     case POST -> Root / AdIdVar(adId) / "msg" as user =>
@@ -89,9 +83,6 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
             _.putHeaders(header)
           }
         )
-        .recoverWith { case InvalidAdId(_) | CannotCreateChatWithMyself() =>
-          BadRequest()
-        }
 
     case ar @ POST -> Root / AdIdVar(adIdVar) / "img" as user =>
       ar.req.decodeR[ImageContents] { contents =>
@@ -113,5 +104,5 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> (publicRoutes <+> authMiddleware(authedRoutes)))
+    Router(prefixPath -> H.handle(publicRoutes <+> authMiddleware(authedRoutes)))
 }

@@ -2,6 +2,7 @@ package com.holodome.resources
 
 import cats.effect.{Async, Resource}
 import com.holodome.config.types.HttpClientConfig
+import fs2.io.net.Network
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
 
@@ -12,7 +13,7 @@ trait MkHttpClient[F[_]] {
 object MkHttpClient {
   def apply[F[_]: MkHttpClient]: MkHttpClient[F] = implicitly
 
-  implicit def forAsync[F[_]: Async]: MkHttpClient[F] = (c: HttpClientConfig) =>
+  implicit def forAsync[F[_]: Async: Network]: MkHttpClient[F] = (c: HttpClientConfig) =>
     EmberClientBuilder
       .default[F]
       .withTimeout(c.timeout)

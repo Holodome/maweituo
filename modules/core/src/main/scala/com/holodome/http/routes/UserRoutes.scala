@@ -2,10 +2,11 @@ package com.holodome.http.routes
 
 import cats.MonadThrow
 import cats.syntax.all._
-import com.holodome.domain.errors.InvalidAccess
+import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users._
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.UserIdVar
+import com.holodome.http.HttpErrorHandler
 import com.holodome.services.UserService
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
@@ -13,8 +14,9 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
-    extends Http4sDsl[F] {
+final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])(implicit
+    H: HttpErrorHandler[F, ApplicationError]
+) extends Http4sDsl[F] {
 
   private val prefixPath = "/users"
 
@@ -32,9 +34,6 @@ final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserServ
           userService
             .update(update, user.id)
             .flatMap(Ok(_))
-            .recoverWith { case InvalidAccess() =>
-              Forbidden()
-            }
         } else {
           BadRequest()
         }
@@ -42,5 +41,5 @@ final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserServ
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> (publicRoutes <+> authMiddleware(authedRoutes)))
+    Router(prefixPath -> H.handle(publicRoutes <+> authMiddleware(authedRoutes)))
 }

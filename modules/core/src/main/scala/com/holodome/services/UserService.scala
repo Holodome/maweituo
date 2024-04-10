@@ -6,7 +6,7 @@ import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.users._
 import com.holodome.domain.Id
-import com.holodome.domain.errors.{InvalidUserId, NoUserFound, UserEmailInUse, UserNameInUse}
+import com.holodome.domain.errors._
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
 

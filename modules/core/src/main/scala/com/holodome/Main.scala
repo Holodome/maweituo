@@ -4,7 +4,8 @@ import cats.effect.{IO, IOApp}
 import cats.effect.std.Supervisor
 import com.holodome.config.Config
 import com.holodome.domain.users.UserJwtAuth
-import com.holodome.modules.{AppResources, RecsClients, HttpApi, Repositories, Services}
+import com.holodome.http.ApplicationErrorHandler._
+import com.holodome.modules._
 import com.holodome.resources.MkHttpServer
 import dev.profunktor.auth.jwt.JwtAuth
 import dev.profunktor.redis4cats.log4cats._

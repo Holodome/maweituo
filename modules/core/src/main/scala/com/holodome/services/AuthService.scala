@@ -37,7 +37,7 @@ object AuthService {
           if (passwordsMatch(user, password)) {
             jwtDict
               .get(user.id)
-              .getOrElseF(tokens.create flatTap { t =>
+              .getOrElseF(tokens.create(user.id) flatTap { t =>
                 jwtDict.store(user.id, t) &>
                   authedUserDict.store(t, user.id)
               })

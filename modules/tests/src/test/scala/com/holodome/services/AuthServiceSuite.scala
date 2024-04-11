@@ -65,8 +65,9 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
     forall(registerGen) { reg =>
       val usersRepo = new InMemoryUserRepository[IO]
       val users     = UserService.make(usersRepo, iam)
-      val tokens    = mock[JwtTokens[IO]]
-      whenF(tokens.create) thenReturn JwtToken.apply("token")
+      val tokens = new JwtTokens[IO] {
+        override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
+      }
       val auth = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
       for {
         id <- users.register(reg)
@@ -80,8 +81,9 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
     forall(registerGen) { reg =>
       val usersRepo = new InMemoryUserRepository[IO]
       val users     = UserService.make(usersRepo, iam)
-      val tokens    = mock[JwtTokens[IO]]
-      whenF(tokens.create) thenReturn JwtToken.apply("token")
+      val tokens = new JwtTokens[IO] {
+        override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
+      }
       val auth = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
       for {
         id <- users.register(reg)

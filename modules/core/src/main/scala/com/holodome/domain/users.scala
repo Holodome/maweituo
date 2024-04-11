@@ -5,13 +5,14 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import io.circe.refined._
 import derevo.derive
-import dev.profunktor.auth.jwt.JwtSymmetricAuth
+import dev.profunktor.auth.jwt.{JwtSymmetricAuth, JwtToken}
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.cats._
 import eu.timepit.refined.predicates.all.MatchesRegex
 import io.estatico.newtype.macros.newtype
 import eu.timepit.refined.string._
 import eu.timepit.refined.W
+import com.holodome.domain._
 
 import java.util.UUID
 import scala.util.control.NoStackTrace

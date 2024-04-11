@@ -15,4 +15,8 @@
     <p>{data.userInfo.name}</p>
     <h2>Email</h2>
     <p>{data.userInfo.email}</p>
+
+    <form use:enhance method="POST" action="?/logout">
+        <button type="submit">Logout</button>
+    </form>
 </div>

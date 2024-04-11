@@ -10,6 +10,7 @@ async function send({ method, path, data, token }) {
 		opts.body = JSON.stringify(data);
 	}
 
+	console.log("aboba", token);
 	if (token) {
 		opts.headers['Authorization'] = `Bearer ${token}`;
 	}

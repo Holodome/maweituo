@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Sign in</title>
+	<title>Register</title>
 </svelte:head>
 
 <div>
@@ -14,8 +14,11 @@
             <input name="name" type="text" required placeholder="Username"/>
         </fieldset>
         <fieldset>
+            <input name="email" type="email" required placeholder="Email"/>
+        </fieldset>
+        <fieldset>
             <input name="password" type="password" required placeholder="Password"/>
         </fieldset>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
     </form>
 </div>

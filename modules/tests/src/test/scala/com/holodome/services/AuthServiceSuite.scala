@@ -3,12 +3,12 @@ package com.holodome.services
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.auth.JwtTokens
+import com.holodome.domain._
 import com.holodome.domain.errors.NoUserFound
 import com.holodome.domain.users.UserId
-import com.holodome.ext.jwt.jwtTokenShow
 import com.holodome.generators._
 import com.holodome.infrastructure.{EphemeralDict, InMemoryEphemeralDict}
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository, InMemoryUserRepository}
+import com.holodome.repositories._
 import dev.profunktor.auth.jwt.JwtToken
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats

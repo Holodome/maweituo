@@ -18,7 +18,7 @@ final class ApplicationErrorHandler[F[_]](implicit M: MonadError[F, ApplicationE
     case NotAnAuthor() | ChatAccessForbidden()                                 => Forbidden()
     case InternalImageUnsync()                                                 => InternalServerError()
     case InvalidPassword(_)                                                    => Forbidden()
-    case NoUserFound(_)                                                        => NotFound()
+    case NoUserFound(_)                                                        => Forbidden()
     case UserEmailInUse(_) | UserNameInUse(_)                                  => Conflict()
   }
 

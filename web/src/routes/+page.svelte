@@ -1,5 +1,5 @@
 <script>
-    import { page } from '$app/stores';
+	import AdCard from './AdCard.svelte';
 
     /** @type {import('./$types').PageData} */
 	export let data;
@@ -8,3 +8,9 @@
 <svelte:head>
 	<title>Maweituo</title>
 </svelte:head>
+
+<div>
+    {#each data.adInfo as ad}
+        <AdCard {ad} />
+    {/each}
+</div>

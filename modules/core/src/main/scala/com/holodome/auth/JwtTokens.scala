@@ -22,8 +22,8 @@ object JwtTokens {
       exp: JwtTokenExpiration
   ): JwtTokens[F] = {
     implicit val encoder: Encoder[UserId] = Encoder.forProduct1("user_id")(_.value)
-    new JwtTokens[F] {
-      override def create(userId: UserId): F[JwtToken] = for {
+    (userId: UserId) =>
+      for {
         claim <- jwtExpire.expiresIn(
           JwtClaim(userId.asJson(encoder).noSpaces),
           exp
@@ -31,6 +31,5 @@ object JwtTokens {
         secretKey = JwtSecretKey(secret.value)
         token <- jwtEncode[F](claim, secretKey, JwtAlgorithm.HS256)
       } yield token
-    }
   }
 }

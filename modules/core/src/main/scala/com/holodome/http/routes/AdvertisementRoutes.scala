@@ -11,13 +11,11 @@ import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
 import com.holodome.http.HttpErrorHandler
 import com.holodome.services._
-import org.http4s.{AuthedRoutes, HttpRoutes, Uri}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.headers.Location
 import org.http4s.server.{AuthMiddleware, Router}
-import org.http4s.Uri.Path.Segment
 
 final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F],
@@ -29,21 +27,15 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
 ) extends Http4sDsl[F] {
   private val prefixPath = "/ads"
 
-  private object AdQueryParam extends OptionalQueryParamDecoderMatcher[AdParam]("ad")
-
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root :? AdQueryParam(ad) =>
-      ad match {
-        case None => Ok(advertisementService.all)
-        case Some(param) =>
-          param.toDomain match {
-            case None => BadRequest()
-            case Some(id) =>
-              advertisementService
-                .get(id)
-                .flatMap(Ok(_))
-          }
-      }
+    case GET -> Root =>
+      advertisementService.all
+        .flatMap(Ok(_))
+
+    case GET -> Root / AdIdVar(adId) =>
+      advertisementService
+        .get(adId)
+        .flatMap(Ok(_))
 
     case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
       imageService.get(imageId).flatMap(Ok(_))
@@ -52,7 +44,9 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as user =>
       ar.req.decodeR[CreateAdRequest] { create =>
-        advertisementService.create(user.id, create).flatMap(Ok(_))
+        advertisementService
+          .create(user.id, create)
+          .flatMap(Ok(_))
       }
 
     case DELETE -> Root / AdIdVar(adId) as user =>
@@ -72,17 +66,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
     case POST -> Root / AdIdVar(adId) / "msg" as user =>
       chatService
         .create(adId, user.id)
-        .flatMap(chatId =>
-          Created().map {
-            val header =
-              Location(
-                Uri(path =
-                  Root / Segment(adId.toString) / Segment("msg") / Segment(chatId.toString)
-                )
-              )
-            _.putHeaders(header)
-          }
-        )
+        .flatMap(Ok(_))
 
     case ar @ POST -> Root / AdIdVar(adIdVar) / "img" as user =>
       ar.req.decodeR[ImageContents] { contents =>

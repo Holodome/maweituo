@@ -2,7 +2,7 @@ package com.holodome.cql
 
 import com.datastax.oss.driver.api.core.`type`.DataType
 import com.holodome.domain.ads.{AdId, AdTag, AdTitle}
-import com.holodome.domain.images.{ImageId, ImageUrl}
+import com.holodome.domain.images.{ImageId, ImageUrl, MediaType}
 import com.holodome.domain.messages.{ChatId, MessageText}
 import com.holodome.domain.users._
 import com.holodome.optics.{IsString, IsUUID}

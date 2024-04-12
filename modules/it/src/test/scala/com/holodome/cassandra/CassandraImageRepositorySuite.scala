@@ -4,7 +4,7 @@ import cats.effect.IO
 import cats.syntax.all._
 import cats.Show
 import com.holodome.domain.errors.InvalidImageId
-import com.holodome.domain.images.Image
+import com.holodome.domain.images.{Image, MediaType}
 import com.holodome.generators._
 import com.holodome.repositories.cassandra.CassandraImageRepository
 
@@ -15,7 +15,7 @@ object CassandraImageRepositorySuite extends CassandraSuite {
       id   <- imageIdGen
       adId <- adIdGen
       url  <- imageUrlGen
-    } yield Image(id, adId, url, "image/jpeg")
+    } yield Image(id, adId, url, MediaType("image", "jpeg"))
     forall(gen) { image =>
       val repo = CassandraImageRepository.make[IO](cassandra)
       for {

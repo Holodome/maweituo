@@ -1,13 +1,11 @@
 package com.holodome
 
-import com.holodome.domain.users._
 import com.holodome.auth.PasswordHashing
-import com.holodome.domain.users._
 import com.holodome.domain.ads._
 import com.holodome.domain.images._
 import com.holodome.domain.messages._
+import com.holodome.domain.users._
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import com.holodome.optics.{IsString, IsUUID}
 import eu.timepit.refined.api.Refined
 import org.scalacheck.Gen
 
@@ -91,7 +89,7 @@ object generators {
     } yield SendMessageRequest(msg)
 
   def imageContentsGen: Gen[ImageContents] =
-    byteArrayGen.map(ImageContents(_, "image/jpeg"))
+    byteArrayGen.map(ImageContents(_, MediaType("image", "jpeg")))
 
   def objectIdGen: Gen[ObjectId] =
     nesGen(ObjectId.apply)

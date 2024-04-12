@@ -27,4 +27,6 @@ object errors {
   final case class ChatAlreadyExists() extends ApplicationError
   final case class NotAnAuthor() extends ApplicationError
 
+  final case class DatabaseEncodingError() extends ApplicationError
+
 }

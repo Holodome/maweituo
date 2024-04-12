@@ -45,8 +45,8 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
     case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
       imageService.get(imageId).flatMap { img =>
         Ok(fs2.Stream.emits(img.data).covary[F]).map {
-          val parts = img.contentType.split("/")
-          val header = `Content-Type`(new MediaType(parts(0), parts(1)))
+          val header =
+            `Content-Type`(new MediaType(img.contentType.mainType, img.contentType.subType))
           _.putHeaders(header)
         }
       }

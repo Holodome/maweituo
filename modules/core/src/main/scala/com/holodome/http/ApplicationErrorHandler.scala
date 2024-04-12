@@ -20,6 +20,7 @@ final class ApplicationErrorHandler[F[_]](implicit M: MonadError[F, ApplicationE
     case InvalidPassword(_)                                                    => Forbidden()
     case NoUserFound(_)                                                        => Forbidden()
     case UserEmailInUse(_) | UserNameInUse(_)                                  => Conflict()
+    case DatabaseEncodingError()                                               => InternalServerError()
   }
 
   override def handle(routes: HttpRoutes[F]): HttpRoutes[F] =

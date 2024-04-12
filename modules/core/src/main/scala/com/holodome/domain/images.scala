@@ -10,11 +10,13 @@ import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 import org.http4s.{
   AuthedRoutes,
+  Entity,
   EntityDecoder,
+  EntityEncoder,
   Header,
+  Headers,
   HttpRoutes,
   MalformedMessageBodyFailure,
   Media,
@@ -31,7 +33,7 @@ object images {
   @derive(encoder, decoder, eqv)
   @newtype case class ImageUrl(value: String)
 
-  case class ImageContents(data: Array[Byte], contentType: String)
+  case class ImageContents(data: Array[Byte], contentType: MediaType)
 
   object ImageContents {
     implicit val show: Show[ImageContents] = Show.show(_ => "ImageContents")
@@ -47,18 +49,29 @@ object images {
           ).tupled.map { case (arr, contentType) =>
             ImageContents(
               arr,
-              s"${contentType.mediaType.mainType}/${contentType.mediaType.subType}"
+              MediaType(contentType.mediaType.mainType, contentType.mediaType.subType)
             )
           }
         )
       }
   }
 
-  @derive(encoder)
+  case class MediaType(mainType: String, subType: String) {
+    def toRaw = s"$mainType/$subType"
+  }
+  object MediaType {
+    def fromRaw(raw: String): Option[MediaType] = {
+      raw.split("/") match {
+        case Array(a, b) => MediaType(a, b).some
+        case _           => None
+      }
+    }
+  }
+
   case class Image(
       id: ImageId,
       adId: AdId,
       url: ImageUrl,
-      mediaType: String
+      mediaType: MediaType
   )
 }

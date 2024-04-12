@@ -6,6 +6,7 @@ import com.holodome.generators.{bigByteArrayGen, byteArrayGen, nonEmptyStringGen
 import com.holodome.infrastructure.minio.MinioObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.minio.MinioAsyncClient
+import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
@@ -13,6 +14,7 @@ import scala.util.Random
 
 object S3Suite extends SimpleIOSuite with Checkers {
 
+  implicit val l = NoOpLogger[IO]
   test("basic minio operations work") {
     val key   = ObjectId("test")
     val value = Random.nextBytes(1024)

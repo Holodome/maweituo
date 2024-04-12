@@ -1,23 +1,28 @@
 package com.holodome.http.routes
 
 import cats.MonadThrow
+import cats.effect.kernel.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.images.ImageContents
+import com.holodome.domain.images.ImageContents._
 import com.holodome.domain.messages.SendMessageRequest
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
 import com.holodome.http.HttpErrorHandler
 import com.holodome.services._
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
+import org.http4s.headers.`Content-Type`
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
+import java.util.Base64
+
+final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
     advertisementService: AdvertisementService[F],
     chatService: ChatService[F],
     msgService: MessageService[F],
@@ -38,7 +43,13 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
         .flatMap(Ok(_))
 
     case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
-      imageService.get(imageId).flatMap(Ok(_))
+      imageService.get(imageId).flatMap { img =>
+        Ok(fs2.Stream.emits(img.data).covary[F]).map {
+          val parts = img.contentType.split("/")
+          val header = `Content-Type`(new MediaType(parts(0), parts(1)))
+          _.putHeaders(header)
+        }
+      }
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
@@ -69,7 +80,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder](
         .flatMap(Ok(_))
 
     case ar @ POST -> Root / AdIdVar(adIdVar) / "img" as user =>
-      ar.req.decodeR[ImageContents] { contents =>
+      ar.req.as[ImageContents].flatMap { contents =>
         imageService.upload(user.id, adIdVar, contents).flatMap(Ok(_))
       }
 

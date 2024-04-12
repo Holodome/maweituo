@@ -27,10 +27,10 @@ sealed class CassandraImageRepository[F[_]: Async] private (session: CassandraSe
     deleteQuery(imageId).execute(session).void
 
   private def createQuery(image: Image) =
-    cql"insert into local.images (id, ad_id, url) values (${image.id.id}, ${image.adId.value}, ${image.url.value})"
+    cql"insert into local.images (id, ad_id, url, media_type) values (${image.id.id}, ${image.adId.value}, ${image.url.value}, ${image.mediaType})"
 
   private def getMetaQuery(imageId: ImageId) =
-    cql"select id, ad_id, url from local.images where id = ${imageId.id}".as[Image]
+    cql"select id, ad_id, url, media_type from local.images where id = ${imageId.id}".as[Image]
 
   private def deleteQuery(imageId: ImageId) =
     cql"delete from local.images where id = ${imageId.id}"

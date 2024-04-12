@@ -42,12 +42,13 @@ object ImageService {
     ): F[ImageId] =
       for {
         objectId <- GenObjectStorageId[F].make
-        _        <- objectStorage.put(objectId, contents.value)
-        imageId  <- Id.make[F, ImageId]
+        _ <- objectStorage.put(objectId, contents.data)
+        imageId <- Id.make[F, ImageId]
         image = Image(
           imageId,
           adId,
-          objectId.toImageUrl
+          objectId.toImageUrl,
+          contents.contentType
         )
         _ <- imageRepo.create(image)
         _ <- adService.addImage(adId, imageId, uploader)
@@ -66,7 +67,7 @@ object ImageService {
         .flatMap { image =>
           objectStorage
             .get(ObjectId.fromImageUrl(image.url))
-            .map(ImageContents.apply)
+            .map(ImageContents(_, image.mediaType))
             .getOrRaise(InternalImageUnsync())
         }
 

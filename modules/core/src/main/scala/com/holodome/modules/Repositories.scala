@@ -16,9 +16,9 @@ trait Repositories[F[_]] {
 object Repositories {
   def make[F[_]: Async](cassandra: CassandraSession[F]): Repositories[F] = {
     new Repositories[F] {
-      override val users: UserRepository[F]       = CassandraUserRepository.make[F](cassandra)
+      override val users: UserRepository[F] = CassandraUserRepository.make[F](cassandra)
       override val messages: MessageRepository[F] = CassandraMessageRepository.make[F](cassandra)
-      override val chats: ChatRepository[F]       = CassandraChatRepository.make[F](cassandra)
+      override val chats: ChatRepository[F] = CassandraChatRepository.make[F](cassandra)
       override val ads: AdvertisementRepository[F] =
         CassandraAdvertisementRepository.make[F](cassandra)
       override val images: ImageRepository[F] = CassandraImageRepository.make[F](cassandra)

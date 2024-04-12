@@ -2,6 +2,10 @@ import { error } from '@sveltejs/kit';
 
 const base = 'http://127.0.0.1:8080';
 
+export function buildUrl(path) {
+	return `${base}/${path}`;
+}
+
 async function sendInternal({ method, path, data, token }) {
 	const opts = { method, headers: {} };
 
@@ -14,7 +18,7 @@ async function sendInternal({ method, path, data, token }) {
 		opts.headers['Authorization'] = `Bearer ${token}`;
 	}
 
-	const res = await fetch(`${base}/${path}`, opts);
+	const res = await fetch(buildUrl(path), opts);
 	if (res.ok || res.status === 422) 
 		return res;
 
@@ -31,12 +35,31 @@ export function get(path, token) {
 	return send({ method: 'GET', path, token });
 }
 
+export async function getImage(path, token) {
+	const res = await sendInternal({method: 'GET', path, data: null, token});
+	return await res.blob();
+}
+
 export function del(path, token) {
 	return send({ method: 'DELETE', path, token });
 }
 
 export function post(path, data, token) {
 	return send({ method: 'POST', path, data, token });
+}
+
+export async function postFile(path, file, token) {
+	const opts = { method: 'POST', headers: {}, body: file };
+
+	if (token) {
+		opts.headers['Authorization'] = `Bearer ${token}`;
+	}
+
+	const res = await fetch(`${base}/${path}`, opts);
+	if (res.ok || res.status === 422) 
+		return res;
+
+	throw error(res.status);
 }
 
 export function put(path, data, token) {

@@ -91,7 +91,7 @@ object generators {
     } yield SendMessageRequest(msg)
 
   def imageContentsGen: Gen[ImageContents] =
-    byteArrayGen.map(ImageContents.apply)
+    byteArrayGen.map(ImageContents(_, "image/jpeg"))
 
   def objectIdGen: Gen[ObjectId] =
     nesGen(ObjectId.apply)

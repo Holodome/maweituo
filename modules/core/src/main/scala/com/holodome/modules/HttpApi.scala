@@ -1,5 +1,6 @@
 package com.holodome.modules
 
+import cats.data.OptionT
 import cats.effect.Async
 import cats.implicits.toSemigroupKOps
 import com.holodome.domain.errors.ApplicationError
@@ -10,24 +11,25 @@ import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.middleware._
+import org.typelevel.log4cats.Logger
 
 import scala.concurrent.duration.DurationInt
 
 object HttpApi {
-  def make[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+  def make[F[_]: Async: Logger](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
       H: HttpErrorHandler[F, ApplicationError]
   ): HttpApi[F] =
     new HttpApi[F](services, userJwtAuth)
 }
 
-sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
     H: HttpErrorHandler[F, ApplicationError]
 ) {
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
-  private val loginRoutes    = LoginRoutes[F](services.auth).routes
-  private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
+  private val loginRoutes = LoginRoutes[F](services.auth).routes
+  private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
   private val registerRoutes = RegisterRoutes[F](services.users).routes
   private val advertisementRoutes =
     AdvertisementRoutes[F](services.ads, services.chats, services.messages, services.images).routes(
@@ -51,11 +53,24 @@ sealed class HttpApi[F[_]: Async](services: Services[F], userJwtAuth: UserJwtAut
 
   private val loggers: HttpApp[F] => HttpApp[F] = {
     { http: HttpApp[F] =>
-      RequestLogger.httpApp(logHeaders = true, logBody = true)(http)
+      RequestLogger.httpApp(logHeaders = true, logBody = false)(http)
     } andThen { http: HttpApp[F] =>
-      ResponseLogger.httpApp(logHeaders = true, logBody = true)(http)
+      ResponseLogger.httpApp(logHeaders = true, logBody = false)(http)
     }
   }
 
-  val httpApp: HttpApp[F] = loggers(middleware(routes).orNotFound)
+  private def errorHandler(t: Throwable, msg: => String): OptionT[F, Unit] =
+    OptionT.liftF(
+      org.typelevel.log4cats.Logger[F].error(t)(msg)
+    )
+
+  private def withErrorLogging(routes: HttpRoutes[F]) = ErrorHandling.Recover.total(
+    ErrorAction.log(
+      routes,
+      messageFailureLogAction = errorHandler,
+      serviceErrorLogAction = errorHandler
+    )
+  )
+
+  val httpApp: HttpApp[F] = loggers(middleware(withErrorLogging(routes)).orNotFound)
 }

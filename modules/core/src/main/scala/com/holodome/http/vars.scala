@@ -16,8 +16,8 @@ object vars {
         .toOption
   }
 
-  object UserIdVar  extends UUIDVar(UserId.apply)
-  object AdIdVar    extends UUIDVar(AdId.apply)
-  object ChatIdVar  extends UUIDVar(ChatId.apply)
+  object UserIdVar extends UUIDVar(UserId.apply)
+  object AdIdVar extends UUIDVar(AdId.apply)
+  object ChatIdVar extends UUIDVar(ChatId.apply)
   object ImageIdVar extends UUIDVar(ImageId.apply)
 }

@@ -8,7 +8,7 @@ import cats.syntax.all._
 import com.holodome.ext.cats.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import eu.timepit.refined.types.string.NonEmptyString
+import org.typelevel.log4cats.Logger
 import io.minio._
 import io.minio.errors.ErrorResponseException
 

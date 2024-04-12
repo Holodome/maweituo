@@ -46,7 +46,8 @@ create table local.messages (
 create table local.images (
     id uuid primary key,
     ad_id uuid,
-    url text
+    url text,
+    media_type text
 );
 
 drop keyspace if exists recs;

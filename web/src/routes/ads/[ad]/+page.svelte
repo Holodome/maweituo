@@ -13,6 +13,9 @@
     <h1>Advertisement</h1>
     <p>Name: {data.adInfo.title}</p>
 
+    {#each data.images as img}
+        <img src={img} alt="ad"/>
+    {/each}
     {#if $page.data.user?.userId === data.adInfo.authorId}
         <!-- <input bind:files id="imageAdd" accept="image/png, image/jpeg" type="file" /> -->
         <!-- <button on:click={addImage}>Add photos</button> -->

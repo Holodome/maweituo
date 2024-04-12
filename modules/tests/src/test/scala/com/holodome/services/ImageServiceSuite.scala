@@ -42,7 +42,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
         a    <- ads.create(u, createAd)
         i    <- imgs.upload(u, a, imgCont)
         data <- imgs.get(i)
-      } yield expect.all(data.value sameElements imgCont.value)
+      } yield expect.all(data.data sameElements imgCont.data)
     }
   }
 

@@ -1,17 +1,28 @@
 package com.holodome.domain
 
-import cats.Show
+import cats.syntax.all._
+import cats.{Applicative, MonadThrow, Show}
+import cats.data.{EitherT, OptionT}
+import cats.effect.kernel.Concurrent
 import com.holodome.domain.ads.AdId
 import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
+import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
+import org.http4s.{
+  AuthedRoutes,
+  EntityDecoder,
+  Header,
+  HttpRoutes,
+  MalformedMessageBodyFailure,
+  Media,
+  MediaRange,
+  MediaType
+}
 
-import java.util.{Base64, UUID}
-import scala.util.Try
-import scala.util.control.NoStackTrace
+import java.util.UUID
 
 object images {
   @derive(uuidIso, encoder, decoder, show, eqv)
@@ -20,25 +31,34 @@ object images {
   @derive(encoder, decoder, eqv)
   @newtype case class ImageUrl(value: String)
 
-  @newtype case class ImageContents(value: Array[Byte])
+  case class ImageContents(data: Array[Byte], contentType: String)
 
   object ImageContents {
     implicit val show: Show[ImageContents] = Show.show(_ => "ImageContents")
 
-    implicit val jsonDecoder: Decoder[ImageContents] =
-      Decoder.decodeString.emapTry(str =>
-        Try(Base64.getDecoder.decode(str)).map(ImageContents.apply)
-      )
-    implicit val jsonEncoder: Encoder[ImageContents] =
-      Encoder.encodeString.contramap[ImageContents](img =>
-        Base64.getEncoder.encodeToString(img.value)
-      )
+    implicit def imageDecoder[F[_]: MonadThrow: Concurrent]: EntityDecoder[F, ImageContents] =
+      EntityDecoder.decodeBy(MediaRange.`image/*`) { (m: Media[F]) =>
+        EitherT.liftF(
+          (
+            m.as[Array[Byte]],
+            OptionT
+              .fromOption(m.contentType)
+              .getOrRaise(MalformedMessageBodyFailure("Expected Content-Type header"))
+          ).tupled.map { case (arr, contentType) =>
+            ImageContents(
+              arr,
+              s"${contentType.mediaType.mainType}/${contentType.mediaType.subType}"
+            )
+          }
+        )
+      }
   }
 
   @derive(encoder)
   case class Image(
       id: ImageId,
       adId: AdId,
-      url: ImageUrl
+      url: ImageUrl,
+      mediaType: String
   )
 }

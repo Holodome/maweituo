@@ -35,6 +35,9 @@ create table local.chats (
     client_id uuid
 );
 
+create index on local.chats(ad_id);
+create index on local.chats(client_id);
+
 create table local.messages (
     sender_id uuid,
     chat_id uuid,

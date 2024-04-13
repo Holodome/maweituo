@@ -146,7 +146,8 @@ GET    /ads/{ad_id}/img/{img_id}  - get image
 DELETE /ads/{ad_id}/img/{img_id}  - delete image 
 POST   /ads/{ad_id}/tags          - add tags 
 POST   /ads/{ad_id}/resolved      - mark advertisement as resolved
-POST   /ads/{ad_id}/msg           - create chat 
+GET    /ads/{ad_id}/chat          - get chat for current user
+POST   /ads/{ad_id}/chat          - create chat for current user 
 POST   /msg/{ad_id}/msg/{chat_id} - send message
 GET    /msg/{ad_id}/msg/{chat_id} - get chat history
 

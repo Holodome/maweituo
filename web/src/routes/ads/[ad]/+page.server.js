@@ -1,8 +1,11 @@
 import * as api from '$lib/api.js';
+import { fail, redirect } from '@sveltejs/kit';
+
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, params }) {
     const adInfo = await api.get(`ads/${params.ad}`, locals.user?.token);
+    const chatInfo = await api.get(`ads/${params.ad}/chat`, locals.user?.token);
     const images = adInfo.images.map((img) => {
         return {
             url: api.buildUrl(`ads/${params.ad}/img/${img}`),
@@ -11,12 +14,17 @@ export async function load({ locals, params }) {
     });
     return {
         adInfo,
-        images
+        images,
+        chat: chatInfo?.errors ? null : chatInfo
     };
 }
 
 /** @type {import('./$types').Actions} */
 export const actions = {
+    create_chat: async ({ locals, params }) => {
+        const chatId = await api.post(`ads/${params.ad}/chat`, {}, locals.user?.token);
+        throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
+    },  
     delete_image: async ({ locals, request, params }) => {
         const data = await request.formData();
         const image = data.get('image');

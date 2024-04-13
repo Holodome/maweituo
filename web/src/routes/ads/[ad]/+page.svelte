@@ -15,7 +15,7 @@
 
 <div>
     <h1>Advertisement</h1>
-    <p>Name: {data.adInfo.title}</p>
+    <p>Title: {data.adInfo.title}</p>
     <p><a href="/account/{data.adInfo.authorId}">Author</a></p>
 
     {#each data.images as img}
@@ -34,5 +34,14 @@
             <input id="imageAdd" accept="image/png, image/jpeg" type="file" name="image" />
             <button type="submit">Add image</button>
         </form>
+    {/if}
+    {#if !isAuthor()}
+        {#if data.chat}
+            <a href="/ads/{$page.params.ad}/chats/{ data.chat }">Open chat</a>
+        {:else}
+            <form use:enhance method="POST" action="?/create_chat">
+                <button type="submit">Create chat</button>
+            </form>
+        {/if}
     {/if}
 </div>

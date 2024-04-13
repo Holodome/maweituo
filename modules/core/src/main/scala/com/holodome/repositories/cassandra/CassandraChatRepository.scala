@@ -39,6 +39,6 @@ sealed class CassandraChatRepository[F[_]: Async] private (session: CassandraSes
     cql"select id, ad_id, ad_author_id, client_id from local.chats where id = ${chatId.id}".as[Chat]
 
   private def findByAdAndClientQuery(adId: AdId, client: UserId) =
-    cql"select id from local.chats where ad_id = ${adId.value} and client_id = ${client.value}"
+    cql"select id from local.chats where ad_id = ${adId.value} and client_id = ${client.value} allow filtering"
       .as[ChatId]
 }

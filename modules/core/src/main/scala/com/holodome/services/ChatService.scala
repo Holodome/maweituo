@@ -1,18 +1,20 @@
 package com.holodome.services
 
 import cats.{Applicative, MonadThrow}
+import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.messages.{Chat, ChatId}
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
-import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists, InvalidChatId}
+import com.holodome.domain.errors._
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.ChatRepository
 
 trait ChatService[F[_]] {
   def create(adId: AdId, clientId: UserId): F[ChatId]
   def get(chatId: ChatId): F[Chat]
+  def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId]
 }
 
 object ChatService {
@@ -60,5 +62,9 @@ object ChatService {
       chatRepo
         .find(chatId)
         .getOrRaise(InvalidChatId())
+
+    override def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId] =
+      chatRepo
+        .findByAdAndClient(ad, user)
   }
 }

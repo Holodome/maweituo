@@ -10,9 +10,10 @@ import com.holodome.domain.images.ImageContentsStream._
 import com.holodome.domain.messages.SendMessageRequest
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar}
+import com.holodome.http.vars.{AdIdVar, ChatIdVar, ImageIdVar, UserIdVar}
 import com.holodome.http.HttpErrorHandler
 import com.holodome.services._
+import io.circe.Json
 import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
@@ -21,6 +22,7 @@ import org.http4s.headers.`Content-Type`
 import org.http4s.server.{AuthMiddleware, Router}
 
 import java.util.Base64
+import io.circe.syntax._
 
 final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
     advertisementService: AdvertisementService[F],
@@ -67,6 +69,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
       msgService
         .history(chatId, user.id)
         .flatMap(Ok(_))
+
     case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
       ar.req.decodeR[SendMessageRequest] { msg =>
         msgService
@@ -74,7 +77,13 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
           .flatMap(Ok(_))
       }
 
-    case POST -> Root / AdIdVar(adId) / "msg" as user =>
+    case GET -> Root / AdIdVar(adId) / "chat" as user =>
+      chatService
+        .findForAdAndUser(adId, user.id)
+        .fold(Ok(Json.obj(("errors", "chat not found".asJson))))(id => Ok(id))
+        .flatten
+
+    case POST -> Root / AdIdVar(adId) / "chat" as user =>
       chatService
         .create(adId, user.id)
         .flatMap(Ok(_))

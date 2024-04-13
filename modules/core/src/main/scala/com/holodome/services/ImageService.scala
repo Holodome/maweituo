@@ -13,9 +13,9 @@ import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.repositories.ImageRepository
 
 trait ImageService[F[_]] {
-  def upload(uploader: UserId, adId: AdId, contents: ImageContents): F[ImageId]
+  def upload(uploader: UserId, adId: AdId, contents: ImageContentsStream[F]): F[ImageId]
   def delete(imageId: ImageId, authenticated: UserId): F[Unit]
-  def get(imageId: ImageId): F[ImageContents]
+  def get(imageId: ImageId): F[ImageContentsStream[F]]
 }
 
 object ImageService {
@@ -38,17 +38,18 @@ object ImageService {
     override def upload(
         uploader: UserId,
         adId: AdId,
-        contents: ImageContents
+        contents: ImageContentsStream[F]
     ): F[ImageId] =
       for {
         objectId <- GenObjectStorageId[F].make
-        _ <- objectStorage.put(objectId, contents.data)
+        _ <- objectStorage.putStream(objectId, contents.data, contents.dataSize)
         imageId <- Id.make[F, ImageId]
         image = Image(
           imageId,
           adId,
           objectId.toImageUrl,
-          contents.contentType
+          contents.contentType,
+          contents.dataSize
         )
         _ <- imageRepo.create(image)
         _ <- adService.addImage(adId, imageId, uploader)
@@ -62,12 +63,12 @@ object ImageService {
           } &> imageRepo.delete(imageId)
       }
 
-    override def get(imageId: ImageId): F[ImageContents] =
+    override def get(imageId: ImageId): F[ImageContentsStream[F]] =
       find(imageId)
         .flatMap { image =>
           objectStorage
             .get(ObjectId.fromImageUrl(image.url))
-            .map(ImageContents(_, image.mediaType))
+            .map(ImageContentsStream(_, image.mediaType, image.size))
             .getOrRaise(InternalImageUnsync())
         }
 

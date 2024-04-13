@@ -14,21 +14,23 @@ import scala.util.Random
 
 object S3Suite extends SimpleIOSuite with Checkers {
 
-  implicit val l = NoOpLogger[IO]
   test("basic minio operations work") {
-    val key   = ObjectId("test")
-    val value = Random.nextBytes(1024)
-    val minio = MinioAsyncClient
-      .builder()
-      .endpoint("http://localhost:9000")
-      .credentials("minioadmin", "minioadmin")
-      .build()
-    for {
-      storage <- MinioObjectStorage.make[IO](minio, "maweituo-test")
-      x       <- storage.get(key).value
-      _       <- storage.put(key, value)
-      y       <- storage.get(key).value
-      _       <- storage.delete(key)
-    } yield expect.all(x.isEmpty, y.fold(false)(_ sameElements value))
+    forall(objectIdGen) { key =>
+      val value       = Random.nextBytes(1024)
+      val valueStream = fs2.Stream.emits(value).covary[F]
+      val minio = MinioAsyncClient
+        .builder()
+        .endpoint("http://localhost:9000")
+        .credentials("minioadmin", "minioadmin")
+        .build()
+      for {
+        storage <- MinioObjectStorage.make[IO](minio, "maweituo-test")
+        x       <- storage.get(key).value
+        _       <- storage.putStream(key, valueStream, value.length)
+        y       <- storage.get(key).getOrRaise(new RuntimeException(""))
+        _       <- storage.delete(key)
+        d1      <- y.compile.toVector
+      } yield expect.all(x.isEmpty, d1 sameElements value)
+    }
   }
 }

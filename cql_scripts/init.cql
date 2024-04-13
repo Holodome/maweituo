@@ -47,7 +47,8 @@ create table local.images (
     id uuid primary key,
     ad_id uuid,
     url text,
-    media_type text
+    media_type text,
+    size bigint
 );
 
 drop keyspace if exists recs;

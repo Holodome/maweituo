@@ -26,7 +26,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
     val gen = for {
       reg <- registerGen
       ad  <- createAdRequestGen
-      img <- imageContentsGen
+      img <- imageContentsGen[IO]
     } yield (reg, ad, img)
     forall(gen) { case (reg, createAd, imgCont) =>
       val userRepo  = new InMemoryUserRepository[IO]
@@ -42,7 +42,9 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
         a    <- ads.create(u, createAd)
         i    <- imgs.upload(u, a, imgCont)
         data <- imgs.get(i)
-      } yield expect.all(data.data sameElements imgCont.data)
+        d1   <- data.data.compile.toVector
+        d2   <- imgCont.data.compile.toVector
+      } yield expect.all(d1 == d2)
     }
   }
 

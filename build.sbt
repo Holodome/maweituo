@@ -86,8 +86,7 @@ lazy val core = (project in file("modules/core"))
       "com.thesamet.scalapb" %% "scalapb-runtime"       % scalapb.compiler.Version.scalapbVersion % "protobuf",
       "com.thesamet.scalapb" %% "compilerplugin"        % "0.11.11",
       "com.thesamet.scalapb" %% "scalapb-runtime-grpc"  % scalapb.compiler.Version.scalapbVersion,
-      "com.olegpy"           %% "meow-mtl-core"         % MeowMtlVersion,
-//      "com.olegpy"           %% "meow-mtl-effects"      % MeowMtlVersion
+      "com.olegpy"           %% "meow-mtl-core"         % MeowMtlVersion
     ),
     Compile / PB.protoSources += file("proto"),
     Compile / PB.targets ++= Seq(

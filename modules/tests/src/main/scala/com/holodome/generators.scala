@@ -88,8 +88,14 @@ object generators {
       msg <- msgTextGen
     } yield SendMessageRequest(msg)
 
-  def imageContentsGen: Gen[ImageContents] =
-    byteArrayGen.map(ImageContents(_, MediaType("image", "jpeg")))
+  def imageContentsGen[F[_]]: Gen[ImageContentsStream[F]] =
+    byteArrayGen.map(arr =>
+      ImageContentsStream[F](
+        fs2.Stream.emits(arr).covary[F],
+        MediaType("image", "jpeg"),
+        arr.length
+      )
+    )
 
   def objectIdGen: Gen[ObjectId] =
     nesGen(ObjectId.apply)

@@ -15,7 +15,7 @@ object CassandraImageRepositorySuite extends CassandraSuite {
       id   <- imageIdGen
       adId <- adIdGen
       url  <- imageUrlGen
-    } yield Image(id, adId, url, MediaType("image", "jpeg"))
+    } yield Image(id, adId, url, MediaType("image", "jpeg"), 0)
     forall(gen) { image =>
       val repo = CassandraImageRepository.make[IO](cassandra)
       for {

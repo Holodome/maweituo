@@ -1,18 +1,15 @@
 package com.holodome.infrastructure.minio
 
-import _root_.org.apache.commons.io.IOUtils
 import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
-import cats.effect.{Async, Resource}
+import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.ext.cats.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import org.typelevel.log4cats.Logger
 import io.minio._
 import io.minio.errors.ErrorResponseException
 
-import java.io.ByteArrayInputStream
 import scala.util.control.NonFatal
 
 object MinioObjectStorage {
@@ -50,13 +47,8 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
     bucket: String
 ) extends ObjectStorage[F] {
 
-  override def put(id: ObjectId, blob: Array[Byte]): F[Unit] = {
-    val res: Resource[F, ByteArrayInputStream] =
-      Resource.make(Applicative[F].pure(new ByteArrayInputStream(blob))) { bais =>
-        bais.close()
-        Applicative[F].unit
-      }
-    res.use(bais =>
+  override def putStream(id: ObjectId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
+    fs2.io.toInputStreamResource(blob).use { is =>
       liftCompletableFuture {
         client
           .putObject(
@@ -65,23 +57,25 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
               .bucket(bucket)
               .`object`(id.value)
               .contentType("binary/octet-stream")
-              .stream(bais, bais.available(), -1)
+              .stream(is, dataSize, -1)
               .build()
           )
       }.void
-    )
-  }
+    }
 
-  override def get(id: ObjectId): OptionT[F, Array[Byte]] =
+  override def get(id: ObjectId): OptionT[F, fs2.Stream[F, Byte]] =
     OptionT(
       liftCompletableFuture(
         client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
-      ).map(IOUtils.toByteArray(_).some)
-        .recoverWith {
-          case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
-            Applicative[F].pure(None)
-        }
-    )
+      ).map(_.some).recoverWith {
+        case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
+          Applicative[F].pure(none[GetObjectResponse])
+      }
+    ).flatMap { resp =>
+      OptionT.some(
+        fs2.io.readInputStream(Applicative[F].pure(resp), 4096)
+      )
+    }
 
   override def delete(id: ObjectId): F[Unit] =
     liftCompletableFuture(

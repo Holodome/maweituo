@@ -5,8 +5,8 @@ import cats.effect.kernel.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.images.ImageContents
-import com.holodome.domain.images.ImageContents._
+import com.holodome.domain.images.ImageContentsStream
+import com.holodome.domain.images.ImageContentsStream._
 import com.holodome.domain.messages.SendMessageRequest
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
@@ -44,7 +44,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
 
     case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
       imageService.get(imageId).flatMap { img =>
-        Ok(fs2.Stream.emits(img.data).covary[F]).map {
+        Ok(img.data).map {
           val header =
             `Content-Type`(new MediaType(img.contentType.mainType, img.contentType.subType))
           _.putHeaders(header)
@@ -80,7 +80,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
         .flatMap(Ok(_))
 
     case ar @ POST -> Root / AdIdVar(adIdVar) / "img" as user =>
-      ar.req.as[ImageContents].flatMap { contents =>
+      ar.req.as[ImageContentsStream[F]].flatMap { contents =>
         imageService.upload(user.id, adIdVar, contents).flatMap(Ok(_))
       }
 

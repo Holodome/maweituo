@@ -8,8 +8,8 @@ import derevo.derive
 import io.estatico.newtype.macros.newtype
 
 trait ObjectStorage[F[_]] {
-  def put(id: ObjectId, data: Array[Byte]): F[Unit]
-  def get(id: ObjectId): OptionT[F, Array[Byte]]
+  def putStream(id: ObjectId, data: fs2.Stream[F, Byte], dataSize: Long): F[Unit]
+  def get(id: ObjectId): OptionT[F, fs2.Stream[F, Byte]]
   def delete(id: ObjectId): F[Unit]
 }
 

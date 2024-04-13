@@ -33,25 +33,34 @@ object images {
   @derive(encoder, decoder, eqv)
   @newtype case class ImageUrl(value: String)
 
-  case class ImageContents(data: Array[Byte], contentType: MediaType)
+  case class ImageContentsStream[+F[_]](
+      data: fs2.Stream[F, Byte],
+      contentType: MediaType,
+      dataSize: Long
+  )
 
-  object ImageContents {
-    implicit val show: Show[ImageContents] = Show.show(_ => "ImageContents")
+  object ImageContentsStream {
+    implicit def show[F[_]]: Show[ImageContentsStream[F]] = Show.show(_ => "ImageContents")
 
-    implicit def imageDecoder[F[_]: MonadThrow: Concurrent]: EntityDecoder[F, ImageContents] =
+    implicit def imageDecoder[F[_]: MonadThrow: Concurrent]
+        : EntityDecoder[F, ImageContentsStream[F]] =
       EntityDecoder.decodeBy(MediaRange.`image/*`) { (m: Media[F]) =>
         EitherT.liftF(
           (
-            m.as[Array[Byte]],
             OptionT
               .fromOption(m.contentType)
-              .getOrRaise(MalformedMessageBodyFailure("Expected Content-Type header"))
-          ).tupled.map { case (arr, contentType) =>
-            ImageContents(
-              arr,
-              MediaType(contentType.mediaType.mainType, contentType.mediaType.subType)
-            )
-          }
+              .getOrRaise(MalformedMessageBodyFailure("Expected Content-Type header")),
+            OptionT
+              .fromOption(m.contentLength)
+              .getOrRaise(MalformedMessageBodyFailure("Expected Content-Length header"))
+          ).tupled
+            .map { case (contentType, contentLength) =>
+              ImageContentsStream(
+                m.body,
+                MediaType(contentType.mediaType.mainType, contentType.mediaType.subType),
+                contentLength
+              )
+            }
         )
       }
   }
@@ -72,6 +81,7 @@ object images {
       id: ImageId,
       adId: AdId,
       url: ImageUrl,
-      mediaType: MediaType
+      mediaType: MediaType,
+      size: Long
   )
 }

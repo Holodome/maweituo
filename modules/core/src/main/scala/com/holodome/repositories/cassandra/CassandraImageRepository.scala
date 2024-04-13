@@ -24,14 +24,15 @@ sealed class CassandraImageRepository[F[_]: Async] private (session: CassandraSe
       id: ImageId,
       adId: AdId,
       url: ImageUrl,
-      mediaType: String
+      mediaType: String,
+      size: Long
   ) {
     def toDomain: F[Image] =
       OptionT
         .fromOption(MediaType.fromRaw(mediaType))
         .getOrRaise(DatabaseEncodingError())
         .map(
-          Image(id, adId, url, _)
+          Image(id, adId, url, _, size)
         )
   }
 
@@ -46,10 +47,10 @@ sealed class CassandraImageRepository[F[_]: Async] private (session: CassandraSe
     deleteQuery(imageId).execute(session).void
 
   private def createQuery(image: Image) =
-    cql"insert into local.images (id, ad_id, url, media_type) values (${image.id.id}, ${image.adId.value}, ${image.url.value}, ${image.mediaType.toRaw})"
+    cql"insert into local.images (id, ad_id, url, media_type, size) values (${image.id.id}, ${image.adId.value}, ${image.url.value}, ${image.mediaType.toRaw}, ${image.size})"
 
   private def getMetaQuery(imageId: ImageId) =
-    cql"select id, ad_id, url, media_type from local.images where id = ${imageId.id}"
+    cql"select id, ad_id, url, media_type, size from local.images where id = ${imageId.id}"
       .as[SerializedImage]
 
   private def deleteQuery(imageId: ImageId) =

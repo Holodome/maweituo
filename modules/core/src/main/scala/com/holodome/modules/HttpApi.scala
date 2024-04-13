@@ -28,8 +28,8 @@ sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: Us
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
 
-  private val loginRoutes = LoginRoutes[F](services.auth).routes
-  private val logoutRoutes = LogoutRoutes[F](services.auth).routes(usersMiddleware)
+  private val loginRoutes    = LoginRoutes[F](services.auth).routes
+  private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
   private val registerRoutes = RegisterRoutes[F](services.users).routes
   private val advertisementRoutes =
     AdvertisementRoutes[F](services.ads, services.chats, services.messages, services.images).routes(

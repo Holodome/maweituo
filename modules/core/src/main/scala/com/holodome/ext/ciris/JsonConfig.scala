@@ -15,12 +15,12 @@ case class JsonConfig private (json: Json) {
     field[F, Int](location)
 
   def field[F[_], A: io.circe.Decoder](location: String): ConfigValue[F, A] = {
-    val key = ConfigKey(s"json file field ${location}")
+    val key                  = ConfigKey(s"json file field ${location}")
     def errorMessage: String = s"failed to get json field $location"
 
-    val locParts = location.split("\\.")
+    val locParts        = location.split("\\.")
     val cursor: ACursor = json.hcursor
-    val objectCursor = locParts.foldLeft(cursor) { case (c, v) => c.downField(v) }
+    val objectCursor    = locParts.foldLeft(cursor) { case (c, v) => c.downField(v) }
     objectCursor
       .as[A]
       .toOption

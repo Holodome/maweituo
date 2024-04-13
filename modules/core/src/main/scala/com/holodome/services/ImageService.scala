@@ -1,6 +1,6 @@
 package com.holodome.services
 
-import cats.{MonadThrow, NonEmptyParallel}
+import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.images._
@@ -19,7 +19,7 @@ trait ImageService[F[_]] {
 }
 
 object ImageService {
-  def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID: NonEmptyParallel](
+  def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID](
       imageRepo: ImageRepository[F],
       adService: AdvertisementService[F],
       objectStorage: ObjectStorage[F],
@@ -28,7 +28,7 @@ object ImageService {
 
   private final class ImageServiceInterpreter[F[
       _
-  ]: MonadThrow: GenObjectStorageId: GenUUID: NonEmptyParallel](
+  ]: MonadThrow: GenObjectStorageId: GenUUID](
       imageRepo: ImageRepository[F],
       adService: AdvertisementService[F],
       objectStorage: ObjectStorage[F],
@@ -42,8 +42,8 @@ object ImageService {
     ): F[ImageId] =
       for {
         objectId <- GenObjectStorageId[F].make
-        _ <- objectStorage.putStream(objectId, contents.data, contents.dataSize)
-        imageId <- Id.make[F, ImageId]
+        _        <- objectStorage.putStream(objectId, contents.data, contents.dataSize)
+        imageId  <- Id.make[F, ImageId]
         image = Image(
           imageId,
           adId,
@@ -59,8 +59,12 @@ object ImageService {
       iam.authorizeImageDelete(imageId, authenticated) *> {
         find(imageId)
           .flatMap { image =>
-            objectStorage.delete(ObjectId.fromImageUrl(image.url))
-          } &> imageRepo.delete(imageId)
+            objectStorage.delete(ObjectId.fromImageUrl(image.url)) *> adService.removeImage(
+              image.adId,
+              imageId,
+              authenticated
+            )
+          } *> imageRepo.delete(imageId)
       }
 
     override def get(imageId: ImageId): F[ImageContentsStream[F]] =

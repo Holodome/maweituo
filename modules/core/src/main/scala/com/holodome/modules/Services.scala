@@ -1,6 +1,6 @@
 package com.holodome.modules
 
-import cats.{MonadThrow, NonEmptyParallel}
+import cats.MonadThrow
 import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.auth.{JwtExpire, JwtTokens}
@@ -29,7 +29,7 @@ sealed abstract class Services[F[_]] {
 }
 
 object Services {
-  def make[F[_]: MonadThrow: Async: Background: NonEmptyParallel: Logger](
+  def make[F[_]: MonadThrow: Async: Background: Logger](
       repositories: Repositories[F],
       cfg: AppConfig,
       redis: RedisCommands[F, String, String],

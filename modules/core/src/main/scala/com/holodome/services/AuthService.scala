@@ -1,6 +1,6 @@
 package com.holodome.services
 
-import cats.{MonadThrow, NonEmptyParallel}
+import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.auth.{JwtTokens, PasswordHashing}
@@ -17,14 +17,14 @@ trait AuthService[F[_]] {
 }
 
 object AuthService {
-  def make[F[_]: NonEmptyParallel: MonadThrow: Logger](
+  def make[F[_]: MonadThrow: Logger](
       userService: UserService[F],
       jwtDict: EphemeralDict[F, UserId, JwtToken],
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
       tokens: JwtTokens[F]
   ): AuthService[F] = new AuthServiceInterpreter(userService, jwtDict, authedUserDict, tokens)
 
-  private final class AuthServiceInterpreter[F[_]: NonEmptyParallel: MonadThrow: Logger](
+  private final class AuthServiceInterpreter[F[_]: MonadThrow: Logger](
       userService: UserService[F],
       jwtDict: EphemeralDict[F, UserId, JwtToken],
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
@@ -38,7 +38,7 @@ object AuthService {
             jwtDict
               .get(user.id)
               .getOrElseF(tokens.create(user.id) flatTap { t =>
-                jwtDict.store(user.id, t) &>
+                jwtDict.store(user.id, t) *>
                   authedUserDict.store(t, user.id)
               })
           } else {
@@ -51,7 +51,7 @@ object AuthService {
         }
 
     override def logout(uid: UserId, token: JwtToken): F[Unit] =
-      jwtDict.delete(uid) &> authedUserDict.delete(token)
+      jwtDict.delete(uid) *> authedUserDict.delete(token)
 
     override def authed(token: JwtToken): OptionT[F, AuthedUser] =
       authedUserDict

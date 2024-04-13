@@ -25,7 +25,7 @@ object Main extends IOApp.Simple {
             .make[IO](cfg)
             .evalMap { res =>
               val repositories = Repositories.make[IO](res.cassandra)
-              val recs = RecsClients.make[IO](res.grpcClient, cfg.recs)
+              val recs         = RecsClients.make[IO](res.grpcClient, cfg.recs)
               for {
                 services <- Services.make[IO](repositories, cfg, res.redis, res.minio, recs)
                 api = HttpApi.make[IO](

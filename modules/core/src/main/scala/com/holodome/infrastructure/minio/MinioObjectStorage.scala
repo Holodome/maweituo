@@ -71,10 +71,8 @@ final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
         case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
           Applicative[F].pure(none[GetObjectResponse])
       }
-    ).flatMap { resp =>
-      OptionT.some(
-        fs2.io.readInputStream(Applicative[F].pure(resp), 4096)
-      )
+    ).map { resp =>
+      fs2.io.readInputStream(Applicative[F].pure(resp), 4096)
     }
 
   override def delete(id: ObjectId): F[Unit] =

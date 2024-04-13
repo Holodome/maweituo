@@ -69,7 +69,7 @@ object UserService {
           .flatMap(_ => OptionT liftF UserNameInUse(body.name).raiseError[F, Unit])
           .value
         salt <- PasswordHashing.genSalt[F]
-        id <- Id.make[F, UserId]
+        id   <- Id.make[F, UserId]
         user = User(
           id,
           body.name,

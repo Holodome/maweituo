@@ -3,6 +3,10 @@
     import { enhance } from '$app/forms';
 	/** @type {import('./$types').PageData} */
 	export let data;
+
+    const isAuthor = () => {
+        return $page.data.user?.userId === data.adInfo.authorId;
+    };
 </script>
 
 <svelte:head>
@@ -12,15 +16,21 @@
 <div>
     <h1>Advertisement</h1>
     <p>Name: {data.adInfo.title}</p>
+    <p><a href="/account/{data.adInfo.authorId}">Author</a></p>
 
     {#each data.images as img}
-        <img src={img} alt="ad"/>
+        <div style="position: relative;">
+            <img src={img.url} alt="ad" width=300 height=300 />
+            {#if isAuthor()}
+                <form use:enhance method="POST" action="?/delete_image">
+                    <input type="hidden" name="image" value="{img.id}">
+                    <button type="submit" style="position: absolute; bottom: 10px; left: 10px">Delete</button>
+                </form>
+            {/if}
+        </div>
     {/each}
-    {#if $page.data.user?.userId === data.adInfo.authorId}
-        <!-- <input bind:files id="imageAdd" accept="image/png, image/jpeg" type="file" /> -->
-        <!-- <button on:click={addImage}>Add photos</button> -->
-
-        <form method="POST" action="?/add_image" use:enhance enctype="multipart/form-data">
+    {#if isAuthor()}
+        <form use:enhance method="POST" action="?/add_image" enctype="multipart/form-data">
             <input id="imageAdd" accept="image/png, image/jpeg" type="file" name="image" />
             <button type="submit">Add image</button>
         </form>

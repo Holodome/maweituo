@@ -4,7 +4,7 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
-import com.holodome.effects.Clock
+import com.holodome.effects.TimeSource
 import com.holodome.repositories.MessageRepository
 
 trait MessageService[F[_]] {
@@ -16,13 +16,13 @@ object MessageService {
   def make[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
-  )(implicit clock: Clock[F]): MessageService[F] =
+  )(implicit clock: TimeSource[F]): MessageService[F] =
     new MessageServiceInterpreter(msgRepo, iam)
 
   private final class MessageServiceInterpreter[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
-  )(implicit clock: Clock[F])
+  )(implicit clock: TimeSource[F])
       extends MessageService[F] {
 
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {

@@ -7,6 +7,13 @@ import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
 import com.holodome.http.routes._
 import com.holodome.http.HttpErrorHandler
+import com.holodome.http.routes.ads.{
+  AdChatRoutes,
+  AdImageRoutes,
+  AdMsgRoutes,
+  AdRoutes,
+  AdTagRoutes
+}
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
@@ -31,14 +38,19 @@ sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: Us
   private val loginRoutes    = LoginRoutes[F](services.auth).routes
   private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
   private val registerRoutes = RegisterRoutes[F](services.users).routes
-  private val advertisementRoutes =
-    AdvertisementRoutes[F](services.ads, services.chats, services.messages, services.images).routes(
-      usersMiddleware
-    )
+
+  private val adRoutes      = AdRoutes[F](services.ads).routes(usersMiddleware)
+  private val adChatRoutes  = AdChatRoutes[F](services.chats).routes(usersMiddleware)
+  private val adImageRoutes = AdImageRoutes[F](services.images).routes(usersMiddleware)
+  private val adMsgRoutes   = AdMsgRoutes[F](services.messages).routes(usersMiddleware)
+  private val adTagRoutes   = AdTagRoutes[F](services.ads).routes(usersMiddleware)
+
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
   private val routes: HttpRoutes[F] =
-    H.handle(loginRoutes <+> registerRoutes <+> advertisementRoutes <+> userRoutes <+> logoutRoutes)
+    H.handle(
+      loginRoutes <+> registerRoutes <+> adRoutes <+> adChatRoutes <+> adImageRoutes <+> adMsgRoutes <+> adTagRoutes <+> userRoutes <+> logoutRoutes
+    )
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>
       AutoSlash(http)

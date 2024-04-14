@@ -3,7 +3,7 @@ package com.holodome.services
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.errors.ChatAccessForbidden
-import com.holodome.effects.Clock
+import com.holodome.effects.TimeSource
 import com.holodome.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
 import com.holodome.repositories._
 import org.mockito.MockitoSugar
@@ -18,7 +18,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
     IAMService.make(ad, chat, mock[AdImageRepository[IO]])
 
   private val epoch: Long = 1711564995
-  private implicit def clockMock: Clock[IO] = new Clock[IO] {
+  private implicit def clockMock: TimeSource[IO] = new TimeSource[IO] {
     override def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
   }
   private val telemetry = new TelemetryServiceStub[IO]

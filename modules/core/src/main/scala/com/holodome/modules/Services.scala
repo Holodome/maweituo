@@ -2,7 +2,7 @@ package com.holodome.modules
 
 import cats.MonadThrow
 import cats.effect.Async
-import com.holodome.effects.{Background, Clock, GenUUID}
+import com.holodome.effects.{Background, TimeSource, GenUUID}
 import com.holodome.services._
 import org.typelevel.log4cats.Logger
 
@@ -19,7 +19,7 @@ sealed abstract class Services[F[_]] {
 }
 
 object Services {
-  def make[F[_]: MonadThrow: GenUUID: Clock: Background: Logger](
+  def make[F[_]: MonadThrow: GenUUID: TimeSource: Background: Logger](
       repositories: Repositories[F],
       infrastructure: Infrastructure[F],
       grpc: RecsClients[F]

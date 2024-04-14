@@ -38,7 +38,8 @@ object Services {
           infrastructure.jwtTokens
         )
       override val ads: AdvertisementService[F] =
-        AdvertisementService.make[F](repositories.ads, repositories.tags, repositories.feed, iam)
+        AdvertisementService
+          .make[F](repositories.ads, repositories.tags, repositories.feed, iam, telemetry)
       override val chats: ChatService[F] =
         ChatService.make[F](repositories.chats, repositories.ads, telemetry)
       override val messages: MessageService[F] =

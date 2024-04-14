@@ -24,8 +24,8 @@ private final class CassandraRecRepository[F[_]: Async](session: CassandraSessio
       .map(_.map(_.toFloat))
       .map(recommendations.WeightVector.apply)
 
-  override def getUserClicked(user: users.UserId): OptionT[F, Set[ads.AdId]] =
-    OptionT(getUserClickedQuery(user).select(session).head.compile.last)
+  override def getUserCreated(user: users.UserId): OptionT[F, Set[ads.AdId]] =
+    OptionT(getUserCreatedQuery(user).select(session).head.compile.last)
 
   override def getUserBought(user: users.UserId): OptionT[F, Set[ads.AdId]] =
     OptionT(getUserBoughtQuery(user).select(session).head.compile.last)
@@ -43,8 +43,8 @@ private final class CassandraRecRepository[F[_]: Async](session: CassandraSessio
   private def getQuery(userId: users.UserId) =
     cql"select weights from rec.user_weights where id = ${userId.value}".as[List[Double]]
 
-  private def getUserClickedQuery(userId: UserId) =
-    cql"select ads from rec.user_clicked_snapshot where id = ${userId.value}".as[Set[AdId]]
+  private def getUserCreatedQuery(userId: UserId) =
+    cql"select ads from rec.user_created_snapshot where id = ${userId.value}".as[Set[AdId]]
 
   private def getUserBoughtQuery(userId: UserId) =
     cql"select ads from rec.user_bought_snapshot where id = ${userId.value}".as[Set[AdId]]

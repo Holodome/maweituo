@@ -8,7 +8,7 @@ import com.holodome.effects.Background
 import scala.concurrent.duration.DurationInt
 
 trait TelemetryService[F[_]] {
-  def userClicked(user: UserId, ad: AdId): F[Unit]
+  def userCreated(user: UserId, ad: AdId): F[Unit]
   def userBought(user: UserId, ad: AdId): F[Unit]
   def userDiscussed(user: UserId, ad: AdId): F[Unit]
 }
@@ -22,8 +22,8 @@ object TelemetryService {
       internal: TelemetryService[F]
   ) extends TelemetryService[F] {
 
-    override def userClicked(user: UserId, ad: AdId): F[Unit] =
-      runInBackground(internal.userClicked(user, ad))
+    override def userCreated(user: UserId, ad: AdId): F[Unit] =
+      runInBackground(internal.userCreated(user, ad))
 
     override def userBought(user: UserId, ad: AdId): F[Unit] =
       runInBackground(internal.userBought(user, ad))

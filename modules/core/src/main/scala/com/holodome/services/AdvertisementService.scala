@@ -22,9 +22,10 @@ object AdvertisementService {
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
       feed: FeedRepository[F],
-      iam: IAMService[F]
+      iam: IAMService[F],
+      telemetry: TelemetryService[F]
   ): AdvertisementService[F] =
-    new AdvertisementServiceInterpreter(repo, tags, feed, iam)
+    new AdvertisementServiceInterpreter(repo, tags, feed, iam, telemetry)
 
   private final class AdvertisementServiceInterpreter[
       F[_]: MonadThrow: GenUUID: Logger: TimeSource
@@ -32,7 +33,8 @@ object AdvertisementService {
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
       feed: FeedRepository[F],
-      iam: IAMService[F]
+      iam: IAMService[F],
+      telemetry: TelemetryService[F]
   ) extends AdvertisementService[F] {
     override def get(id: AdId): F[Advertisement] =
       repo.get(id)
@@ -44,6 +46,7 @@ object AdvertisementService {
         _  <- repo.create(ad)
         at <- TimeSource[F].instant
         _  <- feed.addToGlobalFeed(id, at)
+        _  <- telemetry.userCreated(authorId, id)
         _  <- Logger[F].info(s"Created ad $id by user $authorId")
       } yield id
 

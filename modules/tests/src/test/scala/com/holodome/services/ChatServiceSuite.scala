@@ -32,8 +32,14 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
-      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
+      val ads = AdvertisementService.make[IO](
+        adRepo,
+        mock[TagRepository[IO]],
+        feedRepository,
+        iam,
+        new TelemetryServiceStub[IO]
+      )
+      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
         u1 <- users.create(reg)
         u2 <- users.create(otherReg)
@@ -54,8 +60,14 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
-      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
+      val ads = AdvertisementService.make[IO](
+        adRepo,
+        mock[TagRepository[IO]],
+        feedRepository,
+        iam,
+        new TelemetryServiceStub[IO]
+      )
+      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
         u1 <- users.create(reg)
         ad <- ads.create(u1, createAd)
@@ -81,8 +93,14 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
-      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
+      val ads = AdvertisementService.make[IO](
+        adRepo,
+        mock[TagRepository[IO]],
+        feedRepository,
+        iam,
+        new TelemetryServiceStub[IO]
+      )
+      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
         u1 <- users.create(reg)
         u2 <- users.create(otherReg)

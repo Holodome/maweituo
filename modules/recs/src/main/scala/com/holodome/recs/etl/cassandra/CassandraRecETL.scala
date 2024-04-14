@@ -34,7 +34,7 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
       truncateAdsTagsQuery.execute(session).void,
       truncateUserWeightsQuery.execute(session).void,
       truncateUserDiscussedSnapshotQuery.execute(session).void,
-      truncateUserClickedSnapshotQuery.execute(session).void,
+      truncateUserCreatedSnapshotQuery.execute(session).void,
       truncateUserBoughtSnapshotQuery.execute(session).void
     ).parSequence_
 
@@ -50,8 +50,8 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
   private def truncateUserDiscussedSnapshotQuery =
     cql"truncate recs.user_discussed_snapshot".config(_.setConsistencyLevel(ConsistencyLevel.ALL))
 
-  private def truncateUserClickedSnapshotQuery =
-    cql"truncate recs.user_clicked_snapshot".config(_.setConsistencyLevel(ConsistencyLevel.ALL))
+  private def truncateUserCreatedSnapshotQuery =
+    cql"truncate recs.user_created_snapshot".config(_.setConsistencyLevel(ConsistencyLevel.ALL))
 
   private def truncateUserBoughtSnapshotQuery =
     cql"truncate recs.user_bought_snapshot".config(_.setConsistencyLevel(ConsistencyLevel.ALL))
@@ -64,7 +64,7 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
           .select(session)
           .compile
           .oneSet,
-        cql"select ads from recs.user_clicked_snapshot where id = $uid"
+        cql"select ads from recs.user_created_snapshot where id = $uid"
           .as[Set[AdId]]
           .select(session)
           .compile
@@ -74,13 +74,13 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
           .select(session)
           .compile
           .oneSet
-      ).parFlatMapN { case (bought, clicked, discussed) =>
+      ).parFlatMapN { case (bought, created, discussed) =>
         (
           bought.toList
             .traverse(selectAdTagFromSnapshot)
             .map(_.flatten)
             .map(_.fold(Set[AdTag]())((s, t) => s ++ t)),
-          clicked.toList
+          created.toList
             .traverse(selectAdTagFromSnapshot)
             .map(_.flatten)
             .map(_.fold(Set[AdTag]())((s, t) => s ++ t)),
@@ -88,7 +88,7 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
             .traverse(selectAdTagFromSnapshot)
             .map(_.flatten)
             .map(_.fold(Set[AdTag]())((s, t) => s ++ t))
-        ).parMapN { case (boughtTags, clickedTags, discussedTags) =>
+        ).parMapN { case (boughtTags, createdTags, discussedTags) =>
           val tagsMap = tags
             .foldLeft(scala.collection.mutable.Map[AdTag, Double]()) { case (m, t) =>
               m(t) = 0
@@ -96,12 +96,12 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
             }
           val boughtWeight    = 1.0
           val discussedWeight = 0.01
-          val clickedWeight   = 0.001
+          val createdWeight   = 0.02
           for (t <- boughtTags) {
             tagsMap(t) += boughtWeight
           }
-          for (t <- clickedTags) {
-            tagsMap(t) += clickedWeight
+          for (t <- createdTags) {
+            tagsMap(t) += createdWeight
           }
           for (t <- discussedTags) {
             tagsMap(t) += discussedWeight
@@ -164,7 +164,7 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
   private def transferTelemetry: F[List[UserId]] =
     (
       transferTransactionalBoughtTelemetry,
-      transferTransactionalClickedTelemetry,
+      transferTransactionalCreatedTelemetry,
       transferTransactionalDiscussedTelemetry
     ).parMapN((u1, u2, u3) => (u1 ++ u2 ++ u3).distinct)
 
@@ -175,11 +175,11 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
       boughtForUserInsert
     )
 
-  private def transferTransactionalClickedTelemetry: F[List[UserId]] =
+  private def transferTransactionalCreatedTelemetry: F[List[UserId]] =
     transferTransactionalTelemetry(
-      transactionalClickedTelemetryUsers,
-      transactionalClickedFourUserTelemetry,
-      clickedForUserInsert
+      transactionalCreatedTelemetryUsers,
+      transactionalCreatedFourUserTelemetry,
+      createdForUserInsert
     )
 
   private def transferTransactionalDiscussedTelemetry: F[List[UserId]] =
@@ -224,23 +224,23 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
   private def boughtForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
     cql"insert into recs.user_bought_snapshot (id, ads) values ($userId, $ads)"
 
-  private def transactionalClickedTelemetryUsers: F[List[UserId]] =
-    transactionalClickedTelemetryQuery.select(session).compile.toList
+  private def transactionalCreatedTelemetryUsers: F[List[UserId]] =
+    transactionalCreatedTelemetryQuery.select(session).compile.toList
 
-  private def transactionalClickedFourUserTelemetry(userId: UserId): F[Set[AdId]] =
-    transactionalClickedForUser(userId).select(session).compile.toList.map(_.toSet)
+  private def transactionalCreatedFourUserTelemetry(userId: UserId): F[Set[AdId]] =
+    transactionalCreatedForUser(userId).select(session).compile.toList.map(_.toSet)
 
-  private def clickedForUserInsert(userId: UserId, ads: Set[AdId]): F[Unit] =
-    clickedForUserInsertQuery(userId, ads).execute(session).void
+  private def createdForUserInsert(userId: UserId, ads: Set[AdId]): F[Unit] =
+    createdForUserInsertQuery(userId, ads).execute(session).void
 
-  private def transactionalClickedTelemetryQuery =
-    cql"select id from recs.user_clicked_transactional".as[UserId]
+  private def transactionalCreatedTelemetryQuery =
+    cql"select id from recs.user_created_transactional".as[UserId]
 
-  private def transactionalClickedForUser(userId: UserId) =
-    cql"select ad from recs.user_clicked_transactional where id = $userId".as[AdId]
+  private def transactionalCreatedForUser(userId: UserId) =
+    cql"select ad from recs.user_created_transactional where id = $userId".as[AdId]
 
-  private def clickedForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
-    cql"insert into recs.user_clicked_snapshot (id, ads) values ($userId, $ads)"
+  private def createdForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
+    cql"insert into recs.user_created_snapshot (id, ads) values ($userId, $ads)"
 
   private def transactionalDiscussedTelemetryUsers: F[List[UserId]] =
     transactionalDiscussedTelemetryQuery.select(session).compile.toList

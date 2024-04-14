@@ -73,7 +73,7 @@ create table recs.user_bought_transactional (
     ad uuid
 );
 
-create table recs.user_clicked_transactional (
+create table recs.user_created_transactional (
     id uuid primary key,
     ad uuid
 );
@@ -88,7 +88,7 @@ create table recs.user_bought_snapshot (
     ads frozen<set<uuid>>
 );
 
-create table recs.user_clicked_snapshot (
+create table recs.user_created_snapshot (
     id uuid primary key,
     ads frozen<set<uuid>>
 );

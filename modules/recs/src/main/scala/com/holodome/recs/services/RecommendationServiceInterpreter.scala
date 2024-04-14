@@ -51,7 +51,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
     OptionT
       .liftF(rng.betweenDouble(0, 1))
       .flatMap {
-        case x if 0.0 <= x && x <= 0.1 => recRepo.getUserClicked(target)
+        case x if 0.0 <= x && x <= 0.1 => recRepo.getUserCreated(target)
         case x if 0.1 < x && x <= 0.4  => recRepo.getUserDiscussed(target)
         case _                         => recRepo.getUserBought(target)
       }

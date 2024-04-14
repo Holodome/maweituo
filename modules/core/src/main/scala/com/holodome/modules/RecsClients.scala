@@ -38,7 +38,7 @@ object RecsClients {
       }
       override val telemetry: TelemetryService[F] = new TelemetryService[F] {
 
-        override def userClicked(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
+        override def userCreated(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
 
         override def userBought(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
 

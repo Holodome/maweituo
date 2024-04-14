@@ -6,10 +6,10 @@ import com.holodome.recs.repositories.TelemetryRepository
 import com.holodome.services.TelemetryService
 
 private final class TelemetryServiceInterpreter[F[_]](repo: TelemetryRepository[F])
-  extends TelemetryService[F] {
+    extends TelemetryService[F] {
 
-  override def userClicked(user: UserId, ad: AdId): F[Unit] =
-    repo.userClicked(user, ad)
+  override def userCreated(user: UserId, ad: AdId): F[Unit] =
+    repo.userCreated(user, ad)
 
   override def userBought(user: UserId, ad: AdId): F[Unit] =
     repo.userBought(user, ad)

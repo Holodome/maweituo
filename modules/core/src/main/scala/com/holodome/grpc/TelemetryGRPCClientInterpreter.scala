@@ -20,8 +20,8 @@ private final class TelemetryGRPCClientInterpreter[F[_]: Monad: GenUUID](
     rpc: proto.rec.TelemetryService[F]
 ) extends TelemetryService[F] {
 
-  override def userClicked(user: UserId, ad: AdId): F[Unit] =
-    rpc.userClicked(toRpcReq(user, ad), Headers.empty).void
+  override def userCreated(user: UserId, ad: AdId): F[Unit] =
+    rpc.userCreated(toRpcReq(user, ad), Headers.empty).void
 
   override def userBought(user: UserId, ad: AdId): F[Unit] =
     rpc.userBought(toRpcReq(user, ad), Headers.empty).void

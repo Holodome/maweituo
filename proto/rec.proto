@@ -27,7 +27,7 @@ service RecommendationService {
 }
 
 service TelemetryService {
-  rpc userClicked(UserAdAction) returns (Empty) {}
+  rpc userCreated(UserAdAction) returns (Empty) {}
   rpc userBought(UserAdAction) returns (Empty) {}
   rpc userDiscussed(UserAdAction) returns (Empty) {}
 }

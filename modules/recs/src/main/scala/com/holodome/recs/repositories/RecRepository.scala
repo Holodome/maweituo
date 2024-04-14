@@ -8,7 +8,7 @@ import com.holodome.recs.domain.recommendations.WeightVector
 trait RecRepository[F[_]] {
   def get(userId: UserId): OptionT[F, WeightVector]
 
-  def getUserClicked(user: UserId): OptionT[F, Set[AdId]]
+  def getUserCreated(user: UserId): OptionT[F, Set[AdId]]
   def getUserBought(user: UserId): OptionT[F, Set[AdId]]
   def getUserDiscussed(user: UserId): OptionT[F, Set[AdId]]
 

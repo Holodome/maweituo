@@ -36,7 +36,13 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val serv = AdvertisementService
-        .make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
+        .make[IO](
+          adRepo,
+          mock[TagRepository[IO]],
+          feedRepository,
+          iam,
+          new TelemetryServiceStub[IO]
+        )
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
@@ -63,7 +69,13 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val serv = AdvertisementService
-        .make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
+        .make[IO](
+          adRepo,
+          mock[TagRepository[IO]],
+          feedRepository,
+          iam,
+          new TelemetryServiceStub[IO]
+        )
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
@@ -85,7 +97,13 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
+      val serv = AdvertisementService.make[IO](
+        adRepo,
+        mock[TagRepository[IO]],
+        feedRepository,
+        iam,
+        new TelemetryServiceStub[IO]
+      )
       for {
         userId  <- users.create(reg)
         otherId <- users.create(otherReg)
@@ -111,7 +129,8 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, tagRepo, feedRepository, iam)
+      val serv = AdvertisementService
+        .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
@@ -133,7 +152,8 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, tagRepo, feedRepository, iam)
+      val serv = AdvertisementService
+        .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)

@@ -20,8 +20,8 @@ object TelemetryGRPCServer {
 private final class TelemetryGRPCServer[F[_]: Monad: GenUUID](service: TelemetryService[F])
     extends proto.rec.TelemetryService[F] {
 
-  override def userClicked(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
-    act(request)(service.userClicked)
+  override def userCreated(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
+    act(request)(service.userCreated)
 
   override def userBought(request: proto.rec.UserAdAction, ctx: Headers): F[proto.rec.Empty] =
     act(request)(service.userBought)

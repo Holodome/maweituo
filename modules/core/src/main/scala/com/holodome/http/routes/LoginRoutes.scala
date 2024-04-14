@@ -15,17 +15,17 @@ import org.http4s.dsl.Http4sDsl
 
 final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
     authService: AuthService[F]
-)(implicit
-    H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
   private val httpRoutes: HttpRoutes[F] =
-    H.handle(HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
+    HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
       req.decodeR[LoginRequest] { login =>
         authService
           .login(login.name, login.password)
           .flatMap(Ok(_))
       }
-    })
+    }
 
-  val routes: Routes[F] = Routes[F](Some(httpRoutes), None)
+  def routes(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] = Routes[F](Some(H.handle(httpRoutes)), None)
 }

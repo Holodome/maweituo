@@ -9,7 +9,7 @@ import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.http.vars.{AdIdVar, ChatIdVar}
 import com.holodome.services.MessageService
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
@@ -17,8 +17,6 @@ import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder](
     msgService: MessageService[F]
-)(implicit
-    H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
 
   private val prefixPath = "/ads"
@@ -38,6 +36,8 @@ final case class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder](
       }
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser])(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] =
     Routes(None, Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes)))))
 }

@@ -14,9 +14,8 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])(implicit
-    H: HttpErrorHandler[F, ApplicationError]
-) extends Http4sDsl[F] {
+final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
+    extends Http4sDsl[F] {
 
   private val prefixPath = "/users"
 
@@ -40,7 +39,9 @@ final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserServ
       }
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser])(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] =
     Routes(
       Some(Router(prefixPath -> H.handle(publicRoutes))),
       Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes))))

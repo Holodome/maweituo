@@ -13,9 +13,8 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.HttpRoutes
 import org.http4s.server.Router
 
-final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])(implicit
-    H: HttpErrorHandler[F, ApplicationError]
-) extends Http4sDsl[F] {
+final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
+    extends Http4sDsl[F] {
 
   private val prefixPath = "/tags"
 
@@ -29,7 +28,9 @@ final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
       }
   }
 
-  val routes: Routes[F] = {
+  def routes(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] = {
     Routes(Some(Router(prefixPath -> H.handle(publicRoutes))), None)
   }
 }

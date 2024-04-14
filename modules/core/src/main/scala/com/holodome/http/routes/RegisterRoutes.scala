@@ -12,19 +12,20 @@ import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])(implicit
-    H: HttpErrorHandler[F, ApplicationError]
-) extends Http4sDsl[F] {
+final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
+    extends Http4sDsl[F] {
 
   private val httpRoutes: HttpRoutes[F] =
-    H.handle(HttpRoutes.of { case req @ POST -> Root / "register" =>
+    HttpRoutes.of { case req @ POST -> Root / "register" =>
       req.decodeR[RegisterRequest] { register =>
         userService
           .create(register)
           .flatMap(Ok(_))
       }
-    })
+    }
 
-  val routes: Routes[F] =
-    Routes[F](Some(httpRoutes), None)
+  def routes(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] =
+    Routes[F](Some(H.handle(httpRoutes)), None)
 }

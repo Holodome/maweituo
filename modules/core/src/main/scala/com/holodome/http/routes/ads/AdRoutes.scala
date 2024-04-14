@@ -17,8 +17,6 @@ import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F]
-)(implicit
-    H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
 
   private val prefixPath = "/ads"
@@ -47,7 +45,9 @@ final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
 
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] = {
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser])(implicit
+      H: HttpErrorHandler[F, ApplicationError]
+  ): Routes[F] = {
     Routes(
       Some(Router(prefixPath -> H.handle(publicRoutes))),
       Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes))))

@@ -15,6 +15,7 @@ trait AdvertisementService[F[_]] {
   def delete(id: AdId, userId: UserId): F[Unit]
   def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
   def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
+  def markAsResolved(id: AdId, userId: UserId, withWhom: UserId): F[Unit]
 }
 
 object AdvertisementService {
@@ -42,7 +43,7 @@ object AdvertisementService {
     override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {
         id <- Id.make[F, AdId]
-        ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId)
+        ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId, resolved = false)
         _  <- repo.create(ad)
         at <- TimeSource[F].instant
         _  <- feed.addToGlobalFeed(id, at)
@@ -77,5 +78,12 @@ object AdvertisementService {
         _ <- Logger[F].info(s"Removed tag $tag from ad $id by user $userId")
       } yield ()
     }
+
+    override def markAsResolved(id: AdId, userId: UserId, withWhom: UserId): F[Unit] =
+      for {
+        _ <- iam.authorizeAdModification(id, userId)
+        _ <- repo.markAsResolved(id)
+        _ <- telemetry.userBought(withWhom, id)
+      } yield ()
   }
 }

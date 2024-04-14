@@ -15,6 +15,7 @@ trait AdvertisementRepository[F[_]] {
   def addImage(id: AdId, image: ImageId): F[Unit]
   def removeTag(id: AdId, tag: AdTag): F[Unit]
   def removeImage(id: AdId, image: ImageId): F[Unit]
+  def markAsResolved(id: AdId): F[Unit]
 }
 
 object AdvertisementRepository {

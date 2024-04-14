@@ -4,7 +4,7 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.users.AuthedUser
+import com.holodome.domain.users.{AuthedUser, UserId}
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.AdIdVar
 import com.holodome.http.{HttpErrorHandler, Routes}
@@ -38,6 +38,12 @@ final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
     case DELETE -> Root / AdIdVar(adId) as user =>
       advertisementService.delete(adId, user.id) *> NoContent()
 
+    case ar @ POST -> Root / AdIdVar(adId) / "resolved" as user =>
+      ar.req.decodeR[UserId] { id =>
+        advertisementService
+          .markAsResolved(adId, user.id, id)
+          .flatMap(Ok(_))
+      }
   }
 
   def routes(authMiddleware: AuthMiddleware[F, AuthedUser])(implicit

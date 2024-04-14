@@ -28,7 +28,8 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
       title: AdTitle,
       tags: Option[Set[AdTag]],
       images: Option[Set[ImageId]],
-      chats: Option[Set[ChatId]]
+      chats: Option[Set[ChatId]],
+      resolved: Boolean
   ) {
     def toDomain: Advertisement =
       Advertisement(
@@ -37,7 +38,8 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
         tags.getOrElse(Set()),
         images.getOrElse(Set()),
         chats.getOrElse(Set()),
-        authorId
+        authorId,
+        resolved
       )
   }
 
@@ -62,6 +64,9 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
 
   def removeImage(id: AdId, image: ImageId): F[Unit] =
     removeImageQuery(id, image).execute(session).void
+
+  override def markAsResolved(id: AdId): F[Unit] =
+    markAsResolvedQ(id).execute(session).void
 
   private def createQuery(ad: Advertisement) = {
     cql"""insert into advertisements (id, author_id, title, tags, images, chats)
@@ -97,4 +102,6 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
   private def removeImageQuery(id: AdId, image: ImageId) =
     cql"update advertisements set images = images - {${image.id}} where id = ${id.value}"
 
+  private def markAsResolvedQ(id: AdId) =
+    cql"update advertisements set resolved = true where id = ${id.value}"
 }

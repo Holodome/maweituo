@@ -18,7 +18,8 @@ create table local.advertisements (
     title text,
     tags set<text>,
     images set<uuid>,
-    chats set<uuid>
+    chats set<uuid>,
+    resolved boolean
 );
 
 create table local.personalized_feed (

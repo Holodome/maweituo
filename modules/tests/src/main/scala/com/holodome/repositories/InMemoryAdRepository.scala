@@ -47,4 +47,10 @@ final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F] 
       val newAd = ad.copy(images = ad.images.filter(test => test =!= image))
       map.update(id, newAd)
     })
+
+  override def markAsResolved(id: AdId): F[Unit] =
+    Sync[F].delay(map.updateWith(id) {
+      case Some(ad) => Some(ad.copy(resolved = true))
+      case None     => None
+    })
 }

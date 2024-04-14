@@ -5,13 +5,13 @@ import cats.syntax.all._
 import cats.Show
 import com.holodome.domain.ads.Advertisement
 import com.holodome.domain.errors.InvalidAdId
-import com.holodome.generators.createAdGen
+import com.holodome.generators.adGen
 import com.holodome.repositories.cassandra.CassandraAdvertisementRepository
 
 object CassandraAdvertisementRepositorySuite extends CassandraSuite {
   implicit val adShow: Show[Advertisement] = Show.show(_ => "Ad")
   test("basic operations work") { cassandra =>
-    forall(createAdGen) { ad =>
+    forall(adGen) { ad =>
       val repo = CassandraAdvertisementRepository.make[IO](cassandra)
       for {
         _ <- repo.create(ad)

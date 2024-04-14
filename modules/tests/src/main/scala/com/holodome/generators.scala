@@ -110,12 +110,12 @@ object generators {
       hashedPassword = PasswordHashing.hashSaltPassword(password, salt)
     } yield User(id, name, email, hashedPassword, salt)
 
-  def createAdGen: Gen[Advertisement] =
+  def adGen: Gen[Advertisement] =
     for {
       id     <- adIdGen
       title  <- adTitleGen
       author <- userIdGen
-    } yield Advertisement(id, title, Set(), Set(), Set(), author)
+    } yield Advertisement(id, title, Set(), Set(), Set(), author, resolved = false)
 
   def chatIdGen: Gen[ChatId] =
     idGen(ChatId.apply)

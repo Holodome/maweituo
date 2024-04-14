@@ -32,7 +32,8 @@ object ads {
       tags: Set[AdTag],
       images: Set[ImageId],
       chats: Set[ChatId],
-      authorId: UserId
+      authorId: UserId,
+      resolved: Boolean
   )
 
   @derive(decoder, encoder, show)

@@ -28,15 +28,15 @@ object FeedService {
       recs: RecommendationService[F]
   ) extends FeedService[F] {
     override def getPersonalized(user: UserId, pag: Pagination): F[List[AdId]] =
-      repo.getPersonalized(user, pag).value.flatMap {
-        case Some(ads) => Applicative[F].pure(ads)
-        case None =>
+      repo.getPersonalized(user, pag).flatMap {
+        case List() =>
           for {
             recs <- recs.getRecs(user, 100)
             _    <- repo.setPersonalized(user, recs, 60 * 60)
-            r    <- repo.getPersonalized(user, pag).getOrRaise(FeedError())
+            r    <- repo.getPersonalized(user, pag)
             _    <- Logger[F].info(s"Generated feed for user $user")
           } yield r
+        case lst => Applicative[F].pure(lst)
       }
 
     override def getGlobal(pag: Pagination): F[List[AdId]] =

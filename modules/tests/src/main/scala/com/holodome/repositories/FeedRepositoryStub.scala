@@ -12,7 +12,7 @@ final class FeedRepositoryStub extends FeedRepository[IO] {
   override def getPersonalized(
       user: users.UserId,
       pag: Pagination
-  ): OptionT[IO, List[AdId]] = OptionT.none
+  ): IO[List[AdId]] = IO.pure(List())
 
   override def getGlobal(pag: Pagination): IO[List[ads.AdId]] = IO.pure(List())
 

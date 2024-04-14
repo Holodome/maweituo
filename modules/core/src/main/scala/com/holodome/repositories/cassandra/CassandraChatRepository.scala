@@ -17,7 +17,7 @@ object CassandraChatRepository {
     new CassandraChatRepository(session)
 }
 
-sealed class CassandraChatRepository[F[_]: Async] private (session: CassandraSession[F])
+private final class CassandraChatRepository[F[_]: Async](session: CassandraSession[F])
     extends ChatRepository[F] {
 
   override def create(chat: Chat): F[Unit] =

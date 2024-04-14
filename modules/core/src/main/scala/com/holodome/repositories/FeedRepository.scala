@@ -8,7 +8,7 @@ import com.holodome.domain.users.UserId
 import java.time.Instant
 
 trait FeedRepository[F[_]] {
-  def getPersonalized(user: UserId, pag: Pagination): OptionT[F, List[AdId]]
+  def getPersonalized(user: UserId, pag: Pagination): F[List[AdId]]
   def getGlobal(pag: Pagination): F[List[AdId]]
 
   def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: Int): F[Unit]

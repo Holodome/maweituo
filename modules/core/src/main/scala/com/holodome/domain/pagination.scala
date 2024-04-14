@@ -7,6 +7,11 @@ import derevo.derive
 object pagination {
 
   @derive(decoder, encoder, show)
-  case class Pagination(pageSize: Int, page: Int)
+  case class Pagination(pageSize: Int, page: Int) {
+    def lower: Int =
+      page * pageSize
+
+    def upper: Int = lower + pageSize
+  }
 
 }

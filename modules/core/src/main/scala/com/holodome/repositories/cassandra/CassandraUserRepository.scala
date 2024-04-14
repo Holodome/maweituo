@@ -15,7 +15,7 @@ object CassandraUserRepository {
     new CassandraUserRepository(session)
 }
 
-sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSession[F])
+private final class CassandraUserRepository[F[_]: Async](session: CassandraSession[F])
     extends UserRepository[F] {
 
   override def create(request: User): F[Unit] = createQuery(request).execute(session).void

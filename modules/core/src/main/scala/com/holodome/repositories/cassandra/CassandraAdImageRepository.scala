@@ -17,7 +17,7 @@ object CassandraAdImageRepository {
     new CassandraAdImageRepository[F](session)
 }
 
-sealed class CassandraAdImageRepository[F[_]: Async] private (session: CassandraSession[F])
+private final class CassandraAdImageRepository[F[_]: Async](session: CassandraSession[F])
     extends AdImageRepository[F] {
 
   private case class SerializedImage(

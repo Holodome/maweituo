@@ -25,7 +25,7 @@ object Repositories {
         CassandraAdvertisementRepository.make[F](cassandra)
       override val images: AdImageRepository[F] = CassandraAdImageRepository.make[F](cassandra)
       override val tags: TagRepository[F]       = CassandraTagRepository.make[F](cassandra)
-      override val feed: FeedRepository[F] = ???
+      override val feed: FeedRepository[F]      = CassandraFeedRepository.make[F](cassandra)
     }
   }
 }

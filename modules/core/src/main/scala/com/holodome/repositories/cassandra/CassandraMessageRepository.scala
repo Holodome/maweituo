@@ -14,7 +14,7 @@ object CassandraMessageRepository {
     new CassandraMessageRepository(session)
 }
 
-sealed class CassandraMessageRepository[F[_]: Async] private (session: CassandraSession[F])
+private final class CassandraMessageRepository[F[_]: Async](session: CassandraSession[F])
     extends MessageRepository[F] {
 
   override def chatHistory(chatId: ChatId): F[List[Message]] =

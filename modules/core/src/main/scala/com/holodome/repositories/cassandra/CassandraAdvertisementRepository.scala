@@ -18,8 +18,9 @@ object CassandraAdvertisementRepository {
     new CassandraAdvertisementRepository(session)
 }
 
-sealed class CassandraAdvertisementRepository[F[_]: Async] private (session: CassandraSession[F])
-    extends AdvertisementRepository[F] {
+private final class CassandraAdvertisementRepository[F[_]: Async](
+    session: CassandraSession[F]
+) extends AdvertisementRepository[F] {
 
   private case class SerializedAd(
       id: AdId,

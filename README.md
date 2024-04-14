@@ -154,6 +154,6 @@ POST   /ads/{ad_id}/tag           - add tag
 DELETE /ads/{ad_id}/tag           - delete tag
 
 GET    /tags                      - get all tags 
-GET    /tags/{tag_id}             - get all advertisements with given tag
+GET    /tags/ads                  - get all advertisements with given tag
 
 ```

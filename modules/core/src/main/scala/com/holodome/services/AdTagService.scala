@@ -3,9 +3,7 @@ package com.holodome.services
 import cats.syntax.all._
 import cats.Monad
 import com.holodome.domain.ads.{AdId, AdTag}
-import com.holodome.domain.users.UserId
 import com.holodome.repositories.TagRepository
-import org.typelevel.log4cats.Logger
 
 trait AdTagService[F[_]] {
   def all: F[List[AdTag]]

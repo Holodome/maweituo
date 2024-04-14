@@ -16,6 +16,7 @@ sealed abstract class Services[F[_]] {
   val chats: ChatService[F]
   val messages: MessageService[F]
   val images: AdImageService[F]
+  val tags: AdTagService[F]
 }
 
 object Services {
@@ -54,6 +55,7 @@ object Services {
           iam
         )
 
+      override val tags: AdTagService[F] = AdTagService.make[F](repositories.tags)
     }
   }
 }

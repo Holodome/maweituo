@@ -47,9 +47,11 @@ sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: Us
 
   private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
 
+  private val tagRoutes = TagRoutes[F](services.tags).routes
+
   private val routes: HttpRoutes[F] =
     H.handle(
-      loginRoutes <+> registerRoutes <+> adRoutes <+> adChatRoutes <+> adImageRoutes <+> adMsgRoutes <+> adTagRoutes <+> userRoutes <+> logoutRoutes
+      loginRoutes <+> registerRoutes <+> tagRoutes <+> adRoutes <+> adChatRoutes <+> adImageRoutes <+> adMsgRoutes <+> adTagRoutes <+> userRoutes <+> logoutRoutes
     )
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>

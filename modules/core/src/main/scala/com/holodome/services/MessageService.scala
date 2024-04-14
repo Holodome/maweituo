@@ -22,13 +22,13 @@ object MessageService {
   private final class MessageServiceInterpreter[F[_]: MonadThrow](
       msgRepo: MessageRepository[F],
       iam: IAMService[F]
-  )(implicit clock: TimeSource[F])
+  )(implicit timeSource: TimeSource[F])
       extends MessageService[F] {
 
     override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {
       iam.authorizeChatAccess(chatId, senderId) *> {
         for {
-          now <- clock.instant
+          now <- timeSource.instant
           msg = Message(
             senderId,
             chatId,

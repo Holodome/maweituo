@@ -20,32 +20,41 @@ object RecsClients {
   def make[F[_]: Concurrent: GenUUID: MonadThrow](
       client: Client[F],
       cfg: RecsClientConfig
-  ): RecsClients[F] = {
+  ): RecsClients[F] =
     if (cfg.noRecs) {
-      return new RecsClients[F] {
-        override val recs: RecommendationService[F] = new RecommendationService[F] {
+      makeStub
+    } else {
+      makeGRPC(client, cfg)
+    }
 
-          override def getRecs(user: users.UserId, count: Int): F[List[ads.AdId]] =
-            Applicative[F].pure(List())
+  private def makeStub[F[_]: Applicative]: RecsClients[F] =
+    new RecsClients[F] {
+      override val recs: RecommendationService[F] = new RecommendationService[F] {
 
-          override def learn(): F[Unit] = Applicative[F].unit
-        }
-        override val telemetry: TelemetryService[F] = new TelemetryService[F] {
+        override def getRecs(user: users.UserId, count: Int): F[List[ads.AdId]] =
+          Applicative[F].pure(List())
 
-          override def userClicked(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
+        override def learn(): F[Unit] = Applicative[F].unit
+      }
+      override val telemetry: TelemetryService[F] = new TelemetryService[F] {
 
-          override def userBought(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
+        override def userClicked(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
 
-          override def userDiscussed(user: users.UserId, ad: ads.AdId): F[Unit] =
-            Applicative[F].unit
-        }
+        override def userBought(user: users.UserId, ad: ads.AdId): F[Unit] = Applicative[F].unit
+
+        override def userDiscussed(user: users.UserId, ad: ads.AdId): F[Unit] =
+          Applicative[F].unit
       }
     }
+
+  private def makeGRPC[F[_]: Concurrent: GenUUID](
+      client: Client[F],
+      cfg: RecsClientConfig
+  ): RecsClients[F] =
     new RecsClients[F] {
       override val recs: RecommendationService[F] =
         RecommendationGRPCClientInterpreter.make[F](client, cfg.uri)
       override val telemetry: TelemetryService[F] =
         TelemetryGRPCClientInterpreter.make[F](client, cfg.uri)
     }
-  }
 }

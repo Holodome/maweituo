@@ -16,20 +16,18 @@ object Main extends IOApp.Simple {
   override def run: IO[Unit] =
     Config.load[IO] flatMap { cfg =>
       Logger[IO].info(s"Loaded config $cfg") >>
-        Supervisor[IO].use { _ =>
-          RecsResources
-            .make[IO](cfg)
-            .evalMap { res =>
-              val repositories = Repositories.make[IO](res.cassandra)
-              for {
-                services <- Services.make[IO](repositories)
-                api = GRPCApi.make[IO](services)
-              } yield cfg.recsServer -> api.httpApp
-            }
-            .flatMap { case (cfg, httpApp) =>
-              MkHttpServer[IO].newEmber(cfg, httpApp)
-            }
-            .useForever
-        }
+        RecsResources
+          .make[IO](cfg)
+          .evalMap { res =>
+            val repositories = Repositories.make[IO](res.cassandra)
+            for {
+              services <- Services.make[IO](repositories)
+              api = GRPCApi.make[IO](services)
+            } yield cfg.recsServer -> api.httpApp
+          }
+          .flatMap { case (cfg, httpApp) =>
+            MkHttpServer[IO].newEmber(cfg, httpApp)
+          }
+          .useForever
     }
 }

@@ -13,13 +13,11 @@ package object http {
       a: Option[HttpRoutes[F]],
       b: Option[HttpRoutes[F]]
   ): Option[HttpRoutes[F]] =
-    a match {
-      case Some(xR) =>
-        b match {
-          case Some(yR) => Some(xR <+> yR)
-          case None     => Some(xR)
-        }
-      case None => b
+    (a, b) match {
+      case (Some(ar), Some(br)) => Some(ar <+> br)
+      case (Some(_), None)      => a
+      case (None, Some(_))      => b
+      case (None, None)         => None
     }
 
   implicit class RoutesOps[F[_]: Async](routes: Routes[F]) {

@@ -11,14 +11,10 @@ import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
 
 trait UserService[F[_]] {
+  def create(body: RegisterRequest): F[UserId]
   def get(id: UserId): F[User]
-  def getByName(name: Username): F[User]
   def delete(subject: UserId, authorized: UserId): F[Unit]
   def update(update: UpdateUserRequest, authorized: UserId): F[Unit]
-
-  def register(
-      body: RegisterRequest
-  ): F[UserId]
 }
 
 object UserService {
@@ -53,10 +49,7 @@ object UserService {
     override def get(id: UserId): F[User] =
       repo.find(id).getOrRaise(InvalidUserId())
 
-    override def getByName(name: Username): F[User] =
-      repo.findByName(name).getOrRaise(NoUserFound(name))
-
-    override def register(
+    override def create(
         body: RegisterRequest
     ): F[UserId] =
       for {

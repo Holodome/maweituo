@@ -1,6 +1,8 @@
 package com.holodome.repositories
 
 import cats.data.OptionT
+import cats.MonadThrow
+import com.holodome.domain.errors.{InvalidUserId, NoUserFound}
 import com.holodome.domain.users._
 
 trait UserRepository[F[_]] extends {
@@ -11,4 +13,14 @@ trait UserRepository[F[_]] extends {
   def findByName(name: Username): OptionT[F, User]
   def delete(id: UserId): F[Unit]
   def update(update: UpdateUserInternal): F[Unit]
+}
+
+object UserRepository {
+  implicit class UserRepositoryOps[F[_]: MonadThrow](repo: UserRepository[F]) {
+    def get(userId: UserId): F[User] =
+      repo.find(userId).getOrRaise(InvalidUserId())
+
+    def getByName(name: Username): F[User] =
+      repo.findByName(name).getOrRaise(NoUserFound(name))
+  }
 }

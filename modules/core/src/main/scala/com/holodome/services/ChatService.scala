@@ -9,25 +9,24 @@ import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
 import com.holodome.domain.errors._
 import com.holodome.effects.GenUUID
-import com.holodome.repositories.ChatRepository
+import com.holodome.repositories.{AdvertisementRepository, ChatRepository}
 
 trait ChatService[F[_]] {
   def create(adId: AdId, clientId: UserId): F[ChatId]
-  def get(chatId: ChatId): F[Chat]
   def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId]
 }
 
 object ChatService {
   def make[F[_]: MonadThrow: GenUUID](
       chatRepo: ChatRepository[F],
-      adService: AdvertisementService[F],
+      adRepo: AdvertisementRepository[F],
       telemetry: TelemetryService[F]
   ): ChatService[F] =
-    new ChatServiceImpl(chatRepo, adService, telemetry)
+    new ChatServiceImpl(chatRepo, adRepo, telemetry)
 
   private final class ChatServiceImpl[F[_]: MonadThrow: GenUUID](
       chatRepo: ChatRepository[F],
-      adService: AdvertisementService[F],
+      adRepo: AdvertisementRepository[F],
       telemetry: TelemetryService[F]
   ) extends ChatService[F] {
     override def create(adId: AdId, clientId: UserId): F[ChatId] = {
@@ -36,7 +35,7 @@ object ChatService {
         .semiflatTap(_ => ChatAlreadyExists().raiseError[F, Unit])
         .value
         .void *>
-        adService
+        adRepo
           .get(adId)
           .map(_.authorId)
           .flatTap {
@@ -57,11 +56,6 @@ object ChatService {
             } yield id
           }
     } <* telemetry.userDiscussed(clientId, adId)
-
-    override def get(chatId: ChatId): F[Chat] =
-      chatRepo
-        .find(chatId)
-        .getOrRaise(InvalidChatId())
 
     override def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId] =
       chatRepo

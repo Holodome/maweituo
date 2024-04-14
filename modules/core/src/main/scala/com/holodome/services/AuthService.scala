@@ -7,6 +7,7 @@ import com.holodome.auth.{JwtTokens, PasswordHashing}
 import com.holodome.domain.errors.InvalidPassword
 import com.holodome.domain.users._
 import com.holodome.infrastructure.EphemeralDict
+import com.holodome.repositories.UserRepository
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
 
@@ -18,20 +19,20 @@ trait AuthService[F[_]] {
 
 object AuthService {
   def make[F[_]: MonadThrow: Logger](
-      userService: UserService[F],
+      userRepo: UserRepository[F],
       jwtDict: EphemeralDict[F, UserId, JwtToken],
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
       tokens: JwtTokens[F]
-  ): AuthService[F] = new AuthServiceInterpreter(userService, jwtDict, authedUserDict, tokens)
+  ): AuthService[F] = new AuthServiceInterpreter(userRepo, jwtDict, authedUserDict, tokens)
 
   private final class AuthServiceInterpreter[F[_]: MonadThrow: Logger](
-      userService: UserService[F],
+      userRepo: UserRepository[F],
       jwtDict: EphemeralDict[F, UserId, JwtToken],
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
       tokens: JwtTokens[F]
   ) extends AuthService[F] {
     override def login(username: Username, password: Password): F[JwtToken] =
-      userService
+      userRepo
         .getByName(username)
         .flatMap { user =>
           if (passwordsMatch(user, password)) {

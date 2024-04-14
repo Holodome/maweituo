@@ -16,7 +16,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   private val iam = IAMService.make(
     mock[AdvertisementRepository[IO]],
     mock[ChatRepository[IO]],
-    mock[ImageRepository[IO]]
+    mock[AdImageRepository[IO]]
   )
 
   test("register user works") {
@@ -24,7 +24,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        _ <- serv.register(register)
+        _ <- serv.create(register)
       } yield expect.all(true)
     }
   }
@@ -34,7 +34,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        id <- serv.register(register)
+        id <- serv.create(register)
         u  <- serv.get(id)
       } yield expect.all(u.id === id)
     }
@@ -45,8 +45,8 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        id <- serv.register(register)
-        u  <- serv.getByName(register.name)
+        id <- serv.create(register)
+        u  <- repo.getByName(register.name)
       } yield expect.all(u.id === id)
     }
   }
@@ -56,7 +56,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        id <- serv.register(register)
+        id <- serv.create(register)
         _  <- serv.delete(id, id)
         found <- serv
           .get(id)
@@ -75,8 +75,8 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        newId   <- serv.register(register)
-        otherId <- serv.register(other)
+        newId   <- serv.create(register)
+        otherId <- serv.create(other)
         x <- serv
           .delete(newId, otherId)
           .map(Some(_))
@@ -97,7 +97,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        newId <- serv.register(register)
+        newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
         prior   <- serv.get(newId)
         _       <- serv.update(newUpd, newId)
@@ -120,7 +120,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       val repo = new InMemoryUserRepository[IO]
       val serv = UserService.make(repo, iam)
       for {
-        newId <- serv.register(register)
+        newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
         prior <- serv.get(newId)
         x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess() => None }

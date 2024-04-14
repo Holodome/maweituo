@@ -11,7 +11,7 @@ import weaver.scalacheck.Checkers
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers {
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[F]): IAMService[IO] =
-    IAMService.make(ad, chat, mock[ImageRepository[IO]])
+    IAMService.make(ad, chat, mock[AdImageRepository[IO]])
 
   private val telemetry: TelemetryService[IO] = new TelemetryServiceStub[IO]
 
@@ -28,10 +28,10 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
-        u1 <- users.register(reg)
-        u2 <- users.register(otherReg)
+        u1 <- users.create(reg)
+        u2 <- users.create(otherReg)
         ad <- ads.create(u1, createAd)
         _  <- chats.create(ad, u2)
       } yield expect.all(true)
@@ -50,9 +50,9 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
-        u1 <- users.register(reg)
+        u1 <- users.create(reg)
         ad <- ads.create(u1, createAd)
         x <- chats
           .create(ad, u1)
@@ -77,10 +77,10 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       for {
-        u1 <- users.register(reg)
-        u2 <- users.register(otherReg)
+        u1 <- users.create(reg)
+        u2 <- users.create(otherReg)
         ad <- ads.create(u1, createAd)
         _  <- chats.create(ad, u2)
         x <- chats

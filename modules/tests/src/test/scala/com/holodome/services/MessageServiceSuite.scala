@@ -15,7 +15,7 @@ import java.time.Instant
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[IO]): IAMService[IO] =
-    IAMService.make(ad, chat, mock[ImageRepository[IO]])
+    IAMService.make(ad, chat, mock[AdImageRepository[IO]])
 
   private val epoch: Long = 1711564995
   private implicit def clockMock: Clock[IO] = new Clock[IO] {
@@ -38,11 +38,11 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
-        u1      <- users.register(reg)
-        u2      <- users.register(otherReg)
+        u1      <- users.create(reg)
+        u2      <- users.create(otherReg)
         ad      <- ads.create(u1, createAd)
         chat    <- chats.create(ad, u2)
         _       <- msgs.send(chat, u2, msg)
@@ -74,12 +74,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
-        u1   <- users.register(reg1)
-        u2   <- users.register(reg2)
-        u3   <- users.register(reg3)
+        u1   <- users.create(reg1)
+        u2   <- users.create(reg2)
+        u3   <- users.create(reg3)
         ad   <- ads.create(u1, createAd)
         chat <- chats.create(ad, u2)
         x <- msgs
@@ -108,12 +108,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
       val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
+      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
-        u1   <- users.register(reg1)
-        u2   <- users.register(reg2)
-        u3   <- users.register(reg3)
+        u1   <- users.create(reg1)
+        u2   <- users.create(reg2)
+        u3   <- users.create(reg3)
         ad   <- ads.create(u1, createAd)
         chat <- chats.create(ad, u2)
         _    <- msgs.send(chat, u2, msg)

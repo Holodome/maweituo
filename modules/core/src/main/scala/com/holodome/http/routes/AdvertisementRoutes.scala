@@ -28,7 +28,7 @@ final case class AdvertisementRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
     advertisementService: AdvertisementService[F],
     chatService: ChatService[F],
     msgService: MessageService[F],
-    imageService: ImageService[F]
+    imageService: AdImageService[F]
 )(implicit
     H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {

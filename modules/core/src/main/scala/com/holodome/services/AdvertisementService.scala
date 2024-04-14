@@ -15,8 +15,6 @@ trait AdvertisementService[F[_]] {
   def all: F[List[Advertisement]]
   def create(authorId: UserId, create: CreateAdRequest): F[AdId]
   def delete(id: AdId, userId: UserId): F[Unit]
-  def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
-  def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit]
   def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
   def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
 }
@@ -35,7 +33,7 @@ object AdvertisementService {
       iam: IAMService[F]
   ) extends AdvertisementService[F] {
     override def get(id: AdId): F[Advertisement] =
-      repo.find(id).getOrRaise(InvalidAdId(id))
+      repo.get(id)
 
     override def all: F[List[Advertisement]] = repo.all
 
@@ -49,18 +47,12 @@ object AdvertisementService {
     override def delete(id: AdId, userId: UserId): F[Unit] =
       iam.authorizeAdModification(id, userId) *> repo.delete(id)
 
-    override def addImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) *> repo.addImage(id, imageId)
-
     override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
       for {
         _ <- iam.authorizeAdModification(id, userId)
         _ <- repo.addTag(id, tag)
         _ <- tags.addTagToAd(id, tag)
       } yield ()
-
-    override def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) *> repo.removeImage(id, imageId)
 
     override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] = {
       for {

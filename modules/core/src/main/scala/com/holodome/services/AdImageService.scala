@@ -10,30 +10,30 @@ import com.holodome.domain.errors.{InternalImageUnsync, InvalidImageId}
 import com.holodome.effects.GenUUID
 import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import com.holodome.repositories.ImageRepository
+import com.holodome.repositories.{AdvertisementRepository, AdImageRepository}
 
-trait ImageService[F[_]] {
+trait AdImageService[F[_]] {
   def upload(uploader: UserId, adId: AdId, contents: ImageContentsStream[F]): F[ImageId]
   def delete(imageId: ImageId, authenticated: UserId): F[Unit]
   def get(imageId: ImageId): F[ImageContentsStream[F]]
 }
 
-object ImageService {
+object AdImageService {
   def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID](
-      imageRepo: ImageRepository[F],
-      adService: AdvertisementService[F],
+      imageRepo: AdImageRepository[F],
+      adRepo: AdvertisementRepository[F],
       objectStorage: ObjectStorage[F],
       iam: IAMService[F]
-  ): ImageService[F] = new ImageServiceInterpreter(imageRepo, adService, objectStorage, iam)
+  ): AdImageService[F] = new AdImageServiceInterpreter(imageRepo, adRepo, objectStorage, iam)
 
-  private final class ImageServiceInterpreter[F[
+  private final class AdImageServiceInterpreter[F[
       _
   ]: MonadThrow: GenObjectStorageId: GenUUID](
-      imageRepo: ImageRepository[F],
-      adService: AdvertisementService[F],
+      imageRepo: AdImageRepository[F],
+      adRepo: AdvertisementRepository[F],
       objectStorage: ObjectStorage[F],
       iam: IAMService[F]
-  ) extends ImageService[F] {
+  ) extends AdImageService[F] {
 
     override def upload(
         uploader: UserId,
@@ -52,23 +52,24 @@ object ImageService {
           contents.dataSize
         )
         _ <- imageRepo.create(image)
-        _ <- adService.addImage(adId, imageId, uploader)
+        _ <- adRepo.addImage(adId, imageId)
       } yield imageId
 
     override def delete(imageId: ImageId, authenticated: UserId): F[Unit] =
       iam.authorizeImageDelete(imageId, authenticated) *> {
-        find(imageId)
+        imageRepo
+          .getMeta(imageId)
           .flatMap { image =>
-            objectStorage.delete(ObjectId.fromImageUrl(image.url)) *> adService.removeImage(
+            objectStorage.delete(ObjectId.fromImageUrl(image.url)) *> adRepo.removeImage(
               image.adId,
-              imageId,
-              authenticated
+              imageId
             )
           } *> imageRepo.delete(imageId)
       }
 
     override def get(imageId: ImageId): F[ImageContentsStream[F]] =
-      find(imageId)
+      imageRepo
+        .getMeta(imageId)
         .flatMap { image =>
           objectStorage
             .get(ObjectId.fromImageUrl(image.url))
@@ -76,9 +77,5 @@ object ImageService {
             .getOrRaise(InternalImageUnsync())
         }
 
-    private def find(id: ImageId): F[Image] =
-      imageRepo
-        .getMeta(id)
-        .getOrRaise(InvalidImageId())
   }
 }

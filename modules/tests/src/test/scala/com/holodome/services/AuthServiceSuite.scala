@@ -23,7 +23,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
   private val iam = IAMService.make(
     mock[AdvertisementRepository[IO]],
     mock[ChatRepository[IO]],
-    mock[ImageRepository[IO]]
+    mock[AdImageRepository[IO]]
   )
   private def jwtDict: EphemeralDict[IO, JwtToken, UserId]         = InMemoryEphemeralDict.make
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
@@ -35,9 +35,8 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
     } yield name -> password
     forall(gen) { case (name, password) =>
       val usersRepo = new InMemoryUserRepository[IO]
-      val users     = UserService.make(usersRepo, iam)
       val tokens    = mock[JwtTokens[IO]]
-      val auth      = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
+      val auth      = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
         x <- auth
           .login(name, password)
@@ -52,9 +51,8 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
   test("unauthenticated user is so") {
     forall(nesGen(JwtToken.apply)) { token =>
       val usersRepo = new InMemoryUserRepository[IO]
-      val users     = UserService.make(usersRepo, iam)
       val tokens    = mock[JwtTokens[IO]]
-      val auth      = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
+      val auth      = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
         x <- auth.authed(token).value
       } yield expect.all(x.isEmpty)
@@ -63,14 +61,14 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
 
   test("login works") {
     forall(registerGen) { reg =>
-      val usersRepo = new InMemoryUserRepository[IO]
-      val users     = UserService.make(usersRepo, iam)
+      val usersRepo   = new InMemoryUserRepository[IO]
+      val userService = UserService.make[IO](usersRepo, iam)
       val tokens = new JwtTokens[IO] {
         override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
       }
-      val auth = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
+      val auth = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
-        id <- users.register(reg)
+        id <- userService.create(reg)
         t  <- auth.login(reg.name, reg.password)
         x  <- auth.authed(t).value
       } yield expect.all(t.value === "token", x.fold(false)(_.id === id))
@@ -84,9 +82,9 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
       val tokens = new JwtTokens[IO] {
         override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
       }
-      val auth = AuthService.make[IO](users, authedUsersDict, jwtDict, tokens)
+      val auth = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
-        id <- users.register(reg)
+        id <- users.create(reg)
         t  <- auth.login(reg.name, reg.password)
         _  <- auth.logout(id, t)
         x  <- auth.authed(t).value

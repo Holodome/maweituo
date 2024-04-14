@@ -11,7 +11,7 @@ trait Repositories[F[_]] {
   val tags: TagRepository[F]
   val chats: ChatRepository[F]
   val messages: MessageRepository[F]
-  val images: ImageRepository[F]
+  val images: AdImageRepository[F]
 }
 
 object Repositories {
@@ -22,8 +22,8 @@ object Repositories {
       override val chats: ChatRepository[F]       = CassandraChatRepository.make[F](cassandra)
       override val ads: AdvertisementRepository[F] =
         CassandraAdvertisementRepository.make[F](cassandra)
-      override val images: ImageRepository[F] = CassandraImageRepository.make[F](cassandra)
-      override val tags: TagRepository[F]     = CassandraTagRepository.make[F](cassandra)
+      override val images: AdImageRepository[F] = CassandraAdImageRepository.make[F](cassandra)
+      override val tags: TagRepository[F]       = CassandraTagRepository.make[F](cassandra)
     }
   }
 }

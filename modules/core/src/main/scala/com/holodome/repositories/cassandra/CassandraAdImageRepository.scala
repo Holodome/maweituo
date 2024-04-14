@@ -4,7 +4,7 @@ import cats.syntax.all._
 import cats.data.OptionT
 import cats.effect.Async
 import com.holodome.domain.images._
-import com.holodome.repositories.ImageRepository
+import com.holodome.repositories.AdImageRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.holodome.cql.codecs._
@@ -12,13 +12,13 @@ import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.DatabaseEncodingError
 import org.http4s.LiteralSyntaxMacros.mediaType
 
-object CassandraImageRepository {
-  def make[F[_]: Async](session: CassandraSession[F]): ImageRepository[F] =
-    new CassandraImageRepository[F](session)
+object CassandraAdImageRepository {
+  def make[F[_]: Async](session: CassandraSession[F]): AdImageRepository[F] =
+    new CassandraAdImageRepository[F](session)
 }
 
-sealed class CassandraImageRepository[F[_]: Async] private (session: CassandraSession[F])
-    extends ImageRepository[F] {
+sealed class CassandraAdImageRepository[F[_]: Async] private (session: CassandraSession[F])
+    extends AdImageRepository[F] {
 
   private case class SerializedImage(
       id: ImageId,
@@ -39,7 +39,7 @@ sealed class CassandraImageRepository[F[_]: Async] private (session: CassandraSe
   override def create(image: Image): F[Unit] =
     createQuery(image).execute(session).void
 
-  override def getMeta(imageId: ImageId): OptionT[F, Image] =
+  override def findMeta(imageId: ImageId): OptionT[F, Image] =
     OptionT(getMetaQuery(imageId).select(session).head.compile.last)
       .flatMap(i => OptionT.liftF(i.toDomain))
 

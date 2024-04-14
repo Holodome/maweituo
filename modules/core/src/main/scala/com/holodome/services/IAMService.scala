@@ -7,7 +7,7 @@ import com.holodome.domain.errors._
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository}
+import com.holodome.repositories.{AdvertisementRepository, ChatRepository, AdImageRepository}
 
 trait IAMService[F[_]] {
   def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit]
@@ -20,20 +20,19 @@ object IAMService {
   def make[F[_]: MonadThrow](
       adRepo: AdvertisementRepository[F],
       chatRepo: ChatRepository[F],
-      imageRepo: ImageRepository[F]
+      imageRepo: AdImageRepository[F]
   ): IAMService[F] =
     new IAMServiceInterpreter(adRepo, chatRepo, imageRepo)
 
   private final class IAMServiceInterpreter[F[_]: MonadThrow](
       adRepo: AdvertisementRepository[F],
       chatRepo: ChatRepository[F],
-      imageRepo: ImageRepository[F]
+      imageRepo: AdImageRepository[F]
   ) extends IAMService[F] {
 
     override def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit] =
       chatRepo
-        .find(chatId)
-        .getOrRaise(InvalidChatId())
+        .get(chatId)
         .flatMap {
           case chat if userHasAccessToChat(chat, userId) =>
             Applicative[F].unit
@@ -42,8 +41,7 @@ object IAMService {
 
     override def authorizeAdModification(advertisementId: AdId, userId: UserId): F[Unit] =
       adRepo
-        .find(advertisementId)
-        .getOrRaise(InvalidAdId(advertisementId))
+        .get(advertisementId)
         .flatMap {
           case ad if ad.authorId === userId => Applicative[F].unit
           case _                            => NotAnAuthor().raiseError[F, Unit]
@@ -60,7 +58,6 @@ object IAMService {
     override def authorizeImageDelete(imageId: ImageId, userId: UserId): F[Unit] =
       imageRepo
         .getMeta(imageId)
-        .getOrRaise(InvalidImageId())
         .flatMap(image => authorizeAdModification(image.adId, userId))
   }
 }

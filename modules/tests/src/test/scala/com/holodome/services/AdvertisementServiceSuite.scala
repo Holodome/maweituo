@@ -11,7 +11,7 @@ import weaver.scalacheck.Checkers
 
 object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
   private def makeIam(ad: AdvertisementRepository[IO]): IAMService[IO] =
-    IAMService.make(ad, mock[ChatRepository[IO]], mock[ImageRepository[IO]])
+    IAMService.make(ad, mock[ChatRepository[IO]], mock[AdImageRepository[IO]])
 
   test("create works") {
     val gen = for {
@@ -25,7 +25,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val users    = UserService.make[IO](userRepo, iam)
       val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       for {
-        userId <- users.register(reg)
+        userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
         ad     <- serv.get(adId)
       } yield expect.all(
@@ -51,7 +51,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val users    = UserService.make[IO](userRepo, iam)
       val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       for {
-        userId <- users.register(reg)
+        userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
         _      <- serv.get(adId)
         _      <- serv.delete(adId, userId)
@@ -73,8 +73,8 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val users    = UserService.make[IO](userRepo, iam)
       val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       for {
-        userId  <- users.register(reg)
-        otherId <- users.register(otherReg)
+        userId  <- users.create(reg)
+        otherId <- users.create(otherReg)
         adId    <- serv.create(userId, createAd)
         _       <- serv.get(adId)
         x <- serv.delete(adId, otherId).map(Some(_)).recoverWith { case NotAnAuthor() =>
@@ -82,49 +82,6 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         }
         _ <- serv.get(adId)
       } yield expect.all(x.isEmpty)
-    }
-  }
-
-  test("add image works") {
-    val gen = for {
-      reg     <- registerGen
-      ad      <- createAdRequestGen
-      imageId <- imageIdGen
-    } yield (reg, ad, imageId)
-    forall(gen) { case (reg, createAd, imageId) =>
-      val userRepo = new InMemoryUserRepository[IO]
-      val adRepo   = new InMemoryAdRepository[IO]
-      val iam      = makeIam(adRepo)
-      val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      for {
-        userId <- users.register(reg)
-        adId   <- serv.create(userId, createAd)
-        _      <- serv.addImage(adId, imageId, userId)
-        ad     <- serv.get(adId)
-      } yield expect.all(ad.images === Set(imageId))
-    }
-  }
-
-  test("delete image works") {
-    val gen = for {
-      reg     <- registerGen
-      ad      <- createAdRequestGen
-      imageId <- imageIdGen
-    } yield (reg, ad, imageId)
-    forall(gen) { case (reg, createAd, imageId) =>
-      val userRepo = new InMemoryUserRepository[IO]
-      val adRepo   = new InMemoryAdRepository[IO]
-      val iam      = makeIam(adRepo)
-      val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      for {
-        userId <- users.register(reg)
-        adId   <- serv.create(userId, createAd)
-        _      <- serv.addImage(adId, imageId, userId)
-        _      <- serv.removeImage(adId, imageId, userId)
-        ad     <- serv.get(adId)
-      } yield expect.all(ad.images === Set())
     }
   }
 
@@ -137,11 +94,12 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
     forall(gen) { case (reg, createAd, tag) =>
       val userRepo = new InMemoryUserRepository[IO]
       val adRepo   = new InMemoryAdRepository[IO]
+      val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
+      val serv     = AdvertisementService.make[IO](adRepo, tagRepo, iam)
       for {
-        userId <- users.register(reg)
+        userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
         _      <- serv.addTag(adId, tag, userId)
         ad     <- serv.get(adId)
@@ -158,11 +116,12 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
     forall(gen) { case (reg, createAd, tag) =>
       val userRepo = new InMemoryUserRepository[IO]
       val adRepo   = new InMemoryAdRepository[IO]
+      val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv     = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
+      val serv     = AdvertisementService.make[IO](adRepo, tagRepo, iam)
       for {
-        userId <- users.register(reg)
+        userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
         _      <- serv.addTag(adId, tag, userId)
         _      <- serv.removeTag(adId, tag, userId)

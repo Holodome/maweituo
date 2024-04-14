@@ -1,20 +1,18 @@
 package com.holodome.services
 
 import cats.effect.IO
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, ImageRepository, InMemoryAdRepository, InMemoryImageRepository, InMemoryUserRepository, TagRepository}
-import com.holodome.services.{AdvertisementService, IAMService, ImageService, UserService}
 import com.holodome.generators.{createAdRequestGen, imageContentsGen, registerGen}
 import com.holodome.infrastructure.InMemoryObjectStorage
+import com.holodome.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
-import org.mockito.MockitoSugar.mock
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
   private def makeIam(
       ad: AdvertisementRepository[IO],
-      images: ImageRepository[IO]
+      images: AdImageRepository[IO]
   ): IAMService[IO] =
     IAMService.make(ad, mock[ChatRepository[IO]], images)
 
@@ -27,14 +25,14 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
     forall(gen) { case (reg, createAd, imgCont) =>
       val userRepo  = new InMemoryUserRepository[IO]
       val adRepo    = new InMemoryAdRepository[IO]
-      val imageRepo = new InMemoryImageRepository[IO]
+      val imageRepo = new InMemoryAdImageRepository[IO]
       val os        = new InMemoryObjectStorage[IO]
       val iam       = makeIam(adRepo, imageRepo)
       val users     = UserService.make[IO](userRepo, iam)
       val ads       = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val imgs      = ImageService.make[IO](imageRepo, ads, os, iam)
+      val imgs      = AdImageService.make[IO](imageRepo, adRepo, os, iam)
       for {
-        u    <- users.register(reg)
+        u    <- users.create(reg)
         a    <- ads.create(u, createAd)
         i    <- imgs.upload(u, a, imgCont)
         data <- imgs.get(i)

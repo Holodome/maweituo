@@ -23,17 +23,20 @@ import org.typelevel.log4cats.Logger
 import scala.concurrent.duration.DurationInt
 
 object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
-  private def makeUserService = {
+  private def makeUserRepository = {
+    new InMemoryUserRepository[IO]
+  }
+
+  private def makeUserService(repo: UserRepository[IO]) = {
     val iam = IAMService.make(
       mock[AdvertisementRepository[IO]],
       mock[ChatRepository[IO]],
-      mock[ImageRepository[IO]]
+      mock[AdImageRepository[IO]]
     )
-    val usersRepo = new InMemoryUserRepository[IO]
-    UserService.make(usersRepo, iam)
+    UserService.make(repo, iam)
   }
 
-  private def makeAuthService(users: UserService[IO])(implicit l: Logger[IO]) = {
+  private def makeAuthService(users: UserRepository[IO])(implicit l: Logger[IO]) = {
     val jwtDict: EphemeralDict[IO, JwtToken, UserId]         = InMemoryEphemeralDict.make
     val authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
     JwtExpire.make[IO].map { e =>
@@ -46,7 +49,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
     forall(loginRequestGen) { login =>
       val req = POST(login, uri"/login")
       for {
-        service <- makeAuthService(makeUserService)
+        service <- makeAuthService(makeUserRepository)
         routes = LoginRoutes[IO](service).routes
         r <- expectHttpStatusLogged(routes, req)(Status.Forbidden)
       } yield r
@@ -56,19 +59,20 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
   ioLoggedTest("/register on new user works") { implicit l =>
     forall(registerRequestGen) { register =>
       val req    = POST(register, uri"/register")
-      val routes = RegisterRoutes[IO](makeUserService).routes
+      val routes = RegisterRoutes[IO](makeUserService(makeUserRepository)).routes
       expectHttpStatusLogged(routes, req)(Status.Ok)
     }
   }
 
   ioLoggedTest("/register and login work") { implicit l =>
     forall(registerRequestGen) { register =>
-      val login = LoginRequest(register.name, register.password)
-      val users = makeUserService
+      val login       = LoginRequest(register.name, register.password)
+      val userRepo    = makeUserRepository
+      val userService = makeUserService(userRepo)
       for {
-        auth <- makeAuthService(users)
+        auth <- makeAuthService(userRepo)
         loginRoutes    = LoginRoutes[IO](auth).routes
-        registerRoutes = RegisterRoutes[IO](users).routes
+        registerRoutes = RegisterRoutes[IO](userService).routes
         r <- expectHttpStatusLogged(
           registerRoutes,
           POST(register, uri"/register")

@@ -19,7 +19,7 @@ final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: User
   val routes: HttpRoutes[F] = H.handle(HttpRoutes.of { case req @ POST -> Root / "register" =>
     req.decodeR[RegisterRequest] { register =>
       userService
-        .register(register)
+        .create(register)
         .flatMap(Ok(_))
     }
   })

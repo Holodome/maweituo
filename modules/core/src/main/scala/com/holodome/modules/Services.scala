@@ -25,7 +25,7 @@ sealed abstract class Services[F[_]] {
   val ads: AdvertisementService[F]
   val chats: ChatService[F]
   val messages: MessageService[F]
-  val images: ImageService[F]
+  val images: AdImageService[F]
 }
 
 object Services {
@@ -54,7 +54,7 @@ object Services {
             UserService.make(repositories.users, iam)
           override val auth: AuthService[F] =
             AuthService.make(
-              users,
+              repositories.users,
               RedisEphemeralDict
                 .make[F](redis, cfg.jwt.tokenExpiration.value)
                 .keyContramap[UserId](_.value.toString)
@@ -68,13 +68,13 @@ object Services {
           override val ads: AdvertisementService[F] =
             AdvertisementService.make[F](repositories.ads, repositories.tags, iam)
           override val chats: ChatService[F] =
-            ChatService.make[F](repositories.chats, ads, telemetry)
+            ChatService.make[F](repositories.chats, repositories.ads, telemetry)
           override val messages: MessageService[F] =
             MessageService.make[F](repositories.messages, iam)
-          override val images: ImageService[F] =
-            ImageService.make[F](
+          override val images: AdImageService[F] =
+            AdImageService.make[F](
               repositories.images,
-              ads,
+              repositories.ads,
               imageStorage,
               iam
             )

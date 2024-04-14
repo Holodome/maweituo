@@ -8,7 +8,7 @@ import dev.profunktor.redis4cats.RedisCommands
 
 import scala.concurrent.duration.FiniteDuration
 
-final class RedisEphemeralDict[F[_]: Monad] private (
+private final class RedisEphemeralDict[F[_]: Monad] private (
     redis: RedisCommands[F, String, String],
     expire: FiniteDuration
 ) extends EphemeralDict[F, String, String] {

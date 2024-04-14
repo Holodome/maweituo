@@ -5,7 +5,7 @@ import com.holodome.repositories._
 import com.holodome.repositories.cassandra._
 import com.ringcentral.cassandra4io.CassandraSession
 
-trait Repositories[F[_]] {
+sealed abstract class Repositories[F[_]] {
   val users: UserRepository[F]
   val ads: AdvertisementRepository[F]
   val tags: TagRepository[F]
@@ -15,7 +15,7 @@ trait Repositories[F[_]] {
 }
 
 object Repositories {
-  def make[F[_]: Async](cassandra: CassandraSession[F]): Repositories[F] = {
+  def makeCassandra[F[_]: Async](cassandra: CassandraSession[F]): Repositories[F] = {
     new Repositories[F] {
       override val users: UserRepository[F]       = CassandraUserRepository.make[F](cassandra)
       override val messages: MessageRepository[F] = CassandraMessageRepository.make[F](cassandra)

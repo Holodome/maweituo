@@ -16,7 +16,7 @@ object MinioObjectStorage {
   def make[F[_]: Async: MonadThrow](
       client: MinioAsyncClient,
       bucket: String
-  ): F[MinioObjectStorage[F]] =
+  ): F[ObjectStorage[F]] =
     ensureBucketIsCreated(client, bucket).map(_ => new MinioObjectStorage(client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Monad](
@@ -42,7 +42,7 @@ object MinioObjectStorage {
 
 }
 
-final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
+private final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
     client: MinioAsyncClient,
     bucket: String
 ) extends ObjectStorage[F] {

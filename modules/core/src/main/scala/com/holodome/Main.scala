@@ -24,7 +24,7 @@ object Main extends IOApp.Simple {
           AppResources
             .make[IO](cfg)
             .evalMap { res =>
-              val repositories = Repositories.make[IO](res.cassandra)
+              val repositories = Repositories.makeCassandra[IO](res.cassandra)
               val recs         = RecsClients.make[IO](res.grpcClient, cfg.recs)
               for {
                 infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)

@@ -8,7 +8,7 @@ import com.holodome.domain.Id
 import com.holodome.domain.errors.InvalidAdId
 import com.holodome.domain.images.ImageId
 import com.holodome.effects.GenUUID
-import com.holodome.repositories.AdvertisementRepository
+import com.holodome.repositories.{AdvertisementRepository, TagRepository}
 
 trait AdvertisementService[F[_]] {
   def get(id: AdId): F[Advertisement]
@@ -24,12 +24,14 @@ trait AdvertisementService[F[_]] {
 object AdvertisementService {
   def make[F[_]: MonadThrow: GenUUID](
       repo: AdvertisementRepository[F],
+      tags: TagRepository[F],
       iam: IAMService[F]
   ): AdvertisementService[F] =
-    new AdvertisementServiceInterpreter(repo, iam)
+    new AdvertisementServiceInterpreter(repo, tags, iam)
 
   private final class AdvertisementServiceInterpreter[F[_]: MonadThrow: GenUUID](
       repo: AdvertisementRepository[F],
+      tags: TagRepository[F],
       iam: IAMService[F]
   ) extends AdvertisementService[F] {
     override def get(id: AdId): F[Advertisement] =
@@ -51,12 +53,21 @@ object AdvertisementService {
       iam.authorizeAdModification(id, userId) *> repo.addImage(id, imageId)
 
     override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) *> repo.addTag(id, tag)
+      for {
+        _ <- iam.authorizeAdModification(id, userId)
+        _ <- repo.addTag(id, tag)
+        _ <- tags.addTagToAd(id, tag)
+      } yield ()
 
     override def removeImage(id: AdId, imageId: ImageId, userId: UserId): F[Unit] =
       iam.authorizeAdModification(id, userId) *> repo.removeImage(id, imageId)
 
-    override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) *> repo.removeTag(id, tag)
+    override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] = {
+      for {
+        _ <- iam.authorizeAdModification(id, userId)
+        _ <- tags.removeTagFromAd(id, tag)
+        _ <- repo.removeTag(id, tag)
+      } yield ()
+    }
   }
 }

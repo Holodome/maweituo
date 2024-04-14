@@ -27,7 +27,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, iam)
+      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       for {
         u1 <- users.register(reg)
@@ -49,7 +49,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, iam)
+      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       for {
         u1 <- users.register(reg)
@@ -76,7 +76,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
       val chatRepo = new InMemoryChatRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, iam)
+      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
       val chats    = ChatService.make[IO](chatRepo, ads, telemetry)
       for {
         u1 <- users.register(reg)

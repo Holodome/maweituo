@@ -66,7 +66,7 @@ object Services {
               tokens
             )
           override val ads: AdvertisementService[F] =
-            AdvertisementService.make[F](repositories.ads, iam)
+            AdvertisementService.make[F](repositories.ads, repositories.tags, iam)
           override val chats: ChatService[F] =
             ChatService.make[F](repositories.chats, ads, telemetry)
           override val messages: MessageService[F] =

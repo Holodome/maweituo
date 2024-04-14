@@ -8,6 +8,7 @@ import com.ringcentral.cassandra4io.CassandraSession
 trait Repositories[F[_]] {
   val users: UserRepository[F]
   val ads: AdvertisementRepository[F]
+  val tags: TagRepository[F]
   val chats: ChatRepository[F]
   val messages: MessageRepository[F]
   val images: ImageRepository[F]
@@ -22,6 +23,7 @@ object Repositories {
       override val ads: AdvertisementRepository[F] =
         CassandraAdvertisementRepository.make[F](cassandra)
       override val images: ImageRepository[F] = CassandraImageRepository.make[F](cassandra)
+      override val tags: TagRepository[F]     = CassandraTagRepository.make[F](cassandra)
     }
   }
 }

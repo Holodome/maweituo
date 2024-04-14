@@ -1,6 +1,6 @@
 package com.holodome.recs.modules
 
-import cats.effect.kernel.Async
+import cats.effect.Async
 import com.holodome.recs.repositories.{RecRepository, TelemetryRepository}
 import com.holodome.recs.repositories.cassandra.{CassandraRecRepository, CassandraTelemetryRepository}
 import com.ringcentral.cassandra4io.CassandraSession

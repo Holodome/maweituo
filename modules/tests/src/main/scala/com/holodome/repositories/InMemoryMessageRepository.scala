@@ -1,6 +1,6 @@
 package com.holodome.repositories
 
-import cats.effect.kernel.Sync
+import cats.effect.Sync
 import com.holodome.domain.messages
 import com.holodome.domain.messages.Message
 

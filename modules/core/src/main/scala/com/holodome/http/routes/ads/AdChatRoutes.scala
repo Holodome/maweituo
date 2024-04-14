@@ -2,7 +2,7 @@ package com.holodome.http.routes.ads
 
 import cats.effect.Concurrent
 import cats.syntax.all._
-import cats.MonadThrow
+import cats.{Monad, MonadThrow}
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
 import com.holodome.http.HttpErrorHandler
@@ -16,7 +16,7 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class AdChatRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
+final case class AdChatRoutes[F[_]: Monad](
     chatService: ChatService[F]
 )(implicit
     H: HttpErrorHandler[F, ApplicationError]

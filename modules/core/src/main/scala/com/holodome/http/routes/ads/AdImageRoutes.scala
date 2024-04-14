@@ -1,8 +1,8 @@
 package com.holodome.http.routes.ads
 
-import cats.effect.kernel.Concurrent
+import cats.effect.Concurrent
 import cats.syntax.all._
-import cats.MonadThrow
+import cats.Monad
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.images._
 import com.holodome.domain.users._
@@ -11,12 +11,11 @@ import com.holodome.http.vars.{AdIdVar, ImageIdVar}
 import com.holodome.services._
 import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
 import org.http4s.circe.CirceEntityEncoder._
-import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class AdImageRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
+final case class AdImageRoutes[F[_]: Monad: Concurrent](
     imageService: AdImageService[F]
 )(implicit
     H: HttpErrorHandler[F, ApplicationError]

@@ -1,7 +1,6 @@
 package com.holodome.http.routes.ads
 
 import cats.MonadThrow
-import cats.effect.kernel.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.ApplicationError
@@ -16,7 +15,7 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 
-final case class AdRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](
+final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F]
 )(implicit
     H: HttpErrorHandler[F, ApplicationError]

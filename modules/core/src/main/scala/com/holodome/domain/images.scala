@@ -3,7 +3,7 @@ package com.holodome.domain
 import cats.syntax.all._
 import cats.{Applicative, MonadThrow, Show}
 import cats.data.{EitherT, OptionT}
-import cats.effect.kernel.Concurrent
+import cats.effect.Concurrent
 import com.holodome.domain.ads.AdId
 import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}

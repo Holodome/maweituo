@@ -1,7 +1,7 @@
 package com.holodome.recs.repositories.cassandra
 
 import cats.syntax.all._
-import cats.effect.kernel.Async
+import cats.effect.Async
 import com.holodome.cql.codecs._
 import com.holodome.domain.{ads, users}
 import com.holodome.recs.repositories.TelemetryRepository

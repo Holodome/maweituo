@@ -2,7 +2,7 @@ package com.holodome.resources
 
 import cats.effect.Resource
 import cats.Applicative
-import cats.effect.kernel.Sync
+import cats.effect.Sync
 import com.holodome.config.types.MinioConfig
 import io.minio.MinioAsyncClient
 

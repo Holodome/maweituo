@@ -1,7 +1,7 @@
 package com.holodome.infrastructure
 
 import cats.data.OptionT
-import cats.effect.kernel.Sync
+import cats.effect.Sync
 
 import scala.collection.concurrent.TrieMap
 

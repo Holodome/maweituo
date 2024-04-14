@@ -1,14 +1,13 @@
 package com.holodome.services
 
-import cats.MonadThrow
+import cats.{Applicative, MonadThrow}
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
-import com.holodome.domain.errors.InvalidAdId
-import com.holodome.domain.images.ImageId
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.{AdvertisementRepository, TagRepository}
+import org.typelevel.log4cats.Logger
 
 trait AdvertisementService[F[_]] {
   def get(id: AdId): F[Advertisement]
@@ -20,14 +19,14 @@ trait AdvertisementService[F[_]] {
 }
 
 object AdvertisementService {
-  def make[F[_]: MonadThrow: GenUUID](
+  def make[F[_]: MonadThrow: GenUUID: Logger](
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
       iam: IAMService[F]
   ): AdvertisementService[F] =
     new AdvertisementServiceInterpreter(repo, tags, iam)
 
-  private final class AdvertisementServiceInterpreter[F[_]: MonadThrow: GenUUID](
+  private final class AdvertisementServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
       iam: IAMService[F]
@@ -42,16 +41,26 @@ object AdvertisementService {
         id <- Id.make[F, AdId]
         ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId)
         _ <- repo.create(ad)
+        _ <- Logger[F].info(s"Created ad $id by user $authorId")
       } yield id
 
     override def delete(id: AdId, userId: UserId): F[Unit] =
-      iam.authorizeAdModification(id, userId) *> repo.delete(id)
+      for {
+        _ <- iam.authorizeAdModification(id, userId)
+        _ <- repo.delete(id)
+        _ <- Logger[F].info(s"Deleted ad $id by user $userId")
+      } yield ()
 
     override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
       for {
         _ <- iam.authorizeAdModification(id, userId)
+        _ <- tags.ensureCreated(tag).flatMap {
+          case true  => Logger[F].info(s"Created new tag $tag")
+          case false => Applicative[F].unit
+        }
         _ <- repo.addTag(id, tag)
         _ <- tags.addTagToAd(id, tag)
+        _ <- Logger[F].info(s"Added tag $tag to ad $id by user $userId")
       } yield ()
 
     override def removeTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] = {
@@ -59,6 +68,7 @@ object AdvertisementService {
         _ <- iam.authorizeAdModification(id, userId)
         _ <- tags.removeTagFromAd(id, tag)
         _ <- repo.removeTag(id, tag)
+        _ <- Logger[F].info(s"Removed tag $tag from ad $id by user $userId")
       } yield ()
     }
   }

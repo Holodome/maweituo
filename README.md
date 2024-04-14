@@ -150,9 +150,10 @@ GET    /ads/{ad_id}/chat          - get chat for current user
 POST   /ads/{ad_id}/chat          - create chat for current user 
 POST   /msg/{ad_id}/msg/{chat_id} - send message
 GET    /msg/{ad_id}/msg/{chat_id} - get chat history
+POST   /ads/{ad_id}/tag           - add tag
+DELETE /ads/{ad_id}/tag           - delete tag
 
 GET    /tags                      - get all tags 
 GET    /tags/{tag_id}             - get all advertisements with given tag
-
 
 ```

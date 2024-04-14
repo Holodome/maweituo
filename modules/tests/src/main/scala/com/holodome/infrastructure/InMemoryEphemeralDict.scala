@@ -5,7 +5,7 @@ import cats.effect.Sync
 
 import scala.collection.concurrent.TrieMap
 
-final class InMemoryEphemeralDict[F[_]: Sync, K, V] private extends EphemeralDict[F, K, V] {
+private final class InMemoryEphemeralDict[F[_]: Sync, K, V] extends EphemeralDict[F, K, V] {
   private val map = new TrieMap[K, V]
 
   override def store(a: K, b: V): F[Unit] =

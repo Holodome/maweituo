@@ -6,10 +6,14 @@ import com.holodome.infrastructure.InMemoryObjectStorage
 import com.holodome.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private def makeIam(
       ad: AdvertisementRepository[IO],
       images: AdImageRepository[IO]

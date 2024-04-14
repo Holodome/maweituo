@@ -10,6 +10,7 @@ import com.holodome.domain.Id
 import com.holodome.domain.errors._
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.{AdvertisementRepository, ChatRepository}
+import org.typelevel.log4cats.Logger
 
 trait ChatService[F[_]] {
   def create(adId: AdId, clientId: UserId): F[ChatId]
@@ -17,14 +18,14 @@ trait ChatService[F[_]] {
 }
 
 object ChatService {
-  def make[F[_]: MonadThrow: GenUUID](
+  def make[F[_]: MonadThrow: GenUUID: Logger](
       chatRepo: ChatRepository[F],
       adRepo: AdvertisementRepository[F],
       telemetry: TelemetryService[F]
   ): ChatService[F] =
     new ChatServiceImpl(chatRepo, adRepo, telemetry)
 
-  private final class ChatServiceImpl[F[_]: MonadThrow: GenUUID](
+  private final class ChatServiceImpl[F[_]: MonadThrow: GenUUID: Logger](
       chatRepo: ChatRepository[F],
       adRepo: AdvertisementRepository[F],
       telemetry: TelemetryService[F]
@@ -54,7 +55,7 @@ object ChatService {
               )
               _ <- chatRepo.create(chat)
             } yield id
-          }
+          } <* Logger[F].info(s"Created chat for ad $adId and user $clientId")
     } <* telemetry.userDiscussed(clientId, adId)
 
     override def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId] =

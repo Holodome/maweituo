@@ -27,7 +27,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
     new InMemoryUserRepository[IO]
   }
 
-  private def makeUserService(repo: UserRepository[IO]) = {
+  private def makeUserService(repo: UserRepository[IO])(implicit l: Logger[IO]) = {
     val iam = IAMService.make(
       mock[AdvertisementRepository[IO]],
       mock[ChatRepository[IO]],

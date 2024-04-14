@@ -7,12 +7,16 @@ import com.holodome.domain.users.UserId
 import com.holodome.generators.{registerGen, updateUserGen, userIdGen}
 import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 import java.util.UUID
 
 object UserServiceSuite extends SimpleIOSuite with Checkers {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private val iam = IAMService.make(
     mock[AdvertisementRepository[IO]],
     mock[ChatRepository[IO]],

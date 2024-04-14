@@ -6,10 +6,14 @@ import com.holodome.domain.errors.{InvalidAdId, NotAnAuthor}
 import com.holodome.generators._
 import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock
+import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private def makeIam(ad: AdvertisementRepository[IO]): IAMService[IO] =
     IAMService.make(ad, mock[ChatRepository[IO]], mock[AdImageRepository[IO]])
 

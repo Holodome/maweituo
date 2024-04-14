@@ -9,6 +9,7 @@ import com.holodome.domain.Id
 import com.holodome.domain.errors._
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
+import org.typelevel.log4cats.Logger
 
 trait UserService[F[_]] {
   def create(body: RegisterRequest): F[UserId]
@@ -19,10 +20,13 @@ trait UserService[F[_]] {
 
 object UserService {
 
-  def make[F[_]: MonadThrow: GenUUID](repo: UserRepository[F], iam: IAMService[F]): UserService[F] =
+  def make[F[_]: MonadThrow: GenUUID: Logger](
+      repo: UserRepository[F],
+      iam: IAMService[F]
+  ): UserService[F] =
     new UserServiceInterpreter(repo, iam)
 
-  private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID](
+  private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
       repo: UserRepository[F],
       iam: IAMService[F]
   ) extends UserService[F] {
@@ -40,11 +44,16 @@ object UserService {
             )
           )
           _ <- repo.update(updateUserInternal)
+          _ <- Logger[F].info(s"Updated user ${update.id} by user $authorized")
         } yield ()
       }
 
     def delete(subject: UserId, authorized: UserId): F[Unit] =
-      iam.authorizeUserModification(subject, authorized) *> repo.delete(subject)
+      for {
+        _ <- iam.authorizeUserModification(subject, authorized)
+        _ <- repo.delete(subject)
+        _ <- Logger[F].info(s"Deleted user $subject by $authorized")
+      } yield ()
 
     override def get(id: UserId): F[User] =
       repo.find(id).getOrRaise(InvalidUserId())
@@ -71,6 +80,7 @@ object UserService {
           salt
         )
         _ <- repo.create(user)
+        _ <- Logger[F].info(s"Created user $id")
       } yield user.id
   }
 

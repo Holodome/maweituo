@@ -6,10 +6,14 @@ import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists
 import com.holodome.generators.{createAdRequestGen, registerGen}
 import com.holodome.repositories._
 import org.mockito.MockitoSugar.mock
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[F]): IAMService[IO] =
     IAMService.make(ad, chat, mock[AdImageRepository[IO]])
 

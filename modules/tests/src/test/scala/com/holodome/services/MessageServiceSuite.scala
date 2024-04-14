@@ -8,12 +8,16 @@ import com.holodome.generators.{createAdRequestGen, registerGen, sendMessageRequ
 import com.holodome.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
+import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 import java.time.Instant
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats {
+  implicit val logger: Logger[IO] = NoOpLogger[IO]
+
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[IO]): IAMService[IO] =
     IAMService.make(ad, chat, mock[AdImageRepository[IO]])
 

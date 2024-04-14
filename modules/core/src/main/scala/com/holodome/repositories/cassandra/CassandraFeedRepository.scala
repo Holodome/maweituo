@@ -34,7 +34,7 @@ private final class CassandraFeedRepository[F[_]: Async](session: CassandraSessi
   override def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: Int): F[Unit] =
     ads
       .foldLeftM(0) { case (idx, id) =>
-        setPersonalizedQ(userId, id, idx).execute(session).map(_ => idx + 1)
+        setPersonalizedQ(userId, id, idx, ttlSecs).execute(session).map(_ => idx + 1)
       }
       .void
 
@@ -52,8 +52,8 @@ private final class CassandraFeedRepository[F[_]: Async](session: CassandraSessi
     cql"select ad_id from local.global_feed where idx >= ${pag.lower} and idx < ${pag.upper}"
       .as[AdId]
 
-  private def setPersonalizedQ(user: UserId, ad: AdId, idx: Int) =
-    cql"insert into local.personalized_feed (user_idx, idx, ad_id) values (${user.value}, $idx, ${ad.value})"
+  private def setPersonalizedQ(user: UserId, ad: AdId, idx: Int, ttlSecs: Int) =
+    cql"insert into local.personalized_feed (user_idx, idx, ad_id) values (${user.value}, $idx, ${ad.value}) using ttl $ttlSecs"
       .config(
         _.setConsistencyLevel(ConsistencyLevel.ONE)
       )

@@ -1,6 +1,5 @@
 package com.holodome.repositories
 
-import cats.data.OptionT
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.users.UserId

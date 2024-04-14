@@ -1,7 +1,6 @@
 package com.holodome.recs
 
 import cats.effect.{IO, IOApp}
-import cats.effect.std.Supervisor
 import com.holodome.recs.config.Config
 import com.holodome.recs.modules.{GRPCApi, Repositories, Services}
 import com.holodome.recs.resources.RecsResources

@@ -21,6 +21,19 @@ create table local.advertisements (
     chats set<uuid>
 );
 
+create table local.personalized_feed (
+    user_id uuid,
+    idx int,
+    ad_id uuid,
+    primary key(user_id, idx)
+) with clustering order by (idx asc);
+
+create table local.global_feed (
+    at timestamp,
+    ad_id uuid,
+    primary key(at)
+) with clustering order by (at desc);
+
 create table local.tags (
     tag text primary key,
     ads set<uuid>

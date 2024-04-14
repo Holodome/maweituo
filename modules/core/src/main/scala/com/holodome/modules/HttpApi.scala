@@ -44,8 +44,10 @@ sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: Us
 
   private val tagRoutes = TagRoutes[F](services.tags).routes
 
+  private val feedRoutes = FeedRoutes[F](services.feed).routes(usersMiddleware)
+
   private val routes: HttpRoutes[F] =
-    (loginRoutes |+| registerRoutes |+| tagRoutes |+| adRoutes |+| adChatRoutes |+| adImageRoutes |+| adMsgRoutes |+| adTagRoutes |+| userRoutes |+| logoutRoutes).collapse
+    (loginRoutes |+| registerRoutes |+| tagRoutes |+| adRoutes |+| adChatRoutes |+| adImageRoutes |+| adMsgRoutes |+| adTagRoutes |+| userRoutes |+| logoutRoutes |+| feedRoutes).collapse
 
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
     { http: HttpRoutes[F] =>

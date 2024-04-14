@@ -25,7 +25,8 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   private implicit def clockMock: TimeSource[IO] = new TimeSource[IO] {
     override def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
   }
-  private val telemetry = new TelemetryServiceStub[IO]
+  private val telemetry                          = new TelemetryServiceStub[IO]
+  private val feedRepository: FeedRepository[IO] = new FeedRepositoryStub
 
   test("basic message works") {
     val gen = for {
@@ -41,9 +42,10 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
-      val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
-      val msgs     = MessageService.make[IO](msgRepo, iam)
+      val ads =
+        AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
+      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
+      val msgs  = MessageService.make[IO](msgRepo, iam)
       for {
         u1      <- users.create(reg)
         u2      <- users.create(otherReg)
@@ -77,7 +79,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
+      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
       val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {
@@ -111,7 +113,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], iam)
+      val ads      = AdvertisementService.make[IO](adRepo, mock[TagRepository[IO]], feedRepository, iam)
       val chats    = ChatService.make[IO](chatRepo, adRepo, telemetry)
       val msgs     = MessageService.make[IO](msgRepo, iam)
       for {

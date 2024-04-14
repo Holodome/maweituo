@@ -7,9 +7,6 @@ import com.holodome.services._
 import org.typelevel.log4cats.Logger
 
 sealed abstract class Services[F[_]] {
-  val iam: IAMService[F]
-  val telemetry: TelemetryService[F]
-  val recs: RecommendationService[F]
   val users: UserService[F]
   val auth: AuthService[F]
   val ads: AdvertisementService[F]
@@ -17,6 +14,7 @@ sealed abstract class Services[F[_]] {
   val messages: MessageService[F]
   val images: AdImageService[F]
   val tags: AdTagService[F]
+  val feed: FeedService[F]
 }
 
 object Services {
@@ -26,12 +24,10 @@ object Services {
       grpc: RecsClients[F]
   ): Services[F] = {
     new Services[F] {
-      override val iam: IAMService[F] =
+      val iam: IAMService[F] =
         IAMService.make[F](repositories.ads, repositories.chats, repositories.images)
-      override val telemetry: TelemetryService[F] =
+      val telemetry: TelemetryService[F] =
         TelemetryService.makeBackground(grpc.telemetry)
-      override val recs: RecommendationService[F] =
-        grpc.recs
       override val users: UserService[F] =
         UserService.make(repositories.users, iam)
       override val auth: AuthService[F] =
@@ -42,7 +38,7 @@ object Services {
           infrastructure.jwtTokens
         )
       override val ads: AdvertisementService[F] =
-        AdvertisementService.make[F](repositories.ads, repositories.tags, iam)
+        AdvertisementService.make[F](repositories.ads, repositories.tags, repositories.feed, iam)
       override val chats: ChatService[F] =
         ChatService.make[F](repositories.chats, repositories.ads, telemetry)
       override val messages: MessageService[F] =
@@ -54,8 +50,8 @@ object Services {
           infrastructure.adImageStorage,
           iam
         )
-
       override val tags: AdTagService[F] = AdTagService.make[F](repositories.tags)
+      override val feed: FeedService[F]  = FeedService.make[F](repositories.feed, grpc.recs)
     }
   }
 }

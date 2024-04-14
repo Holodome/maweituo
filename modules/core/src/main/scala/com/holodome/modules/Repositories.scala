@@ -12,6 +12,7 @@ sealed abstract class Repositories[F[_]] {
   val chats: ChatRepository[F]
   val messages: MessageRepository[F]
   val images: AdImageRepository[F]
+  val feed: FeedRepository[F]
 }
 
 object Repositories {
@@ -24,6 +25,7 @@ object Repositories {
         CassandraAdvertisementRepository.make[F](cassandra)
       override val images: AdImageRepository[F] = CassandraAdImageRepository.make[F](cassandra)
       override val tags: TagRepository[F]       = CassandraTagRepository.make[F](cassandra)
+      override val feed: FeedRepository[F] = ???
     }
   }
 }

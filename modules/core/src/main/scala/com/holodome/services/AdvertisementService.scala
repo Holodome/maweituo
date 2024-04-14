@@ -5,13 +5,12 @@ import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
-import com.holodome.effects.GenUUID
-import com.holodome.repositories.{AdvertisementRepository, TagRepository}
+import com.holodome.effects.{GenUUID, TimeSource}
+import com.holodome.repositories.{AdvertisementRepository, FeedRepository, TagRepository}
 import org.typelevel.log4cats.Logger
 
 trait AdvertisementService[F[_]] {
   def get(id: AdId): F[Advertisement]
-  def all: F[List[Advertisement]]
   def create(authorId: UserId, create: CreateAdRequest): F[AdId]
   def delete(id: AdId, userId: UserId): F[Unit]
   def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit]
@@ -19,29 +18,33 @@ trait AdvertisementService[F[_]] {
 }
 
 object AdvertisementService {
-  def make[F[_]: MonadThrow: GenUUID: Logger](
+  def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
+      feed: FeedRepository[F],
       iam: IAMService[F]
   ): AdvertisementService[F] =
-    new AdvertisementServiceInterpreter(repo, tags, iam)
+    new AdvertisementServiceInterpreter(repo, tags, feed, iam)
 
-  private final class AdvertisementServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
+  private final class AdvertisementServiceInterpreter[
+      F[_]: MonadThrow: GenUUID: Logger: TimeSource
+  ](
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
+      feed: FeedRepository[F],
       iam: IAMService[F]
   ) extends AdvertisementService[F] {
     override def get(id: AdId): F[Advertisement] =
       repo.get(id)
 
-    override def all: F[List[Advertisement]] = repo.all
-
     override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {
         id <- Id.make[F, AdId]
         ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId)
-        _ <- repo.create(ad)
-        _ <- Logger[F].info(s"Created ad $id by user $authorId")
+        _  <- repo.create(ad)
+        at <- TimeSource[F].instant
+        _  <- feed.addToGlobalFeed(id, at)
+        _  <- Logger[F].info(s"Created ad $id by user $authorId")
       } yield id
 
     override def delete(id: AdId, userId: UserId): F[Unit] =

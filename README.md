@@ -136,8 +136,6 @@ DELETE /users/{user_id}           - delete user
 PUT    /users/{user_id}           - update user  
 GET    /users/{user_id}/chats     - get chats information
 
-GET    /ads                       - get all advertisements
-POST   /ads                       - create advertisement
 GET    /ads/{ad_id}               - get advertisement info
 PUT    /ads/{ad_id}               - update advertisement
 DELETE /ads/{ad_id}               - delete advertisement
@@ -152,6 +150,9 @@ POST   /msg/{ad_id}/msg/{chat_id} - send message
 GET    /msg/{ad_id}/msg/{chat_id} - get chat history
 POST   /ads/{ad_id}/tag           - add tag
 DELETE /ads/{ad_id}/tag           - delete tag
+
+GET    /feed/{user_id}            - get personalized feed
+GET    /feed                      - get global feed
 
 GET    /tags                      - get all tags 
 GET    /tags/ads                  - get all advertisements with given tag

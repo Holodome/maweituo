@@ -5,7 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.RegisterRequest
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.services.UserService
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._
@@ -16,11 +16,15 @@ final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: User
     H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
 
-  val routes: HttpRoutes[F] = H.handle(HttpRoutes.of { case req @ POST -> Root / "register" =>
-    req.decodeR[RegisterRequest] { register =>
-      userService
-        .create(register)
-        .flatMap(Ok(_))
-    }
-  })
+  private val httpRoutes: HttpRoutes[F] =
+    H.handle(HttpRoutes.of { case req @ POST -> Root / "register" =>
+      req.decodeR[RegisterRequest] { register =>
+        userService
+          .create(register)
+          .flatMap(Ok(_))
+      }
+    })
+
+  val routes: Routes[F] =
+    Routes[F](Some(httpRoutes), None)
 }

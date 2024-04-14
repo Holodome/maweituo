@@ -4,7 +4,7 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.services.AuthService
 import dev.profunktor.auth.AuthHeaders
 import org.http4s.{AuthedRoutes, HttpRoutes}
@@ -21,6 +21,6 @@ final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthSe
       AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.id, _)) *> NoContent()
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    H.handle(authMiddleware(httpRoutes))
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
+    Routes(None, Some(H.handle(authMiddleware(httpRoutes))))
 }

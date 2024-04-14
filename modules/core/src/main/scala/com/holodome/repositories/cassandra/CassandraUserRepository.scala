@@ -56,12 +56,12 @@ sealed class CassandraUserRepository[F[_]: Async] private (session: CassandraSes
 
   private def findByEmailQuery(email: Email) = {
     val e = email.value
-    cql"select id, name, email, password, salt from users_by_email where email = ${e.value}"
+    cql"select id, name, email, password, salt from users where email = ${e.value}"
       .as[User]
   }
 
   private def findByNameQuery(name: Username) = {
-    cql"select id, name, email, password, salt from users_by_name where name = ${name.value}"
+    cql"select id, name, email, password, salt from users where name = ${name.value}"
       .as[User]
   }
 

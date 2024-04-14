@@ -47,10 +47,10 @@ private final class CassandraTagRepository[F[_]: Async](session: CassandraSessio
     )
 
   private def addTagToAdQ(adId: AdId, tag: AdTag) =
-    cql"update local.tags set ads = ads + {$tag} where id = $adId"
+    cql"update local.tags set ads = ads + {$adId} where tag = $tag"
 
   private def removeTagFromAdQ(adId: AdId, tag: AdTag) =
-    cql"update local.tags set ads = ads + {$tag} where id = $adId"
+    cql"update local.tags set ads = ads + {$adId} where tag = $tag"
 
   private def getAllAdsByTagQ(tag: AdTag) =
     cql"select ads from local.tags where tag = $tag".as[Option[Set[AdId]]]

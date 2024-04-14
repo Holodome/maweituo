@@ -5,7 +5,7 @@ import cats.syntax.all._
 import cats.{Monad, MonadThrow}
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.http.vars.AdIdVar
 import com.holodome.services._
 import io.circe.Json
@@ -38,6 +38,6 @@ final case class AdChatRoutes[F[_]: Monad](
         .flatMap(Ok(_))
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> H.handle(authMiddleware(authedRoutes)))
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
+    Routes(None, Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes)))))
 }

@@ -7,7 +7,7 @@ import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.vars.AdIdVar
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.services._
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.http4s.circe.CirceEntityEncoder._
@@ -47,6 +47,10 @@ final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
 
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> H.handle(publicRoutes <+> authMiddleware(authedRoutes)))
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] = {
+    Routes(
+      Some(Router(prefixPath -> H.handle(publicRoutes))),
+      Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes))))
+    )
+  }
 }

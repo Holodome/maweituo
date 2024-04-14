@@ -6,7 +6,7 @@ import cats.Monad
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.images._
 import com.holodome.domain.users._
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.http.vars.{AdIdVar, ImageIdVar}
 import com.holodome.services._
 import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
@@ -20,8 +20,10 @@ final case class AdImageRoutes[F[_]: Monad: Concurrent](
 )(implicit
     H: HttpErrorHandler[F, ApplicationError]
 ) extends Http4sDsl[F] {
+
   private val prefixPath = "/ads"
-  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
+
+  val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
       imageService.get(imageId).flatMap { img =>
         Ok(img.data).map {
@@ -44,6 +46,9 @@ final case class AdImageRoutes[F[_]: Monad: Concurrent](
 
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> H.handle(publicRoutes <+> authMiddleware(authedRoutes)))
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
+    Routes(
+      Some(Router(prefixPath -> H.handle(publicRoutes))),
+      Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes))))
+    )
 }

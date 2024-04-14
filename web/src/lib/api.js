@@ -40,8 +40,8 @@ export async function getImage(path, token) {
 	return await res.blob();
 }
 
-export function del(path, token) {
-	return send({ method: 'DELETE', path, token });
+export function del(path, data, token) {
+	return send({ method: 'DELETE', path, data, token });
 }
 
 export function post(path, data, token) {

@@ -21,14 +21,40 @@ export async function load({ locals, params }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
+    delete_tag: async ({ locals, request, params }) => {
+        const data = await request.formData();
+        const body = await api.del(`ads/${params.ad}/tag`, {
+            tag: data.get('tag')
+        }, locals.user?.token);
+        if (body.errors) {
+            return fail(401, body);
+        }
+        throw redirect(307, `/ads/${params.ad}`);
+    },
+    add_tag: async ({ locals, request, params }) => {
+        const data = await request.formData();
+        const body = await api.post(`ads/${params.ad}/tag`, {
+            tag: data.get('tag')
+        }, locals.user?.token);
+        if (body.errors) {
+			return fail(401, body);
+		}
+        throw redirect(307, `/ads/${params.ad}`);
+    },
     create_chat: async ({ locals, params }) => {
         const chatId = await api.post(`ads/${params.ad}/chat`, {}, locals.user?.token);
+        if (chatId.errors) {
+            return fail(401, body);
+        }
         throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
     },  
     delete_image: async ({ locals, request, params }) => {
         const data = await request.formData();
         const image = data.get('image');
-        await api.del(`ads/${params.ad}/img/${image}`, locals.user?.token);
+        const body = await api.del(`ads/${params.ad}/img/${image}`, null, locals.user?.token);
+        if (body.errors) {
+            return fail(401, body);
+        }
     },
     add_image: async ({ locals, request, params }) => {
         const data = await request.formData();
@@ -40,7 +66,9 @@ export const actions = {
             });
         }
 
-        await api.postFile(`ads/${params.ad}/img`, image,
-            locals.user?.token);
+        const body = await api.postFile(`ads/${params.ad}/img`, image, locals.user?.token);
+        if (body.errors) {
+            return fail(401, body);
+        }
     },
 };

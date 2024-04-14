@@ -6,7 +6,7 @@ import com.holodome.domain.ads.AddTagRequest
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.HttpErrorHandler
+import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.http.vars.AdIdVar
 import com.holodome.services.AdvertisementService
 import org.http4s.{AuthedRoutes, HttpRoutes}
@@ -35,6 +35,7 @@ final case class AdTagRoutes[F[_]: MonadThrow: JsonDecoder](
       }
   }
 
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
-    Router(prefixPath -> H.handle(authMiddleware(authedRoutes)))
+  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] = {
+    Routes(None, Some(Router(prefixPath -> H.handle(authMiddleware(authedRoutes)))))
+  }
 }

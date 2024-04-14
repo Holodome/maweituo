@@ -18,6 +18,24 @@
     <p>Title: {data.adInfo.title}</p>
     <p><a href="/account/{data.adInfo.authorId}">Author</a></p>
 
+    <div>
+        <h3>Tags: </h3>
+        {#each data.adInfo.tags as tag}
+            <div>
+                {tag}
+                <form use:enhance method="POST" action="?/delete_tag" style="display: inline-block;">
+                    <input type="hidden" name="tag" value="{tag}">
+                    <button type="submit">Delete</button>
+                </form>
+            </div>
+        {/each}
+
+        <form use:enhance method="POST" action="?/add_tag">
+            <input type="text" name="tag">
+            <button type="submit">Add tag</button>
+        </form>
+    </div>
+
     {#each data.images as img}
         <div style="position: relative;">
             <img src={img.url} alt="ad" width=300 height=300 />

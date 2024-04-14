@@ -51,7 +51,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
       for {
         service <- makeAuthService(makeUserRepository)
         routes = LoginRoutes[IO](service).routes
-        r <- expectHttpStatusLogged(routes, req)(Status.Forbidden)
+        r <- expectHttpStatusLogged(routes.collapse, req)(Status.Forbidden)
       } yield r
     }
   }
@@ -60,7 +60,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
     forall(registerRequestGen) { register =>
       val req    = POST(register, uri"/register")
       val routes = RegisterRoutes[IO](makeUserService(makeUserRepository)).routes
-      expectHttpStatusLogged(routes, req)(Status.Ok)
+      expectHttpStatusLogged(routes.collapse, req)(Status.Ok)
     }
   }
 
@@ -74,12 +74,12 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
         loginRoutes    = LoginRoutes[IO](auth).routes
         registerRoutes = RegisterRoutes[IO](userService).routes
         r <- expectHttpStatusLogged(
-          registerRoutes,
+          registerRoutes.collapse,
           POST(register, uri"/register")
         )(
           Status.Created
         ) *> expectHttpStatusLogged(
-          loginRoutes,
+          loginRoutes.collapse,
           POST(login, uri"/login")
         )(Status.Ok)
       } yield r

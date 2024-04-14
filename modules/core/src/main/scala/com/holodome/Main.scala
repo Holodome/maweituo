@@ -27,7 +27,8 @@ object Main extends IOApp.Simple {
               val repositories = Repositories.make[IO](res.cassandra)
               val recs         = RecsClients.make[IO](res.grpcClient, cfg.recs)
               for {
-                services <- Services.make[IO](repositories, cfg, res.redis, res.minio, recs)
+                infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
+                services = Services.make[IO](repositories, infrastructure, recs)
                 api = HttpApi.make[IO](
                   services,
                   UserJwtAuth(JwtAuth.hmac(cfg.jwt.accessSecret.value.value, JwtAlgorithm.HS256))

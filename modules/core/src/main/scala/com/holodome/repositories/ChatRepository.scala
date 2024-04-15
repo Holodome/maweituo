@@ -16,6 +16,6 @@ trait ChatRepository[F[_]] {
 object ChatRepository {
   implicit class ChatRepositoryOps[F[_]: MonadThrow](repo: ChatRepository[F]) {
     def get(chatId: ChatId): F[Chat] =
-      repo.find(chatId).getOrRaise(InvalidChatId())
+      repo.find(chatId).getOrRaise(InvalidChatId(chatId))
   }
 }

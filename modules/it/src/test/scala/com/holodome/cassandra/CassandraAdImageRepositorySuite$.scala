@@ -20,7 +20,7 @@ object CassandraAdImageRepositorySuite$ extends CassandraSuite {
       val repo = CassandraAdImageRepository.make[IO](cassandra)
       for {
         _ <- repo.create(image)
-        i <- repo.findMeta(image.id).getOrRaise(InvalidImageId())
+        i <- repo.findMeta(image.id).getOrRaise(InvalidImageId(image.id))
         _ <- repo.delete(image.id)
       } yield expect.all(i.id === image.id, i.url === image.url, i.adId === image.adId)
     }

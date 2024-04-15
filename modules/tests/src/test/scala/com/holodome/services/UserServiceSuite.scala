@@ -65,7 +65,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
         found <- serv
           .get(id)
           .map(Some(_))
-          .recoverWith { case InvalidUserId() => None.pure[IO] }
+          .recoverWith { case InvalidUserId(_) => None.pure[IO] }
       } yield expect.all(found.isEmpty)
     }
   }
@@ -84,7 +84,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
         x <- serv
           .delete(newId, otherId)
           .map(Some(_))
-          .recover { case InvalidAccess() =>
+          .recover { case InvalidAccess(_) =>
             None
           }
         _ <- serv.get(newId)
@@ -127,7 +127,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
         prior <- serv.get(newId)
-        x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess() => None }
+        x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess(_) => None }
         got   <- serv.get(newId)
       } yield expect.all(
         x.isEmpty,

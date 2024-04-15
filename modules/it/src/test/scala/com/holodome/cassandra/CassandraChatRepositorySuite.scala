@@ -21,7 +21,7 @@ object CassandraChatRepositorySuite extends CassandraSuite {
       val repo = CassandraChatRepository.make[IO](cassandra)
       for {
         _ <- repo.create(chat)
-        c <- repo.find(chat.id).getOrRaise(InvalidChatId())
+        c <- repo.find(chat.id).getOrRaise(InvalidChatId(chat.id))
       } yield expect.all(
         c.id === chat.id,
         c.client === chat.client,

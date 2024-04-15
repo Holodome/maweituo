@@ -14,6 +14,6 @@ trait AdImageRepository[F[_]] {
 object AdImageRepository {
   implicit class ImageRepositoryOps[F[_]: MonadThrow](repo: AdImageRepository[F]) {
     def getMeta(imageId: ImageId): F[Image] =
-      repo.findMeta(imageId).getOrRaise(InvalidImageId())
+      repo.findMeta(imageId).getOrRaise(InvalidImageId(imageId))
   }
 }

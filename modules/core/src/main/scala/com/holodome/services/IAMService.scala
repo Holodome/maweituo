@@ -36,21 +36,23 @@ object IAMService {
         .flatMap {
           case chat if userHasAccessToChat(chat, userId) =>
             Applicative[F].unit
-          case _ => ChatAccessForbidden().raiseError[F, Unit]
+          case _ => ChatAccessForbidden(chatId).raiseError[F, Unit]
         }
 
-    override def authorizeAdModification(advertisementId: AdId, userId: UserId): F[Unit] =
+    override def authorizeAdModification(adId: AdId, userId: UserId): F[Unit] =
       adRepo
-        .get(advertisementId)
+        .get(adId)
         .flatMap {
           case ad if ad.authorId === userId => Applicative[F].unit
-          case _                            => NotAnAuthor().raiseError[F, Unit]
+          case _                            => NotAnAuthor(adId, userId).raiseError[F, Unit]
         }
 
     override def authorizeUserModification(target: UserId, userId: UserId): F[Unit] =
       (target === userId)
         .guard[Option]
-        .fold(InvalidAccess().raiseError[F, Unit])(_ => Applicative[F].unit)
+        .fold(InvalidAccess("User update not authorized").raiseError[F, Unit])(_ =>
+          Applicative[F].unit
+        )
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
       user === chat.adAuthor || user === chat.client

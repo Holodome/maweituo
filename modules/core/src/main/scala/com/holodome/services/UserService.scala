@@ -56,7 +56,7 @@ object UserService {
       } yield ()
 
     override def get(id: UserId): F[User] =
-      repo.find(id).getOrRaise(InvalidUserId())
+      repo.get(id)
 
     override def create(
         body: RegisterRequest

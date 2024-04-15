@@ -18,7 +18,7 @@ trait UserRepository[F[_]] extends {
 object UserRepository {
   implicit class UserRepositoryOps[F[_]: MonadThrow](repo: UserRepository[F]) {
     def get(userId: UserId): F[User] =
-      repo.find(userId).getOrRaise(InvalidUserId())
+      repo.find(userId).getOrRaise(InvalidUserId(userId))
 
     def getByName(name: Username): F[User] =
       repo.findByName(name).getOrRaise(NoUserFound(name))

@@ -30,7 +30,7 @@ private final class CassandraAdImageRepository[F[_]: Async](session: CassandraSe
     def toDomain: F[Image] =
       OptionT
         .fromOption(MediaType.fromRaw(mediaType))
-        .getOrRaise(DatabaseEncodingError())
+        .getOrRaise(DatabaseEncodingError("Failed to deserialize image to domain"))
         .map(
           Image(id, adId, url, _, size)
         )

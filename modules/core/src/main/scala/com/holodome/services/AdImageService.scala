@@ -78,7 +78,7 @@ object AdImageService {
           objectStorage
             .get(ObjectId.fromImageUrl(image.url))
             .map(ImageContentsStream(_, image.mediaType, image.size))
-            .getOrRaise(InternalImageUnsync())
+            .getOrRaise(InternalImageUnsync("Image object not found"))
         }
 
   }

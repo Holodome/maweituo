@@ -109,7 +109,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
         otherId <- users.create(otherReg)
         adId    <- serv.create(userId, createAd)
         _       <- serv.get(adId)
-        x <- serv.delete(adId, otherId).map(Some(_)).recoverWith { case NotAnAuthor() =>
+        x <- serv.delete(adId, otherId).map(Some(_)).recoverWith { case NotAnAuthor(_, _) =>
           None.pure[IO]
         }
         _ <- serv.get(adId)

@@ -103,7 +103,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
         x <- msgs
           .send(chat, u3, msg)
           .map(Some(_))
-          .recoverWith { case ChatAccessForbidden() =>
+          .recoverWith { case ChatAccessForbidden(_) =>
             None.pure[IO]
           }
       } yield expect.all(x.isEmpty)
@@ -144,7 +144,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
         _ <- msgs
           .history(chat, u3)
           .map(Some(_))
-          .recoverWith { case ChatAccessForbidden() =>
+          .recoverWith { case ChatAccessForbidden(_) =>
             None.pure[IO]
           }
       } yield expect.all(true)

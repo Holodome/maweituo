@@ -74,7 +74,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
         x <- chats
           .create(ad, u1)
           .map(Some(_))
-          .recoverWith { case CannotCreateChatWithMyself() =>
+          .recoverWith { case CannotCreateChatWithMyself(_, _) =>
             None.pure[IO]
           }
       } yield expect.all(x.isEmpty)
@@ -109,7 +109,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers {
         x <- chats
           .create(ad, u2)
           .map(Some(_))
-          .recoverWith { case ChatAlreadyExists() =>
+          .recoverWith { case ChatAlreadyExists(_, _) =>
             None.pure[IO]
           }
       } yield expect.all(x.isEmpty)

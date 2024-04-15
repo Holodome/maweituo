@@ -33,7 +33,7 @@ create table local.global_feed (
     at timestamp,
     ad_id uuid,
     primary key(at)
-) with clustering order by (at desc);
+);
 
 create table local.tags (
     tag text primary key,

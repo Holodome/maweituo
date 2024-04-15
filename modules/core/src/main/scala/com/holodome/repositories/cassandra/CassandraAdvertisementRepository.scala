@@ -69,20 +69,20 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
     markAsResolvedQ(id).execute(session).void
 
   private def createQuery(ad: Advertisement) = {
-    cql"""insert into advertisements (id, author_id, title, tags, images, chats)
+    cql"""insert into advertisements (id, author_id, title, tags, images, chats, resolved)
          |values (${ad.id.value}, ${ad.authorId}, ${ad.title.value}, ${ad.tags},
-         |${ad.images}, ${ad.chats})""".stripMargin
+         |${ad.images}, ${ad.chats}, ${ad.resolved})""".stripMargin
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
       )
   }
 
   private def allQuery =
-    cql"select id, author_id, title, tags, images, chats from advertisements"
+    cql"select id, author_id, title, tags, images, chats, resolved from advertisements"
       .as[SerializedAd]
 
   private def findQuery(id: AdId) =
-    cql"select id, author_id, title, tags, images, chats from advertisements where id = ${id.value}"
+    cql"select id, author_id, title, tags, images, chats, resolved from advertisements where id = ${id.value}"
       .as[SerializedAd]
 
   private def deleteQuery(id: AdId) =

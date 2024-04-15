@@ -13,14 +13,16 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
+import org.typelevel.log4cats.Logger
 
-final case class UserRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
+final case class UserRoutes[F[_]: MonadThrow: JsonDecoder: Logger](userService: UserService[F])
     extends Http4sDsl[F] {
 
   private val prefixPath = "/users"
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of { case GET -> Root / UserIdVar(userId) =>
-    userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
+    Logger[F].info(s"hello world") *>
+      userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

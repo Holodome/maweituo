@@ -125,6 +125,6 @@ lazy val recs = (project in file("modules/recs"))
   .settings(
     name := "maweituo-recs",
     libraryDependencies ++= Seq(
-      "org.tpolecat" %% "doobie-core" % DoobieVersion
+      "org.tpolecat"             %% "doobie-core"    % DoobieVersion,
     )
   )

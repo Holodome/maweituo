@@ -69,52 +69,17 @@ create table local.images (
 drop keyspace if exists recs;
 create keyspace recs with replication = {'class':'SimpleStrategy', 'replication_factor':1};
 
-create table recs.user_bought_transactional (
+create table recs.user_bought (
     id uuid primary key,
     ad uuid
 );
 
-create table recs.user_created_transactional (
+create table recs.user_created (
     id uuid primary key,
     ad uuid
 );
 
-create table recs.user_discussed_transactional (
+create table recs.user_discussed (
     id uuid primary key,
     ad uuid
-);
-
-create table recs.user_bought_snapshot (
-    id uuid primary key,
-    ads frozen<set<uuid>>
-);
-
-create table recs.user_created_snapshot (
-    id uuid primary key,
-    ads frozen<set<uuid>>
-);
-
-create table recs.user_discussed_snapshot (
-    id uuid primary key,
-    ads frozen<set<uuid>>
-);
-
-create table recs.user_weights (
-    id uuid primary key,
-    weights frozen<list<float>>
-);
-
-create table recs.tags (
-    idx int primary key,
-    tag text
-);
-
-create table recs.ads_snapshot (
-    tag text primary key,
-    ads frozen<list<uuid>>
-);
-
-create table recs.ads_tags_snapshot (
-    id uuid primary key,
-    tags frozen<set<text>>
 );

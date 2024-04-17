@@ -1,15 +1,14 @@
-package com.holodome.recs.etl.cassandra
+package com.holodome.recs.etl
 
+import cats.{Applicative, Parallel}
 import cats.effect.Async
 import cats.syntax.all._
-import cats.{Applicative, Parallel}
 import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
 import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.ObjectId
-import com.holodome.recs.etl.RecETL
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

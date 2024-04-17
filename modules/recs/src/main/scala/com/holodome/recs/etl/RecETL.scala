@@ -7,3 +7,4 @@ trait RecETL[F[_]] {
   def run: F[Unit]
   def saveToOBS(obs: ObjectStorage[F], objectId: ObjectId): F[Unit]
 }
+

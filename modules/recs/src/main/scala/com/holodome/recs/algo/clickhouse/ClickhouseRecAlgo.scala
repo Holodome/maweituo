@@ -9,14 +9,12 @@ import com.holodome.recs.algo.RecommendationAlgorithm
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
+import com.holodome.recs.sql.codecs._
 
 import java.util.UUID
 
 private final class ClickhouseRecAlgo[F[_]: MonadCancelThrow](xa: Transactor[F])
     extends RecommendationAlgorithm[F] {
-
-  implicit val uuidMeta: Meta[UUID] =
-    Meta[String].imap[UUID](UUID.fromString)(_.toString)
 
   override def obsIngest(obs: ObjectStorage[F], id: ObjectId): F[Unit] =
     obsIngestQ(obs.makeUrl(id)).run.transact(xa).as(())

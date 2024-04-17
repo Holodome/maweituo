@@ -39,6 +39,14 @@ services:
       - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_DEFAULT_BUCKETS=maweituo
 
+  clichouse:
+    image: 'clickhouse/clickhouse-server'
+    container_name: recs-clickhouse
+    restart: always
+    ports:
+      - '8123:8123'
+      - '9019:9019'
+
 networks:
   backend:
     driver: bridge

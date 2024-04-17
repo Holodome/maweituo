@@ -24,7 +24,7 @@ object S3Suite extends SimpleIOSuite with Checkers {
         .credentials("minioadmin", "minioadmin")
         .build()
       for {
-        storage <- MinioObjectStorage.make[IO](minio, "maweituo-test")
+        storage <- MinioObjectStorage.make[IO]("", minio, "maweituo-test")
         x       <- storage.get(key).value
         _       <- storage.putStream(key, valueStream, value.length)
         y       <- storage.get(key).getOrRaise(new RuntimeException(""))

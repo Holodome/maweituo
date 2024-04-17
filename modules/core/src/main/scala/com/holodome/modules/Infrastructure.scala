@@ -31,7 +31,7 @@ object Infrastructure {
       JwtExpire
         .make[F]
         .map(JwtTokens.make[F](_, cfg.jwt.accessSecret.value, cfg.jwt.tokenExpiration)),
-      MinioObjectStorage.make[F](minio, cfg.minio.bucket.value)
+      MinioObjectStorage.make[F](cfg.minio.baseUrl, minio, cfg.minio.bucket.value)
     ).mapN { case (tokens, images) =>
       new Infrastructure[F] {
         override val jwtTokens: JwtTokens[F] = tokens

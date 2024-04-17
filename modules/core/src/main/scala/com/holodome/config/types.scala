@@ -31,7 +31,10 @@ object types {
       userId: Secret[NonEmptyString],
       password: Secret[NonEmptyString],
       bucket: NonEmptyString
-  )
+  ) {
+    def baseUrl: String =
+      s"http://${host.toString}:${port.toString}"
+  }
 
   case class HttpServerConfig(
       host: Host,

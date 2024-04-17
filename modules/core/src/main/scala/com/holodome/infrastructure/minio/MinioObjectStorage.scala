@@ -14,10 +14,11 @@ import scala.util.control.NonFatal
 
 object MinioObjectStorage {
   def make[F[_]: Async: MonadThrow](
+      baseUrl: String,
       client: MinioAsyncClient,
       bucket: String
   ): F[ObjectStorage[F]] =
-    ensureBucketIsCreated(client, bucket).map(_ => new MinioObjectStorage(client, bucket))
+    ensureBucketIsCreated(client, bucket).map(_ => new MinioObjectStorage(baseUrl, client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Monad](
       minio: MinioAsyncClient,
@@ -42,7 +43,8 @@ object MinioObjectStorage {
 
 }
 
-private final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
+private final class MinioObjectStorage[F[_]: Async: MonadThrow](
+    baseUrl: String,
     client: MinioAsyncClient,
     bucket: String
 ) extends ObjectStorage[F] {
@@ -79,4 +81,7 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow] private (
     liftCompletableFuture(
       client.removeObject(RemoveObjectArgs.builder().bucket(bucket).`object`(id.value).build())
     ).void
+
+  override def makeUrl(id: ObjectId): String =
+    s"$baseUrl/$bucket/${id.value}"
 }

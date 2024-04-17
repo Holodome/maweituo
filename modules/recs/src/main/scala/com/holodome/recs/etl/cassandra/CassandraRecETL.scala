@@ -7,6 +7,8 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
 import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.users.UserId
+import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.recs.etl.RecETL
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
@@ -19,7 +21,25 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
       stream.last.map(_.fold(Set[A]())(x => x))
   }
 
-  override def etlAll(): F[Unit] =
+  override def saveToOBS(obs: ObjectStorage[F], objectId: ObjectId): F[Unit] =
+    cql"select id, weights from recs.user_weights"
+      .as[(UserId, List[Double])]
+      .select(session)
+      .map { case (uid, weights) =>
+        s"$uid,${weights.map(_.toString).mkString(",")}"
+      }
+      .fold("") { case (str, it) =>
+        str ++ it ++ "\n"
+      }
+      .head
+      .compile
+      .last
+      .flatMap {
+        case None      => (new RuntimeException).raiseError[F, Unit]
+        case Some(csv) => obs.put(objectId, csv.getBytes)
+      }
+
+  override def run: F[Unit] =
     for {
       _    <- truncateAllSnapshotTables
       uids <- transferTelemetry
@@ -207,56 +227,50 @@ private class CassandraRecETL[F[_]: Async: Parallel](session: CassandraSession[F
     }
 
   private def transactionalBoughtTelemetryUsers: F[List[UserId]] =
-    transactionalBoughtTelemetryQuery.select(session).compile.toList
+    cql"select id from recs.user_bought_transactional".as[UserId].select(session).compile.toList
 
   private def transactionalBoughtFourUserTelemetry(userId: UserId): F[Set[AdId]] =
-    transactionalBoughtForUser(userId).select(session).compile.toList.map(_.toSet)
+    cql"select ad from recs.user_bought_transactional where id = $userId"
+      .as[AdId]
+      .select(session)
+      .compile
+      .toList
+      .map(_.toSet)
 
   private def boughtForUserInsert(userId: UserId, ads: Set[AdId]): F[Unit] =
-    boughtForUserInsertQuery(userId, ads).execute(session).void
-
-  private def transactionalBoughtTelemetryQuery =
-    cql"select id from recs.user_bought_transactional".as[UserId]
-
-  private def transactionalBoughtForUser(userId: UserId) =
-    cql"select ad from recs.user_bought_transactional where id = $userId".as[AdId]
-
-  private def boughtForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
     cql"insert into recs.user_bought_snapshot (id, ads) values ($userId, $ads)"
+      .execute(session)
+      .void
 
   private def transactionalCreatedTelemetryUsers: F[List[UserId]] =
-    transactionalCreatedTelemetryQuery.select(session).compile.toList
+    cql"select id from recs.user_created_transactional".as[UserId].select(session).compile.toList
 
   private def transactionalCreatedFourUserTelemetry(userId: UserId): F[Set[AdId]] =
-    transactionalCreatedForUser(userId).select(session).compile.toList.map(_.toSet)
+    cql"select ad from recs.user_created_transactional where id = $userId"
+      .as[AdId]
+      .select(session)
+      .compile
+      .toList
+      .map(_.toSet)
 
   private def createdForUserInsert(userId: UserId, ads: Set[AdId]): F[Unit] =
-    createdForUserInsertQuery(userId, ads).execute(session).void
-
-  private def transactionalCreatedTelemetryQuery =
-    cql"select id from recs.user_created_transactional".as[UserId]
-
-  private def transactionalCreatedForUser(userId: UserId) =
-    cql"select ad from recs.user_created_transactional where id = $userId".as[AdId]
-
-  private def createdForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
     cql"insert into recs.user_created_snapshot (id, ads) values ($userId, $ads)"
+      .execute(session)
+      .void
 
   private def transactionalDiscussedTelemetryUsers: F[List[UserId]] =
-    transactionalDiscussedTelemetryQuery.select(session).compile.toList
+    cql"select id from recs.user_discussed_transactional".as[UserId].select(session).compile.toList
 
   private def transactionalDiscussedFourUserTelemetry(userId: UserId): F[Set[AdId]] =
-    transactionalDiscussedForUser(userId).select(session).compile.toList.map(_.toSet)
+    cql"select ad from recs.user_discussed_transactional where id = $userId"
+      .as[AdId]
+      .select(session)
+      .compile
+      .toList
+      .map(_.toSet)
 
   private def discussedForUserInsert(userId: UserId, ads: Set[AdId]): F[Unit] =
-    discussedForUserInsertQuery(userId, ads).execute(session).void
-
-  private def transactionalDiscussedTelemetryQuery =
-    cql"select id from recs.user_discussed_transactional".as[UserId]
-
-  private def transactionalDiscussedForUser(userId: UserId) =
-    cql"select ad from recs.user_discussed_transactional where id = $userId".as[AdId]
-
-  private def discussedForUserInsertQuery(userId: UserId, ads: Set[AdId]) =
     cql"insert into recs.user_discussed_snapshot (id, ads) values ($userId, $ads)"
+      .execute(session)
+      .void
 }

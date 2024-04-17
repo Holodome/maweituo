@@ -4,26 +4,30 @@ import cats.{Applicative, MonadThrow}
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.std.Random
 import cats.syntax.all._
+import com.fasterxml.jackson.annotation.ObjectIdGenerator
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
+import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
 import com.holodome.recs.algo.RecommendationAlgorithm
 import com.holodome.recs.etl.RecETL
 import com.holodome.recs.repositories.RecRepository
 import com.holodome.services.RecommendationService
 
 object RecommendationServiceInterpreter {
-  def make[F[_]: MonadThrow](
+  def make[F[_]: MonadThrow: GenObjectStorageId](
       algo: RecommendationAlgorithm[F],
       recRepo: RecRepository[F],
-      etl: RecETL[F]
+      etl: RecETL[F],
+      obs: ObjectStorage[F]
   )(implicit rng: Random[F]): RecommendationService[F] =
-    new RecommendationServiceInterpreter(algo, recRepo, etl)
+    new RecommendationServiceInterpreter(algo, recRepo, etl, obs)
 }
 
-private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
+private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObjectStorageId](
     algo: RecommendationAlgorithm[F],
     recRepo: RecRepository[F],
-    etl: RecETL[F]
+    etl: RecETL[F],
+    obs: ObjectStorage[F]
 )(implicit rng: Random[F])
     extends RecommendationService[F] {
 
@@ -39,7 +43,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] =
     algo
-      .getClosest(user)
+      .getClosest(user, 10)
       .flatMap { closest =>
         List(0 until count)
           .traverse(_ => rng.elementOf(closest))
@@ -83,5 +87,11 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow](
     }
 
   override def learn(): F[Unit] =
-    etl.etlAll()
+    for {
+      _     <- etl.run
+      obsId <- GenObjectStorageId[F].make
+      _     <- etl.saveToOBS(obs, obsId)
+      _     <- algo.obsIngest(obs, obsId)
+    } yield ()
+
 }

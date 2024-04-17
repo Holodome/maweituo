@@ -27,6 +27,7 @@ val MinioVersion           = "8.5.9"
 val Cassandra4IoVersion    = "0.1.14"
 val MockitoVersion         = "1.17.30"
 val MeowMtlVersion         = "0.5.0"
+val DoobieVersion          = "1.0.0-RC4"
 
 lazy val root = (project in file("."))
   .settings(
@@ -122,5 +123,8 @@ lazy val it = (project in file("modules/it"))
 lazy val recs = (project in file("modules/recs"))
   .dependsOn(core)
   .settings(
-    name := "maweituo-recs"
+    name := "maweituo-recs",
+    libraryDependencies ++= Seq(
+      "org.tpolecat" %% "doobie-core" % DoobieVersion
+    )
   )

@@ -3,6 +3,7 @@ package com.holodome.recs.modules
 import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.effects.MkRandom
+import com.holodome.recs.etl.RecETL
 import com.holodome.recs.services.{RecommendationServiceInterpreter, TelemetryServiceInterpreter}
 import com.holodome.services.{RecommendationService, TelemetryService}
 
@@ -13,13 +14,17 @@ sealed abstract class Services[F[_]] {
 
 object Services {
 
-  def make[F[_]: Sync: MkRandom](repositories: Repositories[F]): F[Services[F]] = {
+  def make[F[_]: Sync: MkRandom](
+      repositories: Repositories[F],
+      infrastructure: Infrastructure[F],
+      etl: RecETL[F]
+  ): F[Services[F]] = {
     MkRandom[F].make.map { implicit rng =>
       new Services[F] {
         override val telemetry: TelemetryService[F] =
           TelemetryServiceInterpreter.make[F](repositories.telemetry)
         override val recs: RecommendationService[F] =
-          RecommendationServiceInterpreter.make[F](repositories.recs, ???, ???)
+          RecommendationServiceInterpreter.make[F](repositories.recs, etl, infrastructure.obs)
       }
     }
   }

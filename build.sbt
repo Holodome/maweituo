@@ -28,6 +28,7 @@ val Cassandra4IoVersion    = "0.1.14"
 val MockitoVersion         = "1.17.30"
 val MeowMtlVersion         = "0.5.0"
 val DoobieVersion          = "1.0.0-RC4"
+val ClickhouseVersion      = "0.6.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -125,6 +126,8 @@ lazy val recs = (project in file("modules/recs"))
   .settings(
     name := "maweituo-recs",
     libraryDependencies ++= Seq(
-      "org.tpolecat"             %% "doobie-core"    % DoobieVersion,
+      "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
+      "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,
+      "org.lz4"        % "lz4-java"        % "1.8.0"
     )
   )

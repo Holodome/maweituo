@@ -11,30 +11,53 @@ import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.ringcentral.cassandra4io.CassandraSession
 import com.holodome.cql.codecs._
+import com.holodome.ext.log4catsExt.LoggerProtect
+import org.typelevel.log4cats.Logger
 
 object CassandraExtract {
-  def make[F[_]: Async: NonEmptyParallel](session: CassandraSession[F]): RecETLExtractor[F] =
+  def make[F[_]: Async: NonEmptyParallel: Logger](
+      session: CassandraSession[F]
+  ): RecETLExtractor[F] =
     new CassandraExtract(session)
 }
 
-private final class CassandraExtract[F[_]: Async: NonEmptyParallel](session: CassandraSession[F])
-    extends RecETLExtractor[F] {
+private final class CassandraExtract[F[_]: Async: NonEmptyParallel: Logger](
+    session: CassandraSession[F]
+) extends RecETLExtractor[F] {
 
   override def extract(locs: OBSSnapshotLocations, obs: ObjectStorage[F]): F[Unit] =
-    CassandraExtractOperator(session, obs).extract(locs)
+    Logger[F]
+      .bracketProtectInfo(
+        "Starting ETL extraction",
+        "Finished ETL extraction",
+        "ETL extraction aborted"
+      )(CassandraExtractOperator(session, obs).extract(locs))
 }
 
-private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel](
+private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel: Logger](
     session: CassandraSession[F],
     obs: ObjectStorage[F]
 ) {
   def extract(locs: OBSSnapshotLocations): F[Unit] =
     (
-      extractUsersToObs(locs.users),
-      extractAdsToObs(locs.ads),
-      extractUserBoughtToObs(locs.user_bought),
-      extractUserCreatedToObs(locs.user_created),
-      extractUserDiscussedToObs(locs.user_discussed)
+      Logger[F].protectInfo("Starting ETL extract users", "Finished ETL extract users")(
+        extractUsersToObs(locs.users)
+      ),
+      Logger[F].protectInfo("Starting ETL extract ads", "Finished ETL extract ads")(
+        extractAdsToObs(locs.ads)
+      ),
+      Logger[F].protectInfo(
+        "Starting ETL extract user bought",
+        "Finished ETL extract user bought"
+      )(extractUserBoughtToObs(locs.user_bought)),
+      Logger[F].protectInfo(
+        "Starting ETL extract user created",
+        "Finished ETL extract user created"
+      )(extractUserCreatedToObs(locs.user_created)),
+      Logger[F].protectInfo(
+        "Starting ETL extract user discussed",
+        "Finished ETL extract user discussed"
+      )(extractUserDiscussedToObs(locs.user_discussed))
     ).parMapN((_, _, _, _, _) => ())
 
   private def joinList(lst: List[String])  = lst.mkString(",")
@@ -60,7 +83,8 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel]
         .as[User]
         .select(session)
         .map(u => s"${u.id.value}, ${u.name.value}, ${u.email.value}")
-        .through(joinCsvRows),
+        .through(joinCsvRows)
+        .map("id,name,email\n" ++ _),
       ob
     )
 
@@ -72,7 +96,8 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel]
         .map { a =>
           s"${a.id.value},${a.authorId.value},${a.title},${wrapArray(a.tags.toList.map(_.toString))}"
         }
-        .through(joinCsvRows),
+        .through(joinCsvRows)
+        .map("id,author,title,tags\n" ++ _),
       ob
     )
 
@@ -84,7 +109,8 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel]
         .map { case (a, b) =>
           s"${a.value},${b.value}"
         }
-        .through(joinCsvRows),
+        .through(joinCsvRows)
+        .map("id,ad\n" ++ _),
       ob
     )
 
@@ -96,7 +122,8 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel]
         .map { case (a, b) =>
           s"${a.value},${b.value}"
         }
-        .through(joinCsvRows),
+        .through(joinCsvRows)
+        .map("id,ad\n" ++ _),
       ob
     )
 
@@ -108,7 +135,8 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel]
         .map { case (a, b) =>
           s"${a.value},${b.value}"
         }
-        .through(joinCsvRows),
+        .through(joinCsvRows)
+        .map("id,ad\n" ++ _),
       ob
     )
 

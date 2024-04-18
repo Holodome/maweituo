@@ -18,7 +18,7 @@ object codecs {
     val raw = Meta.Advanced.array[A](elemType, arrayType, arrayTypeT: _*)
     // Ensure `a`, which may be null, which is ok, contains no null elements.
     def checkNull[B >: Null](a: Array[B], e: Exception): Array[B] =
-      if (a == null) null else if (a.exists(_ == null)) throw e else a
+      if (a == null) null else if (a.contains(null)) throw e else a
     (
       raw.timap(checkNull(_, NullableCellRead))(checkNull(_, NullableCellUpdate)),
       raw.timap[Array[Option[A]]](_.map(Option(_)))(_.map(_.orNull).toArray)

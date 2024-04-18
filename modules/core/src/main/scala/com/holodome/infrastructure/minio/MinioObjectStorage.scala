@@ -4,7 +4,7 @@ import cats.{Applicative, Monad, MonadThrow}
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
-import com.holodome.ext.cats.liftCompletableFuture
+import com.holodome.ext.catsExt.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.{ObjectId, OBSUrl}
 import io.minio._

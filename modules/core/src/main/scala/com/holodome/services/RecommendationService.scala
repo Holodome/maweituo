@@ -5,5 +5,5 @@ import com.holodome.domain.users.UserId
 
 trait RecommendationService[F[_]] {
   def getRecs(user: UserId, count: Int): F[List[AdId]]
-  def learn(): F[Unit]
+  def learn: F[Unit]
 }

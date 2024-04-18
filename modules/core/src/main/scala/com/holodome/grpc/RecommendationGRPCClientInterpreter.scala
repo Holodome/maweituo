@@ -20,7 +20,7 @@ object RecommendationGRPCClientInterpreter {
 private final class RecommendationGRPCClientInterpreter[F[_]: Monad: GenUUID](
     rpc: proto.rec.RecommendationService[F]
 ) extends RecommendationService[F] {
-  override def learn(): F[Unit] = rpc.learn(proto.rec.Empty(), Headers.empty).void
+  override def learn: F[Unit] = rpc.learn(proto.rec.Empty(), Headers.empty).void
 
   override def getRecs(userId: UserId, count: Int): F[List[AdId]] =
     rpc

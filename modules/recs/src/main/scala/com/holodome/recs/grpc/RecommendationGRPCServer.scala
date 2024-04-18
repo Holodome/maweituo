@@ -22,7 +22,7 @@ private final class RecommendationGRPCServer[F[_]: Monad: GenUUID](
 ) extends proto.rec.RecommendationService[F] {
 
   override def learn(request: proto.rec.Empty, ctx: Headers): F[proto.rec.Empty] =
-    service.learn().map(_ => proto.rec.Empty())
+    service.learn.map(_ => proto.rec.Empty())
 
   override def getRecs(request: proto.rec.UserId, ctx: Headers): F[proto.rec.Recommendations] = {
     for {

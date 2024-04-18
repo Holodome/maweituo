@@ -9,6 +9,8 @@ import com.ringcentral.cassandra4io.CassandraSession
 import doobie.Transactor
 import io.minio.MinioAsyncClient
 
+import java.util.Properties
+
 sealed abstract class RecsResources[F[_]](
     val cassandra: CassandraSession[F],
     val minio: MinioAsyncClient,
@@ -16,6 +18,12 @@ sealed abstract class RecsResources[F[_]](
 )
 
 object RecsResources {
+  private val properties = {
+    val p = new Properties()
+    p.setProperty("http_connection_provider", "HTTP_URL_CONNECTION")
+    p
+  }
+
   def make[F[_]: MkCassandraClient: MkMinioClient: Async](
       cfg: RecsConfig
   ): Resource[F, RecsResources[F]] =
@@ -27,9 +35,10 @@ object RecsResources {
         _,
         _,
         Transactor.fromDriverManager[F](
-          driver = "com.clickhouse.Driver",
-          url = "jdbc:clickhouse:world",
-          logHandler = None
+          driver = "com.clickhouse.jdbc.ClickHouseDriver",
+          url = "jdbc:ch://localhost/maweituo?jdbcCompliance=false",
+          logHandler = None,
+          info = properties
         )
       ) {}
     )

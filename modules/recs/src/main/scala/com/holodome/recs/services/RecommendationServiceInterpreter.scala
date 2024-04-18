@@ -83,7 +83,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
       } yield ad
     }
 
-  override def learn(): F[Unit] =
+  override def learn: F[Unit] =
     for {
       _ <- etl.run
     } yield ()

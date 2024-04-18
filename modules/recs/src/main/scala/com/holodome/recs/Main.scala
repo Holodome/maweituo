@@ -2,7 +2,8 @@ package com.holodome.recs
 
 import cats.effect.{IO, IOApp}
 import com.holodome.recs.config.Config
-import com.holodome.recs.modules.{GRPCApi, Repositories, Services}
+import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETL}
+import com.holodome.recs.modules.{GRPCApi, Infrastructure, Repositories, Services}
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer
 import org.typelevel.log4cats.Logger
@@ -20,8 +21,15 @@ object Main extends IOApp.Simple {
           .evalMap { res =>
             val repositories = Repositories.make[IO](res.cassandra, res.clickhouse)
             for {
-              services <- Services.make[IO](repositories)
+              infrastructure <- Infrastructure.make[IO](cfg, res.minio)
+              etl = RecETL.make[IO](
+                CassandraExtract.make[IO](res.cassandra),
+                ClickhouseTransformLoad.make[IO](res.clickhouse),
+                infrastructure.obs
+              )
+              services <- Services.make[IO](repositories, infrastructure, etl)
               api = GRPCApi.make[IO](services)
+              _ <- services.recs.learn
             } yield cfg.recsServer -> api.httpApp
           }
           .flatMap { case (cfg, httpApp) =>

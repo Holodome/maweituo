@@ -10,34 +10,48 @@ import doobie.implicits.toSqlInterpolator
 import doobie.util.transactor.Transactor
 import doobie.implicits._
 import com.holodome.recs.sql.codecs._
+import org.typelevel.log4cats.Logger
 
 import java.util.UUID
+import com.holodome.ext.log4catsExt._
 
 object ClickhouseTransformLoad {
-  def make[F[_]: MonadCancelThrow: NonEmptyParallel](xa: Transactor[F]): RecETLLoader[F] =
+  def make[F[_]: MonadCancelThrow: NonEmptyParallel: Logger](xa: Transactor[F]): RecETLLoader[F] =
     new ClickhouseTransformLoad(xa)
 }
 
-private final class ClickhouseTransformLoad[F[_]: MonadCancelThrow: NonEmptyParallel](
+private final class ClickhouseTransformLoad[F[_]: MonadCancelThrow: NonEmptyParallel: Logger](
     xa: Transactor[F]
 ) extends RecETLLoader[F] {
   def load(locs: OBSSnapshotLocations, obs: ObjectStorage[F]): F[Unit] =
-    ClickhouseTransformLoadOperator(xa)(obs).load(locs)
+    Logger[F].bracketProtectInfo("Starting ETL load", "Finished ETL load", "ETL load aborted")(
+      ClickhouseTransformLoadOperator(xa)(obs).load(locs)
+    )
 }
 
-private final case class ClickhouseTransformLoadOperator[F[_]: MonadCancelThrow: NonEmptyParallel](
-    xa: Transactor[F]
-)(
-    obs: ObjectStorage[F]
-) {
+private final case class ClickhouseTransformLoadOperator[F[
+    _
+]: MonadCancelThrow: NonEmptyParallel: Logger](xa: Transactor[F])(obs: ObjectStorage[F]) {
   def load(locs: OBSSnapshotLocations): F[Unit] =
     for {
-      _ <- loadUserCreated(obs.makeUrl(locs.user_created))
-      _ <- loadUserBought(obs.makeUrl(locs.user_bought))
-      _ <- loadUserDiscussed(obs.makeUrl(locs.user_discussed))
-      _ <- loadAdTags(obs.makeUrl(locs.ads))
-      _ <- loadTags
-      _ <- calculateWeights(obs.makeUrl(locs.users))
+      _ <- Logger[F].protectInfo("Starting ETL users load", "Finished ETL users load")(
+        loadUserCreated(obs.makeUrl(locs.user_created))
+      )
+      _ <- Logger[F].protectInfo("Starting ETL user bought load", "Finished ETL users bought load")(
+        loadUserBought(obs.makeUrl(locs.user_bought))
+      )
+      _ <- Logger[F].protectInfo(
+        "Starting ETL user discussed load",
+        "Finished ETL user discussed load"
+      )(loadUserDiscussed(obs.makeUrl(locs.user_discussed)))
+      _ <- Logger[F].protectInfo("Starting ETL ad tags load", "Finished ETL ad tags load")(
+        loadAdTags(obs.makeUrl(locs.ads))
+      )
+      _ <- Logger[F].protectInfo("Starting ETL tags load", "Finished ETL tags load")(loadTags)
+      _ <- Logger[F].protectInfo(
+        "Starting ETL weights calculation",
+        "Finished ETL weights calculation"
+      )(calculateWeights(obs.makeUrl(locs.users)))
     } yield ()
 
   private def calculateWeights(url: OBSUrl) = {
@@ -45,28 +59,28 @@ private final case class ClickhouseTransformLoadOperator[F[_]: MonadCancelThrow:
       data.foldLeft(Set[A]())((s, lst) => s ++ lst)
 
     def tagsForAd(adId: UUID) =
-      sql"select arrayJoin(tags) as tag from ad_tags where id = $adId"
+      sql"select arrayJoin(tags) as tag from ad_tags where `id` = $adId"
         .query[String]
         .to[Set]
         .transact(xa)
 
     for {
       tags <- sql"select tag from tag_ads".query[String].to[List].transact(xa)
-      uids <- sql"select id from s3(${url.value}, 'CaSWWithNames')"
+      uids <- sql"select `id` from s3(${url.value}, 'CaSWWithNames')"
         .query[UUID]
         .to[List]
         .transact(xa)
       _ <- uids.traverse_ { uid =>
         (
-          sql"""select arrayJoin(ads) as ad from user_bought where id = $uid"""
+          sql"""select arrayJoin(ads) as ad from user_bought where `id` = $uid"""
             .query[UUID]
             .to[List]
             .transact(xa),
-          sql"""select arrayJoin(ads) as ad from user_discussed where id = $uid"""
+          sql"""select arrayJoin(ads) as ad from user_discussed where `id` = $uid"""
             .query[UUID]
             .to[List]
             .transact(xa),
-          sql"""select arrayJoin(ads) as ad from user_created where id = $uid"""
+          sql"""select arrayJoin(ads) as ad from user_created where `id` = $uid"""
             .query[UUID]
             .to[List]
             .transact(xa)
@@ -97,7 +111,7 @@ private final case class ClickhouseTransformLoadOperator[F[_]: MonadCancelThrow:
               tagsMap
             }.flatMap { weightMap =>
               val weightVector = tags.map(t => weightMap(t)).mkString(",")
-              sql"""insert into user_weights (id, weights) 
+              sql"""insert into user_weights (`id`, weights)
                       values ($uid, (select splitByChar(',', $weightVector)))""".update.run
                 .transact(xa)
                 .as(())
@@ -110,7 +124,7 @@ private final case class ClickhouseTransformLoadOperator[F[_]: MonadCancelThrow:
 
   private def loadAdTags(url: OBSUrl) =
     sql"""insert into ad_tags
-            select id, splitByChar(',', tags) as tags from s3(${url.value}, 'CSWWithNames')
+            select `id`, splitByChar(',', tags) as tags from s3(${url.value}, 'CSWWithNames')
          """.update.run.transact(xa).void
 
   private def loadTags =
@@ -124,19 +138,19 @@ private final case class ClickhouseTransformLoadOperator[F[_]: MonadCancelThrow:
 
   private def loadUserBought(url: OBSUrl) =
     sql"""insert into user_bought
-            (select id, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames')
-             group by id 
+            (select `id`, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+             group by `id`
             )""".update.run.transact(xa).void
 
   private def loadUserDiscussed(url: OBSUrl) =
     sql"""insert into user_discussed
-            (select id, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames')
-             group by id 
+            (select `id`, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+             group by `id`
             )""".update.run.transact(xa).void
 
   private def loadUserCreated(url: OBSUrl) =
     sql"""insert into user_created
-            (select id, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames')
-             group by id 
-            )""".update.run.transact(xa).void
+          select `id`, groupArray(`ad`) as `ads` from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+          group by `id`
+            """.update.run.transact(xa).void
 }

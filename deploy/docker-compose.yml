@@ -39,13 +39,19 @@ services:
       - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_DEFAULT_BUCKETS=maweituo
 
-  clichouse:
+  clickhouse:
     image: 'clickhouse/clickhouse-server'
+    platform: linux/amd64
     container_name: recs-clickhouse
     restart: always
+    networks:
+      - backend
+    volumes:
+      - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
     ports:
       - '8123:8123'
       - '9019:9019'
+      - '9100:9000'
 
 networks:
   backend:

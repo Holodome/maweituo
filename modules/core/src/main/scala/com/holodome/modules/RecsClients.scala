@@ -34,7 +34,7 @@ object RecsClients {
         override def getRecs(user: users.UserId, count: Int): F[List[ads.AdId]] =
           Applicative[F].pure(List())
 
-        override def learn(): F[Unit] = Applicative[F].unit
+        override def learn: F[Unit] = Applicative[F].unit
       }
       override val telemetry: TelemetryService[F] = new TelemetryService[F] {
 

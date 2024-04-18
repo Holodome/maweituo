@@ -18,7 +18,7 @@ object Main extends IOApp.Simple {
         RecsResources
           .make[IO](cfg)
           .evalMap { res =>
-            val repositories = Repositories.make[IO](res.cassandra)
+            val repositories = Repositories.make[IO](res.cassandra, res.clickhouse)
             for {
               services <- Services.make[IO](repositories)
               api = GRPCApi.make[IO](services)

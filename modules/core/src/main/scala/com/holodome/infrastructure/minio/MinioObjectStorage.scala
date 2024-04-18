@@ -6,7 +6,7 @@ import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.ext.cats.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.ObjectId
+import com.holodome.infrastructure.ObjectStorage.{ObjectId, OBSUrl}
 import io.minio._
 import io.minio.errors.ErrorResponseException
 
@@ -82,6 +82,6 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
       client.removeObject(RemoveObjectArgs.builder().bucket(bucket).`object`(id.value).build())
     ).void
 
-  override def makeUrl(id: ObjectId): String =
-    s"$baseUrl/$bucket/${id.value}"
+  override def makeUrl(id: ObjectId): OBSUrl =
+    OBSUrl(s"$baseUrl/$bucket/${id.value}")
 }

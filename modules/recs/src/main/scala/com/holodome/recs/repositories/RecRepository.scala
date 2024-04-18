@@ -7,6 +7,7 @@ import com.holodome.recs.domain.recommendations.WeightVector
 
 trait RecRepository[F[_]] {
   def get(userId: UserId): OptionT[F, WeightVector]
+  def getClosest(user: UserId, count: Int): F[List[UserId]]
 
   def getUserCreated(user: UserId): OptionT[F, Set[AdId]]
   def getUserBought(user: UserId): OptionT[F, Set[AdId]]

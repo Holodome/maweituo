@@ -2,13 +2,13 @@ package com.holodome.infrastructure
 
 import cats.data.OptionT
 import com.holodome.domain.images.ImageUrl
-import com.holodome.infrastructure.ObjectStorage.ObjectId
+import com.holodome.infrastructure.ObjectStorage.{ObjectId, OBSUrl}
 import derevo.cats.show
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 
 trait ObjectStorage[F[_]] {
-  def makeUrl(id: ObjectId): String
+  def makeUrl(id: ObjectId): OBSUrl
 
   def putStream(id: ObjectId, data: fs2.Stream[F, Byte], dataSize: Long): F[Unit]
   def get(id: ObjectId): OptionT[F, fs2.Stream[F, Byte]]
@@ -19,6 +19,8 @@ trait ObjectStorage[F[_]] {
 }
 
 object ObjectStorage {
+  @newtype case class OBSUrl(value: String)
+
   @derive(show)
   @newtype case class ObjectId(value: String) {
     def toImageUrl: ImageUrl =

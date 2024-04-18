@@ -19,7 +19,7 @@ object Services {
         override val telemetry: TelemetryService[F] =
           TelemetryServiceInterpreter.make[F](repositories.telemetry)
         override val recs: RecommendationService[F] =
-          RecommendationServiceInterpreter.make[F](???, repositories.recs, ???, ???)
+          RecommendationServiceInterpreter.make[F](repositories.recs, ???, ???)
       }
     }
   }

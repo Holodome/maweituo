@@ -21,5 +21,5 @@ final class InMemoryObjectStorage[F[_]: Sync] extends ObjectStorage[F] {
   override def delete(id: ObjectId): F[Unit] =
     Sync[F].delay(map.remove(id))
 
-  override def makeUrl(id: ObjectId): String = ""
+  override def makeUrl(id: ObjectId): OBSUrl = OBSUrl("")
 }

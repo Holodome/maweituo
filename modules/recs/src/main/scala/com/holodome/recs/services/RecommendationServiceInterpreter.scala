@@ -8,23 +8,20 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerator
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
-import com.holodome.recs.algo.RecommendationAlgorithm
 import com.holodome.recs.etl.RecETL
 import com.holodome.recs.repositories.RecRepository
 import com.holodome.services.RecommendationService
 
 object RecommendationServiceInterpreter {
   def make[F[_]: MonadThrow: GenObjectStorageId](
-      algo: RecommendationAlgorithm[F],
       recRepo: RecRepository[F],
       etl: RecETL[F],
       obs: ObjectStorage[F]
   )(implicit rng: Random[F]): RecommendationService[F] =
-    new RecommendationServiceInterpreter(algo, recRepo, etl, obs)
+    new RecommendationServiceInterpreter(recRepo, etl, obs)
 }
 
 private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObjectStorageId](
-    algo: RecommendationAlgorithm[F],
     recRepo: RecRepository[F],
     etl: RecETL[F],
     obs: ObjectStorage[F]
@@ -42,7 +39,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
   }
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] =
-    algo
+    recRepo
       .getClosest(user, 10)
       .flatMap { closest =>
         List(0 until count)
@@ -88,10 +85,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
 
   override def learn(): F[Unit] =
     for {
-      _     <- etl.run
-      obsId <- GenObjectStorageId[F].make
-      _     <- etl.saveToOBS(obs, obsId)
-      _     <- algo.obsIngest(obs, obsId)
+      _ <- etl.run
     } yield ()
 
 }

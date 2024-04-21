@@ -1,19 +1,18 @@
 package com.holodome.recs.etl
 
-import cats.syntax.all._
 import cats.effect.kernel.MonadCancelThrow
+import cats.syntax.all._
 import cats.NonEmptyParallel
+import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSUrl
 import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
-import doobie.implicits.toSqlInterpolator
-import doobie.util.transactor.Transactor
-import doobie.implicits._
 import com.holodome.recs.sql.codecs._
+import doobie.implicits._
+import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 
 import java.util.UUID
-import com.holodome.ext.log4catsExt._
 
 object ClickhouseTransformLoad {
   def make[F[_]: MonadCancelThrow: NonEmptyParallel: Logger](xa: Transactor[F]): RecETLLoader[F] =
@@ -66,10 +65,11 @@ private final case class ClickhouseTransformLoadOperator[F[
 
     for {
       tags <- sql"select tag from tag_ads".query[String].to[List].transact(xa)
-      uids <- sql"select `id` from s3(${url.value}, 'CaSWWithNames')"
-        .query[UUID]
-        .to[List]
-        .transact(xa)
+      uids <-
+        sql"select `id` from s3(${url.value}, 'CSVWithNames', '`id` UUID, `name` String, `email` String')"
+          .query[UUID]
+          .to[List]
+          .transact(xa)
       _ <- uids.traverse_ { uid =>
         (
           sql"""select arrayJoin(ads) as ad from user_bought where `id` = $uid"""
@@ -124,33 +124,33 @@ private final case class ClickhouseTransformLoadOperator[F[
 
   private def loadAdTags(url: OBSUrl) =
     sql"""insert into ad_tags
-            select `id`, splitByChar(',', tags) as tags from s3(${url.value}, 'CSWWithNames')
+            select `id`, splitByChar(',', `tags`) as `tags`
+            from s3(${url.value}, 'CSVWithNames', '`id` UUID, `tags` String')
          """.update.run.transact(xa).void
 
   private def loadTags =
-    sql"""with all_tags as (
-              select unique arrayJoin(tags) as tag from ad_tags
-            )
-            insert into tag_ads
-            select tag, groupArray(id) from all_tags
-            join ad_tags t on has(t.tags, t.id)
-         """.update.run.transact(xa).void
+    sql"""insert into tag_ads
+          select `tag`, groupArray(`id`) as `ads` from (
+            select distinct arrayJoin(`tags`) as `tag` from ad_tags
+          ) a, ad_tags t
+          where has(t.`tags`, `tag`)
+          group by `tag`""".update.run.transact(xa).void
 
   private def loadUserBought(url: OBSUrl) =
     sql"""insert into user_bought
-            (select `id`, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
-             group by `id`
-            )""".update.run.transact(xa).void
+            select `id`, groupArray(ad) as ads
+            from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+            group by `id`""".update.run.transact(xa).void
 
   private def loadUserDiscussed(url: OBSUrl) =
     sql"""insert into user_discussed
-            (select `id`, groupArray(ad) as ads from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
-             group by `id`
-            )""".update.run.transact(xa).void
+            select `id`, groupArray(ad) as ads
+            from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+            group by `id`""".update.run.transact(xa).void
 
   private def loadUserCreated(url: OBSUrl) =
     sql"""insert into user_created
-          select `id`, groupArray(`ad`) as `ads` from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
-          group by `id`
-            """.update.run.transact(xa).void
+            select `id`, groupArray(`ad`) as `ads`
+            from s3(${url.value}, 'CSVWithNames', '`id` UUID, `ad` String')
+            group by `id`""".update.run.transact(xa).void
 }

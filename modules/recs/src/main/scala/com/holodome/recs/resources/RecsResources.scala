@@ -6,7 +6,7 @@ import cats.Applicative
 import com.holodome.recs.config.types.RecsConfig
 import com.holodome.resources.{MkCassandraClient, MkMinioClient}
 import com.ringcentral.cassandra4io.CassandraSession
-import doobie.Transactor
+import doobie.{FC, Transactor}
 import io.minio.MinioAsyncClient
 
 import java.util.Properties
@@ -24,6 +24,16 @@ object RecsResources {
     p
   }
 
+  private def getTransactor[F[_]: Async]: Transactor[F] = {
+    val xa: Transactor[F] = Transactor.fromDriverManager[F](
+      driver = "com.clickhouse.jdbc.ClickHouseDriver",
+      url = "jdbc:ch://localhost/maweituo?jdbcCompliant=true",
+      logHandler = None,
+      info = properties
+    )
+    xa
+  }
+
   def make[F[_]: MkCassandraClient: MkMinioClient: Async](
       cfg: RecsConfig
   ): Resource[F, RecsResources[F]] =
@@ -34,12 +44,7 @@ object RecsResources {
       new RecsResources(
         _,
         _,
-        Transactor.fromDriverManager[F](
-          driver = "com.clickhouse.jdbc.ClickHouseDriver",
-          url = "jdbc:ch://localhost/maweituo?jdbcCompliance=false",
-          logHandler = None,
-          info = properties
-        )
+        getTransactor
       ) {}
     )
 }

@@ -18,7 +18,7 @@ object Infrastructure {
       minio: MinioAsyncClient
   ): F[Infrastructure[F]] =
     MinioObjectStorage
-      .make[F](cfg.minio.baseUrl, minio, cfg.minio.bucket.value)
+      .make[F](s"http://minio:${cfg.minio.port}", minio, cfg.minio.bucket.value)
       .map { minio =>
         new Infrastructure[F] {
           override val obs: ObjectStorage[F] = minio

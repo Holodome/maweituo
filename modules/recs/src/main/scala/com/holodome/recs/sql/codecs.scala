@@ -1,56 +1,65 @@
 package com.holodome.recs.sql
 
+import cats.data.NonEmptyList
 import doobie.Meta
-import doobie.util.invariant.{NullableCellRead, NullableCellUpdate}
 
 import java.util.UUID
-import scala.reflect.ClassTag
 
 object codecs {
-  implicit val uuidMeta: Meta[UUID] =
-    Meta[String].imap[UUID](UUID.fromString)(_.toString)
+  private object arrayMapper {
+    import doobie.util.meta.Meta
+    import doobie.util.{Get, Put}
+    import doobie.enumerated.JdbcType
 
-  private def boxedPair[A >: Null <: AnyRef: ClassTag](
-      elemType: String,
-      arrayType: String,
-      arrayTypeT: String*
-  ): (Meta[Array[A]], Meta[Array[Option[A]]]) = {
-    val raw = Meta.Advanced.array[A](elemType, arrayType, arrayTypeT: _*)
-    // Ensure `a`, which may be null, which is ok, contains no null elements.
-    def checkNull[B >: Null](a: Array[B], e: Exception): Array[B] =
-      if (a == null) null else if (a.contains(null)) throw e else a
-    (
-      raw.timap(checkNull(_, NullableCellRead))(checkNull(_, NullableCellUpdate)),
-      raw.timap[Array[Option[A]]](_.map(Option(_)))(_.map(_.orNull).toArray)
+    def array[A](
+        elemType: String,
+        arrayType: String,
+        arrayTypeT: String*
+    ): Meta[Array[A]] = new Meta[Array[A]](
+      Get.Advanced.one(
+        JdbcType.Array,
+        NonEmptyList(arrayType, arrayTypeT.toList),
+        (r, n) => {
+          val a = r.getArray(n)
+          (if (a == null) null else a.getArray).asInstanceOf[Array[A]]
+        }
+      ),
+      Put.Advanced.one(
+        JdbcType.Array,
+        NonEmptyList(arrayType, arrayTypeT.toList),
+        (ps, n, a) => {
+          val conn = ps.getConnection
+          val arr  = conn.createArrayOf(elemType, a.asInstanceOf[Array[AnyRef]])
+          ps.setArray(n, arr)
+        },
+        (rs, n, a) => {
+          val stmt = rs.getStatement
+          val conn = stmt.getConnection
+          val arr  = conn.createArrayOf(elemType, a.asInstanceOf[Array[AnyRef]])
+          rs.updateArray(n, arr)
+        }
+      )
     )
   }
 
-  private val boxedPairBoolean                                                = boxedPair[java.lang.Boolean]("bit", "_bit")
-  implicit val unliftedBooleanArrayType: Meta[Array[java.lang.Boolean]]       = boxedPairBoolean._1
-  implicit val liftedBooleanArrayType: Meta[Array[Option[java.lang.Boolean]]] = boxedPairBoolean._2
+  implicit val uuidMeta: Meta[UUID] =
+    Meta[String].imap[UUID](UUID.fromString)(_.toString)
 
-  private val boxedPairInteger                                                = boxedPair[java.lang.Integer]("int4", "_int4")
-  implicit val unliftedIntegerArrayType: Meta[Array[java.lang.Integer]]       = boxedPairInteger._1
-  implicit val liftedIntegerArrayType: Meta[Array[Option[java.lang.Integer]]] = boxedPairInteger._2
+  implicit val unliftedIntegerArrayType: Meta[Array[Int]] =
+    arrayMapper.array[Int]("Int32", "Array(Int32)")
 
-  private val boxedPairLong                                             = boxedPair[java.lang.Long]("int8", "_int8")
-  implicit val unliftedLongArrayType: Meta[Array[java.lang.Long]]       = boxedPairLong._1
-  implicit val liftedLongArrayType: Meta[Array[Option[java.lang.Long]]] = boxedPairLong._2
+  implicit val unliftedLongArrayType: Meta[Array[Long]] =
+    arrayMapper.array[Long]("Int64", "Array(Int64)")
 
-  private val boxedPairFloat                                              = boxedPair[java.lang.Float]("float4", "_float4")
-  implicit val unliftedFloatArrayType: Meta[Array[java.lang.Float]]       = boxedPairFloat._1
-  implicit val liftedFloatArrayType: Meta[Array[Option[java.lang.Float]]] = boxedPairFloat._2
+  implicit val unliftedFloatArrayType: Meta[Array[Float]] =
+    arrayMapper.array[Float]("Float32", "Array(Float32)")
 
-  private val boxedPairDouble                                               = boxedPair[java.lang.Double]("float8", "_float8")
-  implicit val unliftedDoubleArrayType: Meta[Array[java.lang.Double]]       = boxedPairDouble._1
-  implicit val liftedDoubleArrayType: Meta[Array[Option[java.lang.Double]]] = boxedPairDouble._2
+  implicit val unliftedDoubleArrayType: Meta[Array[Double]] =
+    arrayMapper.array[Double]("Float64", "Array(Float64)")
 
-  private val boxedPairString =
-    boxedPair[java.lang.String]("varchar", "_varchar", "_char", "_text", "_bpchar")
-  implicit val unliftedStringArrayType: Meta[Array[java.lang.String]]       = boxedPairString._1
-  implicit val liftedStringArrayType: Meta[Array[Option[java.lang.String]]] = boxedPairString._2
+  implicit val unliftedStringArrayType: Meta[Array[String]] =
+    arrayMapper.array[String]("String", "Array(String)")
 
-  private val boxedPairUUID                                             = boxedPair[java.util.UUID]("uuid", "_uuid")
-  implicit val unliftedUUIDArrayType: Meta[Array[java.util.UUID]]       = boxedPairUUID._1
-  implicit val liftedUUIDArrayType: Meta[Array[Option[java.util.UUID]]] = boxedPairUUID._2
+  implicit val unliftedUUIDArrayType: Meta[Array[UUID]] =
+    arrayMapper.array[UUID]("UUID", "Array(UUID)")
 }

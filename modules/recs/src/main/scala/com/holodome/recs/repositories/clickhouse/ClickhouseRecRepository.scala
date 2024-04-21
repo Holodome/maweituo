@@ -24,8 +24,7 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
 
   override def get(userId: UserId): OptionT[F, recommendations.WeightVector] =
     OptionT(getQuery(userId).option.transact(xa))
-      .map(_.map(_.toFloat))
-      .map(arr => recommendations.WeightVector.apply(arr.toList))
+      .map(recommendations.WeightVector.apply)
 
   override def getUserCreated(user: UserId): OptionT[F, Set[AdId]] =
     OptionT(getUserCreatedQuery(user).option.transact(xa)).map(_.toSet.map(AdId.apply))
@@ -44,22 +43,22 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
 
   private def getQuery(userId: UserId) =
     sql"select weights from user_weights where id = ${userId.value}"
-      .query[Array[java.lang.Double]]
+      .query[List[Float]]
 
   private def getUserCreatedQuery(userId: UserId) =
-    sql"select ads from user_created where id = ${userId.value}".query[Array[UUID]]
+    sql"select ads from user_created where id = ${userId.value}".query[List[UUID]]
 
   private def getUserBoughtQuery(userId: UserId) =
-    sql"select ads from user_bought where id = ${userId.value}".query[Array[UUID]]
+    sql"select ads from user_bought where id = ${userId.value}".query[List[UUID]]
 
   private def getUserDiscussedQuery(userId: UserId) =
-    sql"select ads from user_discussed where id = ${userId.value}".query[Array[UUID]]
+    sql"select ads from user_discussed where id = ${userId.value}".query[List[UUID]]
 
   private def getTagByIdxQuery(idx: Int) =
     sql"select tag from tag_ads where idx = $idx".query[String]
 
   private def getAdsByTagQuery(tag: AdTag) =
-    sql"select ads from ad_tags where tag = ${tag.value}".query[Array[UUID]]
+    sql"select ads from ad_tags where tag = ${tag.value}".query[List[UUID]]
 
   override def getClosest(user: UserId, count: Int): F[List[UserId]] =
     getClosestQ(user, count)

@@ -3,7 +3,7 @@ package com.holodome.recs
 import cats.effect.{IO, IOApp}
 import com.holodome.recs.config.Config
 import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETL}
-import com.holodome.recs.modules.{GRPCApi, Infrastructure, Repositories, Services}
+import com.holodome.recs.modules._
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer
 import org.typelevel.log4cats.Logger
@@ -29,7 +29,6 @@ object Main extends IOApp.Simple {
               )
               services <- Services.make[IO](repositories, infrastructure, etl)
               api = GRPCApi.make[IO](services)
-              _ <- services.recs.learn
             } yield cfg.recsServer -> api.httpApp
           }
           .flatMap { case (cfg, httpApp) =>

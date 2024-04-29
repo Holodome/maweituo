@@ -53,9 +53,9 @@ private final case class ClickhouseTransformLoadOperator[F[
       )(calculateWeights(obs.makeUrl(locs.users)))
     } yield ()
 
-  private def calculateWeights(url: OBSUrl) = {
-    def joinListsToSet[A](data: List[Set[A]]) =
-      data.foldLeft(Set[A]())((s, lst) => s ++ lst)
+  private def calculateWeights(url: OBSUrl): F[Unit] = {
+    def joinListsToSet[A](data: List[Set[A]]): Set[A] =
+      data.foldMap(a => a)
 
     def tagsForAd(adId: UUID) =
       sql"select arrayJoin(tags) as tag from ad_tags where `id` = $adId"
@@ -89,7 +89,7 @@ private final case class ClickhouseTransformLoadOperator[F[
             bought.traverse(tagsForAd).map(joinListsToSet),
             discussed.traverse(tagsForAd).map(joinListsToSet),
             created.traverse(tagsForAd).map(joinListsToSet)
-          ).parMapN { case (boughtTags, createdTags, discussedTags) =>
+          ).parMapN { case (boughtTags, discussedTags, createdTags) =>
             val tagsMap = tags
               .foldLeft(scala.collection.mutable.Map[String, Double]()) { case (m, t) =>
                 m(t) = 0
@@ -113,7 +113,7 @@ private final case class ClickhouseTransformLoadOperator[F[
             sql"""insert into user_weights (`id`, weights)
                       values ($uid, (select splitByChar(',', $weightVector)))""".update.run
               .transact(xa)
-              .as(())
+              .void
           }
         }
       }

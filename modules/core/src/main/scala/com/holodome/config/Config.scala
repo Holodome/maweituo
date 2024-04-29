@@ -17,13 +17,15 @@ import scala.concurrent.duration.FiniteDuration
 
 object Config {
   def load[F[_]: Async]: F[AppConfig] =
-    JsonConfig
-      .fromFile[F](Paths.get("maweituo-config.json"))
-      .flatMap { implicit json =>
-        default[F].load[F]
-      }
+    env("MW_CONFIG_PATH").load[F].flatMap { path =>
+      JsonConfig
+        .fromFile[F](Paths.get(path))
+        .flatMap { implicit json =>
+          default[F].load[F]
+        }
+    }
 
-  def default[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
+  private def default[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
     (
       httpServerConfig,
       cassandraConfig,

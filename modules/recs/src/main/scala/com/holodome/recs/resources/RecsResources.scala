@@ -24,15 +24,13 @@ object RecsResources {
     p
   }
 
-  private def getTransactor[F[_]: Async]: Transactor[F] = {
-    val xa: Transactor[F] = Transactor.fromDriverManager[F](
+  private def getTransactor[F[_]: Async]: Transactor[F] =
+    Transactor.fromDriverManager[F](
       driver = "com.clickhouse.jdbc.ClickHouseDriver",
       url = "jdbc:ch://localhost/maweituo?jdbcCompliant=true",
       logHandler = None,
       info = properties
     )
-    xa
-  }
 
   def make[F[_]: MkCassandraClient: MkMinioClient: Async](
       cfg: RecsConfig

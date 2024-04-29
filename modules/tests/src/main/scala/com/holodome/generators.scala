@@ -115,7 +115,7 @@ object generators {
       id     <- adIdGen
       title  <- adTitleGen
       author <- userIdGen
-    } yield Advertisement(id, title, Set(), Set(), Set(), author, resolved = false)
+    } yield Advertisement(id, author, title, Set(), Set(), Set(), resolved = false)
 
   def chatIdGen: Gen[ChatId] =
     idGen(ChatId.apply)

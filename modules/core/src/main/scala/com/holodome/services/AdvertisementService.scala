@@ -43,7 +43,7 @@ object AdvertisementService {
     override def create(authorId: UserId, create: CreateAdRequest): F[AdId] =
       for {
         id <- Id.make[F, AdId]
-        ad = Advertisement(id, create.title, Set(), Set(), Set(), authorId, resolved = false)
+        ad = Advertisement(id, authorId, create.title, Set(), Set(), Set(), resolved = false)
         _  <- repo.create(ad)
         at <- TimeSource[F].instant
         _  <- feed.addToGlobalFeed(id, at)

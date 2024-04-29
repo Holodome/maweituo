@@ -22,35 +22,14 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
     session: CassandraSession[F]
 ) extends AdvertisementRepository[F] {
 
-  private case class SerializedAd(
-      id: AdId,
-      authorId: UserId,
-      title: AdTitle,
-      tags: Option[Set[AdTag]],
-      images: Option[Set[ImageId]],
-      chats: Option[Set[ChatId]],
-      resolved: Boolean
-  ) {
-    def toDomain: Advertisement =
-      Advertisement(
-        id,
-        title,
-        tags.getOrElse(Set()),
-        images.getOrElse(Set()),
-        chats.getOrElse(Set()),
-        authorId,
-        resolved
-      )
-  }
-
   override def create(ad: Advertisement): F[Unit] =
     createQuery(ad).execute(session).void
 
   override def all: F[List[Advertisement]] =
-    allQuery.select(session).compile.toList.map(_.map(_.toDomain))
+    allQuery.select(session).compile.toList
 
   override def find(id: AdId): OptionT[F, Advertisement] =
-    OptionT(findQuery(id).select(session).head.compile.last).map(_.toDomain)
+    OptionT(findQuery(id).select(session).head.compile.last)
 
   override def delete(id: AdId): F[Unit] = deleteQuery(id).execute(session).void
 
@@ -79,11 +58,11 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
 
   private def allQuery =
     cql"select id, author_id, title, tags, images, chats, resolved from advertisements"
-      .as[SerializedAd]
+      .as[Advertisement]
 
   private def findQuery(id: AdId) =
     cql"select id, author_id, title, tags, images, chats, resolved from advertisements where id = ${id.value}"
-      .as[SerializedAd]
+      .as[Advertisement]
 
   private def deleteQuery(id: AdId) =
     cql"delete from advertisements where id = ${id.value}".config(

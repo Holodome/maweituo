@@ -10,4 +10,6 @@
     </root>
 
     <logger name="http4s"/>
+
+    <logger name="com.clickhouse.jdbc.internal.ClickHouseConnectionImpl" level="ERROR" />
 </configuration>

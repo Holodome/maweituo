@@ -28,11 +28,11 @@ object ads {
   @derive(encoder)
   case class Advertisement(
       id: AdId,
+      authorId: UserId,
       title: AdTitle,
       tags: Set[AdTag],
       images: Set[ImageId],
       chats: Set[ChatId],
-      authorId: UserId,
       resolved: Boolean
   )
 

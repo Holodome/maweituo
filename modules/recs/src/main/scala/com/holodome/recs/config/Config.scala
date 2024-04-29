@@ -13,11 +13,13 @@ import java.nio.file.Paths
 
 object Config {
   def load[F[_]: Async]: F[RecsConfig] =
-    JsonConfig
-      .fromFile[F](Paths.get("maweituo-config.json"))
-      .flatMap { implicit json =>
-        default[F].load[F]
-      }
+    env("MW_CONFIG_PATH").load[F].flatMap { path =>
+      JsonConfig
+        .fromFile[F](Paths.get(path))
+        .flatMap { implicit json =>
+          default[F].load[F]
+        }
+    }
 
   private def default[F[_]: Async](implicit file: JsonConfig): ConfigValue[F, RecsConfig] =
     (

@@ -1,7 +1,7 @@
 package com.holodome.cql
 
 import com.datastax.oss.driver.api.core.`type`.DataType
-import com.holodome.domain.ads.{AdId, AdTag, AdTitle}
+import com.holodome.domain.ads.{AdId, AdTag, AdTitle, Advertisement}
 import com.holodome.domain.images.{ImageId, ImageUrl, MediaType}
 import com.holodome.domain.messages.{ChatId, MessageText}
 import com.holodome.domain.users._
@@ -53,4 +53,27 @@ object codecs {
 
       def fromCassandra(in: Cassandra, dataType: DataType): T = IsString[T]._String.get(in)
     }
+
+  private case class SerializedAd(
+      id: AdId,
+      authorId: UserId,
+      title: AdTitle,
+      tags: Option[Set[AdTag]],
+      images: Option[Set[ImageId]],
+      chats: Option[Set[ChatId]],
+      resolved: Boolean
+  ) {
+    def toDomain: Advertisement =
+      Advertisement(
+        id,
+        authorId,
+        title,
+        tags.getOrElse(Set()),
+        images.getOrElse(Set()),
+        chats.getOrElse(Set()),
+        resolved
+      )
+  }
+
+  implicit val adReads: Reads[Advertisement] = implicitly[Reads[SerializedAd]].map(_.toDomain)
 }

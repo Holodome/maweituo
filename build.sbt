@@ -42,6 +42,7 @@ lazy val core = (project in file("modules/core"))
   .enablePlugins(DockerPlugin)
   .settings(
     name := "maweituo-core",
+    Compile / run / fork := true,
     scalacOptions ++= Seq(
       "-Ymacro-annotations",
       "-feature",
@@ -125,6 +126,7 @@ lazy val recs = (project in file("modules/recs"))
   .dependsOn(core)
   .settings(
     name := "maweituo-recs",
+    Compile / run / fork := true,
     libraryDependencies ++= Seq(
       "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
       "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,

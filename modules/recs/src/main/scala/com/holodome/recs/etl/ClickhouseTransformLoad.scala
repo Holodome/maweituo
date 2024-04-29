@@ -2,7 +2,7 @@ package com.holodome.recs.etl
 
 import cats.effect.kernel.MonadCancelThrow
 import cats.syntax.all._
-import cats.NonEmptyParallel
+import cats.Parallel
 import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSUrl
@@ -15,11 +15,11 @@ import org.typelevel.log4cats.Logger
 import java.util.UUID
 
 object ClickhouseTransformLoad {
-  def make[F[_]: MonadCancelThrow: NonEmptyParallel: Logger](xa: Transactor[F]): RecETLLoader[F] =
+  def make[F[_]: MonadCancelThrow: Parallel: Logger](xa: Transactor[F]): RecETLLoader[F] =
     new ClickhouseTransformLoad(xa)
 }
 
-private final class ClickhouseTransformLoad[F[_]: MonadCancelThrow: NonEmptyParallel: Logger](
+private final class ClickhouseTransformLoad[F[_]: MonadCancelThrow: Parallel: Logger](
     xa: Transactor[F]
 ) extends RecETLLoader[F] {
   def load(locs: OBSSnapshotLocations, obs: ObjectStorage[F]): F[Unit] =
@@ -30,7 +30,7 @@ private final class ClickhouseTransformLoad[F[_]: MonadCancelThrow: NonEmptyPara
 
 private final case class ClickhouseTransformLoadOperator[F[
     _
-]: MonadCancelThrow: NonEmptyParallel: Logger](xa: Transactor[F])(obs: ObjectStorage[F]) {
+]: MonadCancelThrow: Parallel: Logger](xa: Transactor[F])(obs: ObjectStorage[F]) {
   def load(locs: OBSSnapshotLocations): F[Unit] =
     for {
       _ <- Logger[F].protectInfo("Starting ETL users load", "Finished ETL users load")(
@@ -70,7 +70,7 @@ private final case class ClickhouseTransformLoadOperator[F[
           .query[UUID]
           .to[List]
           .transact(xa)
-      _ <- uids.traverse_ { uid =>
+      _ <- uids.parTraverse_ { uid =>
         (
           sql"""select arrayJoin(ads) as ad from user_bought where `id` = $uid"""
             .query[UUID]
@@ -84,38 +84,36 @@ private final case class ClickhouseTransformLoadOperator[F[
             .query[UUID]
             .to[List]
             .transact(xa)
-        ).parMapN {
-          case (bought, discussed, created) => {
-            (
-              bought.traverse(tagsForAd).map(joinListsToSet),
-              discussed.traverse(tagsForAd).map(joinListsToSet),
-              created.traverse(tagsForAd).map(joinListsToSet)
-            ).parMapN { case (boughtTags, createdTags, discussedTags) =>
-              val tagsMap = tags
-                .foldLeft(scala.collection.mutable.Map[String, Double]()) { case (m, t) =>
-                  m(t) = 0
-                  m
-                }
-              val boughtWeight    = 1.0
-              val discussedWeight = 0.01
-              val createdWeight   = 0.02
-              for (t <- boughtTags) {
-                tagsMap(t) += boughtWeight
+        ).flatMapN { case (bought, discussed, created) =>
+          (
+            bought.traverse(tagsForAd).map(joinListsToSet),
+            discussed.traverse(tagsForAd).map(joinListsToSet),
+            created.traverse(tagsForAd).map(joinListsToSet)
+          ).parMapN { case (boughtTags, createdTags, discussedTags) =>
+            val tagsMap = tags
+              .foldLeft(scala.collection.mutable.Map[String, Double]()) { case (m, t) =>
+                m(t) = 0
+                m
               }
-              for (t <- createdTags) {
-                tagsMap(t) += createdWeight
-              }
-              for (t <- discussedTags) {
-                tagsMap(t) += discussedWeight
-              }
-              tagsMap
-            }.flatMap { weightMap =>
-              val weightVector = tags.map(t => weightMap(t)).mkString(",")
-              sql"""insert into user_weights (`id`, weights)
-                      values ($uid, (select splitByChar(',', $weightVector)))""".update.run
-                .transact(xa)
-                .as(())
+            val boughtWeight    = 1.0
+            val discussedWeight = 0.01
+            val createdWeight   = 0.02
+            for (t <- boughtTags) {
+              tagsMap(t) += boughtWeight
             }
+            for (t <- createdTags) {
+              tagsMap(t) += createdWeight
+            }
+            for (t <- discussedTags) {
+              tagsMap(t) += discussedWeight
+            }
+            tagsMap
+          }.flatMap { weightMap =>
+            val weightVector = tags.map(t => weightMap(t)).mkString(",")
+            sql"""insert into user_weights (`id`, weights)
+                      values ($uid, (select splitByChar(',', $weightVector)))""".update.run
+              .transact(xa)
+              .as(())
           }
         }
       }

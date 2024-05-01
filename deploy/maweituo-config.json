@@ -1,22 +1,22 @@
 {
   "cassandra": {
     "port": "9042",
-    "host": "localhost",
+    "host": "scylla",
     "datacenter": "datacenter1"
   },
   "http": {
     "port": "8080",
-    "host": "localhost"
+    "host": "core"
   },
   "jwt": {
     "expire": "1 hour"
   },
   "redis": {
-    "host": "localhost"
+    "host": "redis"
   },
   "minio": {
     "port": "9000",
-    "host": "localhost",
+    "host": "minio",
     "bucket": "maweituo",
     "url": "http://minio:9000"
   },
@@ -25,11 +25,11 @@
     "idle_time_in_pool": "30 seconds"
   },
   "recs": {
-    "host": "localhost",
+    "host": "recs",
     "port": "11223",
-    "uri": "http://localhost:11223"
+    "uri": "http://recs:11223"
   },
   "clickhouse": {
-    "jdbcUrl": "jdbc:ch://localhost/maweituo?jdbcCompliant=true"
+    "jdbcUrl": "jdbc:ch://clickhouse/maweituo?jdbcCompliant=true"
   }
 }

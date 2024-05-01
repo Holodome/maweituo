@@ -6,7 +6,7 @@ import ciris._
 import com.comcast.ip4s.{Host, Port}
 import com.holodome.config.types.HttpServerConfig
 import com.holodome.ext.ciris.JsonConfig
-import com.holodome.recs.config.types.RecsConfig
+import com.holodome.recs.config.types.{ClickHouseConfig, RecsConfig}
 import ciris.http4s._
 
 import java.nio.file.Paths
@@ -25,12 +25,16 @@ object Config {
     (
       com.holodome.config.Config.cassandraConfig,
       com.holodome.config.Config.minioConfig,
-      recsServerConfig
+      recsServerConfig,
+      clickhouseConfig
     ).parMapN(RecsConfig.apply)
 
-  def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
+  private def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (
       file.stringField("recs.host").as[Host],
       file.stringField("recs.port").as[Port]
     ).parMapN(HttpServerConfig.apply)
+
+  private def clickhouseConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, ClickHouseConfig] =
+    file.stringField("clickhouse.jdbcUrl").as[String].map(ClickHouseConfig.apply)
 }

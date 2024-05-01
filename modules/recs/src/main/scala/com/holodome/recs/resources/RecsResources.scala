@@ -2,11 +2,10 @@ package com.holodome.recs.resources
 
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
-import cats.Applicative
-import com.holodome.recs.config.types.RecsConfig
+import com.holodome.recs.config.types.{ClickHouseConfig, RecsConfig}
 import com.holodome.resources.{MkCassandraClient, MkMinioClient}
 import com.ringcentral.cassandra4io.CassandraSession
-import doobie.{FC, Transactor}
+import doobie.Transactor
 import io.minio.MinioAsyncClient
 
 import java.util.Properties
@@ -18,19 +17,20 @@ sealed abstract class RecsResources[F[_]](
 )
 
 object RecsResources {
-  private val properties = {
-    val p = new Properties()
-    p.setProperty("http_connection_provider", "HTTP_URL_CONNECTION")
-    p
-  }
 
-  private def getTransactor[F[_]: Async]: Transactor[F] =
+  private def clickhouseTransactor[F[_]: Async](cfg: ClickHouseConfig): Transactor[F] = {
+    val properties = {
+      val p = new Properties()
+      p.setProperty("http_connection_provider", "HTTP_URL_CONNECTION")
+      p
+    }
     Transactor.fromDriverManager[F](
       driver = "com.clickhouse.jdbc.ClickHouseDriver",
-      url = "jdbc:ch://localhost/maweituo?jdbcCompliant=true",
+      url = cfg.jdbcUrl,
       logHandler = None,
       info = properties
     )
+  }
 
   def make[F[_]: MkCassandraClient: MkMinioClient: Async](
       cfg: RecsConfig
@@ -42,7 +42,7 @@ object RecsResources {
       new RecsResources(
         _,
         _,
-        getTransactor
+        clickhouseTransactor(cfg.clickhouse)
       ) {}
     )
 }

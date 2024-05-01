@@ -7,7 +7,7 @@ sbt tests/test
 # Integration tests
 
 ```shell
-docker-compose -f deploy/test-docker-compose.yml up -d 
+docker-compose -f deploy/test-it.docker-compose.yml up -d 
 sbt it/test
 ```
 

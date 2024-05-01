@@ -14,8 +14,6 @@ import org.http4s.Uri
 import scala.concurrent.duration.FiniteDuration
 
 object types {
-  sealed abstract class AppEnvironment extends EnumEntry with Lowercase
-
   @derive(configDecoder, show)
   @newtype case class JwtAccessSecret(value: String)
 
@@ -30,11 +28,9 @@ object types {
       port: Port,
       userId: Secret[NonEmptyString],
       password: Secret[NonEmptyString],
-      bucket: NonEmptyString
-  ) {
-    def baseUrl: String =
-      s"http://${host.toString}:${port.toString}"
-  }
+      bucket: NonEmptyString,
+      url: NonEmptyString
+  )
 
   case class HttpServerConfig(
       host: Host,

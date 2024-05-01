@@ -43,22 +43,20 @@ object Config {
       env("MW_CASSANDRA_KEYSPACE")
     ).parMapN(CassandraConfig.apply)
 
-  def httpServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
+  private def httpServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (
       file.stringField("http.host").as[Host],
       file.stringField("http.port").as[Port]
     ).parMapN(HttpServerConfig)
 
-  def jwtConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, JwtConfig] =
+  private def jwtConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, JwtConfig] =
     (
       file.stringField("jwt.expire").as[JwtTokenExpiration],
       env("MW_JWT_SECRET_KEY").as[JwtAccessSecret].secret
     ).parMapN(JwtConfig.apply)
 
-  def redisConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RedisConfig] =
-    (
-      file.stringField("redis.host").as[Host]
-    ).map(RedisConfig.apply)
+  private def redisConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RedisConfig] =
+    file.stringField("redis.host").as[Host].map(RedisConfig.apply)
 
   def minioConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, MinioConfig] =
     (
@@ -66,10 +64,11 @@ object Config {
       file.stringField("minio.port").as[Port],
       env("MW_MINIO_USER").as[NonEmptyString].secret,
       env("MW_MINIO_PASSWORD").as[NonEmptyString].secret,
-      file.stringField("minio.bucket").as[NonEmptyString]
+      file.stringField("minio.bucket").as[NonEmptyString],
+      file.stringField("minio.url").as[NonEmptyString]
     ).parMapN(MinioConfig.apply)
 
-  def recsClientConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RecsClientConfig] =
+  private def recsClientConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, RecsClientConfig] =
     (
       file.stringField("recs_client.timeout").as[FiniteDuration],
       file.stringField("recs_client.idle_time_in_pool").as[FiniteDuration],

@@ -124,9 +124,13 @@ lazy val it = (project in file("modules/it"))
 
 lazy val recs = (project in file("modules/recs"))
   .dependsOn(core)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .settings(
     name := "maweituo-recs",
     Compile / run / fork := true,
+    dockerExposedPorts ++= Seq(11223),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
       "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
       "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,

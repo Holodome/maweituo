@@ -5,7 +5,8 @@ import faker
 import hashlib
 import uuid
 import random
-from faker.providers import company
+from faker.providers import company, date_time
+import datetime
 
 cluster = Cluster(["127.0.0.1"], port=9042)
 session = cluster.connect()
@@ -19,6 +20,7 @@ ADS = 500
 
 fake = faker.Faker()
 fake.add_provider(company)
+fake.add_provider(date_time)
 
 tags = ["car", "house", "job", "clothes", "tickets", "shoes", "furniture", "website", "pet", "electronics"]
 for it in tags:
@@ -31,7 +33,9 @@ for i in range(USERS):
     email = fake.email()
     raw_password = id
     salt = uuid.uuid4()
-    hashed_salted_password = hashlib.sha256((str(raw_password) + str(salt)).encode("utf-8")).hexdigest()
+#     hashed_salted_password = hashlib.sha256((str(raw_password) + str(salt)).encode("utf-8")).hexdigest()
+    hashed_salted_password = "bb2a8dcbfa08b0f23f287555a324ec07148e0c59c3b4245e2f29211636b1b09e"
+    salt = "ab88750c-37e6-4d92-b975-872cde5cb677"
 
     session.execute("insert into local.users (id, name, email, password, salt) values (%s, %s, %s, %s, %s)",
                     (id, name, email, hashed_salted_password, str(salt)))
@@ -52,5 +56,7 @@ for i in range(ADS):
                         (id, tag))
     session.execute("insert into recs.user_created (id, ad) values (%s, %s)",
                     (author, id))
+    session.execute("insert into local.global_feed (at, ad_id) values (%s, %s)",
+                    (int(float(fake.date_time().strftime("%s.%f"))) * 1000, id))
     ads.append(id)
 

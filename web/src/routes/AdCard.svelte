@@ -3,6 +3,5 @@
 </script>
 
 <div>
-    <h3><a href="/ads/{ ad.id }">{ad.title}</a></h3>
-    <p><a href="/account/{ ad.authorId }">Author</a></p>
+    <h3><a href="/ads/{ ad }">Go to ad {ad}</a></h3>
 </div>

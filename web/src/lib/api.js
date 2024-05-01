@@ -25,7 +25,7 @@ async function sendInternal({ method, path, data, token }) {
 	throw error(res.status);
 }
 
-async function send({ method, path, data, token }) {
+export async function send({ method, path, data, token }) {
 	const res = await sendInternal({method, path, data, token});
 	const text = await res.text();
 	return text ? JSON.parse(text) : {};

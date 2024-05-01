@@ -26,7 +26,7 @@ object Config {
       com.holodome.config.Config.cassandraConfig,
       com.holodome.config.Config.minioConfig,
       recsServerConfig,
-      clickhouseConfig
+      clickhouseConfig,
     ).parMapN(RecsConfig.apply)
 
   private def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =

@@ -20,18 +20,21 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder](feed: FeedService[F])
 
   private val prefixPath = "/feed"
 
-  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case req @ GET -> Root =>
-    req.decodeR[Pagination] { pag =>
-      feed.getGlobal(pag).flatMap(Ok(_))
-    }
+  private object Page     extends OptionalQueryParamDecoderMatcher[Int]("page")
+  private object PageSize extends OptionalQueryParamDecoderMatcher[Int]("pageSize")
+
+  private def makePagination(page: Option[Int], pageSize: Option[Int]): Pagination =
+    Pagination(pageSize.getOrElse(100), page.getOrElse(0))
+
+  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
+    case GET -> Root :? Page(page) :? PageSize(pageSize) =>
+      feed.getGlobal(makePagination(page, pageSize)).flatMap(Ok(_))
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case ar @ GET -> Root / UserIdVar(userId) as user =>
+    case GET -> Root / UserIdVar(userId) :? Page(page) :? PageSize(pageSize) as user =>
       if (userId == user.id) {
-        ar.req.decodeR[Pagination] { pag =>
-          feed.getPersonalized(user.id, pag).flatMap(Ok(_))
-        }
+        feed.getPersonalized(user.id, makePagination(page, pageSize)).flatMap(Ok(_))
       } else {
         Forbidden()
       }

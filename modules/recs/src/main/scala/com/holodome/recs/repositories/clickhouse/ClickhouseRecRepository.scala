@@ -55,10 +55,10 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
     sql"select ads from user_discussed where id = ${userId.value}".query[List[UUID]]
 
   private def getTagByIdxQuery(idx: Int) =
-    sql"select tag from tag_ads where idx = $idx".query[String]
+    sql"select tag from tag_ads limit 1 offset $idx".query[String]
 
   private def getAdsByTagQuery(tag: AdTag) =
-    sql"select ads from ad_tags where tag = ${tag.value}".query[List[UUID]]
+    sql"select ads from tag_ads where tag = ${tag.value}".query[List[UUID]]
 
   override def getClosest(user: UserId, count: Int): F[List[UserId]] =
     getClosestQ(user, count)

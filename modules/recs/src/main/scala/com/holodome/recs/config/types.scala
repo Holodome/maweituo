@@ -11,6 +11,6 @@ object types {
       cassandra: CassandraConfig,
       minio: MinioConfig,
       recsServer: HttpServerConfig,
-      clickhouse: ClickHouseConfig
+      clickhouse: ClickHouseConfig,
   )
 }

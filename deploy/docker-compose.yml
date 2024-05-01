@@ -18,13 +18,37 @@ services:
         condition: service_started
       minio:
         condition: service_started
+      recs:
+        condition: service_started
     environment:
-      - MW_APP_ENV=test
       - MW_JWT_SECRET_KEY=123
       - MW_MINIO_USER=minioadmin
       - MW_MINIO_PASSWORD=minioadmin
       - MW_CASSANDRA_KEYSPACE=local
-      - MW_NO_RECS=1
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+
+  recs:
+    image: 'maweituo-recs:0.1.0'
+    container_name: maweituo-recs
+    volumes:
+      - ./maweituo-config.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '11223:11223'
+    networks:
+      - backend
+    depends_on:
+      scylla:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      clickhouse:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CASSANDRA_KEYSPACE=local
       - MW_CONFIG_PATH=/etc/maweituo-config.json
 
   redis:

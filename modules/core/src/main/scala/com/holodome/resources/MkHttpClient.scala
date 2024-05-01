@@ -18,5 +18,6 @@ object MkHttpClient {
       .default[F]
       .withTimeout(c.timeout)
       .withIdleTimeInPool(c.idleTimeInPool)
+      .withHttp2
       .build
 }

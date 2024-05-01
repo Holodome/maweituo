@@ -13,8 +13,6 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import pdi.jwt.JwtAlgorithm
 
-import scala.concurrent.duration.DurationInt
-
 object Main extends IOApp.Simple {
 
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]

@@ -28,7 +28,7 @@ trait HttpSuite extends SimpleIOSuite with Checkers {
           expect.same(resp.status, expectedStatus)(loc = loc) |+| expect
             .same(json.dropNullValues, expectedBody.asJson.dropNullValues)(loc = loc)
         }
-      case None => IO.pure(failure("route not found")(loc))
+      case None => failure("route not found")(loc).pure[IO]
     }
 
   def expectHttpStatus(routes: HttpRoutes[IO], req: Request[IO])(

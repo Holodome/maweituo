@@ -30,33 +30,31 @@ object ChatService {
       adRepo: AdvertisementRepository[F],
       telemetry: TelemetryService[F]
   ) extends ChatService[F] {
-    override def create(adId: AdId, clientId: UserId): F[ChatId] = {
-      chatRepo
+    override def create(adId: AdId, clientId: UserId): F[ChatId] = for {
+      _ <- chatRepo
         .findByAdAndClient(adId, clientId)
         .semiflatTap(_ => ChatAlreadyExists(adId, clientId).raiseError[F, Unit])
         .value
-        .void *>
-        adRepo
-          .get(adId)
-          .map(_.authorId)
-          .flatTap {
-            case author if author === clientId =>
-              CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
-            case _ => Applicative[F].unit
-          }
-          .flatMap { author =>
-            for {
-              id <- Id.make[F, ChatId]
-              chat = Chat(
-                id,
-                adId,
-                author,
-                clientId
-              )
-              _ <- chatRepo.create(chat)
-            } yield id
-          } <* Logger[F].info(s"Created chat for ad $adId and user $clientId")
-    } <* telemetry.userDiscussed(clientId, adId)
+        .void
+      author <- adRepo
+        .get(adId)
+        .map(_.authorId)
+        .flatTap {
+          case author if author === clientId =>
+            CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
+          case _ => Applicative[F].unit
+        }
+      id <- Id.make[F, ChatId]
+      chat = Chat(
+        id,
+        adId,
+        author,
+        clientId
+      )
+      _ <- chatRepo.create(chat)
+      _ <- telemetry.userDiscussed(clientId, adId)
+      _ <- Logger[F].info(s"Created chat for ad $adId and user $clientId")
+    } yield id
 
     override def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId] =
       chatRepo

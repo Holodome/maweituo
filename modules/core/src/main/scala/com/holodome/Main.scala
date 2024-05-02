@@ -17,7 +17,7 @@ object Main extends IOApp.Simple {
 
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  override def run: IO[Unit] = {
+  override def run: IO[Unit] =
     Config.load[IO] flatMap { cfg =>
       Logger[IO].info(s"Loaded config $cfg") >> Supervisor[IO](await = false).use { implicit sp =>
         AppResources
@@ -41,5 +41,4 @@ object Main extends IOApp.Simple {
           .useForever
       }
     }
-  }
 }

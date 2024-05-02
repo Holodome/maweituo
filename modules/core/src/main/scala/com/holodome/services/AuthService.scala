@@ -48,7 +48,7 @@ object AuthService {
           }
         }
         .onError { case e =>
-          Logger[F].error(e)(s"Attempt to get invalid used")
+          Logger[F].warn(e)(s"Attempt to login invalid used")
         }
 
     override def logout(uid: UserId, token: JwtToken): F[Unit] =

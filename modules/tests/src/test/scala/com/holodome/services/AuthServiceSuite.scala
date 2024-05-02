@@ -40,7 +40,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
       for {
         x <- auth
           .login(name, password)
-          .map(_ => None)
+          .as(None)
           .recoverWith { case NoUserFound(name) =>
             Some(name).pure[IO]
           }
@@ -64,7 +64,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
       val usersRepo   = new InMemoryUserRepository[IO]
       val userService = UserService.make[IO](usersRepo, iam)
       val tokens = new JwtTokens[IO] {
-        override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
+        override def create(userId: UserId): IO[JwtToken] = JwtToken("token").pure[IO]
       }
       val auth = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
@@ -80,7 +80,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
       val usersRepo = new InMemoryUserRepository[IO]
       val users     = UserService.make(usersRepo, iam)
       val tokens = new JwtTokens[IO] {
-        override def create(userId: UserId): IO[JwtToken] = IO.pure(JwtToken("token"))
+        override def create(userId: UserId): IO[JwtToken] = JwtToken("token").pure[IO]
       }
       val auth = AuthService.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {

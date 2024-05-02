@@ -22,15 +22,14 @@ private final class RecommendationGRPCServer[F[_]: Monad: GenUUID](
 ) extends proto.rec.RecommendationService[F] {
 
   override def learn(request: proto.rec.Empty, ctx: Headers): F[proto.rec.Empty] =
-    service.learn.map(_ => proto.rec.Empty())
+    service.learn.as(proto.rec.Empty())
 
-  override def getRecs(request: proto.rec.UserId, ctx: Headers): F[proto.rec.Recommendations] = {
+  override def getRecs(request: proto.rec.UserId, ctx: Headers): F[proto.rec.Recommendations] =
     for {
       id     <- Id.read[F, UserId](request.value)
       result <- service.getRecs(id, 10)
     } yield proto.rec
       .Recommendations(
-        result.map(adId => proto.rec.AdId.apply(adId.value.toString))
+        result.map(adId => proto.rec.AdId(adId.value.toString))
       )
-  }
 }

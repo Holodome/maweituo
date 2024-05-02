@@ -13,16 +13,14 @@ trait MkMinioClient[F[_]] {
 object MkMinioClient {
   def apply[F[_]: MkMinioClient]: MkMinioClient[F] = implicitly
 
-  implicit def forSync[F[_]: Sync]: MkMinioClient[F] = new MkMinioClient[F] {
-    override def newClient(cfg: MinioConfig): Resource[F, MinioAsyncClient] =
-      Resource.make[F, MinioAsyncClient](
-        Sync[F].delay(
-          MinioAsyncClient
-            .builder()
-            .endpoint(s"http://${cfg.host}:${cfg.port}")
-            .credentials(cfg.userId.value.toString(), cfg.password.value.toString())
-            .build()
-        )
-      )(_ => Applicative[F].unit)
-  }
+  implicit def forSync[F[_]: Sync]: MkMinioClient[F] = (cfg: MinioConfig) =>
+    Resource.make[F, MinioAsyncClient](
+      Sync[F].delay(
+        MinioAsyncClient
+          .builder()
+          .endpoint(s"http://${cfg.host}:${cfg.port}")
+          .credentials(cfg.userId.value.toString(), cfg.password.value.toString())
+          .build()
+      )
+    )(_ => Applicative[F].unit)
 }

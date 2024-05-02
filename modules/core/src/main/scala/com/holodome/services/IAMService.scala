@@ -50,9 +50,7 @@ object IAMService {
     override def authorizeUserModification(target: UserId, userId: UserId): F[Unit] =
       (target === userId)
         .guard[Option]
-        .fold(InvalidAccess("User update not authorized").raiseError[F, Unit])(_ =>
-          Applicative[F].unit
-        )
+        .fold(InvalidAccess("User update not authorized").raiseError[F, Unit])(Applicative[F].pure)
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
       user === chat.adAuthor || user === chat.client

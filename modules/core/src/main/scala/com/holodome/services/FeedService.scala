@@ -1,9 +1,8 @@
 package com.holodome.services
 
-import cats.{Applicative, MonadThrow}
+import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.errors.FeedError
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
@@ -36,7 +35,7 @@ object FeedService {
             r    <- repo.getPersonalized(user, pag)
             _    <- Logger[F].info(s"Generated feed for user $user")
           } yield r
-        case lst => Applicative[F].pure(lst)
+        case lst => lst.pure[F]
       }
 
     override def getGlobal(pag: Pagination): F[List[AdId]] =

@@ -10,6 +10,7 @@ import com.holodome.infrastructure.ObjectStorage.{ObjectId, OBSUrl}
 import io.minio._
 import io.minio.errors.ErrorResponseException
 
+import java.io.InputStream
 import scala.util.control.NonFatal
 
 object MinioObjectStorage {
@@ -18,28 +19,26 @@ object MinioObjectStorage {
       client: MinioAsyncClient,
       bucket: String
   ): F[ObjectStorage[F]] =
-    ensureBucketIsCreated(client, bucket).map(_ => new MinioObjectStorage(baseUrl, client, bucket))
+    ensureBucketIsCreated(client, bucket).as(new MinioObjectStorage(baseUrl, client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Monad](
       minio: MinioAsyncClient,
       bucket: String
-  ): F[Unit] = {
-    liftCompletableFuture(
-      minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())
-    ).map(scala.Boolean.unbox)
-      .flatMap {
-        case true => Applicative[F].unit
-        case false =>
-          liftCompletableFuture(
-            minio.makeBucket(
-              MakeBucketArgs
-                .builder()
-                .bucket(bucket)
-                .build()
-            )
-          ).void
-      }
-  }
+  ): F[Unit] = liftCompletableFuture(
+    minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())
+  ).map(scala.Boolean.unbox)
+    .flatMap {
+      case true => Applicative[F].unit
+      case false =>
+        liftCompletableFuture(
+          minio.makeBucket(
+            MakeBucketArgs
+              .builder()
+              .bucket(bucket)
+              .build()
+          )
+        ).void
+    }
 
 }
 
@@ -71,10 +70,10 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
         client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
       ).map(_.some).recoverWith {
         case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
-          Applicative[F].pure(none[GetObjectResponse])
+          none[GetObjectResponse].pure[F]
       }
-    ).map { resp =>
-      fs2.io.readInputStream(Applicative[F].pure(resp), 4096)
+    ).map { resp: InputStream =>
+      fs2.io.readInputStream(resp.pure[F], 4096)
     }
 
   override def delete(id: ObjectId): F[Unit] =

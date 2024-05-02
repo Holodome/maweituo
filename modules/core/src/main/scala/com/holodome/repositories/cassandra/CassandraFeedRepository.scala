@@ -34,7 +34,7 @@ private final class CassandraFeedRepository[F[_]: Async](session: CassandraSessi
   override def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: Int): F[Unit] =
     ads
       .foldLeftM(0) { case (idx, id) =>
-        setPersonalizedQ(userId, id, idx, ttlSecs).execute(session).map(_ => idx + 1)
+        setPersonalizedQ(userId, id, idx, ttlSecs).execute(session).as(idx + 1)
       }
       .void
 

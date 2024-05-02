@@ -2,10 +2,8 @@ package com.holodome.auth
 
 import cats.Monad
 import cats.syntax.all._
-import ch.qos.logback.classic.encoder.JsonEncoder
 import com.holodome.config.types._
 import com.holodome.domain.users.UserId
-import com.holodome.effects.GenUUID
 import dev.profunktor.auth.jwt.{jwtEncode, JwtSecretKey, JwtToken}
 import io.circe.syntax.EncoderOps
 import io.circe.Encoder

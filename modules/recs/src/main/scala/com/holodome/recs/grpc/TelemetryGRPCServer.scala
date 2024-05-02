@@ -36,7 +36,7 @@ private final class TelemetryGRPCServer[F[_]: Monad: GenUUID](service: Telemetry
       .flatMap { case (userId, adId) =>
         f(userId, adId)
       }
-      .map(_ => proto.rec.Empty())
+      .as(proto.rec.Empty())
 
   private def userAdActionToDomain(request: proto.rec.UserAdAction): F[(UserId, AdId)] =
     OptionT

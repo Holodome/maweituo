@@ -25,20 +25,17 @@ object MessageService {
   )(implicit timeSource: TimeSource[F])
       extends MessageService[F] {
 
-    override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = {
-      iam.authorizeChatAccess(chatId, senderId) *> {
-        for {
-          now <- timeSource.instant
-          msg = Message(
-            senderId,
-            chatId,
-            req.text,
-            now
-          )
-          _ <- msgRepo.send(msg)
-        } yield ()
-      }
-    }
+    override def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] = for {
+      _   <- iam.authorizeChatAccess(chatId, senderId)
+      now <- timeSource.instant
+      msg = Message(
+        senderId,
+        chatId,
+        req.text,
+        now
+      )
+      _ <- msgRepo.send(msg)
+    } yield ()
 
     override def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
       iam.authorizeChatAccess(chatId, requester) *> msgRepo

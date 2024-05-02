@@ -16,7 +16,6 @@ object Services {
 
   def make[F[_]: Sync: MkRandom](
       repositories: Repositories[F],
-      infrastructure: Infrastructure[F],
       etl: RecETL[F]
   ): F[Services[F]] = {
     MkRandom[F].make.map { implicit rng =>
@@ -24,7 +23,7 @@ object Services {
         override val telemetry: TelemetryService[F] =
           TelemetryServiceInterpreter.make[F](repositories.telemetry)
         override val recs: RecommendationService[F] =
-          RecommendationServiceInterpreter.make[F](repositories.recs, etl, infrastructure.obs)
+          RecommendationServiceInterpreter.make[F](repositories.recs, etl)
       }
     }
   }

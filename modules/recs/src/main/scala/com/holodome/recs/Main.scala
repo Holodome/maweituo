@@ -1,5 +1,6 @@
 package com.holodome.recs
 
+import cats.syntax.all._
 import cats.effect.{IO, IOApp}
 import com.holodome.recs.config.Config
 import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETL}
@@ -27,7 +28,7 @@ object Main extends IOApp.Simple {
                 ClickhouseTransformLoad.make[IO](res.clickhouse),
                 infrastructure.obs
               )
-              services <- Services.make[IO](repositories, infrastructure, etl)
+              services <- Services.make[IO](repositories, etl)
               api = GRPCApi.make[IO](services)
             } yield cfg.recsServer -> api.httpApp
           }

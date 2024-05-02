@@ -23,8 +23,7 @@ object RecommendationServiceInterpreter {
 
 private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObjectStorageId](
     recRepo: RecRepository[F],
-    etl: RecETL[F],
-    obs: ObjectStorage[F]
+    etl: RecETL[F]
 )(implicit rng: Random[F])
     extends RecommendationService[F] {
 

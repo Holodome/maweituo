@@ -7,7 +7,6 @@ import ciris.http4s._
 import ciris.refined._
 import com.comcast.ip4s._
 import com.holodome.config.types._
-import com.holodome.ext.ciris.JsonConfig
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.http4s.Uri

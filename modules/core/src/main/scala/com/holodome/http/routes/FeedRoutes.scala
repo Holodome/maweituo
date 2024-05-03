@@ -5,7 +5,6 @@ import cats.MonadThrow
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.AuthedUser
-import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.http.vars.UserIdVar
 import com.holodome.services.FeedService

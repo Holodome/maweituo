@@ -8,7 +8,8 @@ import com.holodome.config.types.{JwtAccessSecret, JwtTokenExpiration}
 import com.holodome.domain.users.{LoginRequest, UserId}
 import com.holodome.generators._
 import com.holodome.http.routes.{LoginRoutes, RegisterRoutes}
-import com.holodome.infrastructure.{EphemeralDict, InMemoryEphemeralDict}
+import com.holodome.infrastructure.EphemeralDict
+import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
 import com.holodome.repositories._
 import com.holodome.services.{AuthService, IAMService, UserService}
 import com.holodome.services.AuthServiceSuite.mock

@@ -2,7 +2,7 @@ package com.holodome.services
 
 import cats.effect.IO
 import com.holodome.generators.{createAdRequestGen, imageContentsGen, registerGen}
-import com.holodome.infrastructure.InMemoryObjectStorage
+import com.holodome.infrastructure.inmemory.InMemoryObjectStorage
 import com.holodome.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats

@@ -9,7 +9,6 @@ import com.holodome.domain.Id
 import com.holodome.domain.errors.InternalImageUnsync
 import com.holodome.effects.GenUUID
 import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
-import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.repositories.{AdImageRepository, AdvertisementRepository}
 import org.typelevel.log4cats.Logger
 
@@ -59,7 +58,7 @@ object AdImageService {
     override def delete(imageId: ImageId, authenticated: UserId): F[Unit] = for {
       _     <- iam.authorizeImageDelete(imageId, authenticated)
       image <- imageRepo.getMeta(imageId)
-      _     <- objectStorage.delete(ObjectId.fromImageUrl(image.url))
+      _     <- objectStorage.delete(image.url.toObsID)
       _     <- adRepo.removeImage(image.adId, imageId)
       _ <- Logger[F].info(
         s"Deleted image ${image.id} from ad ${image.adId} by user $authenticated"
@@ -69,7 +68,7 @@ object AdImageService {
     override def get(imageId: ImageId): F[ImageContentsStream[F]] = for {
       image <- imageRepo.getMeta(imageId)
       stream <- objectStorage
-        .get(ObjectId.fromImageUrl(image.url))
+        .get(image.url.toObsID)
         .map(ImageContentsStream(_, image.mediaType, image.size))
         .getOrRaise(InternalImageUnsync("Image object not found"))
     } yield stream

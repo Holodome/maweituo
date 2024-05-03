@@ -5,8 +5,6 @@ import com.comcast.ip4s.{Host, Port}
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
-import enumeratum.EnumEntry._
-import enumeratum._
 import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import org.http4s.Uri

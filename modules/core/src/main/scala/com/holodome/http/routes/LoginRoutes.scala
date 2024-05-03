@@ -25,7 +25,6 @@ final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
       }
     }
 
-  def routes(implicit
-      H: HttpErrorHandler[F, ApplicationError]
-  ): Routes[F] = Routes[F](Some(H.handle(httpRoutes)), None)
+  def routes(implicit H: HttpErrorHandler[F, ApplicationError]): Routes[F] =
+    Routes[F](Some(H.handle(httpRoutes)), None)
 }

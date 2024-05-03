@@ -5,7 +5,7 @@ import com.holodome.domain.ads._
 import com.holodome.domain.images._
 import com.holodome.domain.messages._
 import com.holodome.domain.users._
-import com.holodome.infrastructure.ObjectStorage.ObjectId
+import com.holodome.infrastructure.ObjectStorage.OBSId
 import eu.timepit.refined.api.Refined
 import org.scalacheck.Gen
 
@@ -92,8 +92,8 @@ object generators {
       )
     )
 
-  def objectIdGen: Gen[ObjectId] =
-    nesGen(ObjectId.apply)
+  def objectIdGen: Gen[OBSId] =
+    nesGen(OBSId.apply)
 
   def userGen: Gen[User] = for {
     id       <- userIdGen

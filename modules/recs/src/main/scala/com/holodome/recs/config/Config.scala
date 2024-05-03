@@ -5,9 +5,9 @@ import cats.syntax.all._
 import ciris._
 import com.comcast.ip4s.{Host, Port}
 import com.holodome.config.types.HttpServerConfig
-import com.holodome.ext.ciris.JsonConfig
 import com.holodome.recs.config.types.{ClickHouseConfig, RecsConfig}
 import ciris.http4s._
+import com.holodome.config.JsonConfig
 
 import java.nio.file.Paths
 

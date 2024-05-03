@@ -1,9 +1,9 @@
 package com.holodome.optics
 
-import com.holodome.ext.derevo.Derive
 import monocle.Iso
 
 import java.util.UUID
+import com.holodome.ext.derevo.Derive
 
 trait IsUUID[A] {
   def _UUID: Iso[UUID, A]

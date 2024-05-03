@@ -1,7 +1,7 @@
-package com.holodome.ext.ciris
+package com.holodome.config
 
-import cats.syntax.all._
 import cats.effect.Sync
+import cats.syntax.all._
 import ciris.{ConfigError, ConfigKey, ConfigValue}
 import io.circe.{ACursor, Json}
 

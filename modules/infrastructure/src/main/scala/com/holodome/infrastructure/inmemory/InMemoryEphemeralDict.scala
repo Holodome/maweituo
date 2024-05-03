@@ -1,7 +1,8 @@
-package com.holodome.infrastructure
+package com.holodome.infrastructure.inmemory
 
 import cats.data.OptionT
 import cats.effect.Sync
+import com.holodome.infrastructure.EphemeralDict
 
 import scala.collection.concurrent.TrieMap
 

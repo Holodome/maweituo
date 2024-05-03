@@ -3,8 +3,8 @@ package com.holodome
 import cats.effect.{IO, Resource}
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import com.holodome.generators.nonEmptyStringGen
-import dev.profunktor.redis4cats.log4cats._
 import com.holodome.infrastructure.redis.RedisEphemeralDict
+import dev.profunktor.redis4cats.log4cats._
 import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.Logger
 

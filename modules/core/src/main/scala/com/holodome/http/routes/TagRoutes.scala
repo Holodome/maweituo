@@ -28,9 +28,6 @@ final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
       }
   }
 
-  def routes(implicit
-      H: HttpErrorHandler[F, ApplicationError]
-  ): Routes[F] = {
+  def routes(implicit H: HttpErrorHandler[F, ApplicationError]): Routes[F] =
     Routes(Some(Router(prefixPath -> H.handle(publicRoutes))), None)
-  }
 }

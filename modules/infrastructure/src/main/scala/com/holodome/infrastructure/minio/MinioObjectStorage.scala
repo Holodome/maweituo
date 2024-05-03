@@ -6,7 +6,7 @@ import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.ext.catsExt.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.{ObjectId, OBSUrl}
+import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
 import io.minio._
 import io.minio.errors.ErrorResponseException
 
@@ -48,7 +48,7 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
     bucket: String
 ) extends ObjectStorage[F] {
 
-  override def putStream(id: ObjectId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
+  override def putStream(id: OBSId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
     fs2.io.toInputStreamResource(blob).use { is =>
       liftCompletableFuture {
         client
@@ -64,7 +64,7 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
       }.void
     }
 
-  override def get(id: ObjectId): OptionT[F, fs2.Stream[F, Byte]] =
+  override def get(id: OBSId): OptionT[F, fs2.Stream[F, Byte]] =
     OptionT(
       liftCompletableFuture(
         client.getObject(GetObjectArgs.builder().bucket(bucket).`object`(id.value).build())
@@ -76,11 +76,11 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
       fs2.io.readInputStream(resp.pure[F], 4096)
     }
 
-  override def delete(id: ObjectId): F[Unit] =
+  override def delete(id: OBSId): F[Unit] =
     liftCompletableFuture(
       client.removeObject(RemoveObjectArgs.builder().bucket(bucket).`object`(id.value).build())
     ).void
 
-  override def makeUrl(id: ObjectId): OBSUrl =
+  override def makeUrl(id: OBSId): OBSUrl =
     OBSUrl(s"$baseUrl/$bucket/${id.value}")
 }

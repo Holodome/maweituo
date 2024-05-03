@@ -5,6 +5,7 @@ import cats.data.{EitherT, OptionT}
 import cats.effect.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
+import com.holodome.infrastructure.ObjectStorage.OBSId
 import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
@@ -19,7 +20,18 @@ object images {
   @newtype case class ImageId(id: UUID)
 
   @derive(encoder, decoder, eqv)
-  @newtype case class ImageUrl(value: String)
+  @newtype case class ImageUrl(value: String) {
+    def toObsID: OBSId = OBSId(value)
+  }
+
+  object ImageUrl {
+    def fromObsId(id: OBSId): ImageUrl =
+      ImageUrl(id.value)
+  }
+
+  implicit class ImageUrlOBSConv(id: OBSId) {
+    def toImageUrl: ImageUrl = ImageUrl.fromObsId(id)
+  }
 
   case class ImageContentsStream[+F[_]](
       data: fs2.Stream[F, Byte],

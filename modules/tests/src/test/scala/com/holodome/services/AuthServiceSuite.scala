@@ -7,7 +7,8 @@ import com.holodome.domain._
 import com.holodome.domain.errors.NoUserFound
 import com.holodome.domain.users.UserId
 import com.holodome.generators._
-import com.holodome.infrastructure.{EphemeralDict, InMemoryEphemeralDict}
+import com.holodome.infrastructure.EphemeralDict
+import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
 import com.holodome.repositories._
 import dev.profunktor.auth.jwt.JwtToken
 import org.mockito.MockitoSugar

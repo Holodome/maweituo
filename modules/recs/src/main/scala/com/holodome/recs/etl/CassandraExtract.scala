@@ -2,16 +2,16 @@ package com.holodome.recs.etl
 
 import cats.effect.Async
 import cats.syntax.all._
+import com.holodome.ext.log4catsExt._
 import cats.NonEmptyParallel
 import com.holodome.domain.ads.{AdId, AdTag, AdTitle}
 import com.holodome.domain.users.{User, UserId}
-import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.ObjectId
 import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import com.ringcentral.cassandra4io.CassandraSession
 import com.holodome.cql.codecs._
-import com.holodome.ext.log4catsExt.LoggerProtect
+import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.ObjectStorage.OBSId
 import org.typelevel.log4cats.Logger
 
 object CassandraExtract {
@@ -68,7 +68,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 
   private def storeCsv(
       stream: fs2.Stream[F, String],
-      ob: ObjectId
+      ob: OBSId
   ): F[Unit] =
     stream
       .evalMap { str =>
@@ -77,7 +77,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
       .compile
       .drain
 
-  private def extractUsersToObs(ob: ObjectId): F[Unit] =
+  private def extractUsersToObs(ob: OBSId): F[Unit] =
     storeCsv(
       cql"select * from local.users"
         .as[User]
@@ -88,7 +88,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
       ob
     )
 
-  private def extractAdsToObs(ob: ObjectId): F[Unit] =
+  private def extractAdsToObs(ob: OBSId): F[Unit] =
     storeCsv(
       cql"select id, author_id, title, tags from local.advertisements"
         .as[(AdId, UserId, AdTitle, Option[Set[AdTag]])]
@@ -101,7 +101,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
       ob
     )
 
-  private def extractUserBoughtToObs(ob: ObjectId): F[Unit] =
+  private def extractUserBoughtToObs(ob: OBSId): F[Unit] =
     storeCsv(
       cql"select * from recs.user_bought"
         .as[(UserId, AdId)]
@@ -114,7 +114,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
       ob
     )
 
-  private def extractUserDiscussedToObs(ob: ObjectId): F[Unit] =
+  private def extractUserDiscussedToObs(ob: OBSId): F[Unit] =
     storeCsv(
       cql"select * from recs.user_discussed"
         .as[(UserId, AdId)]
@@ -127,7 +127,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
       ob
     )
 
-  private def extractUserCreatedToObs(ob: ObjectId): F[Unit] =
+  private def extractUserCreatedToObs(ob: OBSId): F[Unit] =
     storeCsv(
       cql"select * from recs.user_created"
         .as[(UserId, AdId)]

@@ -1,10 +1,10 @@
 package com.holodome.domain
 
-import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import io.circe.refined._
 import derevo.derive
+import com.holodome.optics.uuidIso
 import dev.profunktor.auth.jwt.{JwtSymmetricAuth, JwtToken}
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.cats._

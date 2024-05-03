@@ -24,8 +24,6 @@ final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: User
       }
     }
 
-  def routes(implicit
-      H: HttpErrorHandler[F, ApplicationError]
-  ): Routes[F] =
+  def routes(implicit H: HttpErrorHandler[F, ApplicationError]): Routes[F] =
     Routes[F](Some(H.handle(httpRoutes)), None)
 }

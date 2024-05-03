@@ -1,28 +1,16 @@
 package com.holodome.domain
 
-import cats.syntax.all._
-import cats.{Applicative, MonadThrow, Show}
+import cats.{MonadThrow, Show}
 import cats.data.{EitherT, OptionT}
 import cats.effect.Concurrent
+import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import org.http4s.{
-  AuthedRoutes,
-  Entity,
-  EntityDecoder,
-  EntityEncoder,
-  Header,
-  Headers,
-  HttpRoutes,
-  MalformedMessageBodyFailure,
-  Media,
-  MediaRange,
-  MediaType
-}
+import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
 import java.util.UUID
 

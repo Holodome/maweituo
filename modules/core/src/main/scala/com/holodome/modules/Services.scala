@@ -22,7 +22,7 @@ object Services {
       repositories: Repositories[F],
       infrastructure: Infrastructure[F],
       grpc: RecsClients[F]
-  ): Services[F] = {
+  ): Services[F] =
     new Services[F] {
       val iam: IAMService[F] =
         IAMService.make[F](repositories.ads, repositories.chats, repositories.images)
@@ -54,5 +54,4 @@ object Services {
       override val tags: AdTagService[F] = AdTagService.make[F](repositories.tags)
       override val feed: FeedService[F]  = FeedService.make[F](repositories.feed, grpc.recs)
     }
-  }
 }

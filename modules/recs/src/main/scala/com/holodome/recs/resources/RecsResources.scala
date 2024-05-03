@@ -9,6 +9,8 @@ import doobie.Transactor
 import io.minio.MinioAsyncClient
 
 import java.util.Properties
+import com.zaxxer.hikari.HikariConfig
+import doobie.hikari._
 
 sealed abstract class RecsResources[F[_]](
     val cassandra: CassandraSession[F],
@@ -18,18 +20,24 @@ sealed abstract class RecsResources[F[_]](
 
 object RecsResources {
 
-  private def clickhouseTransactor[F[_]: Async](cfg: ClickHouseConfig): Transactor[F] = {
+  private def clickhouseTransactor[F[_]: Async](
+      cfg: ClickHouseConfig
+  ): Resource[F, Transactor[F]] = {
     val properties = {
       val p = new Properties()
       p.setProperty("http_connection_provider", "HTTP_URL_CONNECTION")
       p
     }
-    Transactor.fromDriverManager[F](
-      driver = "com.clickhouse.jdbc.ClickHouseDriver",
-      url = cfg.jdbcUrl,
-      logHandler = None,
-      info = properties
-    )
+    for {
+      hikariConfig <- Resource.pure {
+        val config = new HikariConfig()
+        config.setDriverClassName("com.clickhouse.jdbc.ClickHouseDriver")
+        config.setJdbcUrl(cfg.jdbcUrl)
+        config.setDataSourceProperties(properties)
+        config
+      }
+      xa <- HikariTransactor.fromHikariConfig[F](hikariConfig)
+    } yield xa
   }
 
   def make[F[_]: MkCassandraClient: MkMinioClient: Async](
@@ -37,12 +45,9 @@ object RecsResources {
   ): Resource[F, RecsResources[F]] =
     (
       MkCassandraClient[F].newClient(cfg.cassandra),
-      MkMinioClient[F].newClient(cfg.minio)
+      MkMinioClient[F].newClient(cfg.minio),
+      clickhouseTransactor(cfg.clickhouse)
     ).parMapN(
-      new RecsResources(
-        _,
-        _,
-        clickhouseTransactor(cfg.clickhouse)
-      ) {}
+      new RecsResources(_, _, _) {}
     )
 }

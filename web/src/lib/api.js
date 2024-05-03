@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 
-const base = 'http://127.0.0.1:8080';
+//const base = 'http://core:8080';
+const base = 'http://localhost:8080';
 
 export function buildUrl(path) {
 	return `${base}/${path}`;

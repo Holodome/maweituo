@@ -57,12 +57,10 @@
         </form>
     {/if}
     {#if !isAuthor()}
-        {#if data.chat}
-            <a href="/ads/{$page.params.ad}/chats/{ data.chat }">Open chat</a>
-        {:else}
-            <form use:enhance method="POST" action="?/create_chat">
-                <button type="submit">Create chat</button>
-            </form>
-        {/if}
+        <form use:enhance method="POST" action="?/create_chat">
+            <button type="submit">Create chat</button>
+        </form>
+    {:else if data.chat}
+        <a href="/ads/{$page.params.ad}/chats/{ data.chat }">Open chat</a>
     {/if}
 </div>

@@ -36,8 +36,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
       .map(_.toList)
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] = for {
-    closest <- recRepo
-      .getClosest(user, 10)
+    closest <- recRepo.getClosest(user, 10)
     s <- List(0 until count)
       .traverse(_ => rng.elementOf(closest))
       .flatMap(_.traverse(u => generateRecommendationBasedOnUser(u).value).map(_.flatten))
@@ -46,7 +45,7 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
 
   private def generateRecommendationBasedOnUser(target: UserId): OptionT[F, AdId] =
     OptionT
-      .liftF(rng.betweenDouble(0, 1))
+      .liftF(rng.nextDouble)
       .flatMap {
         case x if 0.0 <= x && x <= 0.1 => recRepo.getUserCreated(target)
         case x if 0.1 < x && x <= 0.4  => recRepo.getUserDiscussed(target)
@@ -68,7 +67,9 @@ private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObject
       .reverse
     low  = values.head
     high = values.last
-    r <- OptionT.liftF(rng.betweenDouble(low, high))
+    r <-
+      if (low < high) { OptionT.liftF(rng.betweenDouble(low, high)) }
+      else { OptionT.none }
     idx = values.takeWhile_(v => v < r).length
     tag <- recRepo.getTagByIdx(idx)
     ads <- recRepo.getAdsByTag(tag)

@@ -5,7 +5,7 @@ import { fail, redirect } from '@sveltejs/kit';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, params }) {
     const adInfo = await api.get(`ads/${params.ad}`, locals.user?.token);
-    const chatInfo = await api.get(`ads/${params.ad}/chat`, locals.user?.token);
+    const chatInfo = locals.user?.token ? await api.get(`ads/${params.ad}/chat`, locals.user?.token) : null;
     const images = adInfo.images.map((img) => {
         return {
             url: api.buildUrl(`ads/${params.ad}/img/${img}`),

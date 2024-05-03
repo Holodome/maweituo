@@ -133,6 +133,8 @@ lazy val recs = (project in file("modules/recs"))
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
       "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
+      "org.tpolecat"  %% "doobie-hikari"   % DoobieVersion,
+      "com.zaxxer"     % "HikariCP"        % "5.1.0",
       "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,
       "org.lz4"        % "lz4-java"        % "1.8.0"
     )

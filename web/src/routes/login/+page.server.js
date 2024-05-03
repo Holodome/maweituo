@@ -15,13 +15,13 @@ export const actions = {
 			name: data.get('name'),
 			password: data.get('password')
 		});
+
 		if (body.errors) {
 			return fail(401, body);
 		}
 		
 		const jwt = body.access_token;
 		cookies.set('jwt', jwt, { path: '/' });
-
-		throw redirect(307, '/');
+		redirect(307, '/');
 	}
 };

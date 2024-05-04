@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.MonadThrow
 import cats.syntax.all._
@@ -9,6 +9,8 @@ import com.holodome.domain.messages.SendMessageRequest
 import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
 import com.holodome.repositories.MessageRepository
+import com.holodome.services.IAMService
+import com.holodome.services.MessageService
 
 object MessageServiceInterpreter {
   def make[F[_]: MonadThrow](

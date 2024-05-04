@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.Applicative
 import cats.MonadThrow
@@ -14,6 +14,9 @@ import com.holodome.effects.TimeSource
 import com.holodome.repositories.AdvertisementRepository
 import com.holodome.repositories.FeedRepository
 import com.holodome.repositories.TagRepository
+import com.holodome.services.AdService
+import com.holodome.services.IAMService
+import com.holodome.services.TelemetryService
 import org.typelevel.log4cats.Logger
 
 object AdServiceInterpreter {

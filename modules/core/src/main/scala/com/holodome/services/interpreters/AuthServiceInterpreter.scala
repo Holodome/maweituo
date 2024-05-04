@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.MonadThrow
 import cats.data.OptionT
@@ -13,6 +13,7 @@ import com.holodome.domain.users.UserId
 import com.holodome.domain.users.Username
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.repositories.UserRepository
+import com.holodome.services.AuthService
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
 

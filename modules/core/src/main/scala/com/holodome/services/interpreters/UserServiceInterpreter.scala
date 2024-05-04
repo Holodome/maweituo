@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.MonadThrow
 import cats.data.OptionT
@@ -14,6 +14,8 @@ import com.holodome.domain.users.User
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
+import com.holodome.services.IAMService
+import com.holodome.services.UserService
 import org.typelevel.log4cats.Logger
 
 object UserServiceInterpreter {

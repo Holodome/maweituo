@@ -5,6 +5,16 @@ import com.holodome.effects.Background
 import com.holodome.effects.GenUUID
 import com.holodome.effects.TimeSource
 import com.holodome.services._
+import com.holodome.services.interpreters.AdImageServiceInterpreter
+import com.holodome.services.interpreters.AdServiceInterpreter
+import com.holodome.services.interpreters.AdTagServiceInterpreter
+import com.holodome.services.interpreters.AuthServiceInterpreter
+import com.holodome.services.interpreters.ChatServiceInterpreter
+import com.holodome.services.interpreters.FeedServiceInterpreter
+import com.holodome.services.interpreters.IAMServiceInterpreter
+import com.holodome.services.interpreters.MessageServiceInterpreter
+import com.holodome.services.interpreters.TelemetryServiceBackgroundInterpreter
+import com.holodome.services.interpreters.UserServiceInterpreter
 import org.typelevel.log4cats.Logger
 
 sealed abstract class Services[F[_]] {

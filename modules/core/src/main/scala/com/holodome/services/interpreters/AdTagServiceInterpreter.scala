@@ -1,10 +1,11 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.Monad
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.ads.AdTag
 import com.holodome.repositories.TagRepository
+import com.holodome.services.AdTagService
 
 object AdTagServiceInterpreter {
 

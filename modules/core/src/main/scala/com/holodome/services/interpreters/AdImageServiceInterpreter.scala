@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.MonadThrow
 import cats.syntax.all._
@@ -14,6 +14,8 @@ import com.holodome.infrastructure.GenObjectStorageId
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.repositories.AdImageRepository
 import com.holodome.repositories.AdvertisementRepository
+import com.holodome.services.AdImageService
+import com.holodome.services.IAMService
 import org.typelevel.log4cats.Logger
 
 object AdImageServiceInterpreter {

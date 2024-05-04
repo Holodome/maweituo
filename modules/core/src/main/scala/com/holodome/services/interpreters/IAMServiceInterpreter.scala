@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.services.interpreters
 
 import cats.Applicative
 import cats.MonadThrow
@@ -14,6 +14,7 @@ import com.holodome.domain.users.UserId
 import com.holodome.repositories.AdImageRepository
 import com.holodome.repositories.AdvertisementRepository
 import com.holodome.repositories.ChatRepository
+import com.holodome.services.IAMService
 
 object IAMServiceInterpreter {
 

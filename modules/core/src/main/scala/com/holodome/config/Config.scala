@@ -6,6 +6,7 @@ import ciris._
 import ciris.http4s._
 import ciris.refined._
 import com.comcast.ip4s._
+import com.holodome.cassandra.config.CassandraConfig
 import com.holodome.config.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString

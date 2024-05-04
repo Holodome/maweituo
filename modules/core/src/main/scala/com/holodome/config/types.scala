@@ -2,6 +2,7 @@ package com.holodome.config
 
 import ciris.Secret
 import com.comcast.ip4s.{Host, Port}
+import com.holodome.cassandra.config.CassandraConfig
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
@@ -20,7 +21,6 @@ object types {
 
   @newtype case class RedisConfig(host: Host)
 
-  case class CassandraConfig(host: Host, port: Port, datacenter: NonEmptyString, keyspace: String)
   case class MinioConfig(
       host: Host,
       port: Port,

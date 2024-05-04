@@ -86,14 +86,24 @@ lazy val domain = (project in file("modules/domain"))
   .dependsOn(infrastructure)
   .settings(
     commonSettings,
-    name := "maweituo-domain",
+    name := "maweituo-domain"
+  )
+
+lazy val cassandra = (project in file("modules/cassandra-da"))
+  .dependsOn(domain)
+  .settings(
+    commonSettings,
+    name := "maweituo-cassandra-da",
+    libraryDependencies ++= Seq(
+      "com.ringcentral" %% "cassandra4io" % Cassandra4IoVersion
+    )
   )
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(Http4sGrpcPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
-  .dependsOn(domain)
+  .dependsOn(cassandra)
   .settings(
     commonSettings,
     name := "maweituo-core",
@@ -103,7 +113,6 @@ lazy val core = (project in file("modules/core"))
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
       "ch.qos.logback"        % "logback-classic"      % LogbackVersion,
-      "com.ringcentral"      %% "cassandra4io"         % Cassandra4IoVersion,
       "com.thesamet.scalapb" %% "scalapb-runtime"      % scalapb.compiler.Version.scalapbVersion % "protobuf",
       "com.thesamet.scalapb" %% "compilerplugin"       % "0.11.11",
       "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,

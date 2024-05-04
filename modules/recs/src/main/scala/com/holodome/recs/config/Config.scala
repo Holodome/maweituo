@@ -4,12 +4,10 @@ import cats.effect.Async
 import cats.syntax.all._
 import ciris._
 import ciris.http4s._
-import com.comcast.ip4s.Host
-import com.comcast.ip4s.Port
+import com.comcast.ip4s.{Host, Port}
 import com.holodome.config.JsonConfig
 import com.holodome.config.types.HttpServerConfig
-import com.holodome.recs.config.types.ClickHouseConfig
-import com.holodome.recs.config.types.RecsConfig
+import com.holodome.recs.config.types.{ClickHouseConfig, RecsConfig}
 
 import java.nio.file.Paths
 

@@ -1,8 +1,7 @@
 package com.holodome.recs.services
 
 import cats.MonadThrow
-import cats.data.NonEmptyList
-import cats.data.OptionT
+import cats.data.{NonEmptyList, OptionT}
 import cats.effect.std.Random
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId

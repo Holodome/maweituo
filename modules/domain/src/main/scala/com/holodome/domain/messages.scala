@@ -3,13 +3,10 @@ package com.holodome.domain
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.optics.uuidIso
-import derevo.cats.eqv
-import derevo.cats.show
-import derevo.circe.magnolia.decoder
-import derevo.circe.magnolia.encoder
+import derevo.cats.{eqv, show}
+import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
-import io.circe.Encoder
-import io.circe.Json
+import io.circe.{Encoder, Json}
 import io.estatico.newtype.macros.newtype
 
 import java.time.Instant

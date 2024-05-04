@@ -1,15 +1,19 @@
-package com.holodome.services
+package com.holodome.tests.services
 
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.errors.ChatAccessForbidden
+import com.holodome.domain.repositories._
+import com.holodome.domain.services._
 import com.holodome.effects.TimeSource
-import com.holodome.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
-import com.holodome.repositories._
+import com.holodome.services.interpreters._
+import com.holodome.tests.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
+import com.holodome.tests.repositories._
+import com.holodome.tests.services.TelemetryServiceStub
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
-import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
@@ -19,7 +23,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   implicit val logger: Logger[IO] = NoOpLogger[IO]
 
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[IO]): IAMService[IO] =
-    IAMService.make(ad, chat, mock[AdImageRepository[IO]])
+    IAMServiceInterpreter.make(ad, chat, mock[AdImageRepository[IO]])
 
   private val epoch: Long = 1711564995
   private implicit def clockMock: TimeSource[IO] = new TimeSource[IO] {
@@ -41,17 +45,17 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserService.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
       val ads =
-        AdService.make[IO](
+        AdServiceInterpreter.make[IO](
           adRepo,
           mock[TagRepository[IO]],
           feedRepository,
           iam,
           new TelemetryServiceStub[IO]
         )
-      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageService.make[IO](msgRepo, iam)
+      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
+      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for {
         u1      <- users.create(reg)
         u2      <- users.create(otherReg)
@@ -84,16 +88,16 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserService.make[IO](userRepo, iam)
-      val ads = AdService.make[IO](
+      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val ads = AdServiceInterpreter.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
         iam,
         new TelemetryServiceStub[IO]
       )
-      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageService.make[IO](msgRepo, iam)
+      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
+      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for {
         u1   <- users.create(reg1)
         u2   <- users.create(reg2)
@@ -124,16 +128,16 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserService.make[IO](userRepo, iam)
-      val ads = AdService.make[IO](
+      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val ads = AdServiceInterpreter.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
         iam,
         new TelemetryServiceStub[IO]
       )
-      val chats = ChatService.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageService.make[IO](msgRepo, iam)
+      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
+      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for {
         u1   <- users.create(reg1)
         u2   <- users.create(reg2)

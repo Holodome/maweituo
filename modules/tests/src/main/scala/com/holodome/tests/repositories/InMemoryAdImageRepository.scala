@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.tests.repositories
 
 import cats.data.OptionT
 import cats.effect.Sync

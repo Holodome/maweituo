@@ -4,11 +4,9 @@ import cats.data.OptionT
 import cats.effect.kernel.Async
 import cats.syntax.all._
 import com.holodome.effects.GenUUID
-import com.holodome.recs.grpc.RecommendationGRPCServer
-import com.holodome.recs.grpc.TelemetryGRPCServer
-import org.http4s.HttpApp
-import org.http4s.HttpRoutes
+import com.holodome.recs.grpc.{RecommendationGRPCServer, TelemetryGRPCServer}
 import org.http4s.server.middleware._
+import org.http4s.{HttpApp, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
 import scala.concurrent.duration.DurationInt

@@ -8,8 +8,7 @@ import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
-import org.http4s.Headers
-import org.http4s.HttpRoutes
+import org.http4s.{Headers, HttpRoutes}
 
 object RecommendationGRPCServer {
   def make[F[_]: GenUUID: Temporal](

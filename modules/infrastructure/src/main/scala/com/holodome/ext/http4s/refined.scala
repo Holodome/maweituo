@@ -3,8 +3,7 @@ package com.holodome.ext.http4s
 import cats.MonadThrow
 import cats.syntax.all._
 import eu.timepit.refined._
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.api.Validate
+import eu.timepit.refined.api.{Refined, Validate}
 import io.circe.Decoder
 import org.http4s._
 import org.http4s.circe._

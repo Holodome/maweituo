@@ -2,8 +2,7 @@ package com.holodome.recs.etl
 
 import cats.Monad
 import cats.syntax.all._
-import com.holodome.infrastructure.GenObjectStorageId
-import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
 import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
 
 trait RecETLExtractor[F[_]] {

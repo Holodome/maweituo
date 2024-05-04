@@ -1,12 +1,12 @@
 package com.holodome.cassandra
 
+import cats.Show
 import cats.effect.IO
 import cats.syntax.all._
-import cats.Show
+import com.holodome.cassandra.CassandraAdvertisementRepository
 import com.holodome.domain.ads.Advertisement
 import com.holodome.domain.errors.InvalidAdId
-import com.holodome.generators.adGen
-import com.holodome.repositories.cassandra.CassandraAdvertisementRepository
+import com.holodome.tests.generators.adGen
 
 object CassandraAdvertisementRepositorySuite extends CassandraSuite {
   implicit val adShow: Show[Advertisement] = Show.show(_ => "Ad")

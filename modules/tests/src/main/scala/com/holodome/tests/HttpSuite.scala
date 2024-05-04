@@ -1,4 +1,4 @@
-package com.holodome
+package com.holodome.tests
 
 import cats.Applicative
 import cats.effect.IO
@@ -8,10 +8,8 @@ import io.circe.syntax._
 import org.http4s._
 import org.http4s.circe._
 import org.typelevel.log4cats.Logger
-import weaver.Expectations
-import weaver.SimpleIOSuite
-import weaver.SourceLocation
 import weaver.scalacheck.Checkers
+import weaver.{Expectations, SimpleIOSuite, SourceLocation}
 
 import java.nio.charset.StandardCharsets
 import scala.util.control.NoStackTrace

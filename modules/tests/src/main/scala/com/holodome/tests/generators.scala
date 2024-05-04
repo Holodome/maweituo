@@ -1,4 +1,4 @@
-package com.holodome
+package com.holodome.tests
 
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.ads._

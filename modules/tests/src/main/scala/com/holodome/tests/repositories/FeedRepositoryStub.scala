@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.tests.repositories
 
 import cats.effect.IO
 import cats.syntax.all._

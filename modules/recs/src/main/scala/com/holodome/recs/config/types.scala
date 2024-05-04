@@ -1,8 +1,6 @@
 package com.holodome.recs.config
 
-import com.holodome.config.types.CassandraConfig
-import com.holodome.config.types.HttpServerConfig
-import com.holodome.config.types.MinioConfig
+import com.holodome.config.types.{CassandraConfig, HttpServerConfig, MinioConfig}
 
 object types {
   case class ClickHouseConfig(

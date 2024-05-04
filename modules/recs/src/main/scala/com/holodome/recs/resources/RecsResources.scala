@@ -1,12 +1,9 @@
 package com.holodome.recs.resources
 
-import cats.effect.Async
-import cats.effect.Resource
+import cats.effect.{Async, Resource}
 import cats.syntax.all._
-import com.holodome.recs.config.types.ClickHouseConfig
-import com.holodome.recs.config.types.RecsConfig
-import com.holodome.resources.MkCassandraClient
-import com.holodome.resources.MkMinioClient
+import com.holodome.recs.config.types.{ClickHouseConfig, RecsConfig}
+import com.holodome.resources.{MkCassandraClient, MkMinioClient}
 import com.ringcentral.cassandra4io.CassandraSession
 import com.zaxxer.hikari.HikariConfig
 import doobie.Transactor

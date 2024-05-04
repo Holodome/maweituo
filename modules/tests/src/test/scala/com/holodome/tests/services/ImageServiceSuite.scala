@@ -1,13 +1,16 @@
-package com.holodome.services
+package com.holodome.tests.services
 
 import cats.effect.IO
-import com.holodome.generators.{createAdRequestGen, imageContentsGen, registerGen}
+import com.holodome.domain.repositories._
+import com.holodome.domain.services._
 import com.holodome.infrastructure.inmemory.InMemoryObjectStorage
-import com.holodome.repositories._
+import com.holodome.services.interpreters._
+import com.holodome.tests.generators.{createAdRequestGen, imageContentsGen, registerGen}
+import com.holodome.tests.repositories._
 import org.mockito.MockitoSugar
 import org.mockito.cats.MockitoCats
-import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
@@ -18,7 +21,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
       ad: AdvertisementRepository[IO],
       images: AdImageRepository[IO]
   ): IAMService[IO] =
-    IAMService.make(ad, mock[ChatRepository[IO]], images)
+    IAMServiceInterpreter.make(ad, mock[ChatRepository[IO]], images)
 
   test("create works") {
     val gen = for {
@@ -32,16 +35,16 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
       val imageRepo = new InMemoryAdImageRepository[IO]
       val os        = new InMemoryObjectStorage[IO]
       val iam       = makeIam(adRepo, imageRepo)
-      val users     = UserService.make[IO](userRepo, iam)
+      val users     = UserServiceInterpreter.make[IO](userRepo, iam)
       val ads =
-        AdService.make[IO](
+        AdServiceInterpreter.make[IO](
           adRepo,
           mock[TagRepository[IO]],
           new FeedRepositoryStub,
           iam,
           new TelemetryServiceStub[IO]
         )
-      val imgs = AdImageService.make[IO](imageRepo, adRepo, os, iam)
+      val imgs = AdImageServiceInterpreter.make[IO](imageRepo, adRepo, os, iam)
       for {
         u    <- users.create(reg)
         a    <- ads.create(u, createAd)

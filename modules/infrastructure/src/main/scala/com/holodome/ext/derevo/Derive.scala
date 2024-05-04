@@ -1,7 +1,6 @@
 package com.holodome.ext.derevo
 
-import derevo.Derivation
-import derevo.NewTypeDerivation
+import derevo.{Derivation, NewTypeDerivation}
 
 import scala.annotation.implicitNotFound
 

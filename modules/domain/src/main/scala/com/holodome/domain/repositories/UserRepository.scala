@@ -2,8 +2,7 @@ package com.holodome.domain.repositories
 
 import cats.MonadThrow
 import cats.data.OptionT
-import com.holodome.domain.errors.InvalidUserId
-import com.holodome.domain.errors.NoUserFound
+import com.holodome.domain.errors.{InvalidUserId, NoUserFound}
 import com.holodome.domain.users._
 
 trait UserRepository[F[_]] extends {

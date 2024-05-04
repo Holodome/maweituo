@@ -1,11 +1,11 @@
 package com.holodome.cassandra
 
-import cats.syntax.all._
-import cats.effect.IO
 import cats.Show
+import cats.effect.IO
+import cats.syntax.all._
+import com.holodome.cassandra.CassandraMessageRepository
 import com.holodome.domain.messages.Message
-import com.holodome.generators._
-import com.holodome.repositories.cassandra.CassandraMessageRepository
+import com.holodome.tests.generators._
 
 object CassandraMessageRepositorySuite extends CassandraSuite {
   private implicit val showMessage: Show[Message] = Show.show(_ => "Message")

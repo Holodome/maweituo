@@ -1,11 +1,8 @@
-package com.holodome
+package com.holodome.tests
 
 import cats.effect.IO
 import org.typelevel.log4cats.Logger
-import weaver.Expectations
-import weaver.Log
-import weaver.SimpleIOSuite
-import weaver.TestName
+import weaver._
 
 abstract class IOLoggedTest extends SimpleIOSuite {
   def ioLoggedTest(name: TestName)(run: Logger[IO] => IO[Expectations]): Unit =

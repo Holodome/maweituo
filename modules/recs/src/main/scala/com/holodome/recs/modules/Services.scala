@@ -2,12 +2,10 @@ package com.holodome.recs.modules
 
 import cats.effect.Sync
 import cats.syntax.all._
-import com.holodome.domain.services.RecommendationService
-import com.holodome.domain.services.TelemetryService
+import com.holodome.domain.services.{RecommendationService, TelemetryService}
 import com.holodome.effects.MkRandom
 import com.holodome.recs.etl.RecETL
-import com.holodome.recs.services.RecommendationServiceInterpreter
-import com.holodome.recs.services.TelemetryServiceInterpreter
+import com.holodome.recs.services.{RecommendationServiceInterpreter, TelemetryServiceInterpreter}
 
 sealed abstract class Services[F[_]] {
   val telemetry: TelemetryService[F]

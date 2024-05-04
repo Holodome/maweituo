@@ -1,14 +1,16 @@
-package com.holodome.services
+package com.holodome.tests.services
 
 import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.errors.{InvalidAccess, InvalidUserId}
+import com.holodome.domain.repositories._
 import com.holodome.domain.users.UserId
-import com.holodome.generators.{registerGen, updateUserGen, userIdGen}
-import com.holodome.repositories._
+import com.holodome.services.interpreters._
+import com.holodome.tests.generators.{registerGen, updateUserGen, userIdGen}
+import com.holodome.tests.repositories._
 import org.mockito.MockitoSugar.mock
-import org.typelevel.log4cats.noop.NoOpLogger
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
@@ -17,7 +19,7 @@ import java.util.UUID
 object UserServiceSuite extends SimpleIOSuite with Checkers {
   implicit val logger: Logger[IO] = NoOpLogger[IO]
 
-  private val iam = IAMService.make(
+  private val iam = IAMServiceInterpreter.make(
     mock[AdvertisementRepository[IO]],
     mock[ChatRepository[IO]],
     mock[AdImageRepository[IO]]
@@ -26,7 +28,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register user works") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         _ <- serv.create(register)
       } yield expect.all(true)
@@ -36,7 +38,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         id <- serv.create(register)
         u  <- serv.get(id)
@@ -47,7 +49,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find by name work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         id <- serv.create(register)
         u  <- repo.getByName(register.name)
@@ -58,7 +60,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and delete work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         id <- serv.create(register)
         _  <- serv.delete(id, id)
@@ -77,7 +79,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield r -> other
     forall(gen) { case (register, other) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         newId   <- serv.create(register)
         otherId <- serv.create(other)
@@ -99,7 +101,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd)
     forall(gen) { case (register, upd) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
@@ -122,7 +124,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd, id)
     forall(gen) { case (register, upd, id) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserService.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, iam)
       for {
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)

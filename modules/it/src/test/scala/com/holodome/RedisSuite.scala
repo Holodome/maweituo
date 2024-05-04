@@ -1,12 +1,13 @@
 package com.holodome
 
 import cats.effect.{IO, Resource}
-import dev.profunktor.redis4cats.{Redis, RedisCommands}
-import com.holodome.generators.nonEmptyStringGen
 import com.holodome.infrastructure.redis.RedisEphemeralDict
+import com.holodome.tests.ResourceSuite
+import com.holodome.tests.generators.nonEmptyStringGen
 import dev.profunktor.redis4cats.log4cats._
-import org.typelevel.log4cats.noop.NoOpLogger
+import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 
 import scala.concurrent.duration.DurationInt
 

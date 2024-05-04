@@ -1,12 +1,12 @@
 package com.holodome.cassandra
 
+import cats.Show
 import cats.effect.IO
 import cats.syntax.all._
-import cats.Show
+import com.holodome.cassandra.CassandraUserRepository
 import com.holodome.domain.errors.NoUserFound
 import com.holodome.domain.users.User
-import com.holodome.generators.userGen
-import com.holodome.repositories.cassandra.CassandraUserRepository
+import com.holodome.tests.generators.userGen
 
 object CassandraUserRepositorySuite extends CassandraSuite {
 

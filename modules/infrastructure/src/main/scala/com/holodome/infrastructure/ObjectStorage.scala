@@ -1,8 +1,7 @@
 package com.holodome.infrastructure
 
 import cats.data.OptionT
-import com.holodome.infrastructure.ObjectStorage.OBSId
-import com.holodome.infrastructure.ObjectStorage.OBSUrl
+import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
 import derevo.cats.show
 import derevo.derive
 import io.estatico.newtype.macros.newtype

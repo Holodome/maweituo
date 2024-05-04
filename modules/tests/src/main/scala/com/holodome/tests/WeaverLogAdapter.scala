@@ -1,4 +1,4 @@
-package com.holodome
+package com.holodome.tests
 
 class WeaverLogAdapter[F[_]](log: weaver.Log[F]) extends org.typelevel.log4cats.Logger[F] {
 

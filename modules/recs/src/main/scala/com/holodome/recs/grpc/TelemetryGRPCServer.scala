@@ -10,8 +10,7 @@ import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
-import org.http4s.Headers
-import org.http4s.HttpRoutes
+import org.http4s.{Headers, HttpRoutes}
 
 object TelemetryGRPCServer {
   def make[F[_]: GenUUID: Temporal](service: TelemetryService[F]): HttpRoutes[F] =

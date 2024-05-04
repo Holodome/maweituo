@@ -1,12 +1,11 @@
-package com.holodome.repositories
+package com.holodome.tests.repositories
 
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.domain.repositories.UserRepository
 import com.holodome.domain.users
-import com.holodome.domain.users.User
-import com.holodome.domain.users.UserId
+import com.holodome.domain.users.{User, UserId}
 
 import scala.collection.concurrent.TrieMap
 

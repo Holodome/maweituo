@@ -4,11 +4,8 @@ import cats.NonEmptyParallel
 import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.cql.codecs._
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.AdTag
-import com.holodome.domain.ads.AdTitle
-import com.holodome.domain.users.User
-import com.holodome.domain.users.UserId
+import com.holodome.domain.ads.{AdId, AdTag, AdTitle}
+import com.holodome.domain.users.{User, UserId}
 import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSId

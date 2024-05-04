@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.tests.repositories
 
 import cats.effect.Sync
 import com.holodome.domain.messages

@@ -9,7 +9,6 @@ import com.holodome.domain.users.{User, UserId}
 import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSId
-import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import org.typelevel.log4cats.Logger

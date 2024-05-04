@@ -3,7 +3,7 @@ package com.holodome.recs.etl
 import cats.Monad
 import cats.syntax.all._
 import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
-import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
+import com.holodome.recs.etl.OBSSnapshotLocations
 
 trait RecETLExtractor[F[_]] {
   def extract(locs: OBSSnapshotLocations, obs: ObjectStorage[F]): F[Unit]

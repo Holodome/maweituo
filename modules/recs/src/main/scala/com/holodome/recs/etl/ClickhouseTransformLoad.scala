@@ -6,7 +6,7 @@ import cats.syntax.all._
 import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSUrl
-import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
+import com.holodome.recs.etl.OBSSnapshotLocations
 import com.holodome.recs.sql.codecs._
 import doobie.implicits._
 import doobie.util.transactor.Transactor

@@ -4,9 +4,9 @@ import cats.data.OptionT
 import cats.effect.kernel.MonadCancelThrow
 import cats.syntax.all._
 import com.holodome.domain.ads.{AdId, AdTag}
+import com.holodome.domain.recommendations.WeightVector
+import com.holodome.domain.repositories.RecRepository
 import com.holodome.domain.users.UserId
-import com.holodome.recs.domain.recommendations
-import com.holodome.recs.repositories.RecRepository
 import com.holodome.recs.sql.codecs._
 import doobie._
 import doobie.implicits._
@@ -22,9 +22,9 @@ object ClickhouseRecRepository {
 private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transactor[F])
     extends RecRepository[F] {
 
-  override def get(userId: UserId): OptionT[F, recommendations.WeightVector] =
+  override def get(userId: UserId): OptionT[F, WeightVector] =
     OptionT(getQuery(userId).option.transact(xa))
-      .map(recommendations.WeightVector.apply)
+      .map(WeightVector.apply)
 
   override def getUserCreated(user: UserId): OptionT[F, Set[AdId]] =
     OptionT(getUserCreatedQuery(user).option.transact(xa)).map(_.toSet.map(AdId.apply))

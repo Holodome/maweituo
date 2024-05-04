@@ -1,9 +1,9 @@
-package com.holodome.recs.repositories
+package com.holodome.domain.repositories
 
 import cats.data.OptionT
 import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.users.UserId
-import com.holodome.recs.domain.recommendations.WeightVector
+import com.holodome.domain.recommendations.WeightVector
 
 trait RecRepository[F[_]] {
   def get(userId: UserId): OptionT[F, WeightVector]

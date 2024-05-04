@@ -1,4 +1,4 @@
-package com.holodome.recs.grpc
+package com.holodome.grpc
 
 import cats.Monad
 import cats.effect.Temporal

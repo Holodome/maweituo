@@ -1,7 +1,7 @@
 package com.holodome.resources
 
 import cats.effect.{Async, Resource}
-import com.holodome.config.types.HttpServerConfig
+import com.holodome.config.HttpServerConfig
 import fs2.io.net.Network
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder
@@ -31,7 +31,7 @@ object MkHttpServer {
         .withHost(config.host)
         .withPort(config.port)
         .withHttpApp(httpApp)
-        .withHttp2
+        // .withHttp2
         .withoutTLS
         .build
         .evalTap(showEmberBanner[F])

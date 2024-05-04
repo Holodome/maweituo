@@ -4,7 +4,7 @@ import cats.data.OptionT
 import cats.effect.kernel.Async
 import cats.syntax.all._
 import com.holodome.effects.GenUUID
-import com.holodome.recs.grpc.{RecommendationGRPCServer, TelemetryGRPCServer}
+import com.holodome.grpc._
 import org.http4s.server.middleware._
 import org.http4s.{HttpApp, HttpRoutes}
 import org.typelevel.log4cats.Logger

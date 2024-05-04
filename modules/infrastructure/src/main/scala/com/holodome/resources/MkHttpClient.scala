@@ -1,7 +1,7 @@
 package com.holodome.resources
 
 import cats.effect.{Async, Resource}
-import com.holodome.config.types.HttpClientConfig
+import com.holodome.config.HttpClientConfig
 import fs2.io.net.Network
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
@@ -18,6 +18,6 @@ object MkHttpClient {
       .default[F]
       .withTimeout(c.timeout)
       .withIdleTimeInPool(c.idleTimeInPool)
-      .withHttp2
+      // .withHttp2
       .build
 }

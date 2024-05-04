@@ -1,16 +1,15 @@
 package com.holodome.config
 
 import ciris.Secret
-import com.comcast.ip4s.{Host, Port}
 import com.holodome.cassandra.config.CassandraConfig
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
-import eu.timepit.refined.types.all.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
+import com.holodome.recs.clickhouse.config.ClickHouseConfig
 
 object types {
   @derive(configDecoder, show)
@@ -18,27 +17,6 @@ object types {
 
   @derive(configDecoder, show)
   @newtype case class JwtTokenExpiration(value: FiniteDuration)
-
-  @newtype case class RedisConfig(host: Host)
-
-  case class MinioConfig(
-      host: Host,
-      port: Port,
-      userId: Secret[NonEmptyString],
-      password: Secret[NonEmptyString],
-      bucket: NonEmptyString,
-      url: NonEmptyString
-  )
-
-  case class HttpServerConfig(
-      host: Host,
-      port: Port
-  )
-
-  case class HttpClientConfig(
-      timeout: FiniteDuration,
-      idleTimeInPool: FiniteDuration
-  )
 
   case class RecsClientConfig(
       client: HttpClientConfig,
@@ -58,5 +36,12 @@ object types {
       redis: RedisConfig,
       minio: MinioConfig,
       recs: RecsClientConfig
+  )
+
+  case class RecsConfig(
+      cassandra: CassandraConfig,
+      minio: MinioConfig,
+      recsServer: HttpServerConfig,
+      clickhouse: ClickHouseConfig
   )
 }

@@ -11,21 +11,53 @@ import com.holodome.config.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
 import org.http4s.Uri
+import com.holodome.recs.clickhouse.config._
 
 import java.nio.file.Paths
 import scala.concurrent.duration.FiniteDuration
+import utils.JsonConfig
 
 object Config {
-  def load[F[_]: Async]: F[AppConfig] =
+  def loadRecsConfig[F[_]: Async]: F[RecsConfig] =
     env("MW_CONFIG_PATH").load[F].flatMap { path =>
       JsonConfig
         .fromFile[F](Paths.get(path))
         .flatMap { implicit json =>
-          default[F].load[F]
+          defaultRecsConfig[F].load[F]
         }
     }
 
-  private def default[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
+  private def defaultRecsConfig[F[_]: Async](implicit
+      file: JsonConfig
+  ): ConfigValue[F, RecsConfig] =
+    (
+      com.holodome.config.Config.cassandraConfig,
+      com.holodome.config.Config.minioConfig,
+      recsServerConfig,
+      clickhouseConfig
+    ).parMapN(RecsConfig.apply)
+
+  private def recsServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
+    (
+      file.stringField("recs.host").as[Host],
+      file.stringField("recs.port").as[Port]
+    ).parMapN(HttpServerConfig.apply)
+
+  private def clickhouseConfig[F[_]](implicit
+      file: JsonConfig
+  ): ConfigValue[F, ClickHouseConfig] =
+    file.stringField("clickhouse.jdbcUrl").as[String].map(ClickHouseConfig.apply)
+
+  def loadAppConfig[F[_]: Async]: F[AppConfig] =
+    env("MW_CONFIG_PATH").load[F].flatMap { path =>
+      utils.JsonConfig
+        .fromFile[F](Paths.get(path))
+        .flatMap { implicit json =>
+          defaultAppConfig[F].load[F]
+        }
+    }
+
+  private def defaultAppConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
     (
       httpServerConfig,
       cassandraConfig,

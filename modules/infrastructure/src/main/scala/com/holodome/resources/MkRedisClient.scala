@@ -3,7 +3,7 @@ package com.holodome.resources
 import cats.MonadThrow
 import cats.effect.Resource
 import cats.syntax.all._
-import com.holodome.config.types.RedisConfig
+import com.holodome.config.RedisConfig
 import dev.profunktor.redis4cats.effect.MkRedis
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import org.typelevel.log4cats.Logger

@@ -119,7 +119,7 @@ lazy val grpc = (project in file("modules/grpc"))
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
-  .dependsOn(cassandra, grpc)
+  .dependsOn(cassandra, grpc, common)
   .settings(
     commonSettings,
     name := "maweituo-core",
@@ -160,16 +160,25 @@ lazy val it = (project in file("modules/it"))
     publish / skip := true
   )
 
-lazy val recs = (project in file("modules/recs"))
-  .dependsOn(core)
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
+lazy val recsDomain = (project in file("modules/recs-domain"))
+  .dependsOn(domain)
   .settings(
     commonSettings,
-    name := "maweituo-recs",
-    Compile / run / fork := true,
-    dockerExposedPorts ++= Seq(11223),
-    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    name := "maweituo-recs-domain"
+  )
+
+lazy val recsCassandra = (project in file("modules/recs-cassandra-da"))
+  .dependsOn(recsDomain, cassandra)
+  .settings(
+    commonSettings,
+    name := "maweituo-recs-cassandra-da"
+  )
+
+lazy val recsClickhouse = (project in file("modules/recs-clickhouse-da"))
+  .dependsOn(recsDomain)
+  .settings(
+    commonSettings,
+    name := "maweituo-recs-clickhouse-da",
     libraryDependencies ++= Seq(
       "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
       "org.tpolecat"  %% "doobie-hikari"   % DoobieVersion,
@@ -177,4 +186,23 @@ lazy val recs = (project in file("modules/recs"))
       "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,
       "org.lz4"        % "lz4-java"        % "1.8.0"
     )
+  )
+
+lazy val recs = (project in file("modules/recs"))
+  .dependsOn(recsDomain, recsCassandra, recsClickhouse, common, grpc)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .settings(
+    commonSettings,
+    name := "maweituo-recs",
+    Compile / run / fork := true,
+    dockerExposedPorts ++= Seq(11223),
+    dockerBaseImage := "openjdk:11-jre-slim-buster"
+  )
+
+lazy val common = (project in file("modules/common"))
+  .dependsOn(domain, cassandra, recsClickhouse)
+  .settings(
+    commonSettings,
+    name := "maweituo-common"
   )

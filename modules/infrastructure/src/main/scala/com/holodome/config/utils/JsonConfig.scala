@@ -1,4 +1,4 @@
-package com.holodome.config
+package com.holodome.config.utils
 
 import cats.effect.Sync
 import cats.syntax.all._

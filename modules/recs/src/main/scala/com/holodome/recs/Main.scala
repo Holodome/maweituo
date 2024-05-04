@@ -1,8 +1,8 @@
 package com.holodome.recs
 
 import cats.effect.{IO, IOApp}
-import com.holodome.recs.config.Config
-import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETL}
+import com.holodome.config.Config
+import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETLInterpreter}
 import com.holodome.recs.modules._
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer
@@ -14,7 +14,7 @@ object Main extends IOApp.Simple {
   implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
   override def run: IO[Unit] =
-    Config.load[IO] flatMap { cfg =>
+    Config.loadRecsConfig[IO] flatMap { cfg =>
       Logger[IO].info(s"Loaded config $cfg") >>
         RecsResources
           .make[IO](cfg)
@@ -22,7 +22,7 @@ object Main extends IOApp.Simple {
             val repositories = Repositories.make[IO](res.cassandra, res.clickhouse)
             for {
               infrastructure <- Infrastructure.make[IO](cfg, res.minio)
-              etl = RecETL.make[IO](
+              etl = RecETLInterpreter.make[IO](
                 CassandraExtract.make[IO](res.cassandra),
                 ClickhouseTransformLoad.make[IO](res.clickhouse),
                 infrastructure.obs

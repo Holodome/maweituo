@@ -43,7 +43,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests, domain, it, recs, infrastructure)
+  .aggregate(core, tests, it, recs)
 
 lazy val infrastructure = (project in file("modules/infrastructure"))
   .settings(
@@ -99,11 +99,27 @@ lazy val cassandra = (project in file("modules/cassandra-da"))
     )
   )
 
-lazy val core = (project in file("modules/core"))
+lazy val grpc = (project in file("modules/grpc"))
+  .dependsOn(domain)
   .enablePlugins(Http4sGrpcPlugin)
+  .settings(
+    commonSettings,
+    name := "maweituo-grpc",
+    libraryDependencies ++= Seq(
+      "com.thesamet.scalapb" %% "scalapb-runtime"      % scalapb.compiler.Version.scalapbVersion % "protobuf",
+      "com.thesamet.scalapb" %% "compilerplugin"       % "0.11.11",
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
+    ),
+    Compile / PB.protoSources += file("proto"),
+    Compile / PB.targets ++= Seq(
+      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb"
+    )
+  )
+
+lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
-  .dependsOn(cassandra)
+  .dependsOn(cassandra, grpc)
   .settings(
     commonSettings,
     name := "maweituo-core",
@@ -112,15 +128,8 @@ lazy val core = (project in file("modules/core"))
     dockerExposedPorts ++= Seq(8080),
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
-      "ch.qos.logback"        % "logback-classic"      % LogbackVersion,
-      "com.thesamet.scalapb" %% "scalapb-runtime"      % scalapb.compiler.Version.scalapbVersion % "protobuf",
-      "com.thesamet.scalapb" %% "compilerplugin"       % "0.11.11",
-      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion,
-      "com.olegpy"           %% "meow-mtl-core"        % MeowMtlVersion
-    ),
-    Compile / PB.protoSources += file("proto"),
-    Compile / PB.targets ++= Seq(
-      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb"
+      "ch.qos.logback" % "logback-classic" % LogbackVersion,
+      "com.olegpy"    %% "meow-mtl-core"   % MeowMtlVersion
     )
   )
 

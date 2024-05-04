@@ -5,17 +5,11 @@ import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
-import com.holodome.domain.errors.UserEmailInUse
-import com.holodome.domain.errors.UserNameInUse
-import com.holodome.domain.users.RegisterRequest
-import com.holodome.domain.users.UpdateUserInternal
-import com.holodome.domain.users.UpdateUserRequest
-import com.holodome.domain.users.User
-import com.holodome.domain.users.UserId
+import com.holodome.domain.errors.{UserEmailInUse, UserNameInUse}
+import com.holodome.domain.repositories.UserRepository
+import com.holodome.domain.services.{IAMService, UserService}
+import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
-import com.holodome.repositories.UserRepository
-import com.holodome.services.IAMService
-import com.holodome.services.UserService
 import org.typelevel.log4cats.Logger
 
 object UserServiceInterpreter {

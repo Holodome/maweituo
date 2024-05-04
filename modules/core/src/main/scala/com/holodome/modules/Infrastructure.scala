@@ -3,15 +3,13 @@ package com.holodome.modules
 import cats.MonadThrow
 import cats.effect.Async
 import cats.syntax.all._
-import com.holodome.auth.JwtExpire
-import com.holodome.auth.JwtTokens
+import com.holodome.auth.{JwtExpire, JwtTokens}
 import com.holodome.config.types._
 import com.holodome.domain.Id
 import com.holodome.domain.users.UserId
-import com.holodome.infrastructure.EphemeralDict
-import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.minio.MinioObjectStorage
 import com.holodome.infrastructure.redis.RedisEphemeralDict
+import com.holodome.infrastructure.{EphemeralDict, ObjectStorage}
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient

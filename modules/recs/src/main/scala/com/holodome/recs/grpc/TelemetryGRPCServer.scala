@@ -6,10 +6,10 @@ import cats.effect.Temporal
 import cats.syntax.all._
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
-import com.holodome.services.TelemetryService
 import org.http4s.Headers
 import org.http4s.HttpRoutes
 

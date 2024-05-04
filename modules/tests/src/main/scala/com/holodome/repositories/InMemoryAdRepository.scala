@@ -7,6 +7,7 @@ import com.holodome.domain.ads.AdId
 import com.holodome.domain.ads.AdTag
 import com.holodome.domain.ads.Advertisement
 import com.holodome.domain.images.ImageId
+import com.holodome.domain.repositories.AdvertisementRepository
 
 import scala.collection.concurrent.TrieMap
 

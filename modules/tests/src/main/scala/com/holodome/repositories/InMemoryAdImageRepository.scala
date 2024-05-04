@@ -3,6 +3,7 @@ package com.holodome.repositories
 import cats.data.OptionT
 import cats.effect.Sync
 import com.holodome.domain.images._
+import com.holodome.domain.repositories.AdImageRepository
 
 import scala.collection.concurrent.TrieMap
 

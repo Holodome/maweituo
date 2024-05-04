@@ -3,17 +3,12 @@ package com.holodome.services.interpreters
 import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.auth.JwtTokens
-import com.holodome.auth.PasswordHashing
+import com.holodome.auth.{JwtTokens, PasswordHashing}
 import com.holodome.domain.errors.InvalidPassword
-import com.holodome.domain.users.AuthedUser
-import com.holodome.domain.users.Password
-import com.holodome.domain.users.User
-import com.holodome.domain.users.UserId
-import com.holodome.domain.users.Username
+import com.holodome.domain.repositories.UserRepository
+import com.holodome.domain.services.AuthService
+import com.holodome.domain.users._
 import com.holodome.infrastructure.EphemeralDict
-import com.holodome.repositories.UserRepository
-import com.holodome.services.AuthService
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
 

@@ -4,11 +4,10 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
+import com.holodome.domain.repositories.FeedRepository
+import com.holodome.domain.services.{FeedService, RecommendationService}
 import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
-import com.holodome.repositories.FeedRepository
-import com.holodome.services.FeedService
-import com.holodome.services.RecommendationService
 import org.typelevel.log4cats.Logger
 
 object FeedServiceInterpreter {

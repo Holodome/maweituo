@@ -3,18 +3,16 @@ package com.holodome.http.routes.ads
 import cats.Monad
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
+import com.holodome.domain.services.ChatService
 import com.holodome.domain.users.AuthedUser
-import com.holodome.http.HttpErrorHandler
-import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
-import com.holodome.services.ChatService
+import com.holodome.http.{HttpErrorHandler, Routes}
 import io.circe.Json
 import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdChatRoutes[F[_]: Monad](
     chatService: ChatService[F]

@@ -4,18 +4,15 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.pagination.Pagination
+import com.holodome.domain.services.FeedService
 import com.holodome.domain.users.AuthedUser
-import com.holodome.http.HttpErrorHandler
-import com.holodome.http.Routes
 import com.holodome.http.vars.UserIdVar
-import com.holodome.services.FeedService
-import org.http4s.AuthedRoutes
-import org.http4s.HttpRoutes
+import com.holodome.http.{HttpErrorHandler, Routes}
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 
 final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder](feed: FeedService[F])
     extends Http4sDsl[F] {

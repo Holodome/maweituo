@@ -2,6 +2,7 @@ package com.holodome.repositories
 
 import cats.effect.Sync
 import com.holodome.domain.ads._
+import com.holodome.domain.repositories.TagRepository
 
 import scala.collection.concurrent.TrieMap
 

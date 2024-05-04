@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.domain.repositories
 
 import com.holodome.domain.messages._
 

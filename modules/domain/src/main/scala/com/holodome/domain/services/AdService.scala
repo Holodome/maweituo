@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.domain.services
 
 import com.holodome.domain.ads._
 import com.holodome.domain.users.UserId

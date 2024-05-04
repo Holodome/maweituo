@@ -1,20 +1,14 @@
 package com.holodome.services.interpreters
 
-import cats.Applicative
-import cats.MonadThrow
 import cats.syntax.all._
+import cats.{Applicative, MonadThrow}
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.errors.ChatAccessForbidden
-import com.holodome.domain.errors.InvalidAccess
-import com.holodome.domain.errors.NotAnAuthor
+import com.holodome.domain.errors.{ChatAccessForbidden, InvalidAccess, NotAnAuthor}
 import com.holodome.domain.images.ImageId
-import com.holodome.domain.messages.Chat
-import com.holodome.domain.messages.ChatId
+import com.holodome.domain.messages.{Chat, ChatId}
+import com.holodome.domain.repositories.{AdImageRepository, AdvertisementRepository, ChatRepository}
+import com.holodome.domain.services.IAMService
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.AdImageRepository
-import com.holodome.repositories.AdvertisementRepository
-import com.holodome.repositories.ChatRepository
-import com.holodome.services.IAMService
 
 object IAMServiceInterpreter {
 

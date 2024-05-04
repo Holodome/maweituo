@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.domain.services
 
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.images._

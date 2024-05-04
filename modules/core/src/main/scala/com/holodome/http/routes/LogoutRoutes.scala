@@ -3,10 +3,9 @@ package com.holodome.http.routes
 import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
+import com.holodome.domain.services.AuthService
 import com.holodome.domain.users.AuthedUser
-import com.holodome.http.HttpErrorHandler
-import com.holodome.http.Routes
-import com.holodome.services.AuthService
+import com.holodome.http.{HttpErrorHandler, Routes}
 import dev.profunktor.auth.AuthHeaders
 import org.http4s.AuthedRoutes
 import org.http4s.circe.JsonDecoder

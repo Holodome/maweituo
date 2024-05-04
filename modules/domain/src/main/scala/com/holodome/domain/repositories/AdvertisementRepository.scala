@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.domain.repositories
 
 import cats.MonadThrow
 import cats.data.OptionT

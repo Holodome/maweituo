@@ -2,8 +2,8 @@ package com.holodome.services
 
 import cats.Applicative
 import com.holodome.domain.ads
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users
-import com.holodome.services.TelemetryService
 
 class TelemetryServiceStub[F[_]: Applicative] extends TelemetryService[F] {
 

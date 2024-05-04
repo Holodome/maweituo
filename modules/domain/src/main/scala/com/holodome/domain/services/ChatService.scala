@@ -1,4 +1,4 @@
-package com.holodome.services
+package com.holodome.domain.services
 
 import cats.data.OptionT
 import com.holodome.domain.ads._

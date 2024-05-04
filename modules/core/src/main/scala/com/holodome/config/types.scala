@@ -1,8 +1,7 @@
 package com.holodome.config
 
 import ciris.Secret
-import com.comcast.ip4s.Host
-import com.comcast.ip4s.Port
+import com.comcast.ip4s.{Host, Port}
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive

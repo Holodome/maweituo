@@ -1,4 +1,4 @@
-package com.holodome.repositories
+package com.holodome.domain.repositories
 
 import cats.Applicative
 import cats.Monad

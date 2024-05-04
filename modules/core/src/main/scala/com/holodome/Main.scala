@@ -1,16 +1,10 @@
 package com.holodome
 
-import cats.effect.IO
-import cats.effect.IOApp
 import cats.effect.std.Supervisor
+import cats.effect.{IO, IOApp}
 import com.holodome.config.Config
 import com.holodome.domain.users.UserJwtAuth
 import com.holodome.http.ApplicationErrorHandler._
-import com.holodome.modules.HttpApi
-import com.holodome.modules.Infrastructure
-import com.holodome.modules.RecsClients
-import com.holodome.modules.Repositories
-import com.holodome.modules.Services
 import com.holodome.modules._
 import com.holodome.resources.MkHttpServer
 import dev.profunktor.auth.jwt.JwtAuth

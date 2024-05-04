@@ -1,22 +1,13 @@
 package com.holodome.services.interpreters
 
-import cats.Applicative
-import cats.MonadThrow
 import cats.syntax.all._
+import cats.{Applicative, MonadThrow}
 import com.holodome.domain.Id
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.AdTag
-import com.holodome.domain.ads.Advertisement
-import com.holodome.domain.ads.CreateAdRequest
+import com.holodome.domain.ads._
+import com.holodome.domain.repositories.{AdvertisementRepository, FeedRepository, TagRepository}
+import com.holodome.domain.services.{AdService, IAMService, TelemetryService}
 import com.holodome.domain.users.UserId
-import com.holodome.effects.GenUUID
-import com.holodome.effects.TimeSource
-import com.holodome.repositories.AdvertisementRepository
-import com.holodome.repositories.FeedRepository
-import com.holodome.repositories.TagRepository
-import com.holodome.services.AdService
-import com.holodome.services.IAMService
-import com.holodome.services.TelemetryService
+import com.holodome.effects.{GenUUID, TimeSource}
 import org.typelevel.log4cats.Logger
 
 object AdServiceInterpreter {

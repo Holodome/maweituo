@@ -1,8 +1,7 @@
 package com.holodome.resources
 
 import cats.Applicative
-import cats.effect.Async
-import cats.effect.Resource
+import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.CqlSession
 import com.holodome.config.types.CassandraConfig

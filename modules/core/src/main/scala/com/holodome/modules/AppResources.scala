@@ -1,13 +1,9 @@
 package com.holodome.modules
 
-import cats.effect.Async
-import cats.effect.Resource
+import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.holodome.config.types.AppConfig
-import com.holodome.resources.MkCassandraClient
-import com.holodome.resources.MkHttpClient
-import com.holodome.resources.MkMinioClient
-import com.holodome.resources.MkRedisClient
+import com.holodome.resources._
 import com.ringcentral.cassandra4io.CassandraSession
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient

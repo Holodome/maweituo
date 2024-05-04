@@ -4,19 +4,16 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.messages.SendMessageRequest
+import com.holodome.domain.services.MessageService
 import com.holodome.domain.users.AuthedUser
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.HttpErrorHandler
-import com.holodome.http.Routes
-import com.holodome.http.vars.AdIdVar
-import com.holodome.http.vars.ChatIdVar
-import com.holodome.services.MessageService
+import com.holodome.http.vars.{AdIdVar, ChatIdVar}
+import com.holodome.http.{HttpErrorHandler, Routes}
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder](
     msgService: MessageService[F]

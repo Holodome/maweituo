@@ -1,8 +1,7 @@
 package com.holodome.resources
 
 import cats.Applicative
-import cats.effect.Resource
-import cats.effect.Sync
+import cats.effect.{Resource, Sync}
 import com.holodome.config.types.MinioConfig
 import io.minio.MinioAsyncClient
 

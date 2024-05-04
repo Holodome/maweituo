@@ -1,12 +1,11 @@
-package com.holodome.repositories.cassandra
+package com.holodome.cassandra
 
 import cats.effect.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.AdTag
-import com.holodome.repositories.TagRepository
+import com.holodome.domain.ads.{AdId, AdTag}
+import com.holodome.domain.repositories.TagRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

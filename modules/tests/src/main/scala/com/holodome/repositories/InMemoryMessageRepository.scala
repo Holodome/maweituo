@@ -3,6 +3,7 @@ package com.holodome.repositories
 import cats.effect.Sync
 import com.holodome.domain.messages
 import com.holodome.domain.messages.Message
+import com.holodome.domain.repositories.MessageRepository
 
 import scala.collection.concurrent.TrieMap
 

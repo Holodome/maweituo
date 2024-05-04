@@ -11,7 +11,8 @@ import com.holodome.http.routes.{LoginRoutes, RegisterRoutes}
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
 import com.holodome.repositories._
-import com.holodome.services.{AuthService, IAMService, UserService}
+import com.holodome.domain.services._
+import com.holodome.domain.repositories._
 import com.holodome.services.AuthServiceSuite.mock
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s._

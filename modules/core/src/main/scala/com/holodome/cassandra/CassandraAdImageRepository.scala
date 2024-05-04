@@ -1,4 +1,4 @@
-package com.holodome.repositories.cassandra
+package com.holodome.cassandra
 
 import cats.data.OptionT
 import cats.effect.Async
@@ -7,7 +7,7 @@ import com.holodome.cql.codecs._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.DatabaseEncodingError
 import com.holodome.domain.images._
-import com.holodome.repositories.AdImageRepository
+import com.holodome.domain.repositories.AdImageRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

@@ -2,9 +2,9 @@ package com.holodome.services.interpreters
 
 import cats.Functor
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.Background
-import com.holodome.services.TelemetryService
 
 import scala.concurrent.duration.DurationInt
 

@@ -1,15 +1,13 @@
 package com.holodome.http
 
-import cats.MonadError
-import cats.MonadThrow
 import cats.syntax.all._
+import cats.{MonadError, MonadThrow}
 import com.holodome.domain.errors._
 import com.olegpy.meow.hierarchy._
 import io.circe.Encoder
-import org.http4s.HttpRoutes
-import org.http4s.Response
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
+import org.http4s.{HttpRoutes, Response}
 import org.typelevel.log4cats.Logger
 
 final class ApplicationErrorHandler[F[_]: Logger](implicit M: MonadError[F, ApplicationError])

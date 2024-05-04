@@ -5,13 +5,12 @@ import cats.effect.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
-import com.holodome.services.RecommendationService
-import org.http4s.Headers
-import org.http4s.Uri
 import org.http4s.client.Client
+import org.http4s.{Headers, Uri}
 
 object RecommendationGRPCClientInterpreter {
   def make[F[_]: Concurrent: GenUUID](client: Client[F], uri: Uri): RecommendationService[F] =

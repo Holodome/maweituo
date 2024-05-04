@@ -1,21 +1,16 @@
 package com.holodome.services.interpreters
 
-import cats.Applicative
-import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all._
+import cats.{Applicative, MonadThrow}
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.errors.CannotCreateChatWithMyself
-import com.holodome.domain.errors.ChatAlreadyExists
-import com.holodome.domain.messages.Chat
-import com.holodome.domain.messages.ChatId
+import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists}
+import com.holodome.domain.messages.{Chat, ChatId}
+import com.holodome.domain.repositories.{AdvertisementRepository, ChatRepository}
+import com.holodome.domain.services.{ChatService, TelemetryService}
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
-import com.holodome.repositories.AdvertisementRepository
-import com.holodome.repositories.ChatRepository
-import com.holodome.services.ChatService
-import com.holodome.services.TelemetryService
 import org.typelevel.log4cats.Logger
 
 object ChatServiceInterpreter {

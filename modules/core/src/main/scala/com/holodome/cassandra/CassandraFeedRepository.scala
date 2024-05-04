@@ -1,4 +1,4 @@
-package com.holodome.repositories.cassandra
+package com.holodome.cassandra
 
 import cats.effect.kernel.Async
 import cats.syntax.all._
@@ -6,8 +6,8 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
+import com.holodome.domain.repositories.FeedRepository
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.FeedRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

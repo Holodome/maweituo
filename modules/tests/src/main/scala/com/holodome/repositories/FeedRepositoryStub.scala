@@ -4,6 +4,7 @@ import cats.effect.IO
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
+import com.holodome.domain.repositories.FeedRepository
 import com.holodome.domain.users.UserId
 
 import java.time.Instant

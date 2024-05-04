@@ -1,4 +1,4 @@
-package com.holodome.repositories.cassandra
+package com.holodome.cassandra
 
 import cats.data.OptionT
 import cats.effect.Async
@@ -7,8 +7,8 @@ import com.datastax.oss.driver.api.core.ConsistencyLevel
 import com.holodome.cql.codecs._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.messages._
+import com.holodome.domain.repositories.ChatRepository
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.ChatRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

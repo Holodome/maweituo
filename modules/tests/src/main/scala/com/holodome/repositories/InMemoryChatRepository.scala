@@ -5,6 +5,7 @@ import cats.effect.Sync
 import cats.syntax.all._
 import com.holodome.domain.ads
 import com.holodome.domain.messages._
+import com.holodome.domain.repositories.ChatRepository
 import com.holodome.domain.users
 
 import scala.collection.concurrent.TrieMap

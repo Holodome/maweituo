@@ -4,7 +4,7 @@ import cats.effect.IO
 import com.holodome.domain.repositories._
 import com.holodome.domain.services._
 import com.holodome.infrastructure.inmemory.InMemoryObjectStorage
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators.{createAdRequestGen, imageContentsGen, registerGen}
 import com.holodome.tests.repositories._
 import org.mockito.MockitoSugar

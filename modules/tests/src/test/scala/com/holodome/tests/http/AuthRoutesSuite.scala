@@ -9,7 +9,7 @@ import com.holodome.http.ApplicationErrorHandler._
 import com.holodome.http.routes.{LoginRoutes, RegisterRoutes}
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators._
 import com.holodome.tests.repositories._
 import com.holodome.tests.{HttpSuite, IOLoggedTest}

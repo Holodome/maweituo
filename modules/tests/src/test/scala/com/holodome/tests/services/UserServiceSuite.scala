@@ -5,7 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.errors.{InvalidAccess, InvalidUserId}
 import com.holodome.domain.repositories._
 import com.holodome.domain.users.UserId
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators.{registerGen, updateUserGen, userIdGen}
 import com.holodome.tests.repositories._
 import org.mockito.MockitoSugar.mock

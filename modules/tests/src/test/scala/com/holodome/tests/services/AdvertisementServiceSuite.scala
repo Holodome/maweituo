@@ -5,7 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.errors.{InvalidAdId, NotAnAuthor}
 import com.holodome.domain.repositories._
 import com.holodome.domain.services._
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators._
 import com.holodome.tests.repositories._
 import org.mockito.MockitoSugar.mock

@@ -1,4 +1,4 @@
-package com.holodome.services.interpreters
+package com.holodome.interpreters
 
 import cats.Functor
 import com.holodome.domain.ads.AdId

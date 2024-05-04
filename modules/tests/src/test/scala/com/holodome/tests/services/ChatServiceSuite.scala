@@ -5,7 +5,7 @@ import cats.syntax.all._
 import com.holodome.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists}
 import com.holodome.domain.repositories._
 import com.holodome.domain.services._
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators.{createAdRequestGen, registerGen}
 import com.holodome.tests.repositories._
 import com.holodome.tests.services.TelemetryServiceStub

@@ -1,4 +1,4 @@
-package com.holodome.services.interpreters
+package com.holodome.interpreters
 
 import cats.MonadThrow
 import cats.syntax.all._

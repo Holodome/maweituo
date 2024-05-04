@@ -43,7 +43,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests, it, recs)
+  .aggregate(coreHttp, tests, it, recs)
 
 lazy val infrastructure = (project in file("modules/infrastructure"))
   .settings(
@@ -120,12 +120,19 @@ lazy val grpc = (project in file("modules/grpc"))
   )
 
 lazy val core = (project in file("modules/core"))
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
   .dependsOn(cassandra, grpc, common)
   .settings(
     commonSettings,
-    name := "maweituo-core",
+    name := "maweituo-core"
+  )
+
+lazy val coreHttp = (project in file("modules/core-http"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .dependsOn(core)
+  .settings(
+    commonSettings,
+    name := "maweituo-core-http",
     Compile / run / fork := true,
     scalafmtOnCompile := true,
     dockerExposedPorts ++= Seq(8080),
@@ -137,7 +144,7 @@ lazy val core = (project in file("modules/core"))
   )
 
 lazy val tests = (project in file("modules/tests"))
-  .dependsOn(core)
+  .dependsOn(coreHttp)
   .settings(
     commonSettings,
     name := "maweituo-tests",

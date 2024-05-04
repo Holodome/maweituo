@@ -8,7 +8,7 @@ import com.holodome.domain.repositories._
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
-import com.holodome.services.interpreters._
+import com.holodome.interpreters._
 import com.holodome.tests.generators._
 import com.holodome.tests.repositories._
 import com.holodome.utils._

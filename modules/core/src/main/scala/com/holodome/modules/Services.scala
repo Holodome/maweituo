@@ -3,8 +3,17 @@ package com.holodome.modules
 import cats.MonadThrow
 import com.holodome.domain.services._
 import com.holodome.effects.{Background, GenUUID, TimeSource}
-import com.holodome.services.interpreters._
 import org.typelevel.log4cats.Logger
+import com.holodome.interpreters.AdImageServiceInterpreter
+import com.holodome.interpreters.AdServiceInterpreter
+import com.holodome.interpreters.AdTagServiceInterpreter
+import com.holodome.interpreters.AuthServiceInterpreter
+import com.holodome.interpreters.ChatServiceInterpreter
+import com.holodome.interpreters.FeedServiceInterpreter
+import com.holodome.interpreters.IAMServiceInterpreter
+import com.holodome.interpreters.MessageServiceInterpreter
+import com.holodome.interpreters.TelemetryServiceBackgroundInterpreter
+import com.holodome.interpreters.UserServiceInterpreter
 
 sealed abstract class Services[F[_]] {
   val users: UserService[F]

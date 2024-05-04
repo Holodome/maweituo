@@ -3,8 +3,7 @@ package com.holodome.recs.resources
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.holodome.config.types.RecsConfig
-import com.holodome.recs.clickhouse.resources.MkClickHouseClient
-import com.holodome.resources.{MkCassandraClient, MkMinioClient}
+import com.holodome.resources.{MkCassandraClient, MkClickHouseClient, MkMinioClient}
 import com.ringcentral.cassandra4io.CassandraSession
 import doobie.Transactor
 import io.minio.MinioAsyncClient

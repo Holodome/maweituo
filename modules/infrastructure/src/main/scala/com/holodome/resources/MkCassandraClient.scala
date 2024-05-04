@@ -4,7 +4,7 @@ import cats.Applicative
 import cats.effect.{Async, Resource}
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.CqlSession
-import com.holodome.cassandra.config.CassandraConfig
+import com.holodome.config.CassandraConfig
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import org.typelevel.log4cats.Logger

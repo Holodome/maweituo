@@ -1,6 +1,6 @@
-package com.holodome.recs.clickhouse.resources
+package com.holodome.resources
 
-import com.holodome.recs.clickhouse.config.ClickHouseConfig
+import com.holodome.config.ClickHouseConfig
 import cats.effect.Resource
 import doobie.util.transactor.Transactor
 import java.util.Properties

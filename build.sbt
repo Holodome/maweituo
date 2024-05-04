@@ -50,35 +50,41 @@ lazy val infrastructure = (project in file("modules/infrastructure"))
     commonSettings,
     name := "maweituo-infrastructure",
     libraryDependencies ++= Seq(
-      "org.typelevel"  %% "cats-core"             % CatsVersion,
-      "org.typelevel"  %% "cats-effect"           % CatsEffectVersion,
-      "org.typelevel"  %% "log4cats-slf4j"        % Log4CatsVersion,
-      "dev.profunktor" %% "redis4cats-effects"    % Redis4CatsVersion,
-      "dev.profunktor" %% "redis4cats-log4cats"   % Redis4CatsVersion,
-      "tf.tofu"        %% "derevo-core"           % DerevoVersion,
-      "tf.tofu"        %% "derevo-circe"          % DerevoVersion,
-      "tf.tofu"        %% "derevo-cats"           % DerevoVersion,
-      "tf.tofu"        %% "derevo-circe-magnolia" % DerevoVersion,
-      "io.minio"        % "minio"                 % MinioVersion,
-      "eu.timepit"     %% "refined"               % RefinedVersion,
-      "eu.timepit"     %% "refined-cats"          % RefinedVersion,
-      "dev.optics"     %% "monocle-core"          % MonocleVersion,
-      "dev.optics"     %% "monocle-macro"         % MonocleVersion,
-      "is.cir"         %% "ciris"                 % CirisVersion,
-      "is.cir"         %% "ciris-refined"         % CirisVersion,
-      "is.cir"         %% "ciris-http4s"          % CirisVersion,
-      "io.circe"       %% "circe-generic"         % CirceVersion,
-      "io.circe"       %% "circe-shapes"          % CirceVersion,
-      "io.circe"       %% "circe-parser"          % CirceVersion,
-      "io.circe"       %% "circe-generic-extras"  % CirceVersion,
-      "io.circe"       %% "circe-derivation"      % CirceDerivationVersion,
-      "io.circe"       %% "circe-refined"         % CirceVersion,
-      "io.estatico"    %% "newtype"               % NewtypeVersion,
-      "dev.profunktor" %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
-      "org.http4s"     %% "http4s-ember-server"   % Http4sVersion,
-      "org.http4s"     %% "http4s-ember-client"   % Http4sVersion,
-      "org.http4s"     %% "http4s-circe"          % Http4sVersion,
-      "org.http4s"     %% "http4s-dsl"            % Http4sVersion
+      "org.typelevel"   %% "cats-core"             % CatsVersion,
+      "org.typelevel"   %% "cats-effect"           % CatsEffectVersion,
+      "org.typelevel"   %% "log4cats-slf4j"        % Log4CatsVersion,
+      "dev.profunktor"  %% "redis4cats-effects"    % Redis4CatsVersion,
+      "dev.profunktor"  %% "redis4cats-log4cats"   % Redis4CatsVersion,
+      "tf.tofu"         %% "derevo-core"           % DerevoVersion,
+      "tf.tofu"         %% "derevo-circe"          % DerevoVersion,
+      "tf.tofu"         %% "derevo-cats"           % DerevoVersion,
+      "tf.tofu"         %% "derevo-circe-magnolia" % DerevoVersion,
+      "io.minio"         % "minio"                 % MinioVersion,
+      "eu.timepit"      %% "refined"               % RefinedVersion,
+      "eu.timepit"      %% "refined-cats"          % RefinedVersion,
+      "dev.optics"      %% "monocle-core"          % MonocleVersion,
+      "dev.optics"      %% "monocle-macro"         % MonocleVersion,
+      "is.cir"          %% "ciris"                 % CirisVersion,
+      "is.cir"          %% "ciris-refined"         % CirisVersion,
+      "is.cir"          %% "ciris-http4s"          % CirisVersion,
+      "io.circe"        %% "circe-generic"         % CirceVersion,
+      "io.circe"        %% "circe-shapes"          % CirceVersion,
+      "io.circe"        %% "circe-parser"          % CirceVersion,
+      "io.circe"        %% "circe-generic-extras"  % CirceVersion,
+      "io.circe"        %% "circe-derivation"      % CirceDerivationVersion,
+      "io.circe"        %% "circe-refined"         % CirceVersion,
+      "io.estatico"     %% "newtype"               % NewtypeVersion,
+      "dev.profunktor"  %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
+      "org.http4s"      %% "http4s-ember-server"   % Http4sVersion,
+      "org.http4s"      %% "http4s-ember-client"   % Http4sVersion,
+      "org.http4s"      %% "http4s-circe"          % Http4sVersion,
+      "org.http4s"      %% "http4s-dsl"            % Http4sVersion,
+      "com.ringcentral" %% "cassandra4io"          % Cassandra4IoVersion,
+      "org.tpolecat"    %% "doobie-core"           % DoobieVersion,
+      "org.tpolecat"    %% "doobie-hikari"         % DoobieVersion,
+      "com.zaxxer"       % "HikariCP"              % "5.1.0",
+      "com.clickhouse"   % "clickhouse-jdbc"       % ClickhouseVersion,
+      "org.lz4"          % "lz4-java"              % "1.8.0"
     )
   )
 
@@ -93,10 +99,7 @@ lazy val cassandra = (project in file("modules/cassandra-da"))
   .dependsOn(domain)
   .settings(
     commonSettings,
-    name := "maweituo-cassandra-da",
-    libraryDependencies ++= Seq(
-      "com.ringcentral" %% "cassandra4io" % Cassandra4IoVersion
-    )
+    name := "maweituo-cassandra-da"
   )
 
 lazy val grpc = (project in file("modules/grpc"))
@@ -178,14 +181,7 @@ lazy val recsClickhouse = (project in file("modules/recs-clickhouse-da"))
   .dependsOn(recsDomain)
   .settings(
     commonSettings,
-    name := "maweituo-recs-clickhouse-da",
-    libraryDependencies ++= Seq(
-      "org.tpolecat"  %% "doobie-core"     % DoobieVersion,
-      "org.tpolecat"  %% "doobie-hikari"   % DoobieVersion,
-      "com.zaxxer"     % "HikariCP"        % "5.1.0",
-      "com.clickhouse" % "clickhouse-jdbc" % ClickhouseVersion,
-      "org.lz4"        % "lz4-java"        % "1.8.0"
-    )
+    name := "maweituo-recs-clickhouse-da"
   )
 
 lazy val recs = (project in file("modules/recs"))
@@ -201,7 +197,7 @@ lazy val recs = (project in file("modules/recs"))
   )
 
 lazy val common = (project in file("modules/common"))
-  .dependsOn(domain, cassandra, recsClickhouse)
+  .dependsOn(domain)
   .settings(
     commonSettings,
     name := "maweituo-common"

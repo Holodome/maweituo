@@ -1,7 +1,6 @@
 package com.holodome.config
 
 import ciris.Secret
-import com.holodome.cassandra.config.CassandraConfig
 import com.holodome.ext.ciris.configDecoder
 import derevo.cats.show
 import derevo.derive
@@ -9,7 +8,6 @@ import io.estatico.newtype.macros.newtype
 import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
-import com.holodome.recs.clickhouse.config.ClickHouseConfig
 
 object types {
   @derive(configDecoder, show)

@@ -1,4 +1,4 @@
-package com.holodome.cassandra.config
+package com.holodome.config
 
 import com.comcast.ip4s.Host
 import eu.timepit.refined.types.string.NonEmptyString

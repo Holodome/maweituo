@@ -10,7 +10,7 @@ import com.holodome.ext.http4s.refined.RefinedRequestDecoder
 import com.holodome.http.HttpErrorHandler
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
-import com.holodome.services._
+import com.holodome.services.AdService
 import org.http4s.AuthedRoutes
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._
@@ -20,13 +20,13 @@ import org.http4s.server.AuthMiddleware
 import org.http4s.server.Router
 
 final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
-    advertisementService: AdvertisementService[F]
+    AdService: AdService[F]
 ) extends Http4sDsl[F] {
 
   private val prefixPath = "/ads"
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case GET -> Root / AdIdVar(adId) =>
-    advertisementService
+    AdService
       .get(adId)
       .flatMap(Ok(_))
   }
@@ -34,17 +34,17 @@ final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as user =>
       ar.req.decodeR[CreateAdRequest] { create =>
-        advertisementService
+        AdService
           .create(user.id, create)
           .flatMap(Ok(_))
       }
 
     case DELETE -> Root / AdIdVar(adId) as user =>
-      advertisementService.delete(adId, user.id) *> NoContent()
+      AdService.delete(adId, user.id) *> NoContent()
 
     case ar @ POST -> Root / AdIdVar(adId) / "resolved" as user =>
       ar.req.decodeR[UserId] { id =>
-        advertisementService
+        AdService
           .markAsResolved(adId, user.id, id)
           .flatMap(Ok(_))
       }

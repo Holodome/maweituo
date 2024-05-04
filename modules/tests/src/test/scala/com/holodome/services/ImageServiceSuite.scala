@@ -34,7 +34,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar w
       val iam       = makeIam(adRepo, imageRepo)
       val users     = UserService.make[IO](userRepo, iam)
       val ads =
-        AdvertisementService.make[IO](
+        AdService.make[IO](
           adRepo,
           mock[TagRepository[IO]],
           new FeedRepositoryStub,

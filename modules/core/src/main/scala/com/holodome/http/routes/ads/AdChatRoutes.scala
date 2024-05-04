@@ -7,7 +7,7 @@ import com.holodome.domain.users.AuthedUser
 import com.holodome.http.HttpErrorHandler
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
-import com.holodome.services._
+import com.holodome.services.ChatService
 import io.circe.Json
 import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes

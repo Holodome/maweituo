@@ -17,7 +17,7 @@ import weaver.scalacheck.Checkers
 
 import java.time.Instant
 
-object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
+object AdServiceSuite extends SimpleIOSuite with Checkers {
   implicit val logger: Logger[IO] = NoOpLogger[IO]
 
   private def makeIam(ad: AdvertisementRepository[IO]): IAMService[IO] =
@@ -35,7 +35,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv = AdvertisementService
+      val serv = AdService
         .make[IO](
           adRepo,
           mock[TagRepository[IO]],
@@ -68,7 +68,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv = AdvertisementService
+      val serv = AdService
         .make[IO](
           adRepo,
           mock[TagRepository[IO]],
@@ -97,7 +97,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv = AdvertisementService.make[IO](
+      val serv = AdService.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
@@ -129,7 +129,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv = AdvertisementService
+      val serv = AdService
         .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
       for {
         userId <- users.create(reg)
@@ -152,7 +152,7 @@ object AdvertisementServiceSuite extends SimpleIOSuite with Checkers {
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
       val users    = UserService.make[IO](userRepo, iam)
-      val serv = AdvertisementService
+      val serv = AdService
         .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
       for {
         userId <- users.create(reg)

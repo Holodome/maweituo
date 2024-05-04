@@ -10,7 +10,7 @@ import com.holodome.http.HttpErrorHandler
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
 import com.holodome.http.vars.ImageIdVar
-import com.holodome.services._
+import com.holodome.services.AdImageService
 import org.http4s.AuthedRoutes
 import org.http4s.HttpRoutes
 import org.http4s.MediaType

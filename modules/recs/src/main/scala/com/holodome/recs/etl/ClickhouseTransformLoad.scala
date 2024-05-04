@@ -1,8 +1,8 @@
 package com.holodome.recs.etl
 
+import cats.Parallel
 import cats.effect.kernel.MonadCancelThrow
 import cats.syntax.all._
-import cats.Parallel
 import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSUrl

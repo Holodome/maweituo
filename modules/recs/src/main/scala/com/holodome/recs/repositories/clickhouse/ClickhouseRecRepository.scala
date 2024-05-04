@@ -1,15 +1,16 @@
 package com.holodome.recs.repositories.clickhouse
 
-import cats.syntax.all._
 import cats.data.OptionT
 import cats.effect.kernel.MonadCancelThrow
-import com.holodome.domain.ads.{AdId, AdTag}
+import cats.syntax.all._
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
 import com.holodome.domain.users.UserId
 import com.holodome.recs.domain.recommendations
 import com.holodome.recs.repositories.RecRepository
-import doobie.implicits._
 import com.holodome.recs.sql.codecs._
 import doobie._
+import doobie.implicits._
 import doobie.util.transactor.Transactor
 
 import java.util.UUID

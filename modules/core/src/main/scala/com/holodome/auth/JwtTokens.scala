@@ -4,10 +4,13 @@ import cats.Monad
 import cats.syntax.all._
 import com.holodome.config.types._
 import com.holodome.domain.users.UserId
-import dev.profunktor.auth.jwt.{jwtEncode, JwtSecretKey, JwtToken}
-import io.circe.syntax.EncoderOps
+import dev.profunktor.auth.jwt.JwtSecretKey
+import dev.profunktor.auth.jwt.JwtToken
+import dev.profunktor.auth.jwt.jwtEncode
 import io.circe.Encoder
-import pdi.jwt.{JwtAlgorithm, JwtClaim}
+import io.circe.syntax.EncoderOps
+import pdi.jwt.JwtAlgorithm
+import pdi.jwt.JwtClaim
 
 trait JwtTokens[F[_]] {
   def create(userId: UserId): F[JwtToken]

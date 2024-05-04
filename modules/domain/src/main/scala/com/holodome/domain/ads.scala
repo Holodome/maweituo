@@ -4,16 +4,19 @@ import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.queryParam
-import com.holodome.optics.{stringIso, uuidIso}
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.{decoder, encoder}
+import com.holodome.optics.stringIso
+import com.holodome.optics.uuidIso
+import derevo.cats.eqv
+import derevo.cats.show
+import derevo.circe.magnolia.decoder
+import derevo.circe.magnolia.encoder
 import derevo.derive
-import io.circe.{Decoder, Encoder}
+import io.circe.Decoder
+import io.circe.Encoder
 import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
 import scala.util.Try
-import scala.util.control.NoStackTrace
 
 object ads {
   @derive(decoder, encoder, uuidIso, eqv)

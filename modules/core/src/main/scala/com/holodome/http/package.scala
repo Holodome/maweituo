@@ -1,8 +1,8 @@
 package com.holodome
 
-import cats.syntax.all._
 import cats.Semigroup
 import cats.effect.Async
+import cats.syntax.all._
 import org.http4s.HttpRoutes
 
 package object http {

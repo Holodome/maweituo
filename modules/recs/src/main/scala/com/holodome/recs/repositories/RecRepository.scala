@@ -1,7 +1,8 @@
 package com.holodome.recs.repositories
 
 import cats.data.OptionT
-import com.holodome.domain.ads.{AdId, AdTag}
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
 import com.holodome.domain.users.UserId
 import com.holodome.recs.domain.recommendations.WeightVector
 

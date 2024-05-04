@@ -1,6 +1,7 @@
 package com.holodome.resources
 
-import cats.effect.{Async, Resource}
+import cats.effect.Async
+import cats.effect.Resource
 import com.holodome.config.types.HttpServerConfig
 import fs2.io.net.Network
 import org.http4s.HttpApp

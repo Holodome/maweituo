@@ -1,13 +1,19 @@
 package com.holodome.cql
 
 import com.datastax.oss.driver.api.core.`type`.DataType
-import com.holodome.domain.ads.{AdId, AdTag, AdTitle, Advertisement}
-import com.holodome.domain.images.{ImageId, ImageUrl, MediaType}
-import com.holodome.domain.messages.{ChatId, MessageText}
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
+import com.holodome.domain.ads.AdTitle
+import com.holodome.domain.ads.Advertisement
+import com.holodome.domain.images.ImageId
+import com.holodome.domain.images.ImageUrl
+import com.holodome.domain.messages.ChatId
+import com.holodome.domain.messages.MessageText
 import com.holodome.domain.users._
-import com.holodome.optics.{IsString, IsUUID}
-import com.ringcentral.cassandra4io.cql.{CassandraTypeMapper, Reads}
-import com.ringcentral.cassandra4io.cql.Reads.{stringReads, uuidReads}
+import com.holodome.optics.IsString
+import com.holodome.optics.IsUUID
+import com.ringcentral.cassandra4io.cql.CassandraTypeMapper
+import com.ringcentral.cassandra4io.cql.Reads
 import eu.timepit.refined.api.Refined
 
 object codecs {

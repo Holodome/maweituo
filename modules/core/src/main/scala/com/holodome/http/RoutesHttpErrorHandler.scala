@@ -1,9 +1,12 @@
 package com.holodome.http
 
 import cats.ApplicativeError
-import cats.data.{Kleisli, OptionT}
+import cats.data.Kleisli
+import cats.data.OptionT
 import cats.implicits._
-import org.http4s.{HttpRoutes, Request, Response}
+import org.http4s.HttpRoutes
+import org.http4s.Request
+import org.http4s.Response
 
 object RoutesHttpErrorHandler {
   def apply[F[_], E <: Throwable](

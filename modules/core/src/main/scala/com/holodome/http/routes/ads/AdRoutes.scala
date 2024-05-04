@@ -4,16 +4,20 @@ import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.users.{AuthedUser, UserId}
+import com.holodome.domain.users.AuthedUser
+import com.holodome.domain.users.UserId
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
+import com.holodome.http.HttpErrorHandler
+import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
-import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.services._
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.AuthedRoutes
+import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 
 final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
     advertisementService: AdvertisementService[F]

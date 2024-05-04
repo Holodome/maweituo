@@ -1,9 +1,9 @@
 package com.holodome.domain
 
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.images.ImageId
-import com.holodome.domain.messages.ChatId
-import com.holodome.domain.users.{Email, UserId, Username}
+import com.holodome.domain.ads._
+import com.holodome.domain.images._
+import com.holodome.domain.messages._
+import com.holodome.domain.users._
 
 import scala.util.control.NoStackTrace
 

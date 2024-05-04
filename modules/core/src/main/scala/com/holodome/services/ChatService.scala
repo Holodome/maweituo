@@ -1,15 +1,18 @@
 package com.holodome.services
 
-import cats.{Applicative, MonadThrow}
+import cats.Applicative
+import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.domain.ads._
-import com.holodome.domain.messages.{Chat, ChatId}
-import com.holodome.domain.users.UserId
 import com.holodome.domain.Id
+import com.holodome.domain.ads._
 import com.holodome.domain.errors._
+import com.holodome.domain.messages.Chat
+import com.holodome.domain.messages.ChatId
+import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository}
+import com.holodome.repositories.AdvertisementRepository
+import com.holodome.repositories.ChatRepository
 import org.typelevel.log4cats.Logger
 
 trait ChatService[F[_]] {

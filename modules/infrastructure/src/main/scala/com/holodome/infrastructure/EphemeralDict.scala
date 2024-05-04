@@ -1,6 +1,7 @@
 package com.holodome.infrastructure
 
-import cats.{Functor, Monad}
+import cats.Functor
+import cats.Monad
 import cats.data.OptionT
 import cats.syntax.all._
 

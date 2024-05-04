@@ -1,12 +1,15 @@
 package com.holodome.infrastructure.minio
 
-import cats.{Applicative, Monad, MonadThrow}
+import cats.Applicative
+import cats.Monad
+import cats.MonadThrow
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.ext.catsExt.liftCompletableFuture
 import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
+import com.holodome.infrastructure.ObjectStorage.OBSId
+import com.holodome.infrastructure.ObjectStorage.OBSUrl
 import io.minio._
 import io.minio.errors.ErrorResponseException
 

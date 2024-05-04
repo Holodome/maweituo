@@ -1,7 +1,8 @@
 package com.holodome.domain
 
 import derevo.cats.show
-import derevo.circe.magnolia.{decoder, encoder}
+import derevo.circe.magnolia.decoder
+import derevo.circe.magnolia.encoder
 import derevo.derive
 
 object pagination {

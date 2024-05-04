@@ -1,12 +1,13 @@
 package com.holodome.repositories
 
 import cats.data.OptionT
+import cats.effect.Sync
+import cats.syntax.all._
 import com.holodome.domain.users
-import com.holodome.domain.users.{User, UserId}
+import com.holodome.domain.users.User
+import com.holodome.domain.users.UserId
 
 import scala.collection.concurrent.TrieMap
-import cats.syntax.all._
-import cats.effect.Sync
 
 final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F] {
 

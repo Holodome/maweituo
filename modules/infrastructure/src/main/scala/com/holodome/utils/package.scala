@@ -1,11 +1,12 @@
 package com.holodome
 
-import cats.{Eq, Show}
+import cats.Eq
+import cats.Show
 import cats.syntax.all._
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.Encoder
 
-package object domain extends OrphanInstances
+package object utils extends OrphanInstances
 
 trait OrphanInstances {
   implicit val tokenEq: Eq[JwtToken]        = Eq.by(_.value)

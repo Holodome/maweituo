@@ -3,8 +3,9 @@ package com.holodome.repositories
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all._
-import com.holodome.domain.{ads, users}
+import com.holodome.domain.ads
 import com.holodome.domain.messages._
+import com.holodome.domain.users
 
 import scala.collection.concurrent.TrieMap
 

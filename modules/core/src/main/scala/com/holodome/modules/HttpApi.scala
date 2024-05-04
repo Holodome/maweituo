@@ -1,16 +1,18 @@
 package com.holodome.modules
 
-import cats.syntax.all._
 import cats.data.OptionT
 import cats.effect.Async
-import com.holodome.http._
+import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
-import com.holodome.http.routes._
+import com.holodome.domain.users.AuthedUser
+import com.holodome.domain.users.UserJwtAuth
 import com.holodome.http.HttpErrorHandler
+import com.holodome.http._
+import com.holodome.http.routes._
 import com.holodome.http.routes.ads._
 import dev.profunktor.auth.JwtAuthMiddleware
-import org.http4s.{HttpApp, HttpRoutes}
+import org.http4s.HttpApp
+import org.http4s.HttpRoutes
 import org.http4s.implicits.http4sKleisliResponseSyntaxOptionT
 import org.http4s.server.middleware._
 import org.typelevel.log4cats.Logger

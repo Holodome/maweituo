@@ -1,17 +1,15 @@
 package com.holodome.repositories.cassandra
 
-import cats.syntax.all._
 import cats.data.OptionT
 import cats.effect.Async
+import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
+import com.holodome.cql.codecs._
 import com.holodome.domain.ads._
 import com.holodome.domain.images.ImageId
-import com.holodome.domain.messages.ChatId
-import com.holodome.domain.users.UserId
 import com.holodome.repositories.AdvertisementRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
-import com.holodome.cql.codecs._
 
 object CassandraAdvertisementRepository {
   def make[F[_]: Async](session: CassandraSession[F]): AdvertisementRepository[F] =

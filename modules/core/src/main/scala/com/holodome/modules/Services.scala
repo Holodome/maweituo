@@ -1,8 +1,9 @@
 package com.holodome.modules
 
 import cats.MonadThrow
-import cats.effect.Async
-import com.holodome.effects.{Background, TimeSource, GenUUID}
+import com.holodome.effects.Background
+import com.holodome.effects.GenUUID
+import com.holodome.effects.TimeSource
 import com.holodome.services._
 import org.typelevel.log4cats.Logger
 

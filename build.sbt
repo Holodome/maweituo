@@ -6,6 +6,16 @@ ThisBuild / scalaVersion := "2.13.11"
 ThisBuild / version := "0.1.0"
 ThisBuild / organization := "com.holodome"
 
+lazy val commonSettings = Seq(
+  scalacOptions ++= Seq(
+    "-Ymacro-annotations",
+    "-feature",
+    "-language:implicitConversions",
+    "-deprecation",
+    "-Wunused:imports"
+  )
+)
+
 val CatsVersion            = "2.9.0"
 val CatsEffectVersion      = "3.3.12"
 val Log4CatsVersion        = "2.6.0"
@@ -33,17 +43,12 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests, it, recs, infrastructure)
+  .aggregate(core, tests, domain, it, recs, infrastructure)
 
 lazy val infrastructure = (project in file("modules/infrastructure"))
   .settings(
+    commonSettings,
     name := "maweituo-infrastructure",
-    scalacOptions ++= Seq(
-      "-Ymacro-annotations",
-      "-feature",
-      "-language:implicitConversions",
-      "-deprecation"
-    ),
     libraryDependencies ++= Seq(
       "org.typelevel"  %% "cats-core"             % CatsVersion,
       "org.typelevel"  %% "cats-effect"           % CatsEffectVersion,
@@ -69,6 +74,7 @@ lazy val infrastructure = (project in file("modules/infrastructure"))
       "io.circe"       %% "circe-derivation"      % CirceDerivationVersion,
       "io.circe"       %% "circe-refined"         % CirceVersion,
       "io.estatico"    %% "newtype"               % NewtypeVersion,
+      "dev.profunktor" %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
       "org.http4s"     %% "http4s-ember-server"   % Http4sVersion,
       "org.http4s"     %% "http4s-ember-client"   % Http4sVersion,
       "org.http4s"     %% "http4s-circe"          % Http4sVersion,
@@ -76,28 +82,27 @@ lazy val infrastructure = (project in file("modules/infrastructure"))
     )
   )
 
+lazy val domain = (project in file("modules/domain"))
+  .dependsOn(infrastructure)
+  .settings(
+    commonSettings,
+    name := "maweituo-domain",
+  )
+
 lazy val core = (project in file("modules/core"))
   .enablePlugins(Http4sGrpcPlugin)
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
-  .dependsOn(infrastructure)
+  .dependsOn(domain)
   .settings(
+    commonSettings,
     name := "maweituo-core",
     Compile / run / fork := true,
-    scalacOptions ++= Seq(
-      "-Ymacro-annotations",
-      "-feature",
-      "-language:implicitConversions",
-      "-deprecation"
-    ),
     scalafmtOnCompile := true,
     dockerExposedPorts ++= Seq(8080),
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
       "ch.qos.logback"        % "logback-classic"      % LogbackVersion,
-      "dev.profunktor"       %% "http4s-jwt-auth"      % Http4sJwtAuthVersion,
-      "dev.profunktor"       %% "redis4cats-effects"   % Redis4CatsVersion,
-      "dev.profunktor"       %% "redis4cats-log4cats"  % Redis4CatsVersion,
       "com.ringcentral"      %% "cassandra4io"         % Cassandra4IoVersion,
       "com.thesamet.scalapb" %% "scalapb-runtime"      % scalapb.compiler.Version.scalapbVersion % "protobuf",
       "com.thesamet.scalapb" %% "compilerplugin"       % "0.11.11",
@@ -113,6 +118,7 @@ lazy val core = (project in file("modules/core"))
 lazy val tests = (project in file("modules/tests"))
   .dependsOn(core)
   .settings(
+    commonSettings,
     name := "maweituo-tests",
     publish / skip := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
@@ -131,6 +137,7 @@ lazy val tests = (project in file("modules/tests"))
 lazy val it = (project in file("modules/it"))
   .dependsOn(tests)
   .settings(
+    commonSettings,
     name := "maweituo-it",
     publish / skip := true
   )
@@ -140,6 +147,7 @@ lazy val recs = (project in file("modules/recs"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
   .settings(
+    commonSettings,
     name := "maweituo-recs",
     Compile / run / fork := true,
     dockerExposedPorts ++= Seq(11223),

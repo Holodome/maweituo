@@ -1,12 +1,16 @@
 package com.holodome.services
 
-import cats.{Applicative, MonadThrow}
+import cats.Applicative
+import cats.MonadThrow
 import cats.syntax.all._
+import com.holodome.domain.Id
 import com.holodome.domain.ads._
 import com.holodome.domain.users.UserId
-import com.holodome.domain.Id
-import com.holodome.effects.{GenUUID, TimeSource}
-import com.holodome.repositories.{AdvertisementRepository, FeedRepository, TagRepository}
+import com.holodome.effects.GenUUID
+import com.holodome.effects.TimeSource
+import com.holodome.repositories.AdvertisementRepository
+import com.holodome.repositories.FeedRepository
+import com.holodome.repositories.TagRepository
 import org.typelevel.log4cats.Logger
 
 trait AdvertisementService[F[_]] {

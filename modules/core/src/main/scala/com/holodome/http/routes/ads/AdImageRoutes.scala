@@ -1,19 +1,24 @@
 package com.holodome.http.routes.ads
 
+import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.all._
-import cats.Monad
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.images._
 import com.holodome.domain.users._
-import com.holodome.http.{HttpErrorHandler, Routes}
-import com.holodome.http.vars.{AdIdVar, ImageIdVar}
+import com.holodome.http.HttpErrorHandler
+import com.holodome.http.Routes
+import com.holodome.http.vars.AdIdVar
+import com.holodome.http.vars.ImageIdVar
 import com.holodome.services._
-import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
+import org.http4s.AuthedRoutes
+import org.http4s.HttpRoutes
+import org.http4s.MediaType
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
-import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 
 final case class AdImageRoutes[F[_]: Monad: Concurrent](
     imageService: AdImageService[F]

@@ -1,8 +1,10 @@
 package com.holodome.repositories
 
+import cats.Applicative
+import cats.Monad
 import cats.syntax.all._
-import cats.{Applicative, Monad}
-import com.holodome.domain.ads.{AdId, AdTag}
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
 
 trait TagRepository[F[_]] {
   def getAllTags: F[List[AdTag]]

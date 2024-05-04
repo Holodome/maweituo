@@ -2,14 +2,16 @@ package com.holodome.services
 
 import cats.MonadThrow
 import cats.syntax.all._
+import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.errors.InternalImageUnsync
 import com.holodome.domain.images._
 import com.holodome.domain.users.UserId
-import com.holodome.domain.Id
-import com.holodome.domain.errors.InternalImageUnsync
 import com.holodome.effects.GenUUID
-import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
-import com.holodome.repositories.{AdImageRepository, AdvertisementRepository}
+import com.holodome.infrastructure.GenObjectStorageId
+import com.holodome.infrastructure.ObjectStorage
+import com.holodome.repositories.AdImageRepository
+import com.holodome.repositories.AdvertisementRepository
 import org.typelevel.log4cats.Logger
 
 trait AdImageService[F[_]] {

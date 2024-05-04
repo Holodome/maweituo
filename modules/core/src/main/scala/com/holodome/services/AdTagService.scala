@@ -1,8 +1,9 @@
 package com.holodome.services
 
-import cats.syntax.all._
 import cats.Monad
-import com.holodome.domain.ads.{AdId, AdTag}
+import cats.syntax.all._
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
 import com.holodome.repositories.TagRepository
 
 trait AdTagService[F[_]] {

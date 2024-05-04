@@ -1,21 +1,20 @@
 package com.holodome.domain
 
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.{decoder, encoder}
-import io.circe.refined._
-import derevo.derive
 import com.holodome.optics.uuidIso
-import dev.profunktor.auth.jwt.{JwtSymmetricAuth, JwtToken}
+import derevo.cats.eqv
+import derevo.cats.show
+import derevo.circe.magnolia.decoder
+import derevo.circe.magnolia.encoder
+import derevo.derive
+import dev.profunktor.auth.jwt.JwtSymmetricAuth
+import eu.timepit.refined.W
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.cats._
 import eu.timepit.refined.predicates.all.MatchesRegex
+import io.circe.refined._
 import io.estatico.newtype.macros.newtype
-import eu.timepit.refined.string._
-import eu.timepit.refined.W
-import com.holodome.domain._
 
 import java.util.UUID
-import scala.util.control.NoStackTrace
 
 object users {
   @derive(decoder, encoder, uuidIso, eqv, show)

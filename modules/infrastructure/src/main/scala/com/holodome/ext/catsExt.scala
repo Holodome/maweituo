@@ -1,9 +1,10 @@
 package com.holodome.ext
 
+import _root_.cats.effect.Async
+import _root_.cats.effect.Sync
+
 import java.util.concurrent.CompletableFuture
 import scala.concurrent.Future
-import scala.jdk.FutureConverters.CompletionStageOps
-import _root_.cats.effect.{Sync, Async}
 
 object catsExt {
 

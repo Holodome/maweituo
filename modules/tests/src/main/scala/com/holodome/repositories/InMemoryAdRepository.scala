@@ -3,7 +3,9 @@ package com.holodome.repositories
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all._
-import com.holodome.domain.ads.{AdId, AdTag, Advertisement}
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
+import com.holodome.domain.ads.Advertisement
 import com.holodome.domain.images.ImageId
 
 import scala.collection.concurrent.TrieMap

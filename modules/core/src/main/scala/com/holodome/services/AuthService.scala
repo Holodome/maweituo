@@ -3,7 +3,8 @@ package com.holodome.services
 import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all._
-import com.holodome.auth.{JwtTokens, PasswordHashing}
+import com.holodome.auth.JwtTokens
+import com.holodome.auth.PasswordHashing
 import com.holodome.domain.errors.InvalidPassword
 import com.holodome.domain.users._
 import com.holodome.infrastructure.EphemeralDict

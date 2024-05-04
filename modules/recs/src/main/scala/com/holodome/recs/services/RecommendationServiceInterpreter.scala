@@ -1,13 +1,13 @@
 package com.holodome.recs.services
 
-import cats.{Applicative, MonadThrow}
-import cats.data.{NonEmptyList, OptionT}
+import cats.MonadThrow
+import cats.data.NonEmptyList
+import cats.data.OptionT
 import cats.effect.std.Random
 import cats.syntax.all._
-import com.fasterxml.jackson.annotation.ObjectIdGenerator
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
-import com.holodome.infrastructure.{GenObjectStorageId, ObjectStorage}
+import com.holodome.infrastructure.GenObjectStorageId
 import com.holodome.recs.etl.RecETL
 import com.holodome.recs.repositories.RecRepository
 import com.holodome.services.RecommendationService

@@ -1,7 +1,7 @@
 package com.holodome.effects
 
-import cats.effect.std.Supervisor
 import cats.effect.Temporal
+import cats.effect.std.Supervisor
 import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration

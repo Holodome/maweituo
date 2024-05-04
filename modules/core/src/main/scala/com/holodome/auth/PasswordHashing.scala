@@ -1,7 +1,7 @@
 package com.holodome.auth
 
-import cats.syntax.all._
 import cats.Functor
+import cats.syntax.all._
 import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
 

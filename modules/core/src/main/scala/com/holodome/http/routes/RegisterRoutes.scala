@@ -5,7 +5,8 @@ import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users.RegisterRequest
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.{HttpErrorHandler, Routes}
+import com.holodome.http.HttpErrorHandler
+import com.holodome.http.Routes
 import com.holodome.services.UserService
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._

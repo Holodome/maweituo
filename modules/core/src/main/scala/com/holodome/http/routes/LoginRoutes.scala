@@ -3,11 +3,12 @@ package com.holodome.http.routes
 import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.tokenEncoder
 import com.holodome.domain.users.LoginRequest
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.{HttpErrorHandler, Routes}
+import com.holodome.http.HttpErrorHandler
+import com.holodome.http.Routes
 import com.holodome.services.AuthService
+import com.holodome.utils.tokenEncoder
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder

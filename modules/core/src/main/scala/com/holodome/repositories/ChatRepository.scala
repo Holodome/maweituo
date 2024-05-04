@@ -1,7 +1,7 @@
 package com.holodome.repositories
 
-import cats.data.OptionT
 import cats.MonadThrow
+import cats.data.OptionT
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.InvalidChatId
 import com.holodome.domain.messages._

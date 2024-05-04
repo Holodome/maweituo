@@ -1,13 +1,16 @@
 package com.holodome.services
 
-import cats.{Applicative, MonadThrow}
+import cats.Applicative
+import cats.MonadThrow
 import cats.syntax.all._
 import com.holodome.domain.ads._
 import com.holodome.domain.errors._
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages._
 import com.holodome.domain.users.UserId
-import com.holodome.repositories.{AdvertisementRepository, ChatRepository, AdImageRepository}
+import com.holodome.repositories.AdImageRepository
+import com.holodome.repositories.AdvertisementRepository
+import com.holodome.repositories.ChatRepository
 
 trait IAMService[F[_]] {
   def authorizeChatAccess(chatId: ChatId, userId: UserId): F[Unit]

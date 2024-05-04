@@ -1,7 +1,7 @@
 package com.holodome.repositories
 
-import cats.data.OptionT
 import cats.MonadThrow
+import cats.data.OptionT
 import com.holodome.domain.errors.InvalidImageId
 import com.holodome.domain.images._
 

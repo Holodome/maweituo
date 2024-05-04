@@ -4,9 +4,9 @@ import cats._
 import cats.data.OptionT
 import cats.syntax.all._
 import com.holodome.auth.PasswordHashing
-import com.holodome.domain.users._
 import com.holodome.domain.Id
 import com.holodome.domain.errors._
+import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
 import com.holodome.repositories.UserRepository
 import org.typelevel.log4cats.Logger

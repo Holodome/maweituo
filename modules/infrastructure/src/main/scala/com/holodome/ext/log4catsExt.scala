@@ -1,7 +1,7 @@
 package com.holodome.ext
 
-import cats.syntax.all._
 import cats.MonadThrow
+import cats.syntax.all._
 import org.typelevel.log4cats.Logger
 
 object log4catsExt {

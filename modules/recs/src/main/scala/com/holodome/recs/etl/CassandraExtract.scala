@@ -1,17 +1,20 @@
 package com.holodome.recs.etl
 
+import cats.NonEmptyParallel
 import cats.effect.Async
 import cats.syntax.all._
-import com.holodome.ext.log4catsExt._
-import cats.NonEmptyParallel
-import com.holodome.domain.ads.{AdId, AdTag, AdTitle}
-import com.holodome.domain.users.{User, UserId}
-import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
-import com.ringcentral.cassandra4io.cql.CqlStringContext
-import com.ringcentral.cassandra4io.CassandraSession
 import com.holodome.cql.codecs._
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
+import com.holodome.domain.ads.AdTitle
+import com.holodome.domain.users.User
+import com.holodome.domain.users.UserId
+import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSId
+import com.holodome.recs.domain.recommendations.OBSSnapshotLocations
+import com.ringcentral.cassandra4io.CassandraSession
+import com.ringcentral.cassandra4io.cql.CqlStringContext
 import org.typelevel.log4cats.Logger
 
 object CassandraExtract {

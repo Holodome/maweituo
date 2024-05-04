@@ -1,14 +1,15 @@
 package com.holodome.grpc
 
-import cats.syntax.all._
 import cats.Monad
 import cats.effect.Concurrent
+import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
 import com.holodome.services.TelemetryService
-import org.http4s.{Headers, Uri}
+import org.http4s.Headers
+import org.http4s.Uri
 import org.http4s.client.Client
 
 object TelemetryGRPCClientInterpreter {

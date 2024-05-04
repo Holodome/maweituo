@@ -1,9 +1,12 @@
 package com.holodome
 
-import cats.effect.{IO, Resource}
+import cats.effect.IO
+import cats.effect.Resource
 import cats.syntax.all._
-import weaver.{Expectations, IOSuite}
-import weaver.scalacheck.{CheckConfig, Checkers}
+import weaver.Expectations
+import weaver.IOSuite
+import weaver.scalacheck.CheckConfig
+import weaver.scalacheck.Checkers
 
 abstract class ResourceSuite extends IOSuite with Checkers {
 

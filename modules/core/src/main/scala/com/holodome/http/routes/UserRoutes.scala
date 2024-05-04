@@ -5,14 +5,17 @@ import cats.syntax.all._
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.users._
 import com.holodome.ext.http4s.refined.RefinedRequestDecoder
+import com.holodome.http.HttpErrorHandler
+import com.holodome.http.Routes
 import com.holodome.http.vars.UserIdVar
-import com.holodome.http.{HttpErrorHandler, Routes}
 import com.holodome.services.UserService
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.AuthedRoutes
+import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 import org.typelevel.log4cats.Logger
 
 final case class UserRoutes[F[_]: MonadThrow: JsonDecoder: Logger](userService: UserService[F])

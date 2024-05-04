@@ -3,11 +3,12 @@ package com.holodome.repositories.cassandra
 import cats.effect.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
+import com.holodome.cql.codecs._
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.AdTag
 import com.holodome.repositories.TagRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
-import com.holodome.cql.codecs._
-import com.holodome.domain.ads.{AdId, AdTag}
 
 object CassandraTagRepository {
   def make[F[_]: Async](session: CassandraSession[F]): TagRepository[F] =

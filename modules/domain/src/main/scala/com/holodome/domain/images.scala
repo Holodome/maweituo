@@ -1,17 +1,24 @@
 package com.holodome.domain
 
-import cats.{MonadThrow, Show}
-import cats.data.{EitherT, OptionT}
+import cats.MonadThrow
+import cats.Show
+import cats.data.EitherT
+import cats.data.OptionT
 import cats.effect.Concurrent
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
 import com.holodome.infrastructure.ObjectStorage.OBSId
 import com.holodome.optics.uuidIso
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.{decoder, encoder}
+import derevo.cats.eqv
+import derevo.cats.show
+import derevo.circe.magnolia.decoder
+import derevo.circe.magnolia.encoder
 import derevo.derive
 import io.estatico.newtype.macros.newtype
-import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
+import org.http4s.EntityDecoder
+import org.http4s.MalformedMessageBodyFailure
+import org.http4s.Media
+import org.http4s.MediaRange
 
 import java.util.UUID
 

@@ -1,12 +1,13 @@
 package com.holodome.resources
 
-import cats.syntax.all._
-import cats.effect.Resource
 import cats.MonadThrow
+import cats.effect.Resource
+import cats.syntax.all._
 import com.holodome.config.types.RedisConfig
-import dev.profunktor.redis4cats.{Redis, RedisCommands}
-import org.typelevel.log4cats.Logger
+import dev.profunktor.redis4cats.Redis
+import dev.profunktor.redis4cats.RedisCommands
 import dev.profunktor.redis4cats.effect.MkRedis
+import org.typelevel.log4cats.Logger
 
 trait MkRedisClient[F[_]] {
   def newClient(c: RedisConfig): Resource[F, RedisCommands[F, String, String]]

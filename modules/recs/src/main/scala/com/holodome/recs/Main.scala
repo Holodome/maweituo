@@ -1,9 +1,11 @@
 package com.holodome.recs
 
-import cats.syntax.all._
-import cats.effect.{IO, IOApp}
+import cats.effect.IO
+import cats.effect.IOApp
 import com.holodome.recs.config.Config
-import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETL}
+import com.holodome.recs.etl.CassandraExtract
+import com.holodome.recs.etl.ClickhouseTransformLoad
+import com.holodome.recs.etl.RecETL
 import com.holodome.recs.modules._
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer

@@ -1,14 +1,15 @@
 package com.holodome.recs.grpc
 
-import cats.syntax.all._
 import cats.Monad
 import cats.effect.Temporal
-import com.holodome.domain.users.UserId
+import cats.syntax.all._
 import com.holodome.domain.Id
+import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 import com.holodome.proto
 import com.holodome.services.RecommendationService
-import org.http4s.{Headers, HttpRoutes}
+import org.http4s.Headers
+import org.http4s.HttpRoutes
 
 object RecommendationGRPCServer {
   def make[F[_]: GenUUID: Temporal](

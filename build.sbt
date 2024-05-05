@@ -55,13 +55,10 @@ lazy val infrastructure = (project in file("modules/infrastructure"))
       "org.typelevel"  %% "cats-core"             % CatsVersion,
       "org.typelevel"  %% "cats-effect"           % CatsEffectVersion,
       "org.typelevel"  %% "log4cats-slf4j"        % Log4CatsVersion,
-      "dev.profunktor" %% "redis4cats-effects"    % Redis4CatsVersion,
-      "dev.profunktor" %% "redis4cats-log4cats"   % Redis4CatsVersion,
       "tf.tofu"        %% "derevo-core"           % DerevoVersion,
       "tf.tofu"        %% "derevo-circe"          % DerevoVersion,
       "tf.tofu"        %% "derevo-cats"           % DerevoVersion,
       "tf.tofu"        %% "derevo-circe-magnolia" % DerevoVersion,
-      "io.minio"        % "minio"                 % MinioVersion,
       "eu.timepit"     %% "refined"               % RefinedVersion,
       "eu.timepit"     %% "refined-cats"          % RefinedVersion,
       "dev.optics"     %% "monocle-core"          % MonocleVersion,
@@ -97,12 +94,15 @@ lazy val common = (project in file("modules/common"))
     commonSettings,
     name := "maweituo-common",
     libraryDependencies ++= Seq(
-      "com.zaxxer"       % "HikariCP"        % HikariCPVersion,
-      "com.clickhouse"   % "clickhouse-jdbc" % ClickhouseVersion,
-      "org.lz4"          % "lz4-java"        % LZ4Version,
-      "org.tpolecat"    %% "doobie-core"     % DoobieVersion,
-      "org.tpolecat"    %% "doobie-hikari"   % DoobieVersion,
-      "com.ringcentral" %% "cassandra4io"    % Cassandra4IoVersion
+      "com.zaxxer"       % "HikariCP"            % HikariCPVersion,
+      "com.clickhouse"   % "clickhouse-jdbc"     % ClickhouseVersion,
+      "org.lz4"          % "lz4-java"            % LZ4Version,
+      "org.tpolecat"    %% "doobie-core"         % DoobieVersion,
+      "org.tpolecat"    %% "doobie-hikari"       % DoobieVersion,
+      "com.ringcentral" %% "cassandra4io"        % Cassandra4IoVersion,
+      "dev.profunktor"  %% "redis4cats-effects"  % Redis4CatsVersion,
+      "dev.profunktor"  %% "redis4cats-log4cats" % Redis4CatsVersion,
+      "io.minio"         % "minio"               % MinioVersion
     )
   )
 

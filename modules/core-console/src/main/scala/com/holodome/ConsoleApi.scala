@@ -89,7 +89,7 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   private def register: F[Unit] = for {
     name     <- promptInput("Input name: ", Username.apply)
-    email    <- promptInputF[Email]("Input email: ", EncodeRF[F, String, Email].encodeRF(_))
+    email    <- promptInputF("Input email: ", EncodeRF[F, String, Email].encodeRF)
     password <- promptInput("Input password", Password.apply)
     req = RegisterRequest(name, email, password)
     _ <- services.users.create(req)
@@ -97,13 +97,13 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
   } yield ()
 
   private def getUserInfo: F[Unit] = for {
-    userId <- promptInputF[UserId]("Input user id: ", Id.read[F, UserId])
+    userId <- promptInputF("Input user id: ", Id.read[F, UserId])
     user   <- services.users.get(userId)
     _      <- C.println(s"user: $user")
   } yield ()
 
   private def getAd: F[Unit] = for {
-    adId <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
+    adId <- promptInputF("Input ad id: ", Id.read[F, AdId])
     ad   <- services.ads.get(adId)
     _    <- C.println(s"ad: $ad")
   } yield ()
@@ -115,35 +115,35 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
   } yield ()
 
   private def addTag(userId: UserId): F[Unit] = for {
-    adId <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
+    adId <- promptInputF("Input ad id: ", Id.read[F, AdId])
     tag  <- promptInput("Input tag: ", AdTag.apply)
     _    <- services.ads.addTag(adId, tag, userId)
     _    <- C.println("Added tag")
   } yield ()
 
   private def markResolved(userId: UserId): F[Unit] = for {
-    adId   <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
-    client <- promptInputF[UserId]("Input client id: ", Id.read[F, UserId])
+    adId   <- promptInputF("Input ad id: ", Id.read[F, AdId])
+    client <- promptInputF("Input client id: ", Id.read[F, UserId])
     _      <- services.ads.markAsResolved(adId, userId, client)
     _      <- C.println("Resolved")
   } yield ()
 
   private def createChat(userId: UserId): F[Unit] = for {
-    adId   <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
-    client <- promptInputF[UserId]("Input client id: ", Id.read[F, UserId])
+    adId   <- promptInputF("Input ad id: ", Id.read[F, AdId])
+    client <- promptInputF("Input client id: ", Id.read[F, UserId])
     chatId <- services.chats.create(adId, client)
     _      <- C.println(s"Created chat $chatId")
   } yield ()
 
   private def sendMessage(userId: UserId): F[Unit] = for {
-    chatId <- promptInputF[ChatId]("Input chat id: ", Id.read[F, ChatId])
+    chatId <- promptInputF("Input chat id: ", Id.read[F, ChatId])
     msg    <- promptInput("Input message text: ", MessageText.apply)
     _      <- services.messages.send(chatId, userId, SendMessageRequest(msg))
     _      <- C.println("Message sent")
   } yield ()
 
   private def getChatHistory(userId: UserId): F[Unit] = for {
-    chatId  <- promptInputF[ChatId]("Input chat id: ", Id.read[F, ChatId])
+    chatId  <- promptInputF("Input chat id: ", Id.read[F, ChatId])
     history <- services.messages.history(chatId, userId)
     _       <- C.println(s"History: $history")
   } yield ()

@@ -30,7 +30,7 @@ object EncodeRF {
       case Right(a) => Applicative[F].pure(a)
     }
 
-  def apply[F[_], A, T](implicit I: EncodeRF[F, A, T]): EncodeRF[F, A, T] = I
+  def apply[F[_], T, A](implicit I: EncodeRF[F, T, A]): EncodeRF[F, T, A] = I
 
   implicit def forApplicativeThrow[F[_]: ApplicativeThrow, A, G[_, _], T, P](implicit
       ev: G[T, P] =:= A,

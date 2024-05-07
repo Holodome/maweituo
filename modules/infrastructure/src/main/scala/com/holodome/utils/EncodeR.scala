@@ -1,7 +1,6 @@
 package com.holodome.utils
 
 import cats.Functor
-import java.lang
 
 trait EncodeR[T, A] {
   def encodeR(t: T): Either[Throwable, A]

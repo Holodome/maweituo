@@ -10,11 +10,10 @@ import com.holodome.domain.messages.{ChatId, MessageText, SendMessageRequest}
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.users._
 import com.holodome.modules.Services
-import eu.timepit.refined.api.RefType
+import com.holodome.utils.EncodeRF
 import eu.timepit.refined.auto._
 
 import scala.util.Try
-import com.holodome.utils.EncodeRF
 
 object ConsoleApi {
 

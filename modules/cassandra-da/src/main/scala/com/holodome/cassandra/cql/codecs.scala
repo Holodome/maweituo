@@ -21,7 +21,7 @@ object codecs {
   implicit val userIdReads: Reads[UserId]     = uuidReads.map(UserId.apply)
   implicit val usernameReads: Reads[Username] = stringReads.map(Username.apply)
   implicit val emailReads: Reads[Email] =
-    stringReads.map(e => Email(encodeThrow[String, EmailT](e)))
+    stringReads.map(e => encodeThrow[String, Email](e))
   implicit val passwordReads: Reads[HashedSaltedPassword] =
     stringReads.map(HashedSaltedPassword.apply)
   implicit val saltReads: Reads[PasswordSalt] = stringReads.map(PasswordSalt.apply)

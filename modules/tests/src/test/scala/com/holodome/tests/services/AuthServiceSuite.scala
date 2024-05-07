@@ -87,10 +87,10 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
       }
       val auth = AuthServiceInterpreter.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)
       for {
-        id <- users.create(reg)
-        t  <- auth.login(reg.name, reg.password)
-        _  <- auth.logout(id, t)
-        x  <- auth.authed(t).value
+        id     <- users.create(reg)
+        (t, _) <- auth.login(reg.name, reg.password)
+        _      <- auth.logout(id, t)
+        x      <- auth.authed(t).value
       } yield expect.all(x.isEmpty)
     }
   }

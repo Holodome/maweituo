@@ -1,5 +1,6 @@
 package com.holodome
 
+import cats.effect.kernel.Resource
 import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp}
 import com.holodome.config.Config
@@ -8,7 +9,6 @@ import dev.profunktor.redis4cats.effect.MkRedis._
 import dev.profunktor.redis4cats.log4cats._
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import cats.effect.kernel.Resource
 
 object Main extends IOApp.Simple {
 

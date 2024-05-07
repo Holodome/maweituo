@@ -29,7 +29,7 @@ private final class AuthServiceInterpreter[F[_]: MonadThrow: Logger](
     authedUserDict: EphemeralDict[F, JwtToken, UserId],
     tokens: JwtTokens[F]
 ) extends AuthService[F] {
-  override def login(username: Username, password: Password): F[JwtToken] =
+  override def login(username: Username, password: Password): F[(JwtToken, UserId)] =
     userRepo
       .getByName(username)
       .flatMap { user =>
@@ -40,9 +40,10 @@ private final class AuthServiceInterpreter[F[_]: MonadThrow: Logger](
               jwtDict.store(user.id, t) *>
                 authedUserDict.store(t, user.id)
             })
+            .map(t => (t, user.id))
         } else {
           Logger[F].warn(s"Invalid login attempt for user $username") *>
-            InvalidPassword(username).raiseError[F, JwtToken]
+            InvalidPassword(username).raiseError[F, (JwtToken, UserId)]
         }
       }
       .onError { case e =>

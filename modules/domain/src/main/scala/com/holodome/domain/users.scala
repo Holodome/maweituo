@@ -21,9 +21,11 @@ object users {
   @derive(decoder, encoder, show, eqv)
   @newtype case class Username(value: String)
 
+  type EmailT = String Refined MatchesRegex[W.`"""(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"""`.T]
+
   @derive(decoder, encoder, eqv, show)
   @newtype case class Email(
-      value: String Refined MatchesRegex[W.`"""(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"""`.T]
+      value: EmailT
   )
 
   @derive(decoder, encoder, eqv, show)

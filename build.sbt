@@ -45,7 +45,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(coreHttp, tests, it, recs)
+  .aggregate(coreHttp, coreConsole, tests, it, recs)
 
 lazy val infrastructure = (project in file("modules/infrastructure"))
   .settings(
@@ -155,6 +155,15 @@ lazy val coreHttp = (project in file("modules/core-http"))
       "ch.qos.logback" % "logback-classic" % LogbackVersion,
       "com.olegpy"    %% "meow-mtl-core"   % MeowMtlVersion
     )
+  )
+
+lazy val coreConsole = (project in file("modules/core-console"))
+  .dependsOn(core)
+  .settings(
+    commonSettings,
+    name := "maweituo-core-console",
+    Compile / run / fork := true,
+    scalafmtOnCompile := true
   )
 
 lazy val tests = (project in file("modules/tests"))

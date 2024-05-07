@@ -12,6 +12,8 @@ import eu.timepit.refined.api.Refined
 object codecs {
   import com.ringcentral.cassandra4io.cql.Reads._
 
+  case class InvalidRefined(err: String)
+
   implicit val userIdReads: Reads[UserId]     = uuidReads.map(UserId.apply)
   implicit val usernameReads: Reads[Username] = stringReads.map(Username.apply)
   implicit val emailReads: Reads[Email]       = stringReads.map(e => Email(Refined.unsafeApply(e)))

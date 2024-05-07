@@ -34,6 +34,16 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   def err[A](msg: String): F[A] = new RuntimeException(msg).raiseError[F, A]
 
+  def promptInput[A](prompt: String, convert: String => A): F[A] = for {
+    _ <- C.print(prompt)
+    r <- C.readLine.map(convert)
+  } yield r
+
+  def promptInputF[A](prompt: String, convert: String => F[A]): F[A] = for {
+    _ <- C.print(prompt)
+    r <- C.readLine.flatMap(convert)
+  } yield r
+
   private def parseCommand(n: Int): F[Command] = {
     def ok[A <: Command](a: A): F[Command] = Applicative[F].pure(a)
     n match {
@@ -55,20 +65,20 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
   }
 
   private def readCommand: F[Command] = for {
-    _    <- C.println("Enter command number: ")
-    nStr <- C.readLine
-    n <- Try(nStr.toInt).toOption match {
-      case Some(n) => Applicative[F].pure(n)
-      case None    => err("Invalid input")
-    }
+    n <- promptInputF[Int](
+      "Enter command number: ",
+      nStr =>
+        Try(nStr.toInt).toOption match {
+          case Some(n) => Applicative[F].pure(n)
+          case None    => err("Invalid input")
+        }
+    )
     cmd <- parseCommand(n)
   } yield cmd
 
   private def login: F[Unit] = for {
-    _        <- C.print("Input name: ")
-    name     <- C.readLine.map(Username.apply)
-    _        <- C.print("Input password")
-    password <- C.readLine.map(Password.apply)
+    name     <- promptInput("Input name: ", Username.apply)
+    password <- promptInput("Input password", Password.apply)
     userId   <- services.auth.login(name, password).map(_._2)
     _        <- setCurrentUser(userId.some)
     _        <- C.println(s"Logged in user $userId")
@@ -78,84 +88,69 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
     setCurrentUser(None) *> C.println("Logged out")
 
   private def register: F[Unit] = for {
-    _    <- C.print("Input name: ")
-    name <- C.readLine.map(Username.apply)
-    _    <- C.print("Input email: ")
-    email <- C.readLine
-      .flatMap { x =>
+    name <- promptInput("Input name: ", Username.apply)
+    email <- promptInputF[EmailT](
+      "Input email: ",
+      x =>
         RefType.applyRef[EmailT](x) match {
           case Left(e)  => err[EmailT](e)
           case Right(a) => Applicative[F].pure(a)
         }
-      }
-      .map(Email.apply)
-    _        <- C.print("Input password")
-    password <- C.readLine.map(Password.apply)
+    ).map(Email.apply)
+    password <- promptInput("Input password", Password.apply)
     req = RegisterRequest(name, email, password)
     _ <- services.users.create(req)
     _ <- C.println("Registered")
   } yield ()
 
   private def getUserInfo: F[Unit] = for {
-    _      <- C.print("Input user id: ")
-    userId <- C.readLine.flatMap(Id.read[F, UserId])
+    userId <- promptInputF[UserId]("Input user id: ", Id.read[F, UserId])
     user   <- services.users.get(userId)
     _      <- C.println(s"user: $user")
   } yield ()
 
   private def getAd: F[Unit] = for {
-    _    <- C.print("Input ad id: ")
-    adId <- C.readLine.flatMap(Id.read[F, AdId])
+    adId <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
     ad   <- services.ads.get(adId)
     _    <- C.println(s"ad: $ad")
   } yield ()
 
   private def uploadAd(userId: UserId): F[Unit] = for {
-    _     <- C.print("Input ad title: ")
-    title <- C.readLine.map(AdTitle.apply)
+    title <- promptInput("Input ad title: ", AdTitle.apply)
     adId  <- services.ads.create(userId, CreateAdRequest(title))
     _     <- C.println(s"Created ad $adId")
   } yield ()
 
   private def addTag(userId: UserId): F[Unit] = for {
-    _    <- C.print("Input ad id: ")
-    adId <- C.readLine.flatMap(Id.read[F, AdId])
-    _    <- C.print("Input tag: ")
-    tag  <- C.readLine.map(AdTag.apply)
+    adId <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
+    tag  <- promptInput("Input tag: ", AdTag.apply)
     _    <- services.ads.addTag(adId, tag, userId)
     _    <- C.println("Added tag")
   } yield ()
 
   private def markResolved(userId: UserId): F[Unit] = for {
-    _      <- C.print("Input ad id: ")
-    adId   <- C.readLine.flatMap(Id.read[F, AdId])
-    _      <- C.print("Input client id: ")
-    client <- C.readLine.flatMap(Id.read[F, UserId])
+    adId   <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
+    client <- promptInputF[UserId]("Input client id: ", Id.read[F, UserId])
     _      <- services.ads.markAsResolved(adId, userId, client)
     _      <- C.println("Resolved")
   } yield ()
 
   private def createChat(userId: UserId): F[Unit] = for {
-    _      <- C.print("Input ad id: ")
-    adId   <- C.readLine.flatMap(Id.read[F, AdId])
-    _      <- C.print("Input client id: ")
-    client <- C.readLine.flatMap(Id.read[F, UserId])
+    adId   <- promptInputF[AdId]("Input ad id: ", Id.read[F, AdId])
+    client <- promptInputF[UserId]("Input client id: ", Id.read[F, UserId])
     chatId <- services.chats.create(adId, client)
     _      <- C.println(s"Created chat $chatId")
   } yield ()
 
   private def sendMessage(userId: UserId): F[Unit] = for {
-    _      <- C.print("Input chat id: ")
-    chatId <- C.readLine.flatMap(Id.read[F, ChatId])
-    _      <- C.print("Input message id: ")
-    msg    <- C.readLine.map(MessageText.apply)
+    chatId <- promptInputF[ChatId]("Input chat id: ", Id.read[F, ChatId])
+    msg    <- promptInput("Input message text: ", MessageText.apply)
     _      <- services.messages.send(chatId, userId, SendMessageRequest(msg))
     _      <- C.println("Message sent")
   } yield ()
 
   private def getChatHistory(userId: UserId): F[Unit] = for {
-    _       <- C.print("Input chat id: ")
-    chatId  <- C.readLine.flatMap(Id.read[F, ChatId])
+    chatId  <- promptInputF[ChatId]("Input chat id: ", Id.read[F, ChatId])
     history <- services.messages.history(chatId, userId)
     _       <- C.println(s"History: $history")
   } yield ()

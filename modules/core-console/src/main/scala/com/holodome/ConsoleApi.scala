@@ -14,6 +14,7 @@ import eu.timepit.refined.api.RefType
 import eu.timepit.refined.auto._
 
 import scala.util.Try
+import com.holodome.utils.EncodeRF
 
 object ConsoleApi {
 
@@ -88,15 +89,8 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
     setCurrentUser(None) *> C.println("Logged out")
 
   private def register: F[Unit] = for {
-    name <- promptInput("Input name: ", Username.apply)
-    email <- promptInputF[EmailT](
-      "Input email: ",
-      x =>
-        RefType.applyRef[EmailT](x) match {
-          case Left(e)  => err[EmailT](e)
-          case Right(a) => Applicative[F].pure(a)
-        }
-    ).map(Email.apply)
+    name     <- promptInput("Input name: ", Username.apply)
+    email    <- promptInputF[Email]("Input email: ", EncodeRF[F, String, Email].encodeRF(_))
     password <- promptInput("Input password", Password.apply)
     req = RegisterRequest(name, email, password)
     _ <- services.users.create(req)

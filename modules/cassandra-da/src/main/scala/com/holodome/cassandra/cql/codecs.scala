@@ -6,17 +6,22 @@ import com.holodome.domain.images.{ImageId, ImageUrl}
 import com.holodome.domain.messages.{ChatId, MessageText}
 import com.holodome.domain.users._
 import com.holodome.optics.{IsString, IsUUID}
+import com.holodome.utils.EncodeR
 import com.ringcentral.cassandra4io.cql.{CassandraTypeMapper, Reads}
-import eu.timepit.refined.api.Refined
 
 object codecs {
   import com.ringcentral.cassandra4io.cql.Reads._
 
-  case class InvalidRefined(err: String)
+  private def encodeThrow[T, A](t: T)(implicit E: EncodeR[T, A]): A =
+    E.encodeR(t) match {
+      case Left(e)  => throw e
+      case Right(a) => a
+    }
 
   implicit val userIdReads: Reads[UserId]     = uuidReads.map(UserId.apply)
   implicit val usernameReads: Reads[Username] = stringReads.map(Username.apply)
-  implicit val emailReads: Reads[Email]       = stringReads.map(e => Email(Refined.unsafeApply(e)))
+  implicit val emailReads: Reads[Email] =
+    stringReads.map(e => Email(encodeThrow[String, EmailT](e)))
   implicit val passwordReads: Reads[HashedSaltedPassword] =
     stringReads.map(HashedSaltedPassword.apply)
   implicit val saltReads: Reads[PasswordSalt] = stringReads.map(PasswordSalt.apply)

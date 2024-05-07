@@ -13,6 +13,8 @@ import io.circe.refined._
 import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
+import com.holodome.utils.EncodeRF
+import cats.Functor
 
 object users {
   @derive(decoder, encoder, uuidIso, eqv, show)
@@ -22,11 +24,12 @@ object users {
   @newtype case class Username(value: String)
 
   type EmailT = String Refined MatchesRegex[W.`"""(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"""`.T]
+  @derive(decoder, encoder, show, eqv)
+  @newtype case class Email(value: EmailT)
 
-  @derive(decoder, encoder, eqv, show)
-  @newtype case class Email(
-      value: EmailT
-  )
+  implicit def emailEncodeRF[F[_]: Functor, T](implicit
+      E: EncodeRF[F, T, EmailT]
+  ): EncodeRF[F, T, Email] = EncodeRF.functor[F, T, EmailT].map(E)(Email.apply)
 
   @derive(decoder, encoder, eqv, show)
   @newtype

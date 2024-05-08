@@ -31,7 +31,7 @@ object MkHttpServer {
         .withHost(config.host)
         .withPort(config.port)
         .withHttpApp(httpApp)
-        // .withHttp2
+        .withHttp2
         .withoutTLS
         .build
         .evalTap(showEmberBanner[F])

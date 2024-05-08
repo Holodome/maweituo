@@ -24,7 +24,7 @@ lazy val commonSettings = Seq(
 val CatsVersion            = "2.9.0"
 val CatsEffectVersion      = "3.3.12"
 val Log4CatsVersion        = "2.6.0"
-val Http4sVersion          = "0.23.1"
+val Http4sVersion          = "0.23.9"
 val CirceVersion           = "0.14.1"
 val DerevoVersion          = "0.12.8"
 val RefinedVersion         = "0.11.1"
@@ -230,5 +230,8 @@ lazy val recs = (project in file("modules/recs"))
     name := "maweituo-recs",
     Compile / run / fork := true,
     dockerExposedPorts ++= Seq(11223),
-    dockerBaseImage := "openjdk:11-jre-slim-buster"
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % LogbackVersion
+    )
   )

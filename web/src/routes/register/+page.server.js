@@ -14,9 +14,9 @@ export const actions = {
 
 		const body = await api.post('register', {
 			name: data.get('name'),
-            email: data.get('email'),
+			email: data.get('email'),
 			password: data.get('password')
-		});
+		}, null);
 		if (body.errors) {
 			return fail(401, body);
 		}

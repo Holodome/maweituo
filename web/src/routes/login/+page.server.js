@@ -14,7 +14,7 @@ export const actions = {
 		const body = await api.post('login', {
 			name: data.get('name'),
 			password: data.get('password')
-		});
+		}, null);
 
 		if (body.errors) {
 			return fail(401, body);

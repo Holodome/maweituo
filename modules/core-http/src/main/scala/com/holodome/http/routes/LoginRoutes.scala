@@ -21,6 +21,7 @@ final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
       req.decodeR[LoginRequest] { login =>
         authService
           .login(login.name, login.password)
+          .map(_._1)
           .flatMap(Ok(_))
       }
     }

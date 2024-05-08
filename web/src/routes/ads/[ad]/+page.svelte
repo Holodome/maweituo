@@ -56,11 +56,11 @@
             <button type="submit">Add image</button>
         </form>
     {/if}
-    {#if !isAuthor()}
+    {#if $page.data.user && !isAuthor()}
         <form use:enhance method="POST" action="?/create_chat">
             <button type="submit">Create chat</button>
         </form>
-    {:else if data.chat}
+    {:else if isAuthor() && data.chat}
         <a href="/ads/{$page.params.ad}/chats/{ data.chat }">Open chat</a>
     {/if}
 </div>

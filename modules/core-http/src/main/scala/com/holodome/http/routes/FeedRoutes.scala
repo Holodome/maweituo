@@ -23,7 +23,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder](feed: FeedService[F])
   private object PageSize extends OptionalQueryParamDecoderMatcher[Int]("pageSize")
 
   private def makePagination(page: Option[Int], pageSize: Option[Int]): Pagination =
-    Pagination(pageSize.getOrElse(100), page.getOrElse(0))
+    Pagination(pageSize.getOrElse(10), page.getOrElse(0))
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root :? Page(page) :? PageSize(pageSize) =>

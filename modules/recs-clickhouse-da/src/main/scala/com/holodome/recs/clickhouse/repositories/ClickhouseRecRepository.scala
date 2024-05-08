@@ -22,6 +22,13 @@ object ClickhouseRecRepository {
 private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transactor[F])
     extends RecRepository[F] {
 
+  override def userIsInRecs(id: UserId): F[Boolean] =
+    sql"select (${id.value} in (select id from user_weights))"
+      .query[Boolean]
+      .option
+      .transact(xa)
+      .map(_.getOrElse(false))
+
   override def get(userId: UserId): OptionT[F, WeightVector] =
     OptionT(getQuery(userId).option.transact(xa))
       .map(WeightVector.apply)

@@ -39,23 +39,34 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 ) {
   def extract(locs: OBSSnapshotLocations): F[Unit] =
     (
-      Logger[F].protectInfo("Starting ETL extract users", "Finished ETL extract users")(
+      Logger[F].bracketProtectInfo(
+        "Starting ETL extract users",
+        "Finished ETL extract users",
+        "ETL users extraction aborted"
+      )(
         extractUsersToObs(locs.users)
       ),
-      Logger[F].protectInfo("Starting ETL extract ads", "Finished ETL extract ads")(
+      Logger[F].bracketProtectInfo(
+        "Starting ETL extract ads",
+        "Finished ETL extract ads",
+        "ETL ads extraction aborted"
+      )(
         extractAdsToObs(locs.ads)
       ),
-      Logger[F].protectInfo(
+      Logger[F].bracketProtectInfo(
         "Starting ETL extract user bought",
-        "Finished ETL extract user bought"
+        "Finished ETL extract user bought",
+        "ETL user bought extraction aborted"
       )(extractUserBoughtToObs(locs.user_bought)),
-      Logger[F].protectInfo(
+      Logger[F].bracketProtectInfo(
         "Starting ETL extract user created",
-        "Finished ETL extract user created"
+        "Finished ETL extract user created",
+        "ETL user created extraction aborted"
       )(extractUserCreatedToObs(locs.user_created)),
-      Logger[F].protectInfo(
+      Logger[F].bracketProtectInfo(
         "Starting ETL extract user discussed",
-        "Finished ETL extract user discussed"
+        "Finished ETL extract user discussed",
+        "ETL user discussed extraction aborted"
       )(extractUserDiscussedToObs(locs.user_discussed))
     ).parMapN((_, _, _, _, _) => ())
 
@@ -78,7 +89,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 
   private def extractUsersToObs(ob: OBSId): F[Unit] =
     storeCsv(
-      cql"select * from local.users"
+      cql"select id,name,email,password,salt from local.users"
         .as[User]
         .select(session)
         .map(u => s"${u.id.value},${u.name.value},${u.email.value}")
@@ -102,7 +113,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 
   private def extractUserBoughtToObs(ob: OBSId): F[Unit] =
     storeCsv(
-      cql"select * from recs.user_bought"
+      cql"select id,ad from recs.user_bought"
         .as[(UserId, AdId)]
         .select(session)
         .map { case (a, b) =>
@@ -115,7 +126,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 
   private def extractUserDiscussedToObs(ob: OBSId): F[Unit] =
     storeCsv(
-      cql"select * from recs.user_discussed"
+      cql"select id,ad from recs.user_discussed"
         .as[(UserId, AdId)]
         .select(session)
         .map { case (a, b) =>
@@ -128,7 +139,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
 
   private def extractUserCreatedToObs(ob: OBSId): F[Unit] =
     storeCsv(
-      cql"select * from recs.user_created"
+      cql"select id,ad from recs.user_created"
         .as[(UserId, AdId)]
         .select(session)
         .map { case (a, b) =>

@@ -6,6 +6,7 @@ import com.holodome.domain.services.{RecommendationService, TelemetryService}
 import com.holodome.effects.MkRandom
 import com.holodome.recs.etl.RecETL
 import com.holodome.recs.services.{RecommendationServiceInterpreter, TelemetryServiceInterpreter}
+import com.holodome.effects.Background
 
 sealed abstract class Services[F[_]] {
   val telemetry: TelemetryService[F]
@@ -14,7 +15,7 @@ sealed abstract class Services[F[_]] {
 
 object Services {
 
-  def make[F[_]: Sync: MkRandom](
+  def make[F[_]: Sync: MkRandom: Background](
       repositories: Repositories[F],
       etl: RecETL[F]
   ): F[Services[F]] = {

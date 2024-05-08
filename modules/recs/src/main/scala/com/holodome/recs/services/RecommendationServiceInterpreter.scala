@@ -10,29 +10,37 @@ import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.GenObjectStorageId
 import com.holodome.recs.etl.RecETL
+import cats.Applicative
+import com.holodome.effects.Background
 
 object RecommendationServiceInterpreter {
-  def make[F[_]: MonadThrow: GenObjectStorageId](
+  def make[F[_]: MonadThrow: GenObjectStorageId: Background](
       recRepo: RecRepository[F],
       etl: RecETL[F]
   )(implicit rng: Random[F]): RecommendationService[F] =
     new RecommendationServiceInterpreter(recRepo, etl)
 }
 
-private final class RecommendationServiceInterpreter[F[_]: MonadThrow: GenObjectStorageId](
+private final class RecommendationServiceInterpreter[F[
+    _
+]: MonadThrow: GenObjectStorageId: Background](
     recRepo: RecRepository[F],
     etl: RecETL[F]
 )(implicit rng: Random[F])
     extends RecommendationService[F] {
 
   override def getRecs(user: UserId, count: Int): F[List[AdId]] =
-    collaborativeRecs(user, count)
-      .flatMap {
-        case x if x.size < count =>
-          contentRecs(user, count - x.size).map(_ ++ x)
-        case x => x.pure[F]
-      }
-      .map(_.toList)
+    recRepo.userIsInRecs(user).flatMap {
+      case true =>
+        collaborativeRecs(user, count)
+          .flatMap {
+            case x if x.size < count =>
+              contentRecs(user, count - x.size).map(_ ++ x)
+            case x => x.pure[F]
+          }
+          .map(_.toList)
+      case false => Applicative[F].pure(List[AdId]()) <* Background[F].schedule(learn)
+    }
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] = for {
     closest <- recRepo.getClosest(user, 10)

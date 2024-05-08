@@ -4,10 +4,8 @@ import cats.effect.Temporal
 import cats.effect.std.Supervisor
 import cats.syntax.all._
 
-import scala.concurrent.duration.FiniteDuration
-
 trait Background[F[_]] {
-  def schedule[A](fa: F[A], duration: FiniteDuration): F[Unit]
+  def schedule[A](fa: F[A]): F[Unit]
 }
 
 object Background {
@@ -15,7 +13,7 @@ object Background {
 
   implicit def bgInstance[F[_]](implicit S: Supervisor[F], T: Temporal[F]): Background[F] =
     new Background[F] {
-      override def schedule[A](fa: F[A], duration: FiniteDuration): F[Unit] =
-        S.supervise(T.race(T.sleep(duration), fa)).void
+      override def schedule[A](fa: F[A]): F[Unit] =
+        S.supervise(fa).void
     }
 }

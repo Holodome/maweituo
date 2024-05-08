@@ -30,6 +30,6 @@ private final class TelemetryServiceBackgroundInterpreter[F[_]: Functor: Backgro
     runInBackground(internal.userDiscussed(user, ad))
 
   private def runInBackground[A](fa: F[A]) =
-    Background[F].schedule(fa, 1.minute)
+    Background[F].schedule(fa)
 
 }

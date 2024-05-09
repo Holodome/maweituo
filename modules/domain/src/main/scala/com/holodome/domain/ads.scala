@@ -14,7 +14,7 @@ import io.estatico.newtype.macros.newtype
 import java.util.UUID
 import scala.util.Try
 
-object ads {
+package object ads {
   @derive(decoder, encoder, uuidIso, eqv)
   @newtype case class AdId(value: UUID)
 

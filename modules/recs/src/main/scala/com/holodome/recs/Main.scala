@@ -1,5 +1,6 @@
 package com.holodome.recs
 
+import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp}
 import com.holodome.config.Config
 import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETLInterpreter}
@@ -8,7 +9,6 @@ import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import cats.effect.std.Supervisor
 
 object Main extends IOApp.Simple {
 

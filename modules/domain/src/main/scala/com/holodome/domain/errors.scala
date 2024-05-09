@@ -7,7 +7,7 @@ import com.holodome.domain.users._
 
 import scala.util.control.NoStackTrace
 
-object errors {
+package object errors {
   sealed trait ApplicationError extends NoStackTrace
 
   case class InvalidAccess(reason: String) extends ApplicationError

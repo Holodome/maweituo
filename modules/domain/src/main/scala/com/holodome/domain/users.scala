@@ -16,7 +16,7 @@ import java.util.UUID
 import com.holodome.utils.EncodeRF
 import cats.Functor
 
-object users {
+package object users {
   @derive(decoder, encoder, uuidIso, eqv, show)
   @newtype case class UserId(value: UUID)
 

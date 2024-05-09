@@ -1,17 +1,16 @@
 package com.holodome.recs.services
 
-import cats.MonadThrow
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.std.Random
 import cats.syntax.all._
+import cats.{Applicative, MonadThrow}
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.repositories.RecRepository
 import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
+import com.holodome.effects.Background
 import com.holodome.infrastructure.GenObjectStorageId
 import com.holodome.recs.etl.RecETL
-import cats.Applicative
-import com.holodome.effects.Background
 
 object RecommendationServiceInterpreter {
   def make[F[_]: MonadThrow: GenObjectStorageId: Background](

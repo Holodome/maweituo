@@ -12,7 +12,7 @@ import io.estatico.newtype.macros.newtype
 import java.time.Instant
 import java.util.UUID
 
-object messages {
+package object messages {
   @derive(uuidIso, encoder, decoder, eqv)
   @newtype case class ChatId(id: UUID)
 

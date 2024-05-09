@@ -15,7 +15,7 @@ import org.http4s._
 
 import java.util.UUID
 
-object images {
+package object images {
   @derive(uuidIso, encoder, decoder, show, eqv)
   @newtype case class ImageId(id: UUID)
 

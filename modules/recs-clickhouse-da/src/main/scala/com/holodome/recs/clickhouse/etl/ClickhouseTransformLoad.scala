@@ -56,13 +56,13 @@ private final case class ClickhouseTransformLoadOperator[F[
     data.foldMap(a => a)
 
   private def tagsForAd(adId: UUID) =
-    sql"select arrayJoin(tags) as tag from ad_tags where `id` = $adId"
+    sql"select arrayJoin(tags) as tag from ad_tags final where `id` = $adId"
       .query[String]
       .to[Set]
       .transact(xa)
 
   private def calculateWeights(url: OBSUrl): F[Unit] = for {
-    tags <- sql"select tag from tag_ads".query[String].to[List].transact(xa)
+    tags <- sql"select tag from tag_ads final".query[String].to[List].transact(xa)
     uids <-
       sql"select `id` from s3(${url.value}, 'CSVWithNames', '`id` UUID, `name` String, `email` String')"
         .query[UUID]
@@ -70,15 +70,15 @@ private final case class ClickhouseTransformLoadOperator[F[
         .transact(xa)
     _ <- uids.parTraverse_ { uid =>
       (
-        sql"""select arrayJoin(ads) as ad from user_bought where `id` = $uid"""
+        sql"""select arrayJoin(ads) as ad from user_bought final where `id` = $uid"""
           .query[UUID]
           .to[List]
           .transact(xa),
-        sql"""select arrayJoin(ads) as ad from user_discussed where `id` = $uid"""
+        sql"""select arrayJoin(ads) as ad from user_discussed final where `id` = $uid """
           .query[UUID]
           .to[List]
           .transact(xa),
-        sql"""select arrayJoin(ads) as ad from user_created where `id` = $uid"""
+        sql"""select arrayJoin(ads) as ad from user_created final where `id` = $uid"""
           .query[UUID]
           .to[List]
           .transact(xa)
@@ -125,9 +125,10 @@ private final case class ClickhouseTransformLoadOperator[F[
 
   private def loadTags =
     sql"""insert into tag_ads
-          select `tag`, groupArray(`id`) as `ads` from (
+          select distinct `tag`, groupArray(`id`) as `ads` from (
             select distinct arrayJoin(`tags`) as `tag` from ad_tags
           ) a, ad_tags t
+          final
           where has(t.`tags`, `tag`)
           group by `tag`""".update.run.transact(xa).void
 

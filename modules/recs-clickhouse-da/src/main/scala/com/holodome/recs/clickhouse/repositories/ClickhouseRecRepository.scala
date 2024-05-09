@@ -53,19 +53,19 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
       .query[List[Float]]
 
   private def getUserCreatedQuery(userId: UserId) =
-    sql"select ads from user_created where id = ${userId.value}".query[List[UUID]]
+    sql"select ads from user_created final where id = ${userId.value}".query[List[UUID]]
 
   private def getUserBoughtQuery(userId: UserId) =
-    sql"select ads from user_bought where id = ${userId.value}".query[List[UUID]]
+    sql"select ads from user_bought final where id = ${userId.value}".query[List[UUID]]
 
   private def getUserDiscussedQuery(userId: UserId) =
-    sql"select ads from user_discussed where id = ${userId.value}".query[List[UUID]]
+    sql"select ads from user_discussed final where id = ${userId.value}".query[List[UUID]]
 
   private def getTagByIdxQuery(idx: Int) =
-    sql"select tag from tag_ads limit 1 offset $idx".query[String]
+    sql"select tag from tag_ads final limit 1 offset $idx".query[String]
 
   private def getAdsByTagQuery(tag: AdTag) =
-    sql"select ads from tag_ads where tag = ${tag.value}".query[List[UUID]]
+    sql"select ads from tag_ads final where tag = ${tag.value}".query[List[UUID]]
 
   override def getClosest(user: UserId, count: Int): F[List[UserId]] =
     getClosestQ(user, count)
@@ -75,8 +75,9 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
 
   private def getClosestQ(user: UserId, count: Int): Query0[UUID] =
     sql"""select id from user_weights
-         order by L2Distance(weights,
+          final
+          order by L2Distance(weights,
                             (select weights from user_weights where id = ${user.value}))
-         limit $count"""
+          limit $count"""
       .query[UUID]
 }

@@ -6,8 +6,6 @@ import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.Background
 
-import scala.concurrent.duration.DurationInt
-
 object TelemetryServiceBackgroundInterpreter {
 
   def make[F[_]: Functor: Background](

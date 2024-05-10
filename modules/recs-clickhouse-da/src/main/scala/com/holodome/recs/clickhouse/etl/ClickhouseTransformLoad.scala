@@ -53,7 +53,7 @@ private final case class ClickhouseTransformLoadOperator[F[
   } yield ()
 
   private def joinListsToSet[A](data: List[Set[A]]): Set[A] =
-    data.foldMap(a => a)
+    data.foldMap(identity)
 
   private def tagsForAd(adId: UUID) =
     sql"select arrayJoin(tags) as tag from ad_tags final where `id` = $adId"

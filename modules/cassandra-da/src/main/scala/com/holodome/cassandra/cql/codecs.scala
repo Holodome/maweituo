@@ -13,7 +13,7 @@ object codecs {
   import com.ringcentral.cassandra4io.cql.Reads._
 
   private def encodeThrow[T, A](t: T)(implicit E: EncodeR[T, A]): A =
-    E.encodeR(t) match {
+    E.encodeRF(t) match {
       case Left(e)  => throw e
       case Right(a) => a
     }

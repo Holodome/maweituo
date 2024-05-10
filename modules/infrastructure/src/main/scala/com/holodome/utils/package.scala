@@ -7,6 +7,11 @@ import io.circe.Encoder
 
 package object utils extends OrphanInstances {
   case class RefinedEncodingFailure(reason: String) extends Throwable
+
+  type EncodeR[T, A] = EncodeRF[Either[Throwable, _], T, A]
+  object EncodeR {
+    def apply[T, A](implicit I: EncodeR[T, A]): EncodeR[T, A] = I
+  }
 }
 
 trait OrphanInstances {

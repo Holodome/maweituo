@@ -5,7 +5,6 @@ import cats.Functor
 import cats.ApplicativeThrow
 import eu.timepit.refined.api.RefType
 import eu.timepit.refined.api.Validate
-import cats.Applicative
 
 trait EncodeRF[F[_], T, A] {
   def encodeRF(value: T): F[A]
@@ -27,7 +26,7 @@ object EncodeRF {
   ): F[A] =
     RefType.applyRef(t)(ev, rt, v) match {
       case Left(e)  => RefinedEncodingFailure(e).raiseError[F, A]
-      case Right(a) => Applicative[F].pure(a)
+      case Right(a) => a.pure[F]
     }
 
   def apply[F[_], T, A](implicit I: EncodeRF[F, T, A]): EncodeRF[F, T, A] = I

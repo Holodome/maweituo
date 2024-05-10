@@ -27,7 +27,7 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   private var loggedUserId: Option[UserId] = None
 
-  private def getCurrentUser: F[Option[UserId]] = Applicative[F].pure(loggedUserId)
+  private def getCurrentUser: F[Option[UserId]] = loggedUserId.pure[F]
   private def setCurrentUser(user: Option[UserId]): F[Unit] = Sync[F].delay({
     loggedUserId = user
   })
@@ -45,7 +45,7 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
   } yield r
 
   private def parseCommand(n: Int): F[Command] = {
-    def ok[A <: Command](a: A): F[Command] = Applicative[F].pure(a)
+    def ok(a: Command): F[Command] = a.pure[F]
     n match {
       case 0  => ok(Exit())
       case 1  => ok(Register())
@@ -69,7 +69,7 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
       "Enter command number: ",
       nStr =>
         Try(nStr.toInt).toOption match {
-          case Some(n) => Applicative[F].pure(n)
+          case Some(n) => n.pure[F]
           case None    => err("Invalid input")
         }
     )
@@ -197,8 +197,8 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
     (readCommand >>= executeCommand)
       .as(false)
       .recoverWith {
-        case e if e.getMessage() === "Exit" => Applicative[F].pure(true)
-        case e                              => C.println(s"Error: $e") *> Applicative[F].pure(false)
+        case e if e.getMessage() === "Exit" => true.pure[F]
+        case e                              => C.println(s"Error: $e").as(false)
       }
       .flatMap {
         case true  => Applicative[F].unit

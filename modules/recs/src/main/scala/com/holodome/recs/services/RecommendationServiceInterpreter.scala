@@ -1,9 +1,9 @@
 package com.holodome.recs.services
 
+import cats.MonadThrow
 import cats.data.{NonEmptyList, OptionT}
 import cats.effect.std.Random
 import cats.syntax.all._
-import cats.{Applicative, MonadThrow}
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.repositories.RecRepository
 import com.holodome.domain.services.RecommendationService
@@ -38,7 +38,7 @@ private final class RecommendationServiceInterpreter[F[
             case x => x.pure[F]
           }
           .map(_.toList)
-      case false => Applicative[F].pure(List[AdId]()) <* Background[F].schedule(learn)
+      case false => List[AdId]().pure[F] <* Background[F].schedule(learn)
     }
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] = for {
@@ -73,10 +73,8 @@ private final class RecommendationServiceInterpreter[F[
       .reverse
     low  = values.head
     high = values.last
-    r <-
-      if (low < high) { OptionT.liftF(rng.betweenDouble(low, high)) }
-      else { OptionT.none }
-    idx = values.takeWhile_(v => v < r).length
+    r <- OptionT.whenF(low < high)(rng.betweenDouble(low, high))
+    idx = values.takeWhile_(_ < r).length
     tag <- recRepo.getTagByIdx(idx)
     ads <- recRepo.getAdsByTag(tag)
     ad  <- OptionT.liftF(rng.elementOf(ads))

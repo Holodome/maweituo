@@ -1,8 +1,8 @@
 package com.holodome
 
-import cats.Applicative
+import cats.effect.Async
+import cats.effect.kernel.Ref
 import cats.effect.std.Console
-import cats.effect.{Async, Sync}
 import cats.syntax.all._
 import com.holodome.domain.Id
 import com.holodome.domain.ads._
@@ -13,24 +13,20 @@ import com.holodome.modules.Services
 import com.holodome.utils.EncodeRF
 import eu.timepit.refined.auto._
 
+import java.io.EOFException
 import scala.util.Try
 
 object ConsoleApi {
 
-  def make[F[_]: Console: Async](services: Services[F]): ConsoleApi[F] =
-    new ConsoleApi(services)
-
+  def make[F[_]: Console: Async](services: Services[F]): F[ConsoleApi[F]] =
+    Ref.of[F, Option[UserId]](none[UserId]).map(new ConsoleApi(services, _))
 }
 
-final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: Console[F]) {
+final class ConsoleApi[F[_]: Async] private (
+    services: Services[F],
+    loggedUserId: Ref[F, Option[UserId]]
+)(implicit C: Console[F]) {
   import commands._
-
-  private var loggedUserId: Option[UserId] = None
-
-  private def getCurrentUser: F[Option[UserId]] = loggedUserId.pure[F]
-  private def setCurrentUser(user: Option[UserId]): F[Unit] = Sync[F].delay({
-    loggedUserId = user
-  })
 
   def err[A](msg: String): F[A] = new RuntimeException(msg).raiseError[F, A]
 
@@ -60,11 +56,32 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
       case 10 => ok(GetPersonalizedFeed())
       case 11 => ok(GetGlobalFeed())
       case 12 => ok(GetAllTags())
+      case 13 => ok(Login())
+      case 14 => ok(Logout())
       case _  => err("Invalid command number")
     }
   }
 
+  private val menu: String =
+    """Menu
+      |0. Exit
+      |1. Register
+      |2. Get user info
+      |3. Get ad
+      |4. Upload ad
+      |5. Add tag to ad
+      |6. Mark ad as resolved
+      |7. Create chat
+      |8. Send message
+      |9. Get chat history
+      |10. Get personalized feed
+      |11. Get global feed
+      |12. Get all tags
+      |13. Login
+      |14. Logout""".stripMargin
+
   private def readCommand: F[Command] = for {
+    _ <- C.println(menu)
     n <- promptInputF[Int](
       "Enter command number: ",
       nStr =>
@@ -78,19 +95,19 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   private def login: F[Unit] = for {
     name     <- promptInput("Input name: ", Username.apply)
-    password <- promptInput("Input password", Password.apply)
+    password <- promptInput("Input password: ", Password.apply)
     userId   <- services.auth.login(name, password).map(_._2)
-    _        <- setCurrentUser(userId.some)
+    _        <- loggedUserId.set(Some(userId))
     _        <- C.println(s"Logged in user $userId")
   } yield ()
 
   private def logout: F[Unit] =
-    setCurrentUser(None) *> C.println("Logged out")
+    loggedUserId.set(None) *> C.println("Logged out")
 
   private def register: F[Unit] = for {
     name     <- promptInput("Input name: ", Username.apply)
     email    <- promptInputF("Input email: ", EncodeRF[F, String, Email].encodeRF)
-    password <- promptInput("Input password", Password.apply)
+    password <- promptInput("Input password: ", Password.apply)
     req = RegisterRequest(name, email, password)
     _ <- services.users.create(req)
     _ <- C.println("Registered")
@@ -150,12 +167,12 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   private def getGlobalFeed: F[Unit] = for {
     feed <- services.feed.getGlobal(Pagination(10, 0))
-    _    <- C.println("Feed: $feed")
+    _    <- C.println(s"Feed: $feed")
   } yield ()
 
   private def getPersonalizedFeed(userId: UserId): F[Unit] = for {
     feed <- services.feed.getPersonalized(userId, Pagination(10, 0))
-    _    <- C.println("Feed: $feed")
+    _    <- C.println(s"Feed: $feed")
   } yield ()
 
   private def getAllTags: F[Unit] = for {
@@ -165,12 +182,12 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
 
   private def executeCommand(cmd: Command): F[Unit] = {
     def requireUnlogged(action: => F[Unit]): F[Unit] =
-      getCurrentUser flatMap {
+      loggedUserId.get flatMap {
         case Some(_) => err("Logout before you can do that")
         case None    => action
       }
     def requireLogin(action: UserId => F[Unit]): F[Unit] =
-      getCurrentUser flatMap {
+      loggedUserId.get flatMap {
         case Some(u) => action(u)
         case None    => err("Login before you can do that")
       }
@@ -197,11 +214,12 @@ final class ConsoleApi[F[_]: Async] private (services: Services[F])(implicit C: 
     (readCommand >>= executeCommand)
       .as(false)
       .recoverWith {
+        case e: EOFException                => true.pure[F]
         case e if e.getMessage() === "Exit" => true.pure[F]
         case e                              => C.println(s"Error: $e").as(false)
       }
       .flatMap {
-        case true  => Applicative[F].unit
+        case true  => new RuntimeException("Exited").raiseError[F, Unit]
         case false => run
       }
 }

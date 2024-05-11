@@ -162,12 +162,18 @@ lazy val coreHttp = (project in file("modules/core-http"))
   )
 
 lazy val coreConsole = (project in file("modules/core-console"))
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(core)
   .settings(
     commonSettings,
     name := "maweituo-core-console",
     Compile / run / fork := true,
-    scalafmtOnCompile := true
+    scalafmtOnCompile := true,
+    libraryDependencies ++= Seq(
+      "ch.qos.logback" % "logback-classic" % LogbackVersion
+    ),
+    maintainer := "holodome",
+    Compile / mainClass := Some("com.holodome.Main")
   )
 
 lazy val tests = (project in file("modules/tests"))

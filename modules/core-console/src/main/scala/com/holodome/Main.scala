@@ -25,7 +25,8 @@ object Main extends IOApp.Simple {
             for {
               infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
               services = Services.make[IO](repositories, infrastructure, recs)
-            } yield ConsoleApi.make[IO](services)
+              api <- ConsoleApi.make[IO](services)
+            } yield api
           }
           .flatMap { api => Resource.make(api.run)(_ => IO.unit) }
           .useForever

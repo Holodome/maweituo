@@ -54,8 +54,8 @@ private final class AdServiceInterpreter[
   override def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] = for {
     _ <- iam.authorizeAdModification(id, userId)
     _ <- tags.ensureCreated(tag).flatMap {
-      case true  => Logger[F].info(s"Created new tag $tag")
-      case false => Applicative[F].unit
+      case true  => Applicative[F].unit
+      case false => Logger[F].info(s"Created new tag $tag")
     }
     _ <- repo.addTag(id, tag)
     _ <- tags.addTagToAd(id, tag)

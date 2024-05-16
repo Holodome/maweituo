@@ -36,22 +36,21 @@ private final class CassandraAdImageRepository[F[_]: Async](session: CassandraSe
   }
 
   override def create(image: Image): F[Unit] =
-    createQuery(image).execute(session).void
+    cql"insert into local.images (id, ad_id, url, media_type, size) values (${image.id.id}, ${image.adId.value}, ${image.url.value}, ${image.mediaType.toRaw}, ${image.size})"
+      .execute(session)
+      .void
 
   override def findMeta(imageId: ImageId): OptionT[F, Image] =
-    OptionT(getMetaQuery(imageId).select(session).head.compile.last)
-      .flatMap(i => OptionT.liftF(i.toDomain))
+    OptionT(
+      cql"select id, ad_id, url, media_type, size from local.images where id = ${imageId.id}"
+        .as[SerializedImage]
+        .select(session)
+        .head
+        .compile
+        .last
+    ).flatMap(i => OptionT.liftF(i.toDomain))
 
   override def delete(imageId: ImageId): F[Unit] =
-    deleteQuery(imageId).execute(session).void
+    cql"delete from local.images where id = ${imageId.id}".execute(session).void
 
-  private def createQuery(image: Image) =
-    cql"insert into local.images (id, ad_id, url, media_type, size) values (${image.id.id}, ${image.adId.value}, ${image.url.value}, ${image.mediaType.toRaw}, ${image.size})"
-
-  private def getMetaQuery(imageId: ImageId) =
-    cql"select id, ad_id, url, media_type, size from local.images where id = ${imageId.id}"
-      .as[SerializedImage]
-
-  private def deleteQuery(imageId: ImageId) =
-    cql"delete from local.images where id = ${imageId.id}"
 }

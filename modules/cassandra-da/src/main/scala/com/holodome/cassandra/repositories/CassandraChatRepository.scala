@@ -21,24 +21,31 @@ private final class CassandraChatRepository[F[_]: Async](session: CassandraSessi
     extends ChatRepository[F] {
 
   override def create(chat: Chat): F[Unit] =
-    createQuery(chat).execute(session).void
-
-  override def find(chatId: ChatId): OptionT[F, Chat] =
-    OptionT(findQuery(chatId).select(session).head.compile.last)
-
-  override def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, ChatId] =
-    OptionT(findByAdAndClientQuery(adId, client).select(session).head.compile.last)
-
-  private def createQuery(chat: Chat) =
     cql"insert into local.chats (id, ad_id, ad_author_id, client_id) values (${chat.id.id}, ${chat.adId.value}, ${chat.adAuthor.value}, ${chat.client})"
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
       )
+      .execute(session)
+      .void
 
-  private def findQuery(chatId: ChatId) =
-    cql"select id, ad_id, ad_author_id, client_id from local.chats where id = ${chatId.id}".as[Chat]
+  override def find(chatId: ChatId): OptionT[F, Chat] =
+    OptionT(
+      cql"select id, ad_id, ad_author_id, client_id from local.chats where id = ${chatId.id}"
+        .as[Chat]
+        .select(session)
+        .head
+        .compile
+        .last
+    )
 
-  private def findByAdAndClientQuery(adId: AdId, client: UserId) =
-    cql"select id from local.chats where ad_id = ${adId.value} and client_id = ${client.value} allow filtering"
-      .as[ChatId]
+  override def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, ChatId] =
+    OptionT(
+      cql"select id from local.chats where ad_id = ${adId.value} and client_id = ${client.value} allow filtering"
+        .as[ChatId]
+        .select(session)
+        .head
+        .compile
+        .last
+    )
+
 }

@@ -16,21 +16,18 @@ private final class CassandraTelemetryRepository[F[_]: Async](session: Cassandra
     extends TelemetryRepository[F] {
 
   override def userCreated(user: users.UserId, ad: ads.AdId): F[Unit] =
-    userCreatedQuery(user, ad).execute(session).void
+    cql"insert into rec.user_created_transactional (id, ad) values (${user.value}, ${ad.value})"
+      .execute(session)
+      .void
 
   override def userBought(user: users.UserId, ad: ads.AdId): F[Unit] =
-    userBoughtQuery(user, ad).execute(session).void
+    cql"insert into rec.user_bought_transactional (id, ad) values (${user.value}, ${ad.value})"
+      .execute(session)
+      .void
 
   override def userDiscussed(user: users.UserId, ad: ads.AdId): F[Unit] =
-    userDiscussedQuery(user, ad).execute(session).void
-
-  private def userCreatedQuery(user: users.UserId, ad: ads.AdId) =
-    cql"insert into rec.user_created_transactional (id, ad) values (${user.value}, ${ad.value})"
-
-  private def userBoughtQuery(user: users.UserId, ad: ads.AdId) =
-    cql"insert into rec.user_bought_transactional (id, ad) values (${user.value}, ${ad.value})"
-
-  private def userDiscussedQuery(user: users.UserId, ad: ads.AdId) =
     cql"insert into rec.user_discussed_transactional (id, ad) values (${user.value}, ${ad.value})"
+      .execute(session)
+      .void
 
 }

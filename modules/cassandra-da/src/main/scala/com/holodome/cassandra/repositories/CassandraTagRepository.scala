@@ -18,41 +18,30 @@ private final class CassandraTagRepository[F[_]: Async](session: CassandraSessio
     extends TagRepository[F] {
 
   override def getAllTags: F[List[AdTag]] =
-    getAllTagsQ.select(session).compile.toList
+    cql"select tag from local.tags".as[AdTag].select(session).compile.toList
 
   override def addTag(tag: AdTag): F[Unit] =
-    addTagQ(tag).execute(session).void
+    cql"insert into local.tags (tag) values (${tag.str})"
+      .config(
+        _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+      )
+      .execute(session)
+      .void
 
   override def addTagToAd(adId: AdId, tag: AdTag): F[Unit] =
-    addTagToAdQ(adId, tag).execute(session).void
+    cql"update local.tags set ads = ads + {$adId} where tag = ${tag.str}".execute(session).void
 
   override def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] =
-    removeTagFromAdQ(adId, tag).execute(session).void
+    cql"update local.tags set ads = ads + {$adId} where tag = ${tag.str}".execute(session).void
 
   override def getAllAdsByTag(tag: AdTag): F[Set[AdId]] =
-    getAllAdsByTagQ(tag)
+    cql"select ads from local.tags where tag = ${tag.str}"
+      .as[Option[Set[AdId]]]
       .select(session)
       .head
       .compile
       .last
       .map(_.flatten)
       .map(_.getOrElse(Set.empty[AdId]))
-
-  private def getAllTagsQ =
-    cql"select tag from local.tags".as[AdTag]
-
-  private def addTagQ(tag: AdTag) =
-    cql"insert into local.tags (tag) values (${tag.str})".config(
-      _.setConsistencyLevel(ConsistencyLevel.QUORUM)
-    )
-
-  private def addTagToAdQ(adId: AdId, tag: AdTag) =
-    cql"update local.tags set ads = ads + {$adId} where tag = ${tag.str}"
-
-  private def removeTagFromAdQ(adId: AdId, tag: AdTag) =
-    cql"update local.tags set ads = ads + {$adId} where tag = ${tag.str}"
-
-  private def getAllAdsByTagQ(tag: AdTag) =
-    cql"select ads from local.tags where tag = ${tag.str}".as[Option[Set[AdId]]]
 
 }

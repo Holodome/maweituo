@@ -18,56 +18,63 @@ object CassandraUserRepository {
 private final class CassandraUserRepository[F[_]: Async](session: CassandraSession[F])
     extends UserRepository[F] {
 
-  override def create(request: User): F[Unit] = createQuery(request).execute(session).void
-
-  override def all: F[List[User]] =
-    allQuery.select(session).compile.toList
-
-  override def find(userId: UserId): OptionT[F, User] =
-    OptionT(findQuery(userId).select(session).head.compile.last)
-
-  override def findByEmail(email: Email): OptionT[F, User] =
-    OptionT(findByEmailQuery(email).select(session).head.compile.last)
-
-  override def findByName(name: Username): OptionT[F, User] =
-    OptionT(findByNameQuery(name).select(session).head.compile.last)
-
-  override def delete(id: UserId): F[Unit] =
-    deleteQuery(id).execute(session).void
-
-  override def update(update: UpdateUserInternal): F[Unit] =
-    updateQuery(update).execute(session).void
-
-  private def createQuery(req: User) =
+  override def create(req: User): F[Unit] =
     cql"""insert into users (id, name, email, password, salt) values
          |(${req.id}, ${req.name.value}, ${req.email.value},
          |${req.hashedPassword.value}, ${req.salt.value})""".stripMargin
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
       )
+      .execute(session)
+      .void
 
-  private def allQuery =
+  override def all: F[List[User]] =
     cql"select id, name, email, password, salt from users"
       .as[User]
+      .select(session)
+      .compile
+      .toList
 
-  private def findQuery(id: UserId) =
-    cql"select id, name, email, password, salt from users where id = $id"
-      .as[User]
-
-  private def findByEmailQuery(email: Email) = {
-    cql"select id, name, email, password, salt from users where email = ${email.value}"
-      .as[User]
-  }
-
-  private def findByNameQuery(name: Username) = {
-    cql"select id, name, email, password, salt from users where name = ${name.value}"
-      .as[User]
-  }
-
-  private def deleteQuery(id: UserId) =
-    cql"delete from users where id = $id".config(
-      _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+  override def find(userId: UserId): OptionT[F, User] =
+    OptionT(
+      cql"select id, name, email, password, salt from users where id = $userId"
+        .as[User]
+        .select(session)
+        .head
+        .compile
+        .last
     )
+
+  override def findByEmail(email: Email): OptionT[F, User] =
+    OptionT(
+      cql"select id, name, email, password, salt from users where email = ${email.value}"
+        .as[User]
+        .select(session)
+        .head
+        .compile
+        .last
+    )
+
+  override def findByName(name: Username): OptionT[F, User] =
+    OptionT(
+      cql"select id, name, email, password, salt from users where name = ${name.value}"
+        .as[User]
+        .select(session)
+        .head
+        .compile
+        .last
+    )
+
+  override def delete(id: UserId): F[Unit] =
+    cql"delete from users where id = $id"
+      .config(
+        _.setConsistencyLevel(ConsistencyLevel.QUORUM)
+      )
+      .execute(session)
+      .void
+
+  override def update(update: UpdateUserInternal): F[Unit] =
+    updateQuery(update).execute(session).void
 
   private def updateQuery(update: UpdateUserInternal) = {
     val sets = List(

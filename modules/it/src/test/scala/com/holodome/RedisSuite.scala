@@ -26,8 +26,8 @@ object RedisSuite extends ResourceSuite {
 
   test("basic redis operations work") { redis =>
     val gen = for {
-      a <- nonEmptyStringGen
-      b <- nonEmptyStringGen
+      a <- nonEmptyStringGen.map(_.value)
+      b <- nonEmptyStringGen.map(_.value)
     } yield a -> b
     forall(gen) { case (key, value) =>
       val dict = RedisEphemeralDict.make[IO](redis, Expire)

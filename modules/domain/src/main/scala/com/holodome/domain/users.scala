@@ -1,6 +1,8 @@
 package com.holodome.domain
 
+import cats.Functor
 import com.holodome.optics.uuidIso
+import com.holodome.utils.EncodeRF
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
@@ -9,31 +11,44 @@ import eu.timepit.refined.W
 import eu.timepit.refined.api.Refined
 import eu.timepit.refined.cats._
 import eu.timepit.refined.predicates.all.MatchesRegex
+import eu.timepit.refined.types.string.NonEmptyString
 import io.circe.refined._
 import io.estatico.newtype.macros.newtype
 
 import java.util.UUID
-import com.holodome.utils.EncodeRF
-import cats.Functor
 
 package object users {
   @derive(decoder, encoder, uuidIso, eqv, show)
   @newtype case class UserId(value: UUID)
 
   @derive(decoder, encoder, show, eqv)
-  @newtype case class Username(value: String)
+  @newtype case class Username(_value: NonEmptyString) {
+    def value: String = _value.value
+  }
+
+  implicit def usernameEncodeRF[F[_]: Functor, T](implicit
+      E: EncodeRF[F, T, NonEmptyString]
+  ): EncodeRF[F, T, Username] = EncodeRF.map(Username.apply)
 
   type EmailT = String Refined MatchesRegex[W.`"""(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"""`.T]
   @derive(decoder, encoder, show, eqv)
-  @newtype case class Email(value: EmailT)
+  @newtype case class Email(_value: EmailT) {
+    def value: String = _value.value
+  }
 
   implicit def emailEncodeRF[F[_]: Functor, T](implicit
       E: EncodeRF[F, T, EmailT]
-  ): EncodeRF[F, T, Email] = EncodeRF.functor[F, T, EmailT].map(E)(Email.apply)
+  ): EncodeRF[F, T, Email] = EncodeRF.map(Email.apply)
 
   @derive(decoder, encoder, eqv, show)
   @newtype
-  case class Password(value: String)
+  case class Password(_value: NonEmptyString) {
+    def value: String = _value.value
+  }
+
+  implicit def passwordEncodeRF[F[_]: Functor, T](implicit
+      E: EncodeRF[F, T, NonEmptyString]
+  ): EncodeRF[F, T, Password] = EncodeRF.map(Password.apply)
 
   @derive(decoder, encoder, eqv)
   @newtype
@@ -41,7 +56,13 @@ package object users {
 
   @derive(decoder, encoder, eqv)
   @newtype
-  case class PasswordSalt(value: String)
+  case class PasswordSalt(_value: NonEmptyString) {
+    def value: String = _value.value
+  }
+
+  implicit def passwordSaltEncodeRF[F[_]: Functor, T](implicit
+      E: EncodeRF[F, T, NonEmptyString]
+  ): EncodeRF[F, T, PasswordSalt] = EncodeRF.map(PasswordSalt.apply)
 
   @derive(decoder, encoder, show)
   final case class LoginRequest(name: Username, password: Password)

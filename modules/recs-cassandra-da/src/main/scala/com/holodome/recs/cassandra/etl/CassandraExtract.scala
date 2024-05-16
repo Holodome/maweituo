@@ -104,7 +104,7 @@ private final case class CassandraExtractOperator[F[_]: Async: NonEmptyParallel:
         .as[(AdId, UserId, AdTitle, Option[Set[AdTag]])]
         .select(session)
         .map { a =>
-          s"${a._1.value},${a._2.value},${a._3},${wrapArray(a._4.fold(List[String]())(s => s.toList.map(_.value)))}"
+          s"${a._1.value},${a._2.value},${a._3},${wrapArray(a._4.fold(List[String]())(s => s.toList.map(_.str)))}"
         }
         .through(joinCsvRows)
         .map("id,author,title,tags\n" ++ _),

@@ -6,11 +6,16 @@ import com.holodome.optics.uuidIso
 import derevo.cats.{eqv, show}
 import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
+import eu.timepit.refined.cats._
+import eu.timepit.refined.types.string.NonEmptyString
+import io.circe.refined._
 import io.circe.{Encoder, Json}
 import io.estatico.newtype.macros.newtype
 
 import java.time.Instant
 import java.util.UUID
+import cats.Functor
+import com.holodome.utils.EncodeRF
 
 package object messages {
   @derive(uuidIso, encoder, decoder, eqv)
@@ -24,7 +29,13 @@ package object messages {
   )
 
   @derive(encoder, decoder, show, eqv)
-  @newtype case class MessageText(value: String)
+  @newtype case class MessageText(_value: NonEmptyString) {
+    def value: String = _value.value
+  }
+  implicit def messageTextEncodeRF[F[_]: Functor, T](implicit
+      E: EncodeRF[F, T, NonEmptyString]
+  ): EncodeRF[F, T, MessageText] = EncodeRF.map(MessageText.apply)
+
 
   @derive(encoder)
   case class Message(

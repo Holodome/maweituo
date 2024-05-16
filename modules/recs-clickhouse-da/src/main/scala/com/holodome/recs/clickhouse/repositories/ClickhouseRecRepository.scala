@@ -13,6 +13,7 @@ import doobie.implicits._
 import doobie.util.transactor.Transactor
 
 import java.util.UUID
+import com.holodome.utils.EncodeRF
 
 object ClickhouseRecRepository {
   def make[F[_]: MonadCancelThrow](xa: Transactor[F]): RecRepository[F] =
@@ -43,7 +44,9 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
     OptionT(getUserDiscussedQuery(user).option.transact(xa)).map(_.toSet.map(AdId.apply))
 
   override def getTagByIdx(idx: Int): OptionT[F, AdTag] =
-    OptionT(getTagByIdxQuery(idx).option.transact(xa)).map(AdTag.apply)
+    OptionT(getTagByIdxQuery(idx).option.transact(xa)).flatMap { str => 
+      OptionT.liftF(EncodeRF[F, String, AdTag].encodeRF(str))
+    }
 
   override def getAdsByTag(tag: AdTag): OptionT[F, Set[AdId]] =
     OptionT(getAdsByTagQuery(tag).option.transact(xa)).map(_.toSet.map(AdId.apply))
@@ -65,7 +68,7 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
     sql"select tag from tag_ads final limit 1 offset $idx".query[String]
 
   private def getAdsByTagQuery(tag: AdTag) =
-    sql"select ads from tag_ads final where tag = ${tag.value}".query[List[UUID]]
+    sql"select ads from tag_ads final where tag = ${tag.str}".query[List[UUID]]
 
   override def getClosest(user: UserId, count: Int): F[List[UserId]] =
     getClosestQ(user, count)

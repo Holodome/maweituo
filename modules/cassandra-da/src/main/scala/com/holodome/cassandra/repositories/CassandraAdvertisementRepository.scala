@@ -47,7 +47,7 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
 
   private def createQuery(ad: Advertisement) = {
     cql"""insert into advertisements (id, author_id, title, tags, images, chats, resolved)
-         |values (${ad.id.value}, ${ad.authorId}, ${ad.title.value}, ${ad.tags},
+         |values (${ad.id}, ${ad.authorId}, ${ad.title.str}, ${ad.tags.map(_.str)},
          |${ad.images}, ${ad.chats}, ${ad.resolved})""".stripMargin
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
@@ -68,13 +68,13 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
     )
 
   private def addTagQuery(id: AdId, tag: AdTag) =
-    cql"update advertisements set tags = tags + {${tag.value}} where id = ${id.value}"
+    cql"update advertisements set tags = tags + {${tag.str}} where id = ${id.value}"
 
   private def addImageQuery(id: AdId, image: ImageId) =
     cql"update advertisements set images = images + {${image.id}} where id = ${id.value}"
 
   private def removeTagQuery(id: AdId, tag: AdTag) =
-    cql"update advertisements set tags = tags - {${tag.value}} where id = ${id.value}"
+    cql"update advertisements set tags = tags - {${tag.str}} where id = ${id.value}"
 
   private def removeImageQuery(id: AdId, image: ImageId) =
     cql"update advertisements set images = images - {${image.id}} where id = ${id.value}"

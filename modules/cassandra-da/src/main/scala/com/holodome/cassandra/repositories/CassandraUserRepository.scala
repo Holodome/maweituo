@@ -40,7 +40,7 @@ private final class CassandraUserRepository[F[_]: Async](session: CassandraSessi
 
   private def createQuery(req: User) =
     cql"""insert into users (id, name, email, password, salt) values
-         |(${req.id}, ${req.name.value}, ${req.email.value.value},
+         |(${req.id}, ${req.name.value}, ${req.email.value},
          |${req.hashedPassword.value}, ${req.salt.value})""".stripMargin
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
@@ -55,8 +55,7 @@ private final class CassandraUserRepository[F[_]: Async](session: CassandraSessi
       .as[User]
 
   private def findByEmailQuery(email: Email) = {
-    val e = email.value
-    cql"select id, name, email, password, salt from users where email = ${e.value}"
+    cql"select id, name, email, password, salt from users where email = ${email.value}"
       .as[User]
   }
 
@@ -73,7 +72,7 @@ private final class CassandraUserRepository[F[_]: Async](session: CassandraSessi
   private def updateQuery(update: UpdateUserInternal) = {
     val sets = List(
       update.name.map(_.value).fold(cql"")(name => cql"name = $name "),
-      update.email.map(_.value).fold(cql"")(email => cql"email = ${email.value} "),
+      update.email.map(_.value).fold(cql"")(email => cql"email = $email "),
       update.password.map(_.value).fold(cql"")(password => cql"password = $password ")
     )
     assert(sets.nonEmpty)

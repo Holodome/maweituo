@@ -7,6 +7,7 @@ import com.holodome.domain.messages._
 import com.holodome.domain.users._
 import com.holodome.infrastructure.ObjectStorage.OBSId
 import eu.timepit.refined.api.Refined
+import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Gen
 
 import java.time.Instant
@@ -14,12 +15,13 @@ import java.util.UUID
 
 object generators {
 
-  def nonEmptyStringGen: Gen[String] =
+  def nonEmptyStringGen: Gen[NonEmptyString] =
     Gen
       .chooseNum(21, 40)
       .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
+      .map(Refined.unsafeApply)
 
-  def nesGen[A](f: String => A): Gen[A] =
+  def nesGen[A](f: NonEmptyString => A): Gen[A] =
     nonEmptyStringGen map f
 
   def byteArrayGen: Gen[Array[Byte]] =
@@ -49,7 +51,7 @@ object generators {
     domain <- Gen
       .chooseNum(2, 4)
       .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
-  } yield Email(Refined.unsafeApply(prefix + "@" + postfix + "." + domain))
+  } yield Email(Refined.unsafeApply(prefix.value + "@" + postfix.value + "." + domain))
 
   def registerGen: Gen[RegisterRequest] = for {
     name     <- usernameGen
@@ -93,7 +95,7 @@ object generators {
     )
 
   def objectIdGen: Gen[OBSId] =
-    nesGen(OBSId.apply)
+    nesGen(v => OBSId(v.value))
 
   def userGen: Gen[User] = for {
     id       <- userIdGen
@@ -121,7 +123,7 @@ object generators {
     nanoAdjustment <- Gen.choose(0L, 999_999_999L)
   } yield Instant.ofEpochSecond(seconds, nanoAdjustment)
 
-  def imageUrlGen: Gen[ImageUrl] = nesGen(ImageUrl.apply)
+  def imageUrlGen: Gen[ImageUrl] = nesGen(s => ImageUrl(s.value))
 
   def adTagGen: Gen[AdTag] = nesGen(AdTag.apply)
 

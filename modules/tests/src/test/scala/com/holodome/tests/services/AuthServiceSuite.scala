@@ -52,7 +52,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar wi
   }
 
   test("unauthenticated user is so") {
-    forall(nesGen(JwtToken.apply)) { token =>
+    forall(nesGen(s => JwtToken(s.value))) { token =>
       val usersRepo = new InMemoryUserRepository[IO]
       val tokens    = mock[JwtTokens[IO]]
       val auth      = AuthServiceInterpreter.make[IO](usersRepo, authedUsersDict, jwtDict, tokens)

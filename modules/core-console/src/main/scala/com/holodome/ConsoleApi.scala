@@ -94,8 +94,8 @@ final class ConsoleApi[F[_]: Async] private (
   } yield cmd
 
   private def login: F[Unit] = for {
-    name     <- promptInput("Input name: ", Username.apply)
-    password <- promptInput("Input password: ", Password.apply)
+    name     <- promptInputF("Input name: ", EncodeRF[F, String, Username].encodeRF)
+    password <- promptInputF("Input password: ", EncodeRF[F, String, Password].encodeRF)
     userId   <- services.auth.login(name, password).map(_._2)
     _        <- loggedUserId.set(Some(userId))
     _        <- C.println(s"Logged in user $userId")
@@ -105,9 +105,9 @@ final class ConsoleApi[F[_]: Async] private (
     loggedUserId.set(None) *> C.println("Logged out")
 
   private def register: F[Unit] = for {
-    name     <- promptInput("Input name: ", Username.apply)
+    name     <- promptInputF("Input name: ", EncodeRF[F, String, Username].encodeRF)
     email    <- promptInputF("Input email: ", EncodeRF[F, String, Email].encodeRF)
-    password <- promptInput("Input password: ", Password.apply)
+    password <- promptInputF("Input password: ", EncodeRF[F, String, Password].encodeRF)
     req = RegisterRequest(name, email, password)
     _ <- services.users.create(req)
     _ <- C.println("Registered")
@@ -126,14 +126,14 @@ final class ConsoleApi[F[_]: Async] private (
   } yield ()
 
   private def uploadAd(userId: UserId): F[Unit] = for {
-    title <- promptInput("Input ad title: ", AdTitle.apply)
+    title <- promptInputF("Input ad title: ", EncodeRF[F, String, AdTitle].encodeRF)
     adId  <- services.ads.create(userId, CreateAdRequest(title))
     _     <- C.println(s"Created ad $adId")
   } yield ()
 
   private def addTag(userId: UserId): F[Unit] = for {
     adId <- promptInputF("Input ad id: ", Id.read[F, AdId])
-    tag  <- promptInput("Input tag: ", AdTag.apply)
+    tag  <- promptInputF("Input tag: ", EncodeRF[F, String, AdTag].encodeRF)
     _    <- services.ads.addTag(adId, tag, userId)
     _    <- C.println("Added tag")
   } yield ()
@@ -154,7 +154,7 @@ final class ConsoleApi[F[_]: Async] private (
 
   private def sendMessage(userId: UserId): F[Unit] = for {
     chatId <- promptInputF("Input chat id: ", Id.read[F, ChatId])
-    msg    <- promptInput("Input message text: ", MessageText.apply)
+    msg    <- promptInputF("Input message text: ", EncodeRF[F, String, MessageText].encodeRF)
     _      <- services.messages.send(chatId, userId, SendMessageRequest(msg))
     _      <- C.println("Message sent")
   } yield ()

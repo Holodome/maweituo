@@ -1,10 +1,8 @@
 package com.holodome.utils
 
 import cats.syntax.all._
-import cats.Functor
-import cats.ApplicativeThrow
-import eu.timepit.refined.api.RefType
-import eu.timepit.refined.api.Validate
+import cats.{ApplicativeThrow, Functor}
+import eu.timepit.refined.api.{RefType, Validate}
 
 trait EncodeRF[F[_], T, A] {
   def encodeRF(value: T): F[A]
@@ -39,4 +37,7 @@ object EncodeRF {
     new EncodeRF[F, T, A] {
       def encodeRF(t: T): F[A] = doEncode(t)
     }
+
+  def map[F[_]: Functor, T, A, B](f: A => B)(implicit E: EncodeRF[F, T, A]): EncodeRF[F, T, B] =
+    EncodeRF.functor[F, T, A].map(E)(f)
 }

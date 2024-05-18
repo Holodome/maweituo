@@ -1,8 +1,8 @@
 package com.holodome.modules
 
 import cats.effect.Async
-import com.holodome.repositories._
-import com.holodome.repositories.cassandra._
+import com.holodome.cassandra._
+import com.holodome.domain.repositories._
 import com.ringcentral.cassandra4io.CassandraSession
 
 sealed abstract class Repositories[F[_]] {

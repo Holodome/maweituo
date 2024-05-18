@@ -4,9 +4,9 @@ import cats.Monad
 import cats.syntax.all._
 import com.holodome.config.types._
 import com.holodome.domain.users.UserId
-import dev.profunktor.auth.jwt.{jwtEncode, JwtSecretKey, JwtToken}
-import io.circe.syntax.EncoderOps
+import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken, jwtEncode}
 import io.circe.Encoder
+import io.circe.syntax.EncoderOps
 import pdi.jwt.{JwtAlgorithm, JwtClaim}
 
 trait JwtTokens[F[_]] {

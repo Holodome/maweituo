@@ -142,7 +142,6 @@ DELETE /ads/{ad_id}               - delete advertisement
 POST   /ads/{ad_id}/img           - upload image
 GET    /ads/{ad_id}/img/{img_id}  - get image 
 DELETE /ads/{ad_id}/img/{img_id}  - delete image 
-POST   /ads/{ad_id}/tags          - add tags 
 POST   /ads/{ad_id}/resolved      - mark advertisement as resolved
 GET    /ads/{ad_id}/chat          - get chat for current user
 POST   /ads/{ad_id}/chat          - create chat for current user 

@@ -1,15 +1,14 @@
 import { error } from '@sveltejs/kit';
 
-//const base = 'http://core:8080';
-const base = 'http://localhost:8080';
+const base = 'http://core:8080';
+// const base = 'http://localhost:8080';
 
 export function buildUrl(path) {
 	return `${base}/${path}`;
 }
 
 async function sendInternal({ method, path, data, token }) {
-	const opts = { method, headers: {} };
-
+	const opts = { method, headers: {}, mode: 'cors' };
 	if (data) {
 		opts.headers['Content-Type'] = 'application/json';
 		opts.body = JSON.stringify(data);

@@ -1,9 +1,9 @@
 package com.holodome.recs.services
 
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.repositories.TelemetryRepository
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
-import com.holodome.recs.repositories.TelemetryRepository
-import com.holodome.services.TelemetryService
 
 private final class TelemetryServiceInterpreter[F[_]](repo: TelemetryRepository[F])
     extends TelemetryService[F] {

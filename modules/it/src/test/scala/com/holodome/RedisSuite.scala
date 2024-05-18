@@ -1,12 +1,13 @@
 package com.holodome
 
 import cats.effect.{IO, Resource}
-import dev.profunktor.redis4cats.{Redis, RedisCommands}
-import com.holodome.generators.nonEmptyStringGen
-import dev.profunktor.redis4cats.log4cats._
 import com.holodome.infrastructure.redis.RedisEphemeralDict
-import org.typelevel.log4cats.noop.NoOpLogger
+import com.holodome.tests.ResourceSuite
+import com.holodome.tests.generators.nonEmptyStringGen
+import dev.profunktor.redis4cats.log4cats._
+import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.noop.NoOpLogger
 
 import scala.concurrent.duration.DurationInt
 
@@ -25,8 +26,8 @@ object RedisSuite extends ResourceSuite {
 
   test("basic redis operations work") { redis =>
     val gen = for {
-      a <- nonEmptyStringGen
-      b <- nonEmptyStringGen
+      a <- nonEmptyStringGen.map(_.value)
+      b <- nonEmptyStringGen.map(_.value)
     } yield a -> b
     forall(gen) { case (key, value) =>
       val dict = RedisEphemeralDict.make[IO](redis, Expire)

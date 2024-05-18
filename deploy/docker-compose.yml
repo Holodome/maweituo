@@ -8,13 +8,13 @@ services:
     ports:
       - '3000:3000'
     environment:
-      - HOST=web
+      - ORIGIN=http://web:3000
     networks:
       - backend
 
   core:
-    image: 'maweituo-core:0.1.0'
-    container_name: maweituo-core
+    image: 'maweituo-core-http:0.1.0'
+    container_name: maweituo-core-http
     volumes:
       - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always

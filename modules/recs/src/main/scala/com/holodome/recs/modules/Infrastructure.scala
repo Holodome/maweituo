@@ -3,9 +3,9 @@ package com.holodome.recs.modules
 import cats.MonadThrow
 import cats.effect.Async
 import cats.syntax.all._
+import com.holodome.config.types.RecsConfig
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.minio.MinioObjectStorage
-import com.holodome.recs.config.types.RecsConfig
 import io.minio.MinioAsyncClient
 
 sealed abstract class Infrastructure[F[_]] {

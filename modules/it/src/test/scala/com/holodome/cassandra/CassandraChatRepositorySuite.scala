@@ -1,12 +1,12 @@
 package com.holodome.cassandra
 
-import cats.syntax.all._
-import cats.effect.IO
 import cats.Show
+import cats.effect.IO
+import cats.syntax.all._
+import com.holodome.cassandra.CassandraChatRepository
 import com.holodome.domain.errors.InvalidChatId
 import com.holodome.domain.messages.Chat
-import com.holodome.generators.{adIdGen, chatIdGen, userIdGen}
-import com.holodome.repositories.cassandra.CassandraChatRepository
+import com.holodome.tests.generators.{adIdGen, chatIdGen, userIdGen}
 
 object CassandraChatRepositorySuite extends CassandraSuite {
   implicit val chatShow: Show[Chat] = Show.show(_ => "Chat")

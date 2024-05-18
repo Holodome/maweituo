@@ -1,8 +1,8 @@
 package com.holodome
 
 import cats.effect.IO
+import com.holodome.infrastructure.ObjectStorage.OBSId
 import com.holodome.infrastructure.minio.MinioObjectStorage
-import com.holodome.infrastructure.ObjectStorage.ObjectId
 import io.minio.MinioAsyncClient
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
@@ -12,7 +12,7 @@ import scala.util.Random
 object S3Suite extends SimpleIOSuite with Checkers {
 
   test("basic minio operations work") {
-    val key         = ObjectId("test")
+    val key         = OBSId("test")
     val value       = Random.nextBytes(1024)
     val valueStream = fs2.Stream.emits(value).covary[F]
     val minio = MinioAsyncClient

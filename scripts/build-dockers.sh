@@ -5,7 +5,6 @@ set -x
 cd web
 docker build . -t maweituo-web
 cd -
-sbt core/docker:publishLocal
-sbt recs/docker:publishLocal
+sbt ";coreHttp/docker:publishLocal;coreConsole/docker:publishLocal;recs/docker:publishLocal"
 
 docker images | grep maweituo

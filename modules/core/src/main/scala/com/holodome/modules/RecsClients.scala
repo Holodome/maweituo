@@ -1,14 +1,14 @@
 package com.holodome.modules
 
-import cats.{Applicative, MonadThrow}
 import cats.effect.Concurrent
 import cats.syntax.all._
+import cats.{Applicative, MonadThrow}
 import com.holodome.config.types.RecsClientConfig
-import com.holodome.domain.{ads, users}
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.services.{RecommendationService, TelemetryService}
+import com.holodome.domain.users
 import com.holodome.effects.GenUUID
 import com.holodome.grpc.{RecommendationGRPCClientInterpreter, TelemetryGRPCClientInterpreter}
-import com.holodome.services.{RecommendationService, TelemetryService}
 import org.http4s.client.Client
 
 sealed abstract class RecsClients[F[_]] {

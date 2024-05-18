@@ -28,7 +28,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register user works") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         _ <- serv.create(register)
       } yield expect.all(true)
@@ -38,7 +38,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         id <- serv.create(register)
         u  <- serv.get(id)
@@ -49,7 +49,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and find by name work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         id <- serv.create(register)
         u  <- repo.getByName(register.name)
@@ -60,7 +60,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   test("register and delete work") {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         id <- serv.create(register)
         _  <- serv.delete(id, id)
@@ -79,7 +79,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield r -> other
     forall(gen) { case (register, other) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         newId   <- serv.create(register)
         otherId <- serv.create(other)
@@ -101,7 +101,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd)
     forall(gen) { case (register, upd) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
@@ -124,7 +124,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     } yield (r, upd, id)
     forall(gen) { case (register, upd, id) =>
       val repo = new InMemoryUserRepository[IO]
-      val serv = UserServiceInterpreter.make(repo, iam)
+      val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
       for {
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)

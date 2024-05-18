@@ -35,7 +35,7 @@ object AuthRoutesSuite extends IOLoggedTest with HttpSuite {
       mock[ChatRepository[IO]],
       mock[AdImageRepository[IO]]
     )
-    UserServiceInterpreter.make(repo, iam)
+    UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
   }
 
   private def makeAuthService(users: UserRepository[IO])(implicit l: Logger[IO]) = {

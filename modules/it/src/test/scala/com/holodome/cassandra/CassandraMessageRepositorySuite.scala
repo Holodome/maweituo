@@ -3,7 +3,7 @@ package com.holodome.cassandra
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.cassandra.CassandraMessageRepository
+import com.holodome.cassandra.repositories.CassandraMessageRepository
 import com.holodome.domain.messages.Message
 import com.holodome.tests.generators._
 

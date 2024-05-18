@@ -9,6 +9,7 @@ import com.holodome.domain.services.{AdService, IAMService, TelemetryService}
 import com.holodome.domain.users.UserId
 import com.holodome.effects.{GenUUID, TimeSource}
 import org.typelevel.log4cats.Logger
+import com.holodome.domain.repositories.UserAdsRepository
 
 object AdServiceInterpreter {
 
@@ -16,10 +17,11 @@ object AdServiceInterpreter {
       repo: AdvertisementRepository[F],
       tags: TagRepository[F],
       feed: FeedRepository[F],
+      userAdRepo: UserAdsRepository[F],
       iam: IAMService[F],
       telemetry: TelemetryService[F]
   ): AdService[F] =
-    new AdServiceInterpreter(repo, tags, feed, iam, telemetry)
+    new AdServiceInterpreter(repo, tags, feed, userAdRepo, iam, telemetry)
 
 }
 
@@ -29,6 +31,7 @@ private final class AdServiceInterpreter[
     repo: AdvertisementRepository[F],
     tags: TagRepository[F],
     feed: FeedRepository[F],
+    userAdRepo: UserAdsRepository[F],
     iam: IAMService[F],
     telemetry: TelemetryService[F]
 ) extends AdService[F] {
@@ -39,6 +42,7 @@ private final class AdServiceInterpreter[
     id <- Id.make[F, AdId]
     ad = Advertisement(id, authorId, create.title, Set(), Set(), Set(), resolved = false)
     _  <- repo.create(ad)
+    _  <- userAdRepo.create(authorId, id)
     at <- TimeSource[F].instant
     _  <- feed.addToGlobalFeed(id, at)
     _  <- telemetry.userCreated(authorId, id)

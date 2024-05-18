@@ -1,10 +1,10 @@
-package com.holodome.cassandra
+package com.holodome.cassandra.repositories
 
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
-import com.holodome.cql.codecs._
+import com.holodome.cassandra.cql.codecs._
 import com.holodome.domain.repositories.UserRepository
 import com.holodome.domain.users._
 import com.ringcentral.cassandra4io.CassandraSession

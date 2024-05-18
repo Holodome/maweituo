@@ -3,7 +3,7 @@ package com.holodome.cassandra
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all._
-import com.holodome.cassandra.CassandraChatRepository
+import com.holodome.cassandra.repositories.CassandraChatRepository
 import com.holodome.domain.errors.InvalidChatId
 import com.holodome.domain.messages.Chat
 import com.holodome.tests.generators.{adIdGen, chatIdGen, userIdGen}

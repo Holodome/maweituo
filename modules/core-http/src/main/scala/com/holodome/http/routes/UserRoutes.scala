@@ -20,8 +20,12 @@ final case class UserRoutes[F[_]: MonadThrow: JsonDecoder: Logger](userService: 
 
   private val prefixPath = "/users"
 
-  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of { case GET -> Root / UserIdVar(userId) =>
-    userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
+  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of {
+    case GET -> Root / UserIdVar(userId) =>
+      userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
+
+    case GET -> Root / UserIdVar(userId) / "ads" =>
+      userService.getAds(userId).flatMap(Ok(_))
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

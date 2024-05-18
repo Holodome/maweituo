@@ -31,12 +31,13 @@ object AdServiceSuite extends SimpleIOSuite with Checkers {
       val userRepo = new InMemoryUserRepository[IO]
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val serv = AdServiceInterpreter
         .make[IO](
           adRepo,
           mock[TagRepository[IO]],
           feedRepository,
+          new UserAdsRepositoryStub,
           iam,
           new TelemetryServiceStub[IO]
         )
@@ -64,12 +65,13 @@ object AdServiceSuite extends SimpleIOSuite with Checkers {
       val userRepo = new InMemoryUserRepository[IO]
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val serv = AdServiceInterpreter
         .make[IO](
           adRepo,
           mock[TagRepository[IO]],
           feedRepository,
+          new UserAdsRepositoryStub,
           iam,
           new TelemetryServiceStub[IO]
         )
@@ -93,11 +95,12 @@ object AdServiceSuite extends SimpleIOSuite with Checkers {
       val userRepo = new InMemoryUserRepository[IO]
       val adRepo   = new InMemoryAdRepository[IO]
       val iam      = makeIam(adRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val serv = AdServiceInterpreter.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
+        new UserAdsRepositoryStub,
         iam,
         new TelemetryServiceStub[IO]
       )
@@ -125,9 +128,16 @@ object AdServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val serv = AdServiceInterpreter
-        .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
+        .make[IO](
+          adRepo,
+          tagRepo,
+          feedRepository,
+          new UserAdsRepositoryStub,
+          iam,
+          new TelemetryServiceStub[IO]
+        )
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)
@@ -148,9 +158,16 @@ object AdServiceSuite extends SimpleIOSuite with Checkers {
       val adRepo   = new InMemoryAdRepository[IO]
       val tagRepo  = new InMemoryTagRepository[IO]
       val iam      = makeIam(adRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val serv = AdServiceInterpreter
-        .make[IO](adRepo, tagRepo, feedRepository, iam, new TelemetryServiceStub[IO])
+        .make[IO](
+          adRepo,
+          tagRepo,
+          feedRepository,
+          new UserAdsRepositoryStub,
+          iam,
+          new TelemetryServiceStub[IO]
+        )
       for {
         userId <- users.create(reg)
         adId   <- serv.create(userId, createAd)

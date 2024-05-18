@@ -1,13 +1,13 @@
-package com.holodome.recs.repositories.clickhouse
+package com.holodome.recs.clickhouse.repositories
 
 import cats.data.OptionT
 import cats.effect.kernel.MonadCancelThrow
 import cats.syntax.all._
 import com.holodome.domain.ads.{AdId, AdTag}
-import com.holodome.domain.recommendations.WeightVector
-import com.holodome.domain.repositories.RecRepository
+import com.holodome.recs.domain.recommendations.WeightVector
+import com.holodome.recs.domain.repositories.RecRepository
 import com.holodome.domain.users.UserId
-import com.holodome.recs.sql.codecs._
+import com.holodome.recs.clickhouse.sql.codecs._
 import doobie._
 import doobie.implicits._
 import doobie.util.transactor.Transactor

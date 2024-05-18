@@ -1,9 +1,9 @@
-package com.holodome.cassandra.repositories
+package com.holodome.recs.cassandra.repositories
 
 import cats.effect.Async
 import cats.syntax.all._
 import com.holodome.domain.{ads, users}
-import com.holodome.domain.repositories.TelemetryRepository
+import com.holodome.recs.domain.repositories.TelemetryRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 

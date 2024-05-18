@@ -1,4 +1,4 @@
-package com.holodome.recs.etl
+package com.holodome.recs.cassandra.etl
 
 import cats.NonEmptyParallel
 import cats.effect.Async
@@ -12,6 +12,8 @@ import com.holodome.infrastructure.ObjectStorage.OBSId
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 import org.typelevel.log4cats.Logger
+import com.holodome.recs.etl.RecETLExtractor
+import com.holodome.recs.etl.OBSSnapshotLocations
 
 object CassandraExtract {
   def make[F[_]: Async: NonEmptyParallel: Logger](

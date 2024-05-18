@@ -1,4 +1,4 @@
-package com.holodome.recs.sql
+package com.holodome.recs.clickhouse.sql
 
 import cats.data.NonEmptyList
 import doobie.Meta

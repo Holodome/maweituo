@@ -1,4 +1,4 @@
-package com.holodome.recs.etl
+package com.holodome.recs.clickhouse.etl
 
 import cats.Parallel
 import cats.effect.kernel.MonadCancelThrow
@@ -7,12 +7,13 @@ import com.holodome.ext.log4catsExt._
 import com.holodome.infrastructure.ObjectStorage
 import com.holodome.infrastructure.ObjectStorage.OBSUrl
 import com.holodome.recs.etl.OBSSnapshotLocations
-import com.holodome.recs.sql.codecs._
+import com.holodome.recs.clickhouse.sql.codecs._
 import doobie.implicits._
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 
 import java.util.UUID
+import com.holodome.recs.etl.RecETLLoader
 
 object ClickhouseTransformLoad {
   def make[F[_]: MonadCancelThrow: Parallel: Logger](xa: Transactor[F]): RecETLLoader[F] =

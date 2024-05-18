@@ -5,11 +5,11 @@ import cats.data.{NonEmptyList, OptionT}
 import cats.effect.std.Random
 import cats.syntax.all._
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.repositories.RecRepository
 import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.Background
 import com.holodome.infrastructure.GenObjectStorageId
+import com.holodome.recs.domain.repositories.RecRepository
 import com.holodome.recs.etl.RecETL
 import org.typelevel.log4cats.Logger
 

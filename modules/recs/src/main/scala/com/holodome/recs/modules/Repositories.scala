@@ -1,9 +1,9 @@
 package com.holodome.recs.modules
 
 import cats.effect.Async
-import com.holodome.cassandra.repositories.CassandraTelemetryRepository
-import com.holodome.domain.repositories.{RecRepository, TelemetryRepository}
-import com.holodome.recs.repositories.clickhouse.ClickhouseRecRepository
+import com.holodome.recs.cassandra.repositories.CassandraTelemetryRepository
+import com.holodome.recs.clickhouse.repositories.ClickhouseRecRepository
+import com.holodome.recs.domain.repositories.{RecRepository, TelemetryRepository}
 import com.ringcentral.cassandra4io.CassandraSession
 import doobie.util.transactor.Transactor
 

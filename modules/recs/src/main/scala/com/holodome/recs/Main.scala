@@ -3,7 +3,9 @@ package com.holodome.recs
 import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp}
 import com.holodome.config.Config
-import com.holodome.recs.etl.{CassandraExtract, ClickhouseTransformLoad, RecETLInterpreter}
+import com.holodome.recs.cassandra.etl.CassandraExtract
+import com.holodome.recs.clickhouse.etl.ClickhouseTransformLoad
+import com.holodome.recs.etl.RecETLInterpreter
 import com.holodome.recs.modules._
 import com.holodome.recs.resources.RecsResources
 import com.holodome.resources.MkHttpServer

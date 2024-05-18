@@ -24,6 +24,7 @@ sealed abstract class Services[F[_]] {
   val images: AdImageService[F]
   val tags: AdTagService[F]
   val feed: FeedService[F]
+  val recs: RecommendationService[F]
 }
 
 object Services {
@@ -63,5 +64,6 @@ object Services {
       override val tags: AdTagService[F] = AdTagServiceInterpreter.make[F](repositories.tags)
       override val feed: FeedService[F] =
         FeedServiceInterpreter.make[F](repositories.feed, grpc.recs)
+      override val recs: RecommendationService[F] = grpc.recs
     }
 }

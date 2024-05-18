@@ -11,9 +11,10 @@ import com.holodome.domain.users.UserId
 import com.holodome.effects.Background
 import com.holodome.infrastructure.GenObjectStorageId
 import com.holodome.recs.etl.RecETL
+import org.typelevel.log4cats.Logger
 
 object RecommendationServiceInterpreter {
-  def make[F[_]: MonadThrow: GenObjectStorageId: Background](
+  def make[F[_]: MonadThrow: GenObjectStorageId: Background: Logger](
       recRepo: RecRepository[F],
       etl: RecETL[F]
   )(implicit rng: Random[F]): RecommendationService[F] =
@@ -22,7 +23,7 @@ object RecommendationServiceInterpreter {
 
 private final class RecommendationServiceInterpreter[F[
     _
-]: MonadThrow: GenObjectStorageId: Background](
+]: MonadThrow: GenObjectStorageId: Background: Logger](
     recRepo: RecRepository[F],
     etl: RecETL[F]
 )(implicit rng: Random[F])
@@ -38,7 +39,10 @@ private final class RecommendationServiceInterpreter[F[
             case x => x.pure[F]
           }
           .map(_.toList)
-      case false => List[AdId]().pure[F] <* Background[F].schedule(learn)
+      case false =>
+        List[AdId]().pure[F] <* (Logger[F].info(
+          s"Lack recommendations for user $user, scheduling learn"
+        ) *> Background[F].schedule(learn))
     }
 
   private def collaborativeRecs(user: UserId, count: Int): F[Set[AdId]] = for {
@@ -81,6 +85,6 @@ private final class RecommendationServiceInterpreter[F[
   } yield ad
 
   override def learn: F[Unit] =
-    etl.run
+    Logger[F].info("Running learn of recs") *> etl.run <* Logger[F].info("Learn on recs finished")
 
 }

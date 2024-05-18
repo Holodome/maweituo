@@ -163,6 +163,7 @@ lazy val coreHttp = (project in file("modules/core-http"))
 
 lazy val coreConsole = (project in file("modules/core-console"))
   .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
   .dependsOn(core)
   .settings(
     commonSettings,
@@ -173,7 +174,11 @@ lazy val coreConsole = (project in file("modules/core-console"))
       "ch.qos.logback" % "logback-classic" % LogbackVersion
     ),
     maintainer := "holodome",
-    Compile / mainClass := Some("com.holodome.Main")
+    Compile / mainClass := Some("com.holodome.Main"),
+    Compile / run / fork := true,
+    scalafmtOnCompile := true,
+    dockerExposedPorts ++= Seq(8080),
+    dockerBaseImage := "openjdk:11-jre-slim-buster"
   )
 
 lazy val tests = (project in file("modules/tests"))

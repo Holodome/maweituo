@@ -90,7 +90,7 @@ private final case class ClickhouseTransformLoadOperator[F[
         ).parMapN { case (boughtTags, discussedTags, createdTags) =>
           val tagsMap = tags
             .foldLeft(scala.collection.mutable.Map[String, Double]()) { case (m, t) =>
-              m(t) = 0
+              m(t) = 0.02
               m
             }
           val boughtWeight    = 1.0

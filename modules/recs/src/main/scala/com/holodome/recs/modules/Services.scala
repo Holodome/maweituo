@@ -6,6 +6,7 @@ import com.holodome.domain.services.{RecommendationService, TelemetryService}
 import com.holodome.effects.{Background, MkRandom}
 import com.holodome.recs.etl.RecETL
 import com.holodome.recs.services.{RecommendationServiceInterpreter, TelemetryServiceInterpreter}
+import org.typelevel.log4cats.Logger
 
 sealed abstract class Services[F[_]] {
   val telemetry: TelemetryService[F]
@@ -14,7 +15,7 @@ sealed abstract class Services[F[_]] {
 
 object Services {
 
-  def make[F[_]: Sync: MkRandom: Background](
+  def make[F[_]: Sync: MkRandom: Background: Logger](
       repositories: Repositories[F],
       etl: RecETL[F]
   ): F[Services[F]] = {

@@ -12,13 +12,8 @@ import derevo.circe.magnolia.{decoder, encoder}
 import derevo.derive
 import io.estatico.newtype.macros.newtype
 import org.http4s._
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.cats._
-import eu.timepit.refined.numeric.{NonNegative, Positive}
-import io.circe.refined._
 
 import java.util.UUID
-import eu.timepit.refined.types.string.NonEmptyString
 
 package object images {
   @derive(uuidIso, encoder, decoder, show, eqv)

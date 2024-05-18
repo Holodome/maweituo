@@ -56,8 +56,9 @@ final class ConsoleApi[F[_]: Async] private (
       case 10 => ok(GetPersonalizedFeed())
       case 11 => ok(GetGlobalFeed())
       case 12 => ok(GetAllTags())
-      case 13 => ok(Login())
-      case 14 => ok(Logout())
+      case 13 => ok(Learn())
+      case 14 => ok(Login())
+      case 15 => ok(Logout())
       case _  => err("Invalid command number")
     }
   }
@@ -77,8 +78,9 @@ final class ConsoleApi[F[_]: Async] private (
       |10. Get personalized feed
       |11. Get global feed
       |12. Get all tags
-      |13. Login
-      |14. Logout""".stripMargin
+      |13. Learn 
+      |14. Login
+      |15. Logout""".stripMargin
 
   private def readCommand: F[Command] = for {
     _ <- C.println(menu)
@@ -180,6 +182,11 @@ final class ConsoleApi[F[_]: Async] private (
     _    <- C.println(s"Tags: $tags")
   } yield ()
 
+  private def learn: F[Unit] = for {
+    _ <- services.recs.learn
+    _ <- C.println(s"Learn finished")
+  } yield ()
+
   private def executeCommand(cmd: Command): F[Unit] = {
     def requireUnlogged(action: => F[Unit]): F[Unit] =
       loggedUserId.get flatMap {
@@ -207,6 +214,7 @@ final class ConsoleApi[F[_]: Async] private (
       case GetPersonalizedFeed() => requireLogin(getPersonalizedFeed)
       case GetGlobalFeed()       => getGlobalFeed
       case GetAllTags()          => getAllTags
+      case Learn()               => learn
     }
   }
 
@@ -239,6 +247,7 @@ private object commands {
   final case class GetPersonalizedFeed() extends Command
   final case class GetGlobalFeed()       extends Command
   final case class GetAllTags()          extends Command
+  final case class Learn()               extends Command
   final case class Login()               extends Command
   final case class Logout()              extends Command
 }

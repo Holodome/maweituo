@@ -1,0 +1,137 @@
+version: "3.4"
+
+services:
+  web:
+    image: 'maweituo-web:latest'
+    container_name: maweituo-web
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - ORIGIN=http://web:3000
+    networks:
+      - backend
+
+  core:
+    image: 'maweituo-core-console:0.1.0'
+    container_name: maweituo-core-console
+    volumes:
+      - ./maweituo-config.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8080:8080'
+    networks:
+      - backend
+    depends_on:
+      scylla:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      recs:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CASSANDRA_KEYSPACE=local
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+
+  recs:
+    image: 'maweituo-recs:0.1.0'
+    container_name: maweituo-recs
+    volumes:
+      - ./maweituo-config.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '11223:11223'
+    networks:
+      - backend
+    depends_on:
+      scylla:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      clickhouse:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CASSANDRA_KEYSPACE=local
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+
+  redis:
+    image: 'redis:6.2-alpine'
+    container_name: maweituo-redis
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - backend
+
+  scylla:
+    image: 'scylladb/scylla:latest'
+    container_name: maweituo-scylla
+    restart: always
+    volumes:
+      - scylla_data:/var/lib/scylla
+    ports:
+      - '9042:9042'
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "SHOW VERSION;"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  minio:
+    image: 'minio/minio:latest'
+    container_name: maweituo-minio
+    command: 'minio server /local --console-address :9001'
+    restart: always
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - backend
+    volumes:
+      - 'minio_data:/local'
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DEFAULT_BUCKETS=maweituo
+
+  clickhouse:
+    image: 'clickhouse/clickhouse-server'
+    platform: linux/amd64
+    container_name: maweituo-clickhouse
+    restart: always
+    networks:
+      - backend
+    volumes:
+      - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
+      - clickhouse_data:/var/lib/clickhouse
+    ports:
+      - '8123:8123'
+      - '9019:9019'
+      - '9100:9000'
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  redis_data:
+    driver: local
+  scylla_data:
+    driver: local
+  clickhouse_data:
+    driver: local

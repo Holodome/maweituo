@@ -2,10 +2,9 @@ package com.holodome.http.routes
 
 import cats.MonadThrow
 import cats.syntax.all._
-import com.holodome.domain.ads.AdTag
 import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.services.AdTagService
-import com.holodome.ext.http4s.refined.RefinedRequestDecoder
+import com.holodome.http.vars.TagVar
 import com.holodome.http.{HttpErrorHandler, Routes}
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder._
@@ -22,10 +21,8 @@ final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
     case GET -> Root =>
       tags.all.flatMap(Ok(_))
 
-    case req @ GET -> Root / "ads" =>
-      req.decodeR[AdTag] { tag =>
-        tags.find(tag).flatMap(Ok(_))
-      }
+    case req @ GET -> Root / TagVar(tag) / "ads" =>
+      tags.find(tag).flatMap(Ok(_))
   }
 
   def routes(implicit H: HttpErrorHandler[F, ApplicationError]): Routes[F] =

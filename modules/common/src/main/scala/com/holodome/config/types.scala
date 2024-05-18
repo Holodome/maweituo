@@ -9,7 +9,7 @@ import org.http4s.Uri
 
 import scala.concurrent.duration.FiniteDuration
 
-object types {
+package object types {
   @derive(configDecoder, show)
   @newtype case class JwtAccessSecret(value: String)
 

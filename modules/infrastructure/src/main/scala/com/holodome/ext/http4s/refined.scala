@@ -9,7 +9,7 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-object refined {
+package object refined {
   implicit def refinedQueryParamDecoder[T: QueryParamDecoder, P](implicit
       ev: Validate[T, P]
   ): QueryParamDecoder[T Refined P] =

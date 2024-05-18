@@ -13,7 +13,7 @@ import org.scalacheck.Gen
 import java.time.Instant
 import java.util.UUID
 
-object generators {
+package object generators {
 
   def nonEmptyStringGen: Gen[NonEmptyString] =
     Gen

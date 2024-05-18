@@ -9,7 +9,7 @@ import com.holodome.utils.EncodeR
 import java.util.UUID
 import scala.util.Try
 
-object vars {
+package object vars {
   sealed class UUIDVar[A](f: UUID => A) {
     def unapply(str: String): Option[A] =
       Try(UUID.fromString(str)).toOption.map(f)

@@ -9,7 +9,7 @@ import com.holodome.optics.{IsUUID}
 import com.holodome.utils.EncodeR
 import com.ringcentral.cassandra4io.cql.{CassandraTypeMapper, Reads}
 
-object codecs {
+package object codecs {
   import com.ringcentral.cassandra4io.cql.Reads._
 
   private def encodeThrow[T, A](t: T)(implicit E: EncodeR[T, A]): A =

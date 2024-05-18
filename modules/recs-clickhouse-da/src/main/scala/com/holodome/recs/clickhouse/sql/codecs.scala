@@ -5,7 +5,7 @@ import doobie.Meta
 
 import java.util.UUID
 
-object codecs {
+package object codecs {
   private object arrayMapper {
     import doobie.util.meta.Meta
     import doobie.util.{Get, Put}

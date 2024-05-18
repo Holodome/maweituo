@@ -12,6 +12,11 @@ create table local.users (
 create index on local.users(name);
 create index on local.users(email);
 
+create table local.user_ads (
+    user_id uuid primary key,
+    ads set<uuid>
+);
+
 create table local.advertisements (
     id uuid primary key,
     author_id uuid,

@@ -1,12 +1,13 @@
 package com.holodome.modules
 
 import cats.effect.Async
-import com.holodome.cassandra._
+import com.holodome.cassandra.repositories._
 import com.holodome.domain.repositories._
 import com.ringcentral.cassandra4io.CassandraSession
 
 sealed abstract class Repositories[F[_]] {
   val users: UserRepository[F]
+  val userAds: UserAdsRepository[F]
   val ads: AdvertisementRepository[F]
   val tags: TagRepository[F]
   val chats: ChatRepository[F]
@@ -19,6 +20,7 @@ object Repositories {
   def makeCassandra[F[_]: Async](cassandra: CassandraSession[F]): Repositories[F] = {
     new Repositories[F] {
       override val users: UserRepository[F]       = CassandraUserRepository.make[F](cassandra)
+      override val userAds: UserAdsRepository[F]  = CassandraUserAdsRepository.make[F](cassandra)
       override val messages: MessageRepository[F] = CassandraMessageRepository.make[F](cassandra)
       override val chats: ChatRepository[F]       = CassandraChatRepository.make[F](cassandra)
       override val ads: AdvertisementRepository[F] =

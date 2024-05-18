@@ -11,19 +11,23 @@ import com.holodome.domain.services.{IAMService, UserService}
 import com.holodome.domain.users._
 import com.holodome.effects.GenUUID
 import org.typelevel.log4cats.Logger
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.repositories.UserAdsRepository
 
 object UserServiceInterpreter {
 
   def make[F[_]: MonadThrow: GenUUID: Logger](
       repo: UserRepository[F],
+      userAdRepo: UserAdsRepository[F],
       iam: IAMService[F]
   ): UserService[F] =
-    new UserServiceInterpreter(repo, iam)
+    new UserServiceInterpreter(repo, userAdRepo, iam)
 
 }
 
 private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
     repo: UserRepository[F],
+    userAdRepo: UserAdsRepository[F],
     iam: IAMService[F]
 ) extends UserService[F] {
 
@@ -74,4 +78,16 @@ private final class UserServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
     _ <- repo.create(user)
     _ <- Logger[F].info(s"Created user $id")
   } yield user.id
+
+  override def getAds(userId: UserId): F[Set[AdId]] = for {
+    x <- userAdRepo.get(userId).value
+    v <- x match {
+      case Some(s) => s.pure[F]
+      case None =>
+        Logger[F]
+          .warn(s"Tried to get ads for user $userId, but no such user is found") *> Set[AdId]()
+          .pure[F]
+    }
+  } yield v
+
 }

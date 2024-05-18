@@ -1,4 +1,4 @@
-package com.holodome.cql
+package com.holodome.cassandra.cql
 
 import com.datastax.oss.driver.api.core.`type`.DataType
 import com.holodome.domain.ads._

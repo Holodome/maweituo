@@ -30,7 +30,7 @@ object Services {
       val telemetry: TelemetryService[F] =
         TelemetryServiceBackgroundInterpreter.make(grpc.telemetry)
       override val users: UserService[F] =
-        UserServiceInterpreter.make(repositories.users, iam)
+        UserServiceInterpreter.make(repositories.users, repositories.userAds, iam)
       override val auth: AuthService[F] =
         AuthServiceInterpreter.make(
           repositories.users,
@@ -40,7 +40,14 @@ object Services {
         )
       override val ads: AdService[F] =
         AdServiceInterpreter
-          .make[F](repositories.ads, repositories.tags, repositories.feed, iam, telemetry)
+          .make[F](
+            repositories.ads,
+            repositories.tags,
+            repositories.feed,
+            repositories.userAds,
+            iam,
+            telemetry
+          )
       override val chats: ChatService[F] =
         ChatServiceInterpreter.make[F](repositories.chats, repositories.ads, telemetry)
       override val messages: MessageService[F] =

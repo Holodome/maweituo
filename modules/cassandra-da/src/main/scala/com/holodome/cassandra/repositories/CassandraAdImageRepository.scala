@@ -1,9 +1,9 @@
-package com.holodome.cassandra
+package com.holodome.cassandra.repositories
 
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
-import com.holodome.cql.codecs._
+import com.holodome.cassandra.cql.codecs._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.DatabaseEncodingError
 import com.holodome.domain.images._

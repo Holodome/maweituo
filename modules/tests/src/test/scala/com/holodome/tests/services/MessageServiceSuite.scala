@@ -45,12 +45,13 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val ads =
         AdServiceInterpreter.make[IO](
           adRepo,
           mock[TagRepository[IO]],
           feedRepository,
+          new UserAdsRepositoryStub,
           iam,
           new TelemetryServiceStub[IO]
         )
@@ -88,11 +89,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val ads = AdServiceInterpreter.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
+        new UserAdsRepositoryStub,
         iam,
         new TelemetryServiceStub[IO]
       )
@@ -128,11 +130,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
       val chatRepo = new InMemoryChatRepository[IO]
       val msgRepo  = new InMemoryMessageRepository[IO]
       val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, iam)
+      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
       val ads = AdServiceInterpreter.make[IO](
         adRepo,
         mock[TagRepository[IO]],
         feedRepository,
+        new UserAdsRepositoryStub,
         iam,
         new TelemetryServiceStub[IO]
       )

@@ -1,9 +1,9 @@
-package com.holodome.cassandra
+package com.holodome.cassandra.repositories
 
 import cats.effect.kernel.Async
 import cats.syntax.all._
 import com.datastax.oss.driver.api.core.ConsistencyLevel
-import com.holodome.cql.codecs._
+import com.holodome.cassandra.cql.codecs._
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.repositories.FeedRepository

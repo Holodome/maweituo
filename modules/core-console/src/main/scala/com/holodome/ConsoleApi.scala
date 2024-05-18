@@ -56,9 +56,10 @@ final class ConsoleApi[F[_]: Async] private (
       case 10 => ok(GetPersonalizedFeed())
       case 11 => ok(GetGlobalFeed())
       case 12 => ok(GetAllTags())
-      case 13 => ok(Learn())
-      case 14 => ok(Login())
-      case 15 => ok(Logout())
+      case 13 => ok(GetUserAds())
+      case 14 => ok(Learn())
+      case 15 => ok(Login())
+      case 16 => ok(Logout())
       case _  => err("Invalid command number")
     }
   }
@@ -78,9 +79,10 @@ final class ConsoleApi[F[_]: Async] private (
       |10. Get personalized feed
       |11. Get global feed
       |12. Get all tags
-      |13. Learn 
-      |14. Login
-      |15. Logout""".stripMargin
+      |13. Get user ads 
+      |14. Learn 
+      |15. Login
+      |16. Logout""".stripMargin
 
   private def readCommand: F[Command] = for {
     _ <- C.println(menu)
@@ -95,7 +97,7 @@ final class ConsoleApi[F[_]: Async] private (
     cmd <- parseCommand(n)
   } yield cmd
 
-  private def login: F[Unit] = for {
+  private def login = for {
     name     <- promptInputF("Input name: ", EncodeRF[F, String, Username].encodeRF)
     password <- promptInputF("Input password: ", EncodeRF[F, String, Password].encodeRF)
     userId   <- services.auth.login(name, password).map(_._2)
@@ -103,10 +105,10 @@ final class ConsoleApi[F[_]: Async] private (
     _        <- C.println(s"Logged in user $userId")
   } yield ()
 
-  private def logout: F[Unit] =
+  private def logout =
     loggedUserId.set(None) *> C.println("Logged out")
 
-  private def register: F[Unit] = for {
+  private def register = for {
     name     <- promptInputF("Input name: ", EncodeRF[F, String, Username].encodeRF)
     email    <- promptInputF("Input email: ", EncodeRF[F, String, Email].encodeRF)
     password <- promptInputF("Input password: ", EncodeRF[F, String, Password].encodeRF)
@@ -115,76 +117,82 @@ final class ConsoleApi[F[_]: Async] private (
     _ <- C.println("Registered")
   } yield ()
 
-  private def getUserInfo: F[Unit] = for {
+  private def getUserInfo = for {
     userId <- promptInputF("Input user id: ", Id.read[F, UserId])
     user   <- services.users.get(userId)
     _      <- C.println(s"user: $user")
   } yield ()
 
-  private def getAd: F[Unit] = for {
+  private def getAd = for {
     adId <- promptInputF("Input ad id: ", Id.read[F, AdId])
     ad   <- services.ads.get(adId)
     _    <- C.println(s"ad: $ad")
   } yield ()
 
-  private def uploadAd(userId: UserId): F[Unit] = for {
+  private def uploadAd(userId: UserId) = for {
     title <- promptInputF("Input ad title: ", EncodeRF[F, String, AdTitle].encodeRF)
     adId  <- services.ads.create(userId, CreateAdRequest(title))
     _     <- C.println(s"Created ad $adId")
   } yield ()
 
-  private def addTag(userId: UserId): F[Unit] = for {
+  private def addTag(userId: UserId) = for {
     adId <- promptInputF("Input ad id: ", Id.read[F, AdId])
     tag  <- promptInputF("Input tag: ", EncodeRF[F, String, AdTag].encodeRF)
     _    <- services.ads.addTag(adId, tag, userId)
     _    <- C.println("Added tag")
   } yield ()
 
-  private def markResolved(userId: UserId): F[Unit] = for {
+  private def markResolved(userId: UserId) = for {
     adId   <- promptInputF("Input ad id: ", Id.read[F, AdId])
     client <- promptInputF("Input client id: ", Id.read[F, UserId])
     _      <- services.ads.markAsResolved(adId, userId, client)
     _      <- C.println("Resolved")
   } yield ()
 
-  private def createChat(userId: UserId): F[Unit] = for {
+  private def createChat(userId: UserId) = for {
     adId   <- promptInputF("Input ad id: ", Id.read[F, AdId])
     client <- promptInputF("Input client id: ", Id.read[F, UserId])
     chatId <- services.chats.create(adId, client)
     _      <- C.println(s"Created chat $chatId")
   } yield ()
 
-  private def sendMessage(userId: UserId): F[Unit] = for {
+  private def sendMessage(userId: UserId) = for {
     chatId <- promptInputF("Input chat id: ", Id.read[F, ChatId])
     msg    <- promptInputF("Input message text: ", EncodeRF[F, String, MessageText].encodeRF)
     _      <- services.messages.send(chatId, userId, SendMessageRequest(msg))
     _      <- C.println("Message sent")
   } yield ()
 
-  private def getChatHistory(userId: UserId): F[Unit] = for {
+  private def getChatHistory(userId: UserId) = for {
     chatId  <- promptInputF("Input chat id: ", Id.read[F, ChatId])
     history <- services.messages.history(chatId, userId)
     _       <- C.println(s"History: $history")
   } yield ()
 
-  private def getGlobalFeed: F[Unit] = for {
+  private def getGlobalFeed = for {
     feed <- services.feed.getGlobal(Pagination(10, 0))
     _    <- C.println(s"Feed: $feed")
   } yield ()
 
-  private def getPersonalizedFeed(userId: UserId): F[Unit] = for {
+  private def getPersonalizedFeed(userId: UserId) = for {
     feed <- services.feed.getPersonalized(userId, Pagination(10, 0))
     _    <- C.println(s"Feed: $feed")
   } yield ()
 
-  private def getAllTags: F[Unit] = for {
+  private def getAllTags = for {
     tags <- services.tags.all
     _    <- C.println(s"Tags: $tags")
   } yield ()
 
-  private def learn: F[Unit] = for {
+  private def learn = for {
     _ <- services.recs.learn
     _ <- C.println(s"Learn finished")
+  } yield ()
+
+  def getUserAds = for {
+    userId <- promptInputF("Input user id: ", Id.read[F, UserId])
+    ads    <- services.users.getAds(userId)
+    _      <- C.println(s"Ads: $ads")
   } yield ()
 
   private def executeCommand(cmd: Command): F[Unit] = {
@@ -214,6 +222,7 @@ final class ConsoleApi[F[_]: Async] private (
       case GetPersonalizedFeed() => requireLogin(getPersonalizedFeed)
       case GetGlobalFeed()       => getGlobalFeed
       case GetAllTags()          => getAllTags
+      case GetUserAds()          => getUserAds
       case Learn()               => learn
     }
   }
@@ -247,6 +256,7 @@ private object commands {
   final case class GetPersonalizedFeed() extends Command
   final case class GetGlobalFeed()       extends Command
   final case class GetAllTags()          extends Command
+  final case class GetUserAds()          extends Command
   final case class Learn()               extends Command
   final case class Login()               extends Command
   final case class Logout()              extends Command

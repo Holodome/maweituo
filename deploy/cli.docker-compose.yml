@@ -1,21 +1,11 @@
 version: "3.4"
 
 services:
-  web:
-    image: 'maweituo-web:latest'
-    container_name: maweituo-web
-    restart: always
-    ports:
-      - '3000:3000'
-    environment:
-      - ORIGIN=http://web:3000
-    networks:
-      - backend
-
   core:
     image: 'maweituo-core-console:0.1.0'
     container_name: maweituo-core-console
     volumes:
+      - ./core.log:/app.log
       - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always
     ports:
@@ -42,6 +32,7 @@ services:
     image: 'maweituo-recs:0.1.0'
     container_name: maweituo-recs
     volumes:
+      - ./recs.log:/app.log
       - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always
     ports:

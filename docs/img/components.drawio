@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="ikJhPS-267e_RFNlFRuO" name="Page-1">
-        <mxGraphModel dx="709" dy="764" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="663" dy="551" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -81,6 +81,9 @@
                 </mxCell>
                 <mxCell id="44" value="Recommendation system&lt;br&gt;&lt;i&gt;recs&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
                     <mxGeometry x="510" y="330" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;rounded=0;" edge="1" parent="1" source="47" target="42">
+                    <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="47" value="GRPC&lt;br&gt;&lt;i&gt;grpc&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="400" y="520" width="120" height="60" as="geometry"/>

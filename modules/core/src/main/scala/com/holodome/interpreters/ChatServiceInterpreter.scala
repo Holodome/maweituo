@@ -32,7 +32,11 @@ private final class ChatServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
   override def create(adId: AdId, clientId: UserId): F[ChatId] = for {
     _ <- chatRepo
       .findByAdAndClient(adId, clientId)
-      .semiflatTap(_ => ChatAlreadyExists(adId, clientId).raiseError[F, Unit])
+      .semiflatTap(_ =>
+        Logger[F].warn(
+          s"Chat for ad $adId with client $clientId already exists"
+        ) *> ChatAlreadyExists(adId, clientId).raiseError[F, Unit]
+      )
       .value
       .void
     author <- adRepo
@@ -40,7 +44,9 @@ private final class ChatServiceInterpreter[F[_]: MonadThrow: GenUUID: Logger](
       .map(_.authorId)
       .flatTap {
         case author if author === clientId =>
-          CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
+          Logger[F].warn(
+            s"User $author tried to creat chat with himself"
+          ) *> CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
         case _ => Applicative[F].unit
       }
     id <- Id.make[F, ChatId]

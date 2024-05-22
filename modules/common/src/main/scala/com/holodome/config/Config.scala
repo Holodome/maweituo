@@ -9,6 +9,7 @@ import com.comcast.ip4s._
 import com.holodome.config.types._
 import eu.timepit.refined.cats._
 import eu.timepit.refined.types.string.NonEmptyString
+import org.typelevel.log4cats.Logger
 import org.http4s.Uri
 
 import java.nio.file.Paths
@@ -16,16 +17,21 @@ import scala.concurrent.duration.FiniteDuration
 import utils.JsonConfig
 
 object Config {
-  def loadRecsConfig[F[_]: Async]: F[RecsConfig] =
-    env("MW_CONFIG_PATH").load[F].flatMap { path =>
-      JsonConfig
-        .fromFile[F](Paths.get(path))
-        .flatMap { implicit json =>
-          defaultRecsConfig[F].load[F]
-        }
-    }
+  def loadRecsConfig[F[_]: Async: Logger]: F[RecsConfig] =
+    env("MW_CONFIG_PATH")
+      .load[F]
+      .flatMap { path =>
+        JsonConfig
+          .fromFile[F](Paths.get(path))
+          .flatMap { implicit json =>
+            defaultRecsConfig[F].load[F]
+          }
+      }
+      .onError { case e =>
+        Logger[F].error(e)("Failed to load config")
+      }
 
-  private def defaultRecsConfig[F[_]: Async](implicit
+  private def defaultRecsConfig[F[_]: Async: Logger](implicit
       file: JsonConfig
   ): ConfigValue[F, RecsConfig] =
     (
@@ -46,14 +52,19 @@ object Config {
   ): ConfigValue[F, ClickHouseConfig] =
     file.stringField("clickhouse.jdbcUrl").as[String].map(ClickHouseConfig.apply)
 
-  def loadAppConfig[F[_]: Async]: F[AppConfig] =
-    env("MW_CONFIG_PATH").load[F].flatMap { path =>
-      utils.JsonConfig
-        .fromFile[F](Paths.get(path))
-        .flatMap { implicit json =>
-          defaultAppConfig[F].load[F]
-        }
-    }
+  def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
+    env("MW_CONFIG_PATH")
+      .load[F]
+      .flatMap { path =>
+        utils.JsonConfig
+          .fromFile[F](Paths.get(path))
+          .flatMap { implicit json =>
+            defaultAppConfig[F].load[F]
+          }
+      }
+      .onError { case e =>
+        Logger[F].error(e)("Failed to load config")
+      }
 
   private def defaultAppConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
     (

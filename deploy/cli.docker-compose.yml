@@ -5,6 +5,7 @@ services:
     image: 'maweituo-core-console:0.1.0'
     container_name: maweituo-core-console
     volumes:
+      - ./core.log:/app.log
       - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always
     ports:
@@ -31,6 +32,7 @@ services:
     image: 'maweituo-recs:0.1.0'
     container_name: maweituo-recs
     volumes:
+      - ./recs.log:/app.log
       - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always
     ports:

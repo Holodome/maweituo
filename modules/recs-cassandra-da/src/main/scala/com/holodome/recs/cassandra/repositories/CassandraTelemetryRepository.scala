@@ -16,17 +16,17 @@ private final class CassandraTelemetryRepository[F[_]: Async](session: Cassandra
     extends TelemetryRepository[F] {
 
   override def userCreated(user: users.UserId, ad: ads.AdId): F[Unit] =
-    cql"insert into rec.user_created_transactional (id, ad) values (${user.value}, ${ad.value})"
+    cql"insert into recs.user_created_transactional (id, ad) values (${user.value}, ${ad.value})"
       .execute(session)
       .void
 
   override def userBought(user: users.UserId, ad: ads.AdId): F[Unit] =
-    cql"insert into rec.user_bought_transactional (id, ad) values (${user.value}, ${ad.value})"
+    cql"insert into recs.user_bought_transactional (id, ad) values (${user.value}, ${ad.value})"
       .execute(session)
       .void
 
   override def userDiscussed(user: users.UserId, ad: ads.AdId): F[Unit] =
-    cql"insert into rec.user_discussed_transactional (id, ad) values (${user.value}, ${ad.value})"
+    cql"insert into recs.user_discussed_transactional (id, ad) values (${user.value}, ${ad.value})"
       .execute(session)
       .void
 

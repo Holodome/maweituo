@@ -30,10 +30,10 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder](feed: FeedService[F])
       pageSize: Option[Int]
   ): F[Pagination] =
     (
-      EncodeRF[F, Int, Int Refined Positive].encodeRF(page.getOrElse(0)),
-      EncodeRF[F, Int, Int Refined NonNegative].encodeRF(pageSize.getOrElse(10))
-    ).tupled.map { case (a, b) =>
-      Pagination(a, b)
+      EncodeRF[F, Int, Int Refined NonNegative].encodeRF(page.getOrElse(0)),
+      EncodeRF[F, Int, Int Refined Positive].encodeRF(pageSize.getOrElse(10))
+    ).tupled.map { case (page, pageSize) =>
+      Pagination(pageSize, page)
     }
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {

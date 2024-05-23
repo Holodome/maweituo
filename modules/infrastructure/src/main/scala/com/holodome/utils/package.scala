@@ -6,7 +6,7 @@ import dev.profunktor.auth.jwt.JwtToken
 import io.circe.Encoder
 
 package object utils extends OrphanInstances {
-  case class RefinedEncodingFailure(reason: String) extends Throwable
+  case class RefinedEncodingFailure(reason: String) extends Exception(reason)
 
   type EncodeR[T, A] = EncodeRF[Either[Throwable, _], T, A]
   object EncodeR {

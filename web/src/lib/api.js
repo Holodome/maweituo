@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
 
-const base = 'http://core:8080';
-// const base = 'http://localhost:8080';
+const base = process.env.BACKEND;
 
 export function buildUrl(path) {
 	return `${base}/${path}`;

@@ -9,6 +9,7 @@ services:
       - '3000:3000'
     environment:
       - ORIGIN=http://web:3000
+      - BACKEND=http://core:8080
     networks:
       - backend
 

@@ -53,5 +53,11 @@
     <div class="form-control mt-6">
       <button class="btn btn-primary" type="submit">Register</button>
     </div>
+    <div class="label">
+      <span class="label-text-alt">
+        Already have an account?
+        <a href="/login" class="link link-neutral">Sign in</a>
+      </span>
+    </div>
   </form>
 </div>

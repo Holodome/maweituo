@@ -1,15 +1,21 @@
 <script>
-    import { page } from '$app/stores';
+  import { page } from '$app/stores';
 </script>
 
-<nav>
-    <a href="/">Home</a>
+<div class="navbar bg-base-100">
+  <div class="flex-1">
+    <a class="btn btn-ghost text-xl" href="/">Maweituo</a>
+  </div>
 
-    {#if $page.data.user}
-        <a href="/create_ad">Create advertisement</a>
-        <a href="/account">Account</a>
-    {:else}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-    {/if}
-</nav>
+  <div class="flex-none">
+    <ul class="menu menu-horizontal px-1">
+      {#if $page.data.user}
+        <li><a href="/create_ad">Create advertisement</a></li>
+        <li><a href="/account">Account</a></li>
+      {:else}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+      {/if}
+    </ul>
+  </div>
+</div>

@@ -21,7 +21,7 @@
 
     {#if isAuthor()}
         <form use:enhance method="POST" action="?/logout">
-            <button type="submit">Logout</button>
+            <button class="btn btn-outline btn-error" type="submit">Logout</button>
         </form>
     {/if}
 </div>

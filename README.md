@@ -21,8 +21,6 @@ docker-compose -f deploy/it.docker-compose.yml up
 docker-compose -f deploy/it.docker-compose.yml down
 ```
 
-Consult sources for scripts listed above to donwload necessary dependencies.
-
 To run whole application:
 
 ```shell

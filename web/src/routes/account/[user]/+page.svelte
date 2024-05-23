@@ -1,27 +1,27 @@
 <script>
-    import { page } from '$app/stores';
-	import { enhance } from '$app/forms';
+  import { page } from '$app/stores';
+  import { enhance } from '$app/forms';
 
-	/** @type {import('./$types').PageData} */
-	export let data;
+  /** @type {import('./$types').PageData} */
+  export let data;
 
-	const isAuthor = () => {
-        return $page.data.user?.userId === data.userInfo.id;
-    };
+  const isAuthor = () => {
+    return $page.data.user?.userId === data.userInfo.id;
+  };
 </script>
 
 <svelte:head>
-	<title>{data.userInfo.name}</title>
+  <title>{data.userInfo.name}</title>
 </svelte:head>
 
 <div>
-    <h1>User</h1>
-    <p>Name: {data.userInfo.name}</p>
-    <p>Email: {data.userInfo.email}</p>
+  <h1>User</h1>
+  <p>Name: {data.userInfo.name}</p>
+  <p>Email: {data.userInfo.email}</p>
 
-    {#if isAuthor()}
-        <form use:enhance method="POST" action="?/logout">
-            <button class="btn btn-outline btn-error" type="submit">Logout</button>
-        </form>
-    {/if}
+  {#if isAuthor()}
+    <form use:enhance method="POST" action="?/logout">
+      <button class="btn btn-outline btn-error" type="submit">Logout</button>
+    </form>
+  {/if}
 </div>

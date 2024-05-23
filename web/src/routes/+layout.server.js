@@ -1,8 +1,8 @@
 /** @type {import('./$types').LayoutServerLoad} */
 export function load({ locals }) {
-	return {
-		user: locals.user && {
-			userId: locals.user.userId,
-		}
-	};
+  return {
+    user: locals.user && {
+      userId: locals.user.userId
+    }
+  };
 }

@@ -13,8 +13,11 @@ export async function load({ locals, params }) {
       id: img
     };
   });
+  const authorName = await api.get(`users/${adInfo.authorId}`, locals.user?.token)
+    .then((u) => u.name);
   return {
     adInfo,
+    authorName,
     images,
     chat: chatInfo?.errors ? null : chatInfo
   };

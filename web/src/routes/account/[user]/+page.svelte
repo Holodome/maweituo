@@ -1,6 +1,7 @@
 <script>
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
+  import AdCard from '$lib/components/AdCard.svelte';
 
   /** @type {import('./$types').PageData} */
   export let data;
@@ -40,6 +41,15 @@
       />
     </dd>
   </dl>
+
+  <div>
+    <h2 class="text-lg leading-none mt-8 mb-4">Advertisements</h2>
+    {#each data.ads as ad}
+      <AdCard {ad} />
+    {:else}
+      <p>User has no ads</p>
+    {/each}
+  </div>
 
   {#if isMe()}
     <form use:enhance method="POST" action="?/logout" class="my-4">

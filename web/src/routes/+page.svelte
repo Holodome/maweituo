@@ -1,5 +1,5 @@
 <script>
-  import AdCard from './AdCard.svelte';
+  import AdCard from '$lib/components/AdCard.svelte';
 
   /** @type {import('./$types').PageData} */
   export let data;

@@ -5,7 +5,7 @@
   /** @type {import('./$types').PageData} */
   export let data;
 
-  const isAuthor = () => {
+  const isMe = () => {
     return $page.data.user?.userId === data.userInfo.id;
   };
 </script>
@@ -14,13 +14,35 @@
   <title>{data.userInfo.name}</title>
 </svelte:head>
 
-<div>
-  <h1>User</h1>
-  <p>Name: {data.userInfo.name}</p>
-  <p>Email: {data.userInfo.email}</p>
+<div class="container mx-auto max-w-3xl">
+  <h1 class="mb-10 text-2xl leading-none">User</h1>
+  <dl class="my-2 form-control">
+    <dt><label for="name">Name</label></dt>
+    <dd class="md-15">
+      <input
+        id="name"
+        class="input input-bordered w-full max-w-xs mt-2 rounded-md"
+        type="text"
+        value={data.userInfo.name}
+        readonly
+      />
+    </dd>
+  </dl>
+  <dl class="my-2 form-control">
+    <dt><label for="name">Email</label></dt>
+    <dd class="md-15">
+      <input
+        id="name"
+        class="input input-bordered w-full max-w-xs mt-2 rounded-md"
+        type="text"
+        value={data.userInfo.email}
+        readonly
+      />
+    </dd>
+  </dl>
 
-  {#if isAuthor()}
-    <form use:enhance method="POST" action="?/logout">
+  {#if isMe()}
+    <form use:enhance method="POST" action="?/logout" class="my-4">
       <button class="btn btn-outline btn-error" type="submit">Logout</button>
     </form>
   {/if}

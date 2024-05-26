@@ -6,7 +6,7 @@
 
   export let data: PageData;
 
-  $: isMe = $page.data.user?.userId === data.userInfo.id; 
+  $: isMe = $page.data.user?.userId === data.userInfo.id;
 </script>
 
 <svelte:head>
@@ -42,11 +42,15 @@
 
   <div>
     <h2 class="text-lg leading-none mt-8 mb-4">Advertisements</h2>
-    {#each data.ads as ad}
-      <AdCard {ad} />
+    {#if data.ads.length}
+      <div class="grid grid-cols-2 gap-4 mb-8 border border-spacing-4 px-4 py-4">
+        {#each data.ads as ad}
+          <AdCard {ad} />
+        {/each}
+      </div>
     {:else}
       <p>User has no ads</p>
-    {/each}
+    {/if}
   </div>
 
   {#if isMe}

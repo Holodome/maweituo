@@ -4,7 +4,7 @@
   export let ad: Advertisement;
 </script>
 
-<div class="card w-96 bg-base-100 shrink-0 max-w-sm shadow-md mx-auto">
+<div class="card bg-base-100 shrink-0 max-w-sm shadow-md mx-auto" style="width: 22rem;">
   <div class="card-body">
     <h2 class="card-title">{ad.title}</h2>
     <div class="card-actions justify-start">

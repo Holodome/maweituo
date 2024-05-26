@@ -6,9 +6,7 @@
 
   export let data: PageData;
 
-  const isMe = () => {
-    return $page.data.user?.userId === data.userInfo.id;
-  };
+  $: isMe = $page.data.user?.userId === data.userInfo.id; 
 </script>
 
 <svelte:head>
@@ -51,7 +49,7 @@
     {/each}
   </div>
 
-  {#if isMe()}
+  {#if isMe}
     <form use:enhance method="POST" action="?/logout" class="my-4">
       <button class="btn btn-outline btn-error" type="submit">Logout</button>
     </form>

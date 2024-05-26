@@ -1,16 +1,36 @@
 <script lang="ts">
+  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
+
   export let totalCount: number;
   export let currentPage: number;
   const perPage: number = 10;
 
-  $: currentPage = 0;
-  $: totalPages = Math.ceil(totalCount / perPage);
-  $: start = currentPage * perPage;
-  $: end =
-    currentPage === totalPages - 1 ? totalCount - 1 : start + perPage - 1;
+  $: isFirst = currentPage == 0;
+  $: isLast = (currentPage) * perPage > totalCount;
 
-  $: currentPage = 0;
-  $: currentPage, start, end;
+  const prevPage = async () => {
+    $page.url.searchParams.set('page', (currentPage - 1).toString());
+    currentPage -= 1;
+    await goto(`?${$page.url.searchParams.toString()}`);
+  };
+  const nextPage = async () => {
+    $page.url.searchParams.set('page', (currentPage + 1).toString());
+    currentPage += 1;
+    await goto(`?${$page.url.searchParams.toString()}`);
+  };
 </script>
 
-<div></div>
+<div class="join flex flex-row justify-center items-center mb-8">
+  {#if !isFirst}
+    <button class="join-item btn" on:click={prevPage}>«</button>
+  {:else}
+    <button class="join-item btn btn-disabled">«</button>
+  {/if}
+  <button class="join-item btn">Page {currentPage}</button>
+  {#if !isLast}
+    <button class="join-item btn" on:click={nextPage}>»</button>
+  {:else}
+    <button class="join-item btn btn-disabled">»</button>
+  {/if}
+</div>

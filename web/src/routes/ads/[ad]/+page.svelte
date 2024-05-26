@@ -5,9 +5,7 @@
 
   export let data: PageData;
 
-  const isAuthor: () => Boolean = () => {
-    return $page.data.user?.userId === data.adInfo.authorId;
-  };
+  $: isAuthor = $page.data.user?.userId === data.adInfo.authorId;
 </script>
 
 <svelte:head>
@@ -42,7 +40,7 @@
               width="300"
               height="300"
             />
-            {#if isAuthor()}
+            {#if isAuthor}
               <form use:enhance method="POST" action="?/delete_image">
                 <input type="hidden" name="image" value={img.id} />
                 <button
@@ -72,7 +70,7 @@
       <p>No images in gallery</p>
     {/if}
 
-    {#if isAuthor()}
+    {#if isAuthor}
       <form
         use:enhance
         method="POST"
@@ -99,7 +97,7 @@
       {#each data.adInfo.tags as tag}
         <li>
           {tag}
-          {#if isAuthor()}
+          {#if isAuthor}
             <form
               use:enhance
               method="POST"
@@ -115,7 +113,7 @@
         </li>
       {/each}
     </ul>
-    {#if isAuthor()}
+    {#if isAuthor}
       <form use:enhance method="POST" action="?/add_tag">
         <input
           type="text"
@@ -129,15 +127,15 @@
     {/if}
   </div>
 
-  {#if $page.data.user && !isAuthor()}
+  {#if $page.data.user && !isAuthor}
     <form use:enhance method="POST" action="?/create_chat">
       <button type="submit" class="btn btn-outline btn-primary"
         >Create chat</button
       >
     </form>
-  {:else if data.chat && !isAuthor()}
+  {:else if data.chat && !isAuthor}
     <a href="/ads/{$page.params.ad}/chats/{data.chat}">Open chat</a>
-  {:else if isAuthor()}
+  {:else if isAuthor}
     <p></p>
   {/if}
 </div>

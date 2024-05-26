@@ -32,7 +32,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
   ): F[Pagination] =
     (
       EncodeRF[F, Int, Int Refined Positive].encodeRF(pageSize.getOrElse(10)),
-      EncodeRF[F, Int, Int Refined NonNegative].encodeRF(page.getOrElse(0))
+      EncodeRF[F, Int, Int Refined NonNegative].encodeRF(page.map(_ - 1).getOrElse(0))
     ).tupled.map { case (pageSize, page) =>
       Pagination(pageSize, page)
     }

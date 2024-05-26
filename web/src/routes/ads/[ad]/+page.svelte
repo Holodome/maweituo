@@ -44,7 +44,8 @@
               <form use:enhance method="POST" action="?/delete_image">
                 <input type="hidden" name="image" value={img.id} />
                 <button
-                  class="btn btn-circle btn-outline absolute -translate-x-full"
+                  class="btn btn-circle btn-outline absolute mt-2"
+                  style="transform: translate(-120%, 0);"
                   type="submit"
                 >
                   <svg

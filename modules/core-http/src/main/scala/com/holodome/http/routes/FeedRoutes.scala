@@ -57,7 +57,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
       if (userId == user.id) {
         makePagination(page, pageSize)
           .flatMap(p =>
-            (feed.getPersonalized(user.id, p), feed.getGlobalSize)
+            (feed.getPersonalized(user.id, p), feed.getPersonalizedSize(user.id))
               .parMapN { case (feed, size) =>
                 FeedDTO(feed, size)
               }

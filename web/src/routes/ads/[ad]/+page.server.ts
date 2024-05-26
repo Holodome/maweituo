@@ -21,7 +21,7 @@ export const load = (async ({ locals, params }) => {
   const authorName = await api
     .get(`users/${adInfo.authorId}`, locals.user?.token)
     .then((u) => u.name);
-  const chatInfos: Promise<(Chat & { clientName: string })[]> =
+  const chatInfos: () => Promise<(Chat & { clientName: string })[]> = () =>
     Promise.all(adInfo.chats.map((id) => {
       return api.get(`ads/${adInfo.id}/chat/${id}`, locals.user?.token)
         .then(async (chatInfo: Chat) => {
@@ -34,7 +34,7 @@ export const load = (async ({ locals, params }) => {
     authorName,
     images,
     chat: chatInfo?.errors ? null : chatInfo,
-    chatInfos: isAuthor ? await chatInfos : []
+    chatInfos: isAuthor ? await chatInfos() : []
   };
 }) satisfies PageServerLoad;
 
@@ -80,6 +80,7 @@ export const actions = {
     throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
   },
   delete_image: async ({ locals, request, params }) => {
+    console.log("delete image called");
     const data = await request.formData();
     const image = data.get('image');
     const body = await api.del(

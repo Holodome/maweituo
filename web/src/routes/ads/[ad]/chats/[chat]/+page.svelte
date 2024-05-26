@@ -48,7 +48,7 @@
       class="textarea textarea-primary resize-none textarea-sm w-full max-w-xs"
       required
     ></textarea>
-    <div></div>
+    <br />
     <button type="submit" class="btn btn-primary">Send</button>
   </form>
 </div>

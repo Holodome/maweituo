@@ -80,7 +80,6 @@ export const actions = {
     throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
   },
   delete_image: async ({ locals, request, params }) => {
-    console.log("delete image called");
     const data = await request.formData();
     const image = data.get('image');
     const body = await api.del(

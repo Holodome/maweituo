@@ -9,8 +9,14 @@
   <title>Maweituo</title>
 </svelte:head>
 
-<div>
-  {#each data.adInfo as ad}
-    <AdCard {ad} />
-  {/each}
+<div class="container mx-auto max-w-3xl">
+  {#if data.ads.length}
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      {#each data.ads as ad}
+        <AdCard {ad} />
+      {/each}
+    </div>
+  {:else}
+    <p>No feed, try again later</p>
+  {/if}
 </div>

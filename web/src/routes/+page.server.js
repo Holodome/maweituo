@@ -2,15 +2,19 @@ import * as api from '$lib/api.js';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
+  let feed;
   if (locals.user) {
-    const adInfo = await api.get(`feed/${locals.user?.userId}`, locals.user?.token);
-    return {
-      adInfo
-    };
+    feed = api.get(`feed/${locals.user?.userId}`, locals.user?.token);
   } else {
-    const adInfo = await api.get(`feed`);
-    return {
-      adInfo
-    };
+    feed = api.get(`feed`);
   }
+
+  const ads = await feed
+    .then((ids) =>
+      Promise.all(ids.map((id) => api.get(`ads/${id}`, locals.user?.token)))
+    );
+
+  return {
+    ads
+  };
 }

@@ -49,7 +49,7 @@ object Services {
             telemetry
           )
       override val chats: ChatService[F] =
-        ChatServiceInterpreter.make[F](repositories.chats, repositories.ads, telemetry)
+        ChatServiceInterpreter.make[F](repositories.chats, repositories.ads, telemetry, iam)
       override val messages: MessageService[F] =
         MessageServiceInterpreter.make[F](repositories.messages, iam)
       override val images: AdImageService[F] =

@@ -21,7 +21,7 @@ private final class CassandraChatRepository[F[_]: Async](session: CassandraSessi
     extends ChatRepository[F] {
 
   override def create(chat: Chat): F[Unit] =
-    cql"insert into local.chats (id, ad_id, ad_author_id, client_id) values (${chat.id.id}, ${chat.adId.value}, ${chat.adAuthor.value}, ${chat.client})"
+    cql"insert into local.chats (id, ad_id, ad_author_id, client_id) values (${chat.id.value}, ${chat.adId.value}, ${chat.adAuthor.value}, ${chat.client})"
       .config(
         _.setConsistencyLevel(ConsistencyLevel.QUORUM)
       )
@@ -30,7 +30,7 @@ private final class CassandraChatRepository[F[_]: Async](session: CassandraSessi
 
   override def find(chatId: ChatId): OptionT[F, Chat] =
     OptionT(
-      cql"select id, ad_id, ad_author_id, client_id from local.chats where id = ${chatId.id}"
+      cql"select id, ad_id, ad_author_id, client_id from local.chats where id = ${chatId.value}"
         .as[Chat]
         .select(session)
         .head

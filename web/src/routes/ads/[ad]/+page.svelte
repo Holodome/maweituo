@@ -127,15 +127,26 @@
     {/if}
   </div>
 
-  {#if $page.data.user && !isAuthor}
+  {#if $page.data.user && !isAuthor && !$page.data.chat}
     <form use:enhance method="POST" action="?/create_chat">
       <button type="submit" class="btn btn-outline btn-primary"
         >Create chat</button
       >
     </form>
-  {:else if data.chat && !isAuthor}
-    <a href="/ads/{$page.params.ad}/chats/{data.chat}">Open chat</a>
+  {:else if data.chat && !isAuthor && $page.data.chat}
+    <a class="btn btn-outline" href="/ads/{$page.params.ad}/chats/{data.chat}"
+      >Open chat</a
+    >
   {:else if isAuthor}
-    <p></p>
+    <div>
+      {#each data.chatInfos as chat}
+        <p>
+          <a
+            href="/ads/{$page.params.ad}/chats/{chat.id}"
+            class="mb-8 text-lg leading-none">Chat with user {chat.clientName}</a
+          >
+        </p>
+      {/each}
+    </div>
   {/if}
 </div>

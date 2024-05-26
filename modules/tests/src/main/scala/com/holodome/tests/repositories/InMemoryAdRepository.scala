@@ -8,8 +8,15 @@ import com.holodome.domain.images.ImageId
 import com.holodome.domain.repositories.AdvertisementRepository
 
 import scala.collection.concurrent.TrieMap
+import com.holodome.domain.messages.ChatId
 
 final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F] {
+
+  override def addChat(id: AdId, chatId: ChatId): F[Unit] =
+    Sync[F].delay(map.get(id).map { ad =>
+      val newAd = ad.copy(chats = ad.chats + chatId)
+      map.update(id, newAd)
+    })
 
   private val map = new TrieMap[AdId, Advertisement]
 

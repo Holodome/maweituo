@@ -16,13 +16,13 @@ import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 
 final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
-    AdService: AdService[F]
+    adService: AdService[F]
 ) extends Http4sDsl[F] {
 
   private val prefixPath = "/ads"
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case GET -> Root / AdIdVar(adId) =>
-    AdService
+    adService
       .get(adId)
       .flatMap(Ok(_))
   }
@@ -30,17 +30,17 @@ final case class AdRoutes[F[_]: MonadThrow: JsonDecoder](
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as user =>
       ar.req.decodeR[CreateAdRequest] { create =>
-        AdService
+        adService
           .create(user.id, create)
           .flatMap(Ok(_))
       }
 
     case DELETE -> Root / AdIdVar(adId) as user =>
-      AdService.delete(adId, user.id) *> NoContent()
+      adService.delete(adId, user.id) *> NoContent()
 
     case ar @ POST -> Root / AdIdVar(adId) / "resolved" as user =>
       ar.req.decodeR[UserId] { id =>
-        AdService
+        adService
           .markAsResolved(adId, user.id, id)
           .flatMap(Ok(_))
       }

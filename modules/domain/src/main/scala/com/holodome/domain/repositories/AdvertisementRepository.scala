@@ -5,6 +5,7 @@ import cats.data.OptionT
 import com.holodome.domain.ads._
 import com.holodome.domain.errors.InvalidAdId
 import com.holodome.domain.images.ImageId
+import com.holodome.domain.messages.ChatId
 
 trait AdvertisementRepository[F[_]] {
   def create(ad: Advertisement): F[Unit]
@@ -15,6 +16,7 @@ trait AdvertisementRepository[F[_]] {
   def addImage(id: AdId, image: ImageId): F[Unit]
   def removeTag(id: AdId, tag: AdTag): F[Unit]
   def removeImage(id: AdId, image: ImageId): F[Unit]
+  def addChat(id: AdId, chatId: ChatId): F[Unit]
   def markAsResolved(id: AdId): F[Unit]
 }
 

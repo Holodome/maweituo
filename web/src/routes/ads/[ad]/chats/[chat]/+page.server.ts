@@ -1,18 +1,22 @@
 import * as api from '$lib/api.js';
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
+import type { Advertisement, Message, User } from "$lib/types";
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals, params }) {
-  const messages = await api.get(
+export const load = (async ({ locals, params }) => {
+  const messages: { messages: Message[] } = await api.get(
     `ads/${params.ad}/msg/${params.chat}`,
-    locals?.user.token
+    locals.user?.token
   );
+  const adInfo: Advertisement = await api.get(`ads/${params.ad}`, locals.user?.token);
+  const authorInfo: User = await api.get(`users/${adInfo.authorId}`, locals.user?.token);
   return {
-    messages: messages.messages
+    messages: messages.messages,
+    adInfo,
+    authorInfo
   };
-}
+}) satisfies PageServerLoad;
 
-/** @type {import('./$types').Actions} */
 export const actions = {
   send_message: async ({ locals, request, params }) => {
     const data = await request.formData();
@@ -21,8 +25,8 @@ export const actions = {
       {
         text: data.get('text')
       },
-      locals?.user.token
+      locals.user?.token
     );
     throw redirect(307, `/ads/${params.ad}/chats/${params.chat}`);
   }
-};
+} satisfies Actions;

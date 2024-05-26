@@ -18,14 +18,14 @@ private final class CassandraMessageRepository[F[_]: Async](session: CassandraSe
     extends MessageRepository[F] {
 
   override def chatHistory(chatId: ChatId): F[List[Message]] =
-    cql"select sender_id, chat_id, msg, at from local.messages where chat_id = ${chatId.id}"
+    cql"select sender_id, chat_id, msg, at from local.messages where chat_id = ${chatId.value}"
       .as[Message]
       .select(session)
       .compile
       .toList
 
   override def send(message: Message): F[Unit] =
-    cql"insert into local.messages (sender_id, chat_id, msg, at) values (${message.sender.value}, ${message.chat.id}, ${message.text.value}, ${message.at})"
+    cql"insert into local.messages (sender_id, chat_id, msg, at) values (${message.sender.value}, ${message.chat.value}, ${message.text.value}, ${message.at})"
       .config(
         _.setConsistencyLevel(ConsistencyLevel.ONE)
       )

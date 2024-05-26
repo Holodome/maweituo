@@ -1,5 +1,5 @@
 import * as api from '$lib/api.js';
-import type { Advertisement } from '$lib/types.js';
+import type { Advertisement, Chat, User } from '$lib/types.js';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -8,8 +8,9 @@ export const load = (async ({ locals, params }) => {
     `ads/${params.ad}`,
     locals.user?.token
   );
+  const isAuthor = locals.user?.userId === adInfo.authorId;
   const chatInfo = locals.user?.token
-    ? await api.get(`ads/${params.ad}/chat`, locals.user?.token)
+    ? await api.get(`ads/${params.ad}/myChat`, locals.user?.token)
     : null;
   const images = adInfo.images.map((img) => {
     return {
@@ -20,11 +21,20 @@ export const load = (async ({ locals, params }) => {
   const authorName = await api
     .get(`users/${adInfo.authorId}`, locals.user?.token)
     .then((u) => u.name);
+  const chatInfos: Promise<(Chat & { clientName: string })[]> =
+    Promise.all(adInfo.chats.map((id) => {
+      return api.get(`ads/${adInfo.id}/chat/${id}`, locals.user?.token)
+        .then(async (chatInfo: Chat) => {
+          const userInfo: User = await api.get(`users/${chatInfo.client}`, locals.user?.token);
+          return { ...chatInfo, clientName: userInfo.name };
+        });
+    }));
   return {
     adInfo,
     authorName,
     images,
-    chat: chatInfo?.errors ? null : chatInfo
+    chat: chatInfo?.errors ? null : chatInfo,
+    chatInfos: isAuthor ? await chatInfos : []
   };
 }) satisfies PageServerLoad;
 

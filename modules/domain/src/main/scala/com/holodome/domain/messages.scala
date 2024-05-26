@@ -19,8 +19,9 @@ import com.holodome.utils.EncodeRF
 
 package object messages {
   @derive(uuidIso, encoder, decoder, eqv)
-  @newtype case class ChatId(id: UUID)
+  @newtype case class ChatId(value: UUID)
 
+  @derive(encoder)
   case class Chat(
       id: ChatId,
       adId: AdId,

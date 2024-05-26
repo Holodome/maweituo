@@ -10,6 +10,7 @@ import com.holodome.domain.images.ImageId
 import com.holodome.domain.repositories.AdvertisementRepository
 import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
+import com.holodome.domain.messages.ChatId
 
 object CassandraAdvertisementRepository {
   def make[F[_]: Async](session: CassandraSession[F]): AdvertisementRepository[F] =
@@ -19,6 +20,11 @@ object CassandraAdvertisementRepository {
 private final class CassandraAdvertisementRepository[F[_]: Async](
     session: CassandraSession[F]
 ) extends AdvertisementRepository[F] {
+
+  override def addChat(id: AdId, chatId: ChatId): F[Unit] =
+    cql"update advertisements set chats = chats - {${chatId.value}} where id = ${id.value}"
+      .execute(session)
+      .void
 
   override def create(ad: Advertisement): F[Unit] =
     cql"""insert into advertisements (id, author_id, title, tags, images, chats, resolved)

@@ -13,6 +13,7 @@ import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
+import com.holodome.http.vars.ChatIdVar
 
 final case class AdChatRoutes[F[_]: Monad](
     chatService: ChatService[F]
@@ -22,7 +23,12 @@ final case class AdChatRoutes[F[_]: Monad](
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
 
-    case GET -> Root / AdIdVar(adId) / "chat" as user =>
+    case GET -> Root / AdIdVar(_) / "chat" / ChatIdVar(chatId) as user =>
+      chatService
+        .get(chatId, user.id)
+        .flatMap(Ok(_))
+
+    case GET -> Root / AdIdVar(adId) / "myChat" as user =>
       chatService
         .findForAdAndUser(adId, user.id)
         .fold(Ok(Json.obj(("errors", "chat not found".asJson))))(id => Ok(id))

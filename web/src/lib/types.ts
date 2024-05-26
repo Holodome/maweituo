@@ -12,10 +12,25 @@ export type Advertisement = {
   authorId: string;
   tags: string[];
   images: string[];
+  chats: string[];
 };
 
 export type User = {
   id: string;
   name: string;
   email: string;
+};
+
+export type Message = {
+  sender: string;
+  text: string;
+  chat: string;
+  at: string;
+};
+
+export type Chat = {
+  id: string,
+  adId: string,
+  adAuthor: string,
+  client: string
 };

@@ -1,5 +1,6 @@
 package com.holodome.modules
 
+import cats.Parallel
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all._
@@ -17,13 +18,16 @@ import org.typelevel.log4cats.Logger
 import scala.concurrent.duration.DurationInt
 
 object HttpApi {
-  def make[F[_]: Async: Logger](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+  def make[F[_]: Async: Logger: Parallel](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
       H: HttpErrorHandler[F, ApplicationError]
   ): HttpApi[F] =
     new HttpApi[F](services, userJwtAuth)
 }
 
-sealed class HttpApi[F[_]: Async: Logger](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
+sealed class HttpApi[F[_]: Async: Logger: Parallel](
+    services: Services[F],
+    userJwtAuth: UserJwtAuth
+)(implicit
     H: HttpErrorHandler[F, ApplicationError]
 ) {
   private val usersMiddleware =

@@ -1,9 +1,10 @@
 import * as api from '$lib/api.js';
+import type { Advertisement } from '$lib/types.js';
 import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals, params }) {
-  const adInfo = await api.get(`ads/${params.ad}`, locals.user?.token);
+export const load = (async ({ locals, params }) => {
+  const adInfo: Advertisement = await api.get(`ads/${params.ad}`, locals.user?.token);
   const chatInfo = locals.user?.token
     ? await api.get(`ads/${params.ad}/chat`, locals.user?.token)
     : null;
@@ -21,7 +22,7 @@ export async function load({ locals, params }) {
     images,
     chat: chatInfo?.errors ? null : chatInfo
   };
-}
+}) satisfies PageServerLoad;
 
 /** @type {import('./$types').Actions} */
 export const actions = {
@@ -56,21 +57,21 @@ export const actions = {
   create_chat: async ({ locals, params }) => {
     const chatId = await api.post(`ads/${params.ad}/chat`, {}, locals.user?.token);
     if (chatId.errors) {
-      return fail(401, body);
+      return fail(401, chatId);
     }
     throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
   },
   delete_image: async ({ locals, request, params }) => {
     const data = await request.formData();
     const image = data.get('image');
-    const body = await api.del(`ads/${params.ad}/img/${image}`, null, locals.user?.token);
+    const body = await api.del(`ads/${params.ad}/img/${image}`, undefined, locals.user?.token);
     if (body.errors) {
       return fail(401, body);
     }
   },
   add_image: async ({ locals, request, params }) => {
     const data = await request.formData();
-    const image = data.get('image');
+    const image = data.get('image') as File;
     if (!image.name || image.name === 'undefined') {
       return fail(400, {
         error: true,
@@ -78,9 +79,9 @@ export const actions = {
       });
     }
 
-    const body = await api.postFile(`ads/${params.ad}/img`, image, locals.user?.token);
+    const body = await api.postFile(`ads/${params.ad}/img`, image, locals.user?.token) as { errors?: string[] };
     if (body.errors) {
       return fail(401, body);
     }
   }
-};
+} satisfies Actions;

@@ -1,13 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import * as api from '$lib/api.js';
+import type { PageServerLoad, Actions } from './$types';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ parent }) {
+export const load = (async ({ parent }) => {
   const { user } = await parent();
   if (user) throw redirect(307, '/');
-}
+}) satisfies PageServerLoad;
 
-/** @type {import('./$types').Actions} */
 export const actions = {
   default: async ({ request }) => {
     const data = await request.formData();
@@ -18,8 +17,7 @@ export const actions = {
         name: data.get('name'),
         email: data.get('email'),
         password: data.get('password')
-      },
-      null
+      }
     );
     if (body.errors) {
       return fail(401, body);
@@ -27,4 +25,4 @@ export const actions = {
 
     throw redirect(307, '/login');
   }
-};
+} satisfies Actions;

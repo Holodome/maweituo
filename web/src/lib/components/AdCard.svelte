@@ -1,5 +1,7 @@
-<script>
-  export let ad;
+<script lang="ts">
+  import type { Advertisement } from "$lib/types";
+
+  export let ad: Advertisement;
 </script>
 
 <div class="card w-96 bg-base-100 shrink-0 max-w-sm shadow-md mx-auto">

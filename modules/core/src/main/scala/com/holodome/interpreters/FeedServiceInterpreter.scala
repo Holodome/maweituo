@@ -10,6 +10,8 @@ import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
 import org.typelevel.log4cats.Logger
 
+import scala.concurrent.duration.DurationInt
+
 object FeedServiceInterpreter {
 
   def make[F[_]: MonadThrow: Logger: TimeSource](
@@ -29,13 +31,14 @@ private final class FeedServiceInterpreter[F[_]: MonadThrow: Logger: TimeSource]
       case List() =>
         for {
           recs <- recs.getRecs(user, 100)
-          _    <- repo.setPersonalized(user, recs, 60 * 60)
+          _    <- repo.setPersonalized(user, recs, (60 * 60).seconds)
           r    <- repo.getPersonalized(user, pag)
           _    <- Logger[F].info(s"Generated feed for user $user")
         } yield r
       case lst => lst.pure[F]
     }
 
-  override def getGlobal(pag: Pagination): F[List[AdId]] =
-    repo.getGlobal(pag)
+  override def getGlobal(pag: Pagination): F[List[AdId]] = repo.getGlobal(pag)
+  override def getGlobalSize: F[Int]                     = repo.getGlobalSize
+  override def getPersonalizedSize(user: UserId): F[Int] = repo.getPersonalizedSize(user)
 }

@@ -1,12 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import * as api from '$lib/api.js';
+import type { PageServerLoad, Actions } from './$types';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
+export const load = (async ({ locals }) => {
   if (locals.user) throw redirect(307, '/');
-}
+}) satisfies PageServerLoad;
 
-/** @type {import('./$types').Actions} */
 export const actions = {
   default: async ({ cookies, request }) => {
     const data = await request.formData();
@@ -17,7 +16,6 @@ export const actions = {
         name: data.get('name'),
         password: data.get('password')
       },
-      null
     );
 
     if (body.errors) {
@@ -28,4 +26,4 @@ export const actions = {
     cookies.set('jwt', jwt, { path: '/' });
     redirect(307, '/');
   }
-};
+} satisfies Actions;

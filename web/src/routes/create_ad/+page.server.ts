@@ -1,12 +1,11 @@
-import { redirect, fail } from '@sveltejs/kit';
+import { redirect, error } from '@sveltejs/kit';
 import * as api from '$lib/api.js';
+import type { PageServerLoad, Actions } from './$types';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
+export const load = (async ({ locals }) => {
   if (!locals.user) throw redirect(302, `/login`);
-}
+}) satisfies PageServerLoad;
 
-/** @type {import('./$types').Actions} */
 export const actions = {
   default: async ({ request, locals }) => {
     if (!locals.user) throw error(401);
@@ -21,4 +20,4 @@ export const actions = {
     );
     throw redirect(303, `/ads/${result}`);
   }
-};
+} satisfies Actions;

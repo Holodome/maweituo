@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
   import AdCard from '$lib/components/AdCard.svelte';
+  import type { PageData } from "./$types";
 
-  /** @type {import('./$types').PageData} */
-  export let data;
+  export let data: PageData;
 
   const isMe = () => {
     return $page.data.user?.userId === data.userInfo.id;

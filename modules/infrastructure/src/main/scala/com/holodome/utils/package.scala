@@ -14,7 +14,7 @@ package object utils extends OrphanInstances {
   }
 }
 
-trait OrphanInstances {
+sealed trait OrphanInstances {
   implicit val tokenEq: Eq[JwtToken]        = Eq.by(_.value)
   implicit val jwtTokenShow: Show[JwtToken] = Show[String].contramap[JwtToken](_.value)
   implicit val tokenEncoder: Encoder[JwtToken] =

@@ -1,8 +1,12 @@
-<script>
+<script lang="ts">
   import AdCard from '$lib/components/AdCard.svelte';
+  import Pagination from '$lib/components/Pagination.svelte';
+  import { page } from '$app/stores';
+  import type { PageData } from './$types';
 
-  /** @type {import('./$types').PageData} */
-  export let data;
+  export let data: PageData;
+
+  const currentPage: number = parseInt($page.url.searchParams.get('page') || '0', 10);
 </script>
 
 <svelte:head>
@@ -19,4 +23,5 @@
   {:else}
     <p>No feed, try again later</p>
   {/if}
+  <Pagination totalCount={data.total} {currentPage} />
 </div>

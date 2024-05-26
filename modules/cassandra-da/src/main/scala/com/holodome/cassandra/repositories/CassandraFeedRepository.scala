@@ -12,6 +12,7 @@ import com.ringcentral.cassandra4io.CassandraSession
 import com.ringcentral.cassandra4io.cql.CqlStringContext
 
 import java.time.Instant
+import scala.concurrent.duration.FiniteDuration
 
 object CassandraFeedRepository {
   def make[F[_]: Async](session: CassandraSession[F]): FeedRepository[F] =
@@ -20,6 +21,24 @@ object CassandraFeedRepository {
 
 private final class CassandraFeedRepository[F[_]: Async](session: CassandraSession[F])
     extends FeedRepository[F] {
+
+  override def getPersonalizedSize(user: UserId): F[Int] =
+    cql"select cast(count(*) as int) from local.personalized_feed where user_id = ${user.value}"
+      .as[Int]
+      .select(session)
+      .head
+      .compile
+      .last
+      .map(_.getOrElse(0))
+
+  override def getGlobalSize: F[Int] =
+    cql"select cast(count(*) as int) from local.global_feed"
+      .as[Int]
+      .select(session)
+      .head
+      .compile
+      .last
+      .map(_.getOrElse(0))
 
   override def getPersonalized(
       user: UserId,
@@ -36,10 +55,12 @@ private final class CassandraFeedRepository[F[_]: Async](session: CassandraSessi
       .compile
       .toList
 
-  override def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: Int): F[Unit] =
+  override def setPersonalized(userId: UserId, ads: List[AdId], ttl: FiniteDuration): F[Unit] =
     ads
       .foldLeftM(0) { case (idx, id) =>
-        setPersonalizedQ(userId, id, idx, ttlSecs).execute(session).as(idx + 1)
+        setPersonalizedQ(userId, id, idx, ttl.toSeconds.toInt)
+          .execute(session)
+          .as(idx + 1)
       }
       .void
 

@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
-  /** @type {import('./$types').PageData} */
-  export let data;
+  import type { PageData } from './$types.js';
 
-  const isAuthor = () => {
+  export let data: PageData;  
+
+  const isAuthor: () => Boolean = () => {
     return $page.data.user?.userId === data.adInfo.authorId;
   };
 </script>

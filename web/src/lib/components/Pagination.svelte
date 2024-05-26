@@ -1,23 +1,26 @@
 <script lang="ts">
+  import { redirect } from "@sveltejs/kit";
   import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
+  import { invalidateAll, goto } from '$app/navigation';
 
   export let totalCount: number;
   export let currentPage: number;
   const perPage: number = 10;
 
-  $: isFirst = currentPage == 0;
+  $: isFirst = currentPage <= 1;
   $: isLast = (currentPage) * perPage > totalCount;
 
   const prevPage = async () => {
-    $page.url.searchParams.set('page', (currentPage - 1).toString());
     currentPage -= 1;
+    $page.url.searchParams.set('page', currentPage.toString());
     await goto(`?${$page.url.searchParams.toString()}`);
+    await invalidateAll();
   };
   const nextPage = async () => {
-    $page.url.searchParams.set('page', (currentPage + 1).toString());
     currentPage += 1;
+    $page.url.searchParams.set('page', currentPage.toString());
     await goto(`?${$page.url.searchParams.toString()}`);
+    await invalidateAll();
   };
 </script>
 

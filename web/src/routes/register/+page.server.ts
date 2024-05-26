@@ -11,14 +11,11 @@ export const actions = {
   default: async ({ request }) => {
     const data = await request.formData();
 
-    const body = await api.post(
-      'register',
-      {
-        name: data.get('name'),
-        email: data.get('email'),
-        password: data.get('password')
-      }
-    );
+    const body = await api.post('register', {
+      name: data.get('name'),
+      email: data.get('email'),
+      password: data.get('password')
+    });
     if (body.errors) {
       return fail(401, body);
     }

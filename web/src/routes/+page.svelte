@@ -6,7 +6,10 @@
 
   export let data: PageData;
 
-  const currentPage: number = parseInt($page.url.searchParams.get('page') || '0', 10);
+  const currentPage: number = parseInt(
+    $page.url.searchParams.get('page') || '0',
+    10
+  );
 </script>
 
 <svelte:head>

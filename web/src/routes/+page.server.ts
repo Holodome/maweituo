@@ -1,6 +1,6 @@
 import * as api from '$lib/api.js';
 import type { PageServerLoad } from './$types';
-import type { Feed } from "$lib/types";
+import type { Feed } from '$lib/types';
 
 export const load = (async ({ locals }) => {
   let feed: Feed;
@@ -9,8 +9,10 @@ export const load = (async ({ locals }) => {
   } else {
     feed = await api.get(`feed`);
   }
-  
-  const ads = await Promise.all(feed.ads.map((id) => api.get(`ads/${id}`, locals.user?.token)))
+
+  const ads = await Promise.all(
+    feed.ads.map((id) => api.get(`ads/${id}`, locals.user?.token))
+  );
 
   return {
     ads,

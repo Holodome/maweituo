@@ -10,13 +10,10 @@ export const actions = {
   default: async ({ cookies, request }) => {
     const data = await request.formData();
 
-    const body = await api.post(
-      'login',
-      {
-        name: data.get('name'),
-        password: data.get('password')
-      },
-    );
+    const body = await api.post('login', {
+      name: data.get('name'),
+      password: data.get('password')
+    });
 
     if (body.errors) {
       return fail(401, body);

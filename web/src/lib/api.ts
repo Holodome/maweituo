@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import type { Token } from "$lib/types.ts";
+import type { Token } from '$lib/types.ts';
 
 const base = process.env.BACKEND ?? 'http://127.0.0.1:8080';
 
@@ -7,8 +7,17 @@ export function buildUrl(path: string) {
   return `${base}/${path}`;
 }
 
-async function sendInternal({ method, path, data, token }:
-  { method: string, path: string, data?: Object, token?: Token }) {
+async function sendInternal({
+  method,
+  path,
+  data,
+  token
+}: {
+  method: string;
+  path: string;
+  data?: Object;
+  token?: Token;
+}) {
   const opts: any = { method, headers: {}, mode: 'cors' };
   if (data) {
     opts.headers['Content-Type'] = 'application/json';
@@ -25,8 +34,17 @@ async function sendInternal({ method, path, data, token }:
   throw error(res.status);
 }
 
-export async function send({ method, path: string, data, token }:
-  { method: string, path: string, data?: any, token?: Token }) {
+export async function send({
+  method,
+  path: string,
+  data,
+  token
+}: {
+  method: string;
+  path: string;
+  data?: any;
+  token?: Token;
+}) {
   const res = await sendInternal({ method, path: string, data, token });
   const text = await res.text();
   return text ? JSON.parse(text) : {};

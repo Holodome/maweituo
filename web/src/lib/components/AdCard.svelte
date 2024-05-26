@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Advertisement } from "$lib/types";
+  import type { Advertisement } from '$lib/types';
 
   export let ad: Advertisement;
 </script>

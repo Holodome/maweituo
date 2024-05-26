@@ -3,7 +3,10 @@ import { fail, redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals, params }) {
-  const messages = await api.get(`ads/${params.ad}/msg/${params.chat}`, locals?.user.token);
+  const messages = await api.get(
+    `ads/${params.ad}/msg/${params.chat}`,
+    locals?.user.token
+  );
   return {
     messages: messages.messages
   };

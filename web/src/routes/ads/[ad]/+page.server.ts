@@ -4,7 +4,10 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ locals, params }) => {
-  const adInfo: Advertisement = await api.get(`ads/${params.ad}`, locals.user?.token);
+  const adInfo: Advertisement = await api.get(
+    `ads/${params.ad}`,
+    locals.user?.token
+  );
   const chatInfo = locals.user?.token
     ? await api.get(`ads/${params.ad}/chat`, locals.user?.token)
     : null;
@@ -14,7 +17,8 @@ export const load = (async ({ locals, params }) => {
       id: img
     };
   });
-  const authorName = await api.get(`users/${adInfo.authorId}`, locals.user?.token)
+  const authorName = await api
+    .get(`users/${adInfo.authorId}`, locals.user?.token)
     .then((u) => u.name);
   return {
     adInfo,
@@ -55,7 +59,11 @@ export const actions = {
     throw redirect(307, `/ads/${params.ad}`);
   },
   create_chat: async ({ locals, params }) => {
-    const chatId = await api.post(`ads/${params.ad}/chat`, {}, locals.user?.token);
+    const chatId = await api.post(
+      `ads/${params.ad}/chat`,
+      {},
+      locals.user?.token
+    );
     if (chatId.errors) {
       return fail(401, chatId);
     }
@@ -64,7 +72,11 @@ export const actions = {
   delete_image: async ({ locals, request, params }) => {
     const data = await request.formData();
     const image = data.get('image');
-    const body = await api.del(`ads/${params.ad}/img/${image}`, undefined, locals.user?.token);
+    const body = await api.del(
+      `ads/${params.ad}/img/${image}`,
+      undefined,
+      locals.user?.token
+    );
     if (body.errors) {
       return fail(401, body);
     }
@@ -79,7 +91,11 @@ export const actions = {
       });
     }
 
-    const body = await api.postFile(`ads/${params.ad}/img`, image, locals.user?.token) as { errors?: string[] };
+    const body = (await api.postFile(
+      `ads/${params.ad}/img`,
+      image,
+      locals.user?.token
+    )) as { errors?: string[] };
     if (body.errors) {
       return fail(401, body);
     }

@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { enhance } from '$app/forms';
   import AdCard from '$lib/components/AdCard.svelte';
-  import type { PageData } from "./$types";
+  import type { PageData } from './$types';
 
   export let data: PageData;
 

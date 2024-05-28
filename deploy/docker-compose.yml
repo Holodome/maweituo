@@ -10,6 +10,7 @@ services:
     environment:
       - ORIGIN=http://web:3000
       - BACKEND=http://core:8080
+      - IMAGE_BASE=http://127.0.0.1:8080
     networks:
       - backend
 

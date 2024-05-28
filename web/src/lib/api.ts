@@ -2,6 +2,11 @@ import { error } from '@sveltejs/kit';
 import type { Token } from '$lib/types.ts';
 
 const base = process.env.BACKEND ?? 'http://127.0.0.1:8080';
+const imageBase = process.env.IMAGE_BASE ?? 'http://127.0.0.1:8080';
+
+export function buildImageUrl(path: string) {
+  return `${imageBase}/${path}`;
+}
 
 export function buildUrl(path: string) {
   return `${base}/${path}`;

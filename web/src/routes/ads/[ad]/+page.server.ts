@@ -14,7 +14,7 @@ export const load = (async ({ locals, params }) => {
     : null;
   const images = adInfo.images.map((img) => {
     return {
-      url: api.buildUrl(`ads/${params.ad}/img/${img}`),
+      url: api.buildImageUrl(`ads/${params.ad}/img/${img}`),
       id: img
     };
   });

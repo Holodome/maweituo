@@ -25,8 +25,6 @@ services:
     networks:
       - backend
     depends_on:
-      scylla:
-        condition: service_healthy
       redis:
         condition: service_started
       minio:
@@ -37,7 +35,6 @@ services:
       - MW_JWT_SECRET_KEY=123
       - MW_MINIO_USER=minioadmin
       - MW_MINIO_PASSWORD=minioadmin
-      - MW_CASSANDRA_KEYSPACE=local
       - MW_CONFIG_PATH=/etc/maweituo-config.json
 
   recs:
@@ -74,23 +71,6 @@ services:
     networks:
       - backend
 
-  scylla:
-    image: 'scylladb/scylla:latest'
-    container_name: maweituo-scylla
-    restart: always
-    volumes:
-      - ./scylla.yaml:/etc/scylla/scylla.yaml
-      - scylla_data:/var/lib/scylla
-    ports:
-      - '9042:9042'
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD", "cqlsh", "-e", "SHOW VERSION;"]
-      interval: 1s
-      timeout: 3s
-      retries: 60
-
   minio:
     image: 'minio/minio:latest'
     container_name: maweituo-minio
@@ -116,6 +96,4 @@ volumes:
   minio_data:
     driver: local
   redis_data:
-    driver: local
-  scylla_data:
     driver: local

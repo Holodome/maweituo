@@ -13,8 +13,7 @@ object AdTagServiceInterpreter {
 
 }
 
-private final class AdTagServiceInterpreter[F[_]: Monad](tagRepo: TagRepository[F])
-    extends AdTagService[F] {
+private final class AdTagServiceInterpreter[F[_]: Monad](tagRepo: TagRepository[F]) extends AdTagService[F] {
 
   override def all: F[List[AdTag]] =
     tagRepo.getAllTags

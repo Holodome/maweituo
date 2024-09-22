@@ -13,18 +13,6 @@ services:
     networks:
       - backend
 
-  scylla:
-    image: 'scylladb/scylla:latest'
-    container_name: maweituo-scylla
-    restart: always
-    volumes:
-      - ./scylla.yaml:/etc/scylla/scylla.yaml
-      - scylla_data:/var/lib/scylla
-    ports:
-      - '9042:9042'
-    networks:
-      - backend
-
   minio:
     image: 'minio/minio:latest'
     container_name: maweituo-minio
@@ -50,6 +38,4 @@ volumes:
   minio_data:
     driver: local
   redis_data:
-    driver: local
-  scylla_data:
     driver: local

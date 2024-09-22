@@ -21,15 +21,14 @@ final case class AdImageRoutes[F[_]: Monad: Concurrent](
 
   private val prefixPath = "/ads"
 
-  val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
-      imageService.get(imageId).flatMap { img =>
-        Ok(img.data).map {
-          val header =
-            `Content-Type`(new MediaType(img.contentType.mainType, img.contentType.subType))
-          _.putHeaders(header)
-        }
+  val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case GET -> Root / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
+    imageService.get(imageId).flatMap { img =>
+      Ok(img.data).map {
+        val header =
+          `Content-Type`(new MediaType(img.contentType.mainType, img.contentType.subType))
+        _.putHeaders(header)
       }
+    }
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

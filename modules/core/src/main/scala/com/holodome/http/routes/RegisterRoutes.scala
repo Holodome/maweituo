@@ -12,8 +12,7 @@ import org.http4s.circe.CirceEntityEncoder._
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F])
-    extends Http4sDsl[F] {
+final case class RegisterRoutes[F[_]: MonadThrow: JsonDecoder](userService: UserService[F]) extends Http4sDsl[F] {
 
   private val httpRoutes: HttpRoutes[F] =
     HttpRoutes.of { case req @ POST -> Root / "register" =>

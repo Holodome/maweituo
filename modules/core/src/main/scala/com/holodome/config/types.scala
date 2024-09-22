@@ -22,7 +22,6 @@ package object types {
 
   case class AppConfig(
       httpServer: HttpServerConfig,
-      cassandra: CassandraConfig,
       jwt: JwtConfig,
       redis: RedisConfig,
       minio: MinioConfig

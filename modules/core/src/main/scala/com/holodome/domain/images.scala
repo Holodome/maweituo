@@ -17,7 +17,7 @@ import java.util.UUID
 
 package object images {
   @derive(uuidIso, encoder, decoder, show, eqv)
-  @newtype case class ImageId(id: UUID)
+  @newtype case class ImageId(value: UUID)
 
   @derive(encoder, decoder, eqv)
   @newtype case class ImageUrl(value: String) {
@@ -42,8 +42,7 @@ package object images {
   object ImageContentsStream {
     implicit def show[F[_]]: Show[ImageContentsStream[F]] = Show.show(_ => "ImageContents")
 
-    implicit def imageDecoder[F[_]: MonadThrow: Concurrent]
-        : EntityDecoder[F, ImageContentsStream[F]] =
+    implicit def imageDecoder[F[_]: MonadThrow: Concurrent]: EntityDecoder[F, ImageContentsStream[F]] =
       EntityDecoder.decodeBy(MediaRange.`image/*`) { (m: Media[F]) =>
         EitherT.liftF(
           (

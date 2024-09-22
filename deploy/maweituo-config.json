@@ -1,9 +1,4 @@
 {
-  "cassandra": {
-    "port": "9042",
-    "host": "scylla",
-    "datacenter": "datacenter1"
-  },
   "http": {
     "port": "8080",
     "host": "core"

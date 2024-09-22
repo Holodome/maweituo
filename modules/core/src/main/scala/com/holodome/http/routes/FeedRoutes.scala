@@ -18,8 +18,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 
-final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F])
-    extends Http4sDsl[F] {
+final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F]) extends Http4sDsl[F] {
 
   private val prefixPath = "/feed"
 

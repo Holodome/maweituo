@@ -15,8 +15,7 @@ import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
-final case class UserRoutes[F[_]: MonadThrow: JsonDecoder: Logger](userService: UserService[F])
-    extends Http4sDsl[F] {
+final case class UserRoutes[F[_]: MonadThrow: JsonDecoder: Logger](userService: UserService[F]) extends Http4sDsl[F] {
 
   private val prefixPath = "/users"
 

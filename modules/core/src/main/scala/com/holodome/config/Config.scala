@@ -38,19 +38,10 @@ object Config {
   private def defaultAppConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, AppConfig] =
     (
       httpServerConfig,
-      cassandraConfig,
       jwtConfig,
       redisConfig,
       minioConfig
     ).parMapN(AppConfig.apply)
-
-  def cassandraConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, CassandraConfig] =
-    (
-      file.stringField("cassandra.host").as[Host],
-      file.stringField("cassandra.port").as[Port],
-      file.stringField("cassandra.datacenter").as[NonEmptyString],
-      env("MW_CASSANDRA_KEYSPACE")
-    ).parMapN(CassandraConfig.apply)
 
   private def httpServerConfig[F[_]](implicit file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (

@@ -12,8 +12,7 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.Router
 
-final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
-    extends Http4sDsl[F] {
+final case class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F]) extends Http4sDsl[F] {
 
   private val prefixPath = "/tags"
 

@@ -1,13 +1,13 @@
 package com.holodome.domain
 
-import com.holodome.domain.ads._
-import com.holodome.domain.images._
-import com.holodome.domain.messages._
-import com.holodome.domain.users._
-
 import scala.util.control.NoStackTrace
 
-package object errors {
+import com.holodome.domain.ads.*
+import com.holodome.domain.images.*
+import com.holodome.domain.messages.*
+import com.holodome.domain.users.*
+
+package object errors:
 
   sealed trait ApplicationError extends NoStackTrace
 
@@ -32,5 +32,3 @@ package object errors {
 
   final case class DatabaseEncodingError(reason: String) extends ApplicationError
   final case class FeedError(reason: String)             extends ApplicationError
-
-}

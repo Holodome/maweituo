@@ -1,8 +1,8 @@
 package com.holodome.modules
 
-import com.holodome.domain.repositories._
+import com.holodome.domain.repositories.*
 
-sealed abstract class Repositories[F[_]] {
+sealed abstract class Repositories[F[_]]:
   val users: UserRepository[F]
   val userAds: UserAdsRepository[F]
   val ads: AdvertisementRepository[F]
@@ -11,8 +11,6 @@ sealed abstract class Repositories[F[_]] {
   val messages: MessageRepository[F]
   val images: AdImageRepository[F]
   val feed: FeedRepository[F]
-}
 
-object Repositories {
+object Repositories:
   def makePostgres[F[_]]: Repositories[F] = ???
-}

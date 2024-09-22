@@ -1,18 +1,14 @@
 package com.holodome.effects
 
-import cats.effect.Sync
-
 import java.time.Clock
 
-trait JwtClock[F[_]] {
+import cats.effect.Sync
+
+trait JwtClock[F[_]]:
   def utc: F[Clock]
-}
 
-object JwtClock {
-  def apply[F[_]: JwtClock]: JwtClock[F] = implicitly
+object JwtClock:
+  def apply[F[_]: JwtClock]: JwtClock[F] = summon
 
-  implicit def forSync[F[_]: Sync]: JwtClock[F] =
-    new JwtClock[F] {
-      override def utc: F[Clock] = Sync[F].delay(Clock.systemUTC())
-    }
-}
+  given [F[_]: Sync]: JwtClock[F] with
+    def utc: F[Clock] = Sync[F].delay(Clock.systemUTC())

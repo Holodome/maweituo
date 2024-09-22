@@ -2,18 +2,14 @@ package com.holodome.effects
 
 import cats.effect.Temporal
 import cats.effect.std.Supervisor
-import cats.syntax.all._
+import cats.syntax.all.*
 
-trait Background[F[_]] {
+trait Background[F[_]]:
   def schedule[A](fa: F[A]): F[Unit]
-}
 
-object Background {
-  def apply[F[_]: Background]: Background[F] = implicitly
+object Background:
+  def apply[F[_]: Background]: Background[F] = summon
 
-  implicit def bgInstance[F[_]](implicit S: Supervisor[F], T: Temporal[F]): Background[F] =
-    new Background[F] {
-      override def schedule[A](fa: F[A]): F[Unit] =
-        S.supervise(fa).void
-    }
-}
+  given [F[_]](using S: Supervisor[F], T: Temporal[F]): Background[F] with
+    def schedule[A](fa: F[A]): F[Unit] =
+      S.supervise(fa).void

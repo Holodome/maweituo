@@ -1,31 +1,30 @@
 package com.holodome.http.routes
 
-import cats.MonadThrow
-import cats.syntax.all._
-import com.holodome.domain.errors.ApplicationError
 import com.holodome.domain.services.AuthService
 import com.holodome.domain.users.LoginRequest
-import com.holodome.ext.http4s.refined.RefinedRequestDecoder
-import com.holodome.http.{HttpErrorHandler, Routes}
-import com.holodome.utils.tokenEncoder
+import com.holodome.http.Routes
+import com.holodome.utils.given
+
+import cats.effect.Concurrent
+import cats.syntax.all.*
 import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityEncoder._
+import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class LoginRoutes[F[_]: JsonDecoder: MonadThrow](
+final case class LoginRoutes[F[_]: JsonDecoder: Concurrent](
     authService: AuthService[F]
-) extends Http4sDsl[F] {
+) extends Http4sDsl[F]:
   private val httpRoutes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case req @ POST -> Root / "login" =>
-      req.decodeR[LoginRequest] { login =>
-        authService
-          .login(login.name, login.password)
-          .map(_._1)
-          .flatMap(Ok(_))
-      }
+    HttpRoutes.of[F] {
+      case req @ POST -> Root / "login" =>
+        req.decode[LoginRequest] { login =>
+          authService
+            .login(login.name, login.password)
+            .map(_._1)
+            .flatMap(Ok(_))
+        }
     }
 
-  def routes(implicit H: HttpErrorHandler[F, ApplicationError]): Routes[F] =
-    Routes[F](Some(H.handle(httpRoutes)), None)
-}
+  def routes: Routes[F] =
+    Routes[F](Some(httpRoutes), None)

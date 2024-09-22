@@ -1,18 +1,22 @@
 package com.holodome.auth
 
-import cats.effect.Sync
-import cats.syntax.all._
-import com.holodome.config.types._
+import com.holodome.config.*
+import com.holodome.config.JwtTokenExpiration
 import com.holodome.effects.JwtClock
+
+import cats.effect.Sync
+import cats.syntax.all.*
 import pdi.jwt.JwtClaim
+import java.time.Clock
 
-trait JwtExpire[F[_]] {
+trait JwtExpire[F[_]]:
   def expiresIn(claim: JwtClaim, exp: JwtTokenExpiration): F[JwtClaim]
-}
 
-object JwtExpire {
+object JwtExpire:
   def make[F[_]: Sync]: F[JwtExpire[F]] =
-    JwtClock[F].utc map { implicit jClock => (claim: JwtClaim, exp: JwtTokenExpiration) =>
-      Sync[F].delay(claim.issuedNow.expiresIn(exp.value.toMillis))
+    JwtClock[F].utc map {
+      jClock =>
+        given Clock = jClock
+        (claim: JwtClaim, exp: JwtTokenExpiration) =>
+          Sync[F].delay(claim.issuedNow.expiresIn(exp.value.toMillis))
     }
-}

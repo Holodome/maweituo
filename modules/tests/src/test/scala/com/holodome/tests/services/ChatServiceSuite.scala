@@ -16,7 +16,7 @@ import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers {
-  implicit val logger: Logger[IO] = NoOpLogger[IO]
+  given Logger[IO] = NoOpLogger[IO]
 
   private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[F]): IAMService[IO] =
     IAMServiceInterpreter.make(ad, chat, mock[AdImageRepository[IO]])

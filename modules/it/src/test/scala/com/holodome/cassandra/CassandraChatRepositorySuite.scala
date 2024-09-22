@@ -9,7 +9,7 @@ import com.holodome.domain.messages.Chat
 import com.holodome.tests.generators.{adIdGen, chatIdGen, userIdGen}
 
 object CassandraChatRepositorySuite extends CassandraSuite {
-  implicit val chatShow: Show[Chat] = Show.show(_ => "Chat")
+  given Show[Chat] = Show.show(_ => "Chat")
   test("basic operations work") { cassandra =>
     val gen = for {
       id       <- chatIdGen

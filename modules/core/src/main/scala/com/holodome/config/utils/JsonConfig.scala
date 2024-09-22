@@ -1,20 +1,20 @@
 package com.holodome.config.utils
 
+import java.nio.file.{ Files, Path }
+
 import cats.effect.Sync
-import cats.syntax.all._
-import ciris.{ConfigError, ConfigKey, ConfigValue}
-import io.circe.{ACursor, Json}
+import cats.syntax.all.*
+import ciris.{ ConfigError, ConfigKey, ConfigValue }
+import io.circe.{ ACursor, Json }
 
-import java.nio.file.{Files, Path}
-
-case class JsonConfig private (json: Json) {
+case class JsonConfig private (json: Json):
   def stringField[F[_]](location: String): ConfigValue[F, String] =
     field[F, String](location)
 
   def intField[F[_]](location: String): ConfigValue[F, Int] =
     field[F, Int](location)
 
-  def field[F[_], A: io.circe.Decoder](location: String): ConfigValue[F, A] = {
+  def field[F[_], A: io.circe.Decoder](location: String): ConfigValue[F, A] =
     val key                  = ConfigKey(s"json file field ${location}")
     def errorMessage: String = s"failed to get json field $location"
 
@@ -27,11 +27,9 @@ case class JsonConfig private (json: Json) {
       .fold(
         ciris.ConfigValue.failed[A](ConfigError.sensitive(errorMessage, errorMessage))
       )(v => ciris.ConfigValue.loaded(key, v))
-  }
-}
 
-object JsonConfig {
-  def fromFile[F[_]: Sync](path: Path): F[JsonConfig] = {
+object JsonConfig:
+  def fromFile[F[_]: Sync](path: Path): F[JsonConfig] =
     Sync[F]
       .blocking {
         Files.readString(path)
@@ -40,5 +38,3 @@ object JsonConfig {
         io.circe.parser.parse(str).liftTo[F]
       }
       .map(JsonConfig.apply)
-  }
-}

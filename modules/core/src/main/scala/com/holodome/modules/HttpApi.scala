@@ -1,37 +1,34 @@
 package com.holodome.modules
 
+import scala.concurrent.duration.DurationInt
+
+import com.holodome.domain.users.{ AuthedUser, UserJwtAuth }
+import com.holodome.http.{ *, given }
+import com.holodome.http.routes.*
+import com.holodome.http.routes.ads.*
+
 import cats.Parallel
 import cats.data.OptionT
 import cats.effect.Async
-import cats.syntax.all._
-import com.holodome.domain.errors.ApplicationError
-import com.holodome.domain.users.{AuthedUser, UserJwtAuth}
-import com.holodome.http._
-import com.holodome.http.routes._
-import com.holodome.http.routes.ads._
-import org.http4s.implicits._
+import cats.syntax.all.*
 import dev.profunktor.auth.JwtAuthMiddleware
-import org.http4s.server.middleware._
-import org.http4s.{HttpApp, HttpRoutes}
+import org.http4s.implicits.*
+import org.http4s.server.middleware.*
+import org.http4s.{ HttpApp, HttpRoutes }
 import org.typelevel.log4cats.Logger
+import pdi.jwt.JwtClaim
 
-import scala.concurrent.duration.DurationInt
-
-object HttpApi {
-  def make[F[_]: Async: Logger: Parallel](services: Services[F], userJwtAuth: UserJwtAuth)(implicit
-      H: HttpErrorHandler[F, ApplicationError]
-  ): HttpApi[F] =
+object HttpApi:
+  def make[F[_]: Async: Logger: Parallel](services: Services[F], userJwtAuth: UserJwtAuth): HttpApi[F] =
     new HttpApi[F](services, userJwtAuth)
-}
 
 sealed class HttpApi[F[_]: Async: Logger: Parallel](
     services: Services[F],
     userJwtAuth: UserJwtAuth
-)(implicit
-    H: HttpErrorHandler[F, ApplicationError]
-) {
+):
+
   private val usersMiddleware =
-    JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => _ => services.auth.authed(t).value)
+    JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => (c: JwtClaim) => services.auth.authed(t).value)
 
   private val loginRoutes    = LoginRoutes[F](services.auth).routes
   private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
@@ -52,24 +49,20 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
   private val routes: HttpRoutes[F] =
     (loginRoutes |+| registerRoutes |+| tagRoutes |+| adRoutes |+| adChatRoutes |+| adImageRoutes |+| adMsgRoutes |+| adTagRoutes |+| userRoutes |+| logoutRoutes |+| feedRoutes).collapse
 
-  private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
-    { http: HttpRoutes[F] =>
-      AutoSlash(http)
-    } andThen { http: HttpRoutes[F] =>
-      CORS.policy.withAllowOriginAll
-        .withAllowCredentials(false)
-        .apply(http)
-    } andThen { http: HttpRoutes[F] =>
-      Timeout(60.seconds)(http)
-    }
+  private val middleware: HttpRoutes[F] => HttpRoutes[F] = { (http: HttpRoutes[F]) =>
+    AutoSlash(http)
+  } andThen { (http: HttpRoutes[F]) =>
+    CORS.policy.withAllowOriginAll
+      .withAllowCredentials(false)
+      .apply(http)
+  } andThen { (http: HttpRoutes[F]) =>
+    Timeout(60.seconds)(http)
   }
 
-  private val loggers: HttpApp[F] => HttpApp[F] = {
-    { http: HttpApp[F] =>
-      RequestLogger.httpApp(logHeaders = true, logBody = false)(http)
-    } andThen { http: HttpApp[F] =>
-      ResponseLogger.httpApp(logHeaders = true, logBody = false)(http)
-    }
+  private val loggers: HttpApp[F] => HttpApp[F] = { (http: HttpApp[F]) =>
+    RequestLogger.httpApp(logHeaders = true, logBody = false)(http)
+  } andThen { (http: HttpApp[F]) =>
+    ResponseLogger.httpApp(logHeaders = true, logBody = false)(http)
   }
 
   private def errorHandler(t: Throwable, msg: => String): OptionT[F, Unit] =
@@ -78,4 +71,3 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
     )
 
   val httpApp: HttpApp[F] = loggers(middleware(routes).orNotFound)
-}

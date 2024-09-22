@@ -1,18 +1,14 @@
 package com.holodome.effects
 
-import cats.effect.Sync
-
 import java.time.Instant
 
-trait TimeSource[F[_]] {
+import cats.effect.Sync
+
+trait TimeSource[F[_]]:
   def instant: F[Instant]
-}
 
-object TimeSource {
-  def apply[F[_]: TimeSource]: TimeSource[F] = implicitly
+object TimeSource:
+  def apply[F[_]: TimeSource]: TimeSource[F] = summon
 
-  implicit def forSync[F[_]: Sync]: TimeSource[F] =
-    new TimeSource[F] {
-      override def instant: F[Instant] = Sync[F].delay(Instant.now)
-    }
-}
+  given [F[_]: Sync]: TimeSource[F] with
+    def instant: F[Instant] = Sync[F].delay(Instant.now)

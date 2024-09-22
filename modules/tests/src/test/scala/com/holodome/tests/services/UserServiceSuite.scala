@@ -1,13 +1,13 @@
 package com.holodome.tests.services
 
 import cats.effect.IO
-import cats.syntax.all._
-import com.holodome.domain.errors.{InvalidAccess, InvalidUserId}
-import com.holodome.domain.repositories._
+import cats.syntax.all.*
+import com.holodome.domain.errors.{ InvalidAccess, InvalidUserId }
+import com.holodome.domain.repositories.*
 import com.holodome.domain.users.UserId
-import com.holodome.interpreters._
-import com.holodome.tests.generators.{registerGen, updateUserGen, userIdGen}
-import com.holodome.tests.repositories._
+import com.holodome.interpreters.*
+import com.holodome.tests.generators.{ registerGen, updateUserGen, userIdGen }
+import com.holodome.tests.repositories.*
 import org.mockito.MockitoSugar.mock
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
@@ -16,8 +16,8 @@ import weaver.scalacheck.Checkers
 
 import java.util.UUID
 
-object UserServiceSuite extends SimpleIOSuite with Checkers {
-  implicit val logger: Logger[IO] = NoOpLogger[IO]
+object UserServiceSuite extends SimpleIOSuite with Checkers:
+  given Logger[IO] = NoOpLogger[IO]
 
   private val iam = IAMServiceInterpreter.make(
     mock[AdvertisementRepository[IO]],
@@ -29,9 +29,9 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         _ <- serv.create(register)
-      } yield expect.all(true)
+      yield expect.all(true)
     }
   }
 
@@ -39,10 +39,10 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         id <- serv.create(register)
         u  <- serv.get(id)
-      } yield expect.all(u.id === id)
+      yield expect.all(u.id === id)
     }
   }
 
@@ -50,10 +50,10 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         id <- serv.create(register)
         u  <- repo.getByName(register.name)
-      } yield expect.all(u.id === id)
+      yield expect.all(u.id === id)
     }
   }
 
@@ -61,26 +61,27 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
     forall(registerGen) { register =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         id <- serv.create(register)
         _  <- serv.delete(id, id)
         found <- serv
           .get(id)
           .map(Some(_))
           .recoverWith { case InvalidUserId(_) => None.pure[IO] }
-      } yield expect.all(found.isEmpty)
+      yield expect.all(found.isEmpty)
     }
   }
 
   test("user delete by other person is forbidden") {
-    val gen = for {
-      r     <- registerGen
-      other <- registerGen
-    } yield r -> other
+    val gen =
+      for
+        r     <- registerGen
+        other <- registerGen
+      yield r -> other
     forall(gen) { case (register, other) =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         newId   <- serv.create(register)
         otherId <- serv.create(other)
         x <- serv
@@ -90,25 +91,26 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
             None
           }
         _ <- serv.get(newId)
-      } yield expect.all(x.isEmpty)
+      yield expect.all(x.isEmpty)
     }
   }
 
   test("user update works") {
-    val gen = for {
-      r   <- registerGen
-      upd <- updateUserGen(UserId(UUID.randomUUID()))
-    } yield (r, upd)
+    val gen =
+      for
+        r   <- registerGen
+        upd <- updateUserGen(UserId(UUID.randomUUID()))
+      yield (r, upd)
     forall(gen) { case (register, upd) =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
         prior   <- serv.get(newId)
         _       <- serv.update(newUpd, newId)
         updated <- serv.get(newId)
-      } yield expect.all(
+      yield expect.all(
         newUpd.email.fold(true)(_ === updated.email),
         newUpd.name.fold(true)(_ === updated.name),
         newUpd.password.fold(true)(_ => prior.hashedPassword =!= updated.hashedPassword)
@@ -117,21 +119,22 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
   }
 
   test("user update by other person is forbidden") {
-    val gen = for {
-      r   <- registerGen
-      upd <- updateUserGen(UserId(UUID.randomUUID()))
-      id  <- userIdGen
-    } yield (r, upd, id)
+    val gen =
+      for
+        r   <- registerGen
+        upd <- updateUserGen(UserId(UUID.randomUUID()))
+        id  <- userIdGen
+      yield (r, upd, id)
     forall(gen) { case (register, upd, id) =>
       val repo = new InMemoryUserRepository[IO]
       val serv = UserServiceInterpreter.make(repo, new UserAdsRepositoryStub, iam)
-      for {
+      for
         newId <- serv.create(register)
         newUpd = upd.copy(id = newId)
         prior <- serv.get(newId)
         x     <- serv.update(newUpd, id).map(Some(_)).recover { case InvalidAccess(_) => None }
         got   <- serv.get(newId)
-      } yield expect.all(
+      yield expect.all(
         x.isEmpty,
         got.hashedPassword === prior.hashedPassword,
         got.name === prior.name,
@@ -139,4 +142,3 @@ object UserServiceSuite extends SimpleIOSuite with Checkers {
       )
     }
   }
-}

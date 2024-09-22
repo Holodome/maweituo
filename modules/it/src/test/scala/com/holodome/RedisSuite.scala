@@ -13,7 +13,7 @@ import scala.concurrent.duration.DurationInt
 
 object RedisSuite extends ResourceSuite {
 
-  private implicit val logger: Logger[IO] = NoOpLogger[IO]
+  given Logger[IO] = NoOpLogger[IO]
 
   type Res = RedisCommands[IO, String, String]
 

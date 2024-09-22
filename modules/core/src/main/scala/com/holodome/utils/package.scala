@@ -1,22 +1,29 @@
 package com.holodome
 
-import cats._
-import cats.syntax.all._
+import java.time.Instant
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
+
+import cats.*
+import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
+import io.circe.Decoder
 import io.circe.Encoder
 
-package object utils extends OrphanInstances {
-  case class RefinedEncodingFailure(reason: String) extends Exception(reason)
+package object utils:
+  given Eq[JwtToken]      = Eq.by(_.value)
+  given Show[JwtToken]    = Show[String].contramap[JwtToken](_.value)
+  given Encoder[JwtToken] = Encoder.forProduct1("access_token")(_.value)
 
-  type EncodeR[T, A] = EncodeRF[Either[Throwable, _], T, A]
-  object EncodeR {
-    def apply[T, A](implicit I: EncodeR[T, A]): EncodeR[T, A] = I
-  }
-}
+  given Show[Instant] = Show[String].contramap[Instant](_.toString())
 
-sealed trait OrphanInstances {
-  implicit val tokenEq: Eq[JwtToken]        = Eq.by(_.value)
-  implicit val jwtTokenShow: Show[JwtToken] = Show[String].contramap[JwtToken](_.value)
-  implicit val tokenEncoder: Encoder[JwtToken] =
-    Encoder.forProduct1("access_token")(_.value)
-}
+  given Decoder[FiniteDuration] =
+    Decoder[String].emap { s =>
+      Duration(s) match
+        case fd: FiniteDuration => fd.asRight
+        case e                  => e.toString.asLeft
+    }
+
+  given Encoder[FiniteDuration] =
+    Encoder[String].contramap(_.toString)

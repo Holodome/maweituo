@@ -1,59 +1,44 @@
-package com.holodome.domain
+package com.holodome.domain.messages
+
+import java.time.Instant
 
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
-import com.holodome.optics.uuidIso
-import derevo.cats.{eqv, show}
-import derevo.circe.magnolia.{decoder, encoder}
-import derevo.derive
-import eu.timepit.refined.cats._
-import eu.timepit.refined.types.string.NonEmptyString
-import io.circe.refined._
-import io.circe.{Encoder, Json}
-import io.estatico.newtype.macros.newtype
+import com.holodome.utils.given
+import com.holodome.utils.{ IdNewtype, Newtype }
 
-import java.time.Instant
-import java.util.UUID
-import cats.Functor
-import com.holodome.utils.EncodeRF
+import cats.Show
+import cats.derived.*
+import io.circe.Codec
+import io.circe.Decoder
+import io.circe.{ Encoder, Json }
 
-package object messages {
-  @derive(uuidIso, encoder, decoder, eqv)
-  @newtype case class ChatId(value: UUID)
+type ChatId = ChatId.Type
+object ChatId extends IdNewtype
 
-  @derive(encoder)
-  case class Chat(
-      id: ChatId,
-      adId: AdId,
-      adAuthor: UserId,
-      client: UserId
-  )
+final case class Chat(
+    id: ChatId,
+    adId: AdId,
+    adAuthor: UserId,
+    client: UserId
+) derives Codec.AsObject, Show
 
-  @derive(encoder, decoder, show, eqv)
-  @newtype case class MessageText(_value: NonEmptyString) {
-    def value: String = _value.value
-  }
-  implicit def messageTextEncodeRF[F[_]: Functor, T](implicit
-      E: EncodeRF[F, T, NonEmptyString]
-  ): EncodeRF[F, T, MessageText] = EncodeRF.map(MessageText.apply)
+type MessageText = MessageText.Type
+object MessageText extends Newtype[String]
 
-  @derive(encoder)
-  case class Message(
-      sender: UserId,
-      chat: ChatId,
-      text: MessageText,
-      at: Instant
-  )
+final case class Message(
+    sender: UserId,
+    chat: ChatId,
+    text: MessageText,
+    at: Instant
+) derives Codec.AsObject, Show
 
-  @newtype case class HistoryResponse(messages: List[Message])
+final case class HistoryResponse(messages: List[Message]) derives Show
 
-  object HistoryResponse {
-    implicit val encoder: Encoder[HistoryResponse] = (a: HistoryResponse) =>
-      Json.obj(
-        ("messages", Json.fromValues(a.messages.map(Encoder[Message].apply)))
-      )
-  }
+object HistoryResponse:
+  given Encoder[HistoryResponse] = (a: HistoryResponse) =>
+    Json.obj(
+      ("messages", Json.fromValues(a.messages.map(Encoder[Message].apply)))
+    )
 
-  @derive(decoder, show, eqv)
-  case class SendMessageRequest(text: MessageText)
-}
+final case class SendMessageRequest(text: MessageText) derives Decoder, Show

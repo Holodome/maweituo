@@ -9,7 +9,8 @@ import com.holodome.domain.images.{Image, MediaType}
 import com.holodome.tests.generators._
 
 object CassandraAdImageRepositorySuite extends CassandraSuite {
-  private implicit val imageShow: Show[Image] = Show.show(_ => "Image")
+  private given Show[Image] = Show.show(_ => "Image")
+  
   test("basic operations work") { cassandra =>
     val gen = for {
       id   <- imageIdGen

@@ -6,8 +6,6 @@ import com.holodome.domain.images._
 import com.holodome.domain.messages._
 import com.holodome.domain.users._
 import com.holodome.infrastructure.ObjectStorage.OBSId
-import eu.timepit.refined.api.Refined
-import eu.timepit.refined.types.string.NonEmptyString
 import org.scalacheck.Gen
 
 import java.time.Instant

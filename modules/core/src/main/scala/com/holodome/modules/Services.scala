@@ -1,12 +1,13 @@
 package com.holodome.modules
 
+import com.holodome.domain.services.*
+import com.holodome.effects.{ Background, GenUUID, TimeSource }
+import com.holodome.interpreters.*
+
 import cats.MonadThrow
-import com.holodome.domain.services._
-import com.holodome.effects.{Background, GenUUID, TimeSource}
-import com.holodome.interpreters._
 import org.typelevel.log4cats.Logger
 
-sealed abstract class Services[F[_]] {
+sealed abstract class Services[F[_]]:
   val users: UserService[F]
   val auth: AuthService[F]
   val ads: AdService[F]
@@ -16,15 +17,14 @@ sealed abstract class Services[F[_]] {
   val tags: AdTagService[F]
   val feed: FeedService[F]
   val recs: RecommendationService[F]
-}
 
-object Services {
+object Services:
   def make[F[_]: MonadThrow: GenUUID: TimeSource: Background: Logger](
       repositories: Repositories[F],
       infrastructure: Infrastructure[F],
       grpc: RecsClients[F]
   ): Services[F] =
-    new Services[F] {
+    new Services[F]:
       val iam: IAMService[F] =
         IAMServiceInterpreter.make[F](repositories.ads, repositories.chats, repositories.images)
       val telemetry: TelemetryService[F] =
@@ -63,5 +63,3 @@ object Services {
       override val feed: FeedService[F] =
         FeedServiceInterpreter.make[F](repositories.feed, grpc.recs)
       override val recs: RecommendationService[F] = grpc.recs
-    }
-}

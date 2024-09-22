@@ -1,14 +1,15 @@
 package com.holodome.infrastructure.inmemory
 
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all._
-import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
-
 import scala.collection.concurrent.TrieMap
 
-final class InMemoryObjectStorage[F[_]: Sync] extends ObjectStorage[F] {
+import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.{ OBSId, OBSUrl }
+
+import cats.data.OptionT
+import cats.effect.Sync
+import cats.syntax.all.*
+
+final class InMemoryObjectStorage[F[_]: Sync] extends ObjectStorage[F]:
 
   private val map = new TrieMap[OBSId, Array[Byte]]
 
@@ -23,4 +24,3 @@ final class InMemoryObjectStorage[F[_]: Sync] extends ObjectStorage[F] {
     Sync[F].delay(map.remove(id))
 
   override def makeUrl(id: OBSId): OBSUrl = OBSUrl("")
-}

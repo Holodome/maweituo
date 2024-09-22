@@ -9,7 +9,7 @@ import com.holodome.domain.errors.InvalidAdId
 import com.holodome.tests.generators.adGen
 
 object CassandraAdvertisementRepositorySuite extends CassandraSuite {
-  implicit val adShow: Show[Advertisement] = Show.show(_ => "Ad")
+  given Show[Advertisement] = Show.show(_ => "Ad")
   test("basic operations work") { cassandra =>
     forall(adGen) { ad =>
       val repo = CassandraAdvertisementRepository.make[IO](cassandra)

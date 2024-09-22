@@ -1,12 +1,10 @@
 package com.holodome.infrastructure
 
-import cats.data.OptionT
-import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
-import derevo.cats.show
-import derevo.derive
-import io.estatico.newtype.macros.newtype
+import com.holodome.utils.Newtype
 
-trait ObjectStorage[F[_]] {
+import cats.data.OptionT
+
+trait ObjectStorage[F[_]]:
   def makeUrl(id: OBSId): OBSUrl
 
   def putStream(id: OBSId, data: fs2.Stream[F, Byte], dataSize: Long): F[Unit]
@@ -15,11 +13,9 @@ trait ObjectStorage[F[_]] {
 
   def put(id: OBSId, data: Array[Byte]): F[Unit] =
     putStream(id, fs2.Stream.emits(data), data.length)
-}
 
-object ObjectStorage {
-  @newtype case class OBSUrl(value: String)
+type OBSUrl = OBSUrl.Type
+object OBSUrl extends Newtype[String]
 
-  @derive(show)
-  @newtype case class OBSId(value: String)
-}
+type OBSId = OBSId.Type
+object OBSId extends Newtype[String]

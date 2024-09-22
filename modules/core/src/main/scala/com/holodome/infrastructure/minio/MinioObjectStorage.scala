@@ -1,19 +1,21 @@
 package com.holodome.infrastructure.minio
 
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all._
-import cats.{Applicative, Monad, MonadThrow}
-import com.holodome.ext.catsExt.liftCompletableFuture
-import com.holodome.infrastructure.ObjectStorage
-import com.holodome.infrastructure.ObjectStorage.{OBSId, OBSUrl}
-import io.minio._
-import io.minio.errors.ErrorResponseException
-
 import java.io.InputStream
+
 import scala.util.control.NonFatal
 
-object MinioObjectStorage {
+import com.holodome.ext.catsExt.liftCompletableFuture
+import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.{ OBSId, OBSUrl }
+
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.*
+import cats.{ Applicative, Monad, MonadThrow }
+import io.minio.*
+import io.minio.errors.ErrorResponseException
+
+object MinioObjectStorage:
   def make[F[_]: Async: MonadThrow](
       baseUrl: String,
       client: MinioAsyncClient,
@@ -40,13 +42,11 @@ object MinioObjectStorage {
         ).void
     }
 
-}
-
 private final class MinioObjectStorage[F[_]: Async: MonadThrow](
     baseUrl: String,
     client: MinioAsyncClient,
     bucket: String
-) extends ObjectStorage[F] {
+) extends ObjectStorage[F]:
 
   override def putStream(id: OBSId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
     fs2.io.toInputStreamResource(blob).use { is =>
@@ -72,7 +72,7 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
         case NonFatal(e: ErrorResponseException) if e.errorResponse().code() == "NoSuchKey" =>
           none[GetObjectResponse].pure[F]
       }
-    ).map { resp: InputStream =>
+    ).map { (resp: InputStream) =>
       fs2.io.readInputStream(resp.pure[F], 4096)
     }
 
@@ -83,4 +83,3 @@ private final class MinioObjectStorage[F[_]: Async: MonadThrow](
 
   override def makeUrl(id: OBSId): OBSUrl =
     OBSUrl(s"$baseUrl/$bucket/${id.value}")
-}

@@ -1,17 +1,25 @@
 package com.holodome.infrastructure.redis
 
+import scala.concurrent.duration.FiniteDuration
+
+import com.holodome.infrastructure.EphemeralDict
+
 import cats.Monad
 import cats.data.OptionT
-import cats.syntax.all._
-import com.holodome.infrastructure.EphemeralDict
+import cats.syntax.all.*
 import dev.profunktor.redis4cats.RedisCommands
 
-import scala.concurrent.duration.FiniteDuration
+object RedisEphemeralDict:
+  def make[F[_]: Monad](
+      redis: RedisCommands[F, String, String],
+      expire: FiniteDuration
+  ): EphemeralDict[F, String, String] =
+    new RedisEphemeralDict(redis, expire)
 
 private final class RedisEphemeralDict[F[_]: Monad] private (
     redis: RedisCommands[F, String, String],
     expire: FiniteDuration
-) extends EphemeralDict[F, String, String] {
+) extends EphemeralDict[F, String, String]:
 
   override def store(a: String, b: String): F[Unit] =
     redis.setEx(a, b, expire)
@@ -21,12 +29,3 @@ private final class RedisEphemeralDict[F[_]: Monad] private (
 
   override def get(a: String): OptionT[F, String] =
     OptionT(redis.get(a))
-}
-
-object RedisEphemeralDict {
-  def make[F[_]: Monad](
-      redis: RedisCommands[F, String, String],
-      expire: FiniteDuration
-  ): EphemeralDict[F, String, String] =
-    new RedisEphemeralDict(redis, expire)
-}

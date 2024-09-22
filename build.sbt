@@ -50,139 +50,61 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(coreHttp, coreConsole, tests, it, recs)
-
-lazy val infrastructure = (project in file("modules/infrastructure"))
-  .settings(
-    commonSettings,
-    name := "maweituo-infrastructure",
-    libraryDependencies ++= Seq(
-      "org.typelevel"  %% "cats-core"             % CatsVersion,
-      "org.typelevel"  %% "cats-effect"           % CatsEffectVersion,
-      "org.typelevel"  %% "log4cats-slf4j"        % Log4CatsVersion,
-      "tf.tofu"        %% "derevo-core"           % DerevoVersion,
-      "tf.tofu"        %% "derevo-circe"          % DerevoVersion,
-      "tf.tofu"        %% "derevo-cats"           % DerevoVersion,
-      "tf.tofu"        %% "derevo-circe-magnolia" % DerevoVersion,
-      "eu.timepit"     %% "refined"               % RefinedVersion,
-      "eu.timepit"     %% "refined-cats"          % RefinedVersion,
-      "dev.optics"     %% "monocle-core"          % MonocleVersion,
-      "dev.optics"     %% "monocle-macro"         % MonocleVersion,
-      "is.cir"         %% "ciris"                 % CirisVersion,
-      "is.cir"         %% "ciris-refined"         % CirisVersion,
-      "is.cir"         %% "ciris-http4s"          % CirisVersion,
-      "io.circe"       %% "circe-generic"         % CirceVersion,
-      "io.circe"       %% "circe-shapes"          % CirceVersion,
-      "io.circe"       %% "circe-parser"          % CirceVersion,
-      "io.circe"       %% "circe-generic-extras"  % CirceVersion,
-      "io.circe"       %% "circe-derivation"      % CirceDerivationVersion,
-      "io.circe"       %% "circe-refined"         % CirceVersion,
-      "io.estatico"    %% "newtype"               % NewtypeVersion,
-      "dev.profunktor" %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
-      "org.http4s"     %% "http4s-ember-server"   % Http4sVersion,
-      "org.http4s"     %% "http4s-ember-client"   % Http4sVersion,
-      "org.http4s"     %% "http4s-circe"          % Http4sVersion,
-      "org.http4s"     %% "http4s-dsl"            % Http4sVersion
-    )
-  )
-
-lazy val domain = (project in file("modules/domain"))
-  .dependsOn(infrastructure)
-  .settings(
-    commonSettings,
-    name := "maweituo-domain"
-  )
-
-lazy val common = (project in file("modules/common"))
-  .dependsOn(domain)
-  .settings(
-    commonSettings,
-    name := "maweituo-common",
-    libraryDependencies ++= Seq(
-      "com.zaxxer"       % "HikariCP"            % HikariCPVersion,
-      "com.clickhouse"   % "clickhouse-jdbc"     % ClickhouseVersion,
-      "org.lz4"          % "lz4-java"            % LZ4Version,
-      "org.tpolecat"    %% "doobie-core"         % DoobieVersion,
-      "org.tpolecat"    %% "doobie-hikari"       % DoobieVersion,
-      "com.ringcentral" %% "cassandra4io"        % Cassandra4IoVersion,
-      "dev.profunktor"  %% "redis4cats-effects"  % Redis4CatsVersion,
-      "dev.profunktor"  %% "redis4cats-log4cats" % Redis4CatsVersion,
-      "io.minio"         % "minio"               % MinioVersion
-    )
-  )
-
-lazy val cassandra = (project in file("modules/cassandra-da"))
-  .dependsOn(domain)
-  .settings(
-    commonSettings,
-    name := "maweituo-cassandra-da",
-    libraryDependencies ++= Seq(
-      "com.ringcentral" %% "cassandra4io" % Cassandra4IoVersion
-    )
-  )
-
-lazy val grpc = (project in file("modules/grpc"))
-  .dependsOn(domain)
-  .enablePlugins(Http4sGrpcPlugin)
-  .settings(
-    name := "maweituo-grpc",
-    libraryDependencies ++= Seq(
-      "com.thesamet.scalapb" %% "scalapb-runtime"      % scalapb.compiler.Version.scalapbVersion % "protobuf",
-      "com.thesamet.scalapb" %% "compilerplugin"       % "0.11.11",
-      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
-    ),
-    Compile / PB.protoSources += file("proto"),
-    Compile / PB.targets ++= Seq(
-      scalapb.gen(grpc = false) -> (Compile / sourceManaged).value / "scalapb"
-    )
-  )
+  .aggregate(core, tests, it)
 
 lazy val core = (project in file("modules/core"))
-  .dependsOn(cassandra, grpc, common)
-  .settings(
-    commonSettings,
-    name := "maweituo-core"
-  )
-
-lazy val coreHttp = (project in file("modules/core-http"))
   .enablePlugins(JavaAppPackaging)
   .enablePlugins(DockerPlugin)
-  .dependsOn(core)
   .settings(
     commonSettings,
-    name := "maweituo-core-http",
+    name := "maweituo-core",
     Compile / run / fork := true,
     scalafmtOnCompile := true,
     dockerExposedPorts ++= Seq(8080),
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % LogbackVersion,
-      "com.olegpy"    %% "meow-mtl-core"   % MeowMtlVersion
+      "ch.qos.logback"        % "logback-classic"       % LogbackVersion,
+      "com.olegpy"           %% "meow-mtl-core"         % MeowMtlVersion,
+      "org.typelevel"        %% "cats-core"             % CatsVersion,
+      "org.typelevel"        %% "cats-effect"           % CatsEffectVersion,
+      "org.typelevel"        %% "log4cats-slf4j"        % Log4CatsVersion,
+      "tf.tofu"              %% "derevo-core"           % DerevoVersion,
+      "tf.tofu"              %% "derevo-circe"          % DerevoVersion,
+      "tf.tofu"              %% "derevo-cats"           % DerevoVersion,
+      "tf.tofu"              %% "derevo-circe-magnolia" % DerevoVersion,
+      "eu.timepit"           %% "refined"               % RefinedVersion,
+      "eu.timepit"           %% "refined-cats"          % RefinedVersion,
+      "dev.optics"           %% "monocle-core"          % MonocleVersion,
+      "dev.optics"           %% "monocle-macro"         % MonocleVersion,
+      "is.cir"               %% "ciris"                 % CirisVersion,
+      "is.cir"               %% "ciris-refined"         % CirisVersion,
+      "is.cir"               %% "ciris-http4s"          % CirisVersion,
+      "io.circe"             %% "circe-generic"         % CirceVersion,
+      "io.circe"             %% "circe-shapes"          % CirceVersion,
+      "io.circe"             %% "circe-parser"          % CirceVersion,
+      "io.circe"             %% "circe-generic-extras"  % CirceVersion,
+      "io.circe"             %% "circe-derivation"      % CirceDerivationVersion,
+      "io.circe"             %% "circe-refined"         % CirceVersion,
+      "io.estatico"          %% "newtype"               % NewtypeVersion,
+      "dev.profunktor"       %% "http4s-jwt-auth"       % Http4sJwtAuthVersion,
+      "org.http4s"           %% "http4s-ember-server"   % Http4sVersion,
+      "org.http4s"           %% "http4s-ember-client"   % Http4sVersion,
+      "org.http4s"           %% "http4s-circe"          % Http4sVersion,
+      "org.http4s"           %% "http4s-dsl"            % Http4sVersion,
+      "com.zaxxer"            % "HikariCP"              % HikariCPVersion,
+      "org.lz4"               % "lz4-java"              % LZ4Version,
+      "org.tpolecat"         %% "doobie-core"           % DoobieVersion,
+      "org.tpolecat"         %% "doobie-hikari"         % DoobieVersion,
+      "com.ringcentral"      %% "cassandra4io"          % Cassandra4IoVersion,
+      "dev.profunktor"       %% "redis4cats-effects"    % Redis4CatsVersion,
+      "dev.profunktor"       %% "redis4cats-log4cats"   % Redis4CatsVersion,
+      "io.minio"              % "minio"                 % MinioVersion,
+      "com.ringcentral"      %% "cassandra4io"          % Cassandra4IoVersion,
     )
   )
 
-lazy val coreConsole = (project in file("modules/core-console"))
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
-  .dependsOn(core)
-  .settings(
-    commonSettings,
-    name := "maweituo-core-console",
-    Compile / run / fork := true,
-    scalafmtOnCompile := true,
-    libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % LogbackVersion
-    ),
-    maintainer := "holodome",
-    Compile / mainClass := Some("com.holodome.Main"),
-    Compile / run / fork := true,
-    scalafmtOnCompile := true,
-    dockerExposedPorts ++= Seq(8080),
-    dockerBaseImage := "openjdk:11-jre-slim-buster"
-  )
-
 lazy val tests = (project in file("modules/tests"))
-  .dependsOn(coreHttp)
+  .dependsOn(core)
   .settings(
     commonSettings,
     name := "maweituo-tests",
@@ -206,43 +128,4 @@ lazy val it = (project in file("modules/it"))
     commonSettings,
     name := "maweituo-it",
     publish / skip := true
-  )
-
-lazy val recsDomain = (project in file("modules/recs-domain"))
-  .dependsOn(domain)
-  .settings(
-    commonSettings,
-    name := "maweituo-recs-domain"
-  )
-
-lazy val recsCassandra = (project in file("modules/recs-cassandra-da"))
-  .dependsOn(recsDomain, cassandra)
-  .settings(
-    commonSettings,
-    name := "maweituo-recs-cassandra-da"
-  )
-
-lazy val recsClickhouse = (project in file("modules/recs-clickhouse-da"))
-  .dependsOn(recsDomain)
-  .settings(
-    commonSettings,
-    name := "maweituo-recs-clickhouse-da",
-    libraryDependencies ++= Seq(
-      "org.tpolecat" %% "doobie-core" % DoobieVersion
-    )
-  )
-
-lazy val recs = (project in file("modules/recs"))
-  .dependsOn(recsDomain, recsCassandra, recsClickhouse, common, grpc)
-  .enablePlugins(JavaAppPackaging)
-  .enablePlugins(DockerPlugin)
-  .settings(
-    commonSettings,
-    name := "maweituo-recs",
-    Compile / run / fork := true,
-    dockerExposedPorts ++= Seq(11223),
-    dockerBaseImage := "openjdk:11-jre-slim-buster",
-    libraryDependencies ++= Seq(
-      "ch.qos.logback" % "logback-classic" % LogbackVersion
-    )
   )

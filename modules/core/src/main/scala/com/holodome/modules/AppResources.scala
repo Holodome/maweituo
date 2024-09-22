@@ -6,14 +6,12 @@ import com.holodome.config.types.AppConfig
 import com.ringcentral.cassandra4io.CassandraSession
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient
-import org.http4s.client.Client
 import com.holodome.resources.{MkRedisClient, MkHttpClient, MkMinioClient, MkCassandraClient}
 
 sealed abstract class AppResources[F[_]](
     val redis: RedisCommands[F, String, String],
     val cassandra: CassandraSession[F],
-    val minio: MinioAsyncClient,
-    val grpcClient: Client[F]
+    val minio: MinioAsyncClient
 )
 
 object AppResources {
@@ -23,9 +21,8 @@ object AppResources {
     (
       MkRedisClient[F].newClient(cfg.redis),
       MkCassandraClient[F].newClient(cfg.cassandra),
-      MkMinioClient[F].newClient(cfg.minio),
-      MkHttpClient[F].newEmber(cfg.recs.client)
+      MkMinioClient[F].newClient(cfg.minio)
     )
-      .parMapN(new AppResources[F](_, _, _, _) {})
+      .parMapN(new AppResources[F](_, _, _) {})
   }
 }

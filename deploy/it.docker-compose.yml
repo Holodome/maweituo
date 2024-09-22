@@ -42,21 +42,6 @@ services:
       - MINIO_ROOT_PASSWORD=minioadmin
       - MINIO_DEFAULT_BUCKETS=maweituo
 
-  clickhouse:
-    image: 'clickhouse/clickhouse-server'
-    platform: linux/amd64
-    container_name: maweituo-clickhouse
-    restart: always
-    networks:
-      - backend
-    volumes:
-      - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
-      - clickhouse_data:/var/lib/clickhouse
-    ports:
-      - '8123:8123'
-      - '9019:9019'
-      - '9100:9000'
-
 networks:
   backend:
     driver: bridge
@@ -67,6 +52,4 @@ volumes:
   redis_data:
     driver: local
   scylla_data:
-    driver: local
-  clickhouse_data:
     driver: local

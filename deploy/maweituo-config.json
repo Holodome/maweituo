@@ -19,17 +19,5 @@
     "host": "minio",
     "bucket": "maweituo",
     "url": "http://minio:9000"
-  },
-  "recs_client": {
-    "timeout": "60 seconds",
-    "idle_time_in_pool": "30 seconds"
-  },
-  "recs": {
-    "host": "recs",
-    "port": "11223",
-    "uri": "http://recs:11223"
-  },
-  "clickhouse": {
-    "jdbcUrl": "jdbc:ch://clickhouse/maweituo?jdbcCompliant=true"
   }
 }

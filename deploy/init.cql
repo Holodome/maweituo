@@ -88,3 +88,23 @@ create table recs.user_discussed (
     id uuid primary key,
     ad uuid
 );
+
+create role if not exists core_role with password = 'password' and login = true;
+grant select on keyspace local to core_role;
+grant modify on keyspace local to core_role;
+
+create role if not exists recs_role with password = 'password' and login = true;
+grant select on keyspace recs to recs_role;
+grant modify on keyspace recs to recs_role;
+grant select on keyspace local to recs_role;
+
+create role if not exists administrator with superuser = true and password = 'password' and login = true;
+
+create user if not exists core_user with password 'password';
+grant core_role to core_user;
+
+create user if not exists recs_user with password 'password';
+grant recs_role to recs_user;
+
+create user if not exists admin with password 'password';
+grant administrator to admin;

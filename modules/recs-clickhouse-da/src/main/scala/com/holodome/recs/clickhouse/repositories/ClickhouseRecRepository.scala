@@ -79,8 +79,8 @@ private final class ClickhouseRecRepository[F[_]: MonadCancelThrow](xa: Transact
   private def getClosestQ(user: UserId, count: Int): Query0[UUID] =
     sql"""select id from user_weights
           final
-          order by L2Distance(weights,
-                            (select weights from user_weights where id = ${user.value}))
+          order by cosineDistance(weights,
+            (select weights from user_weights where id = ${user.value}))
           limit $count"""
       .query[UUID]
 }

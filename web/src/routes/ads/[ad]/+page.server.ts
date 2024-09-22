@@ -109,5 +109,5 @@ export const actions = {
     if (body.errors) {
       return fail(401, body);
     }
-  }
+  },
 } satisfies Actions;

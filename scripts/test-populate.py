@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, PlainTextAuthProvider
 import faker
 import hashlib
 import uuid
@@ -8,7 +8,8 @@ import random
 from faker.providers import company, date_time
 import datetime
 
-cluster = Cluster(["127.0.0.1"], port=9042)
+auth_provider = PlainTextAuthProvider(username="cassandra", password="cassandra")
+cluster = Cluster(["127.0.0.1"], port=9042, auth_provider=auth_provider)
 session = cluster.connect()
 
 row = session.execute("SELECT release_version FROM system.local").one()
@@ -54,6 +55,8 @@ for i in range(ADS):
     for tag in t:
         session.execute("update local.tags set ads = ads + {%s} where tag = %s",
                         (id, tag))
+    session.execute("update local.user_ads set ads = ads + {%s} where user_id = %s",
+                    (id, author))
     session.execute("insert into recs.user_created (id, ad) values (%s, %s)",
                     (author, id))
     session.execute("insert into local.global_feed (at, ad_id) values (%s, %s)",

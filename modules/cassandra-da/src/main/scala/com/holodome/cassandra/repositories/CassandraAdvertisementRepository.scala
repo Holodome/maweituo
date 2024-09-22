@@ -22,7 +22,7 @@ private final class CassandraAdvertisementRepository[F[_]: Async](
 ) extends AdvertisementRepository[F] {
 
   override def addChat(id: AdId, chatId: ChatId): F[Unit] =
-    cql"update advertisements set chats = chats - {${chatId.value}} where id = ${id.value}"
+    cql"update advertisements set chats = chats + {${chatId.value}} where id = ${id.value}"
       .execute(session)
       .void
 

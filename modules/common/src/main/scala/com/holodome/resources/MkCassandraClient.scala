@@ -38,6 +38,7 @@ object MkCassandraClient {
           .addContactPoint(InetSocketAddress.createUnresolved(c.host.toString, c.port.value))
           .withLocalDatacenter(c.datacenter.value)
           .withKeyspace(c.keyspace)
+          .withAuthCredentials("cassandra", "cassandra")
         CassandraSession.connect(builder).evalTap(checkCassandraConnection)
       }
     }

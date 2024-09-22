@@ -13,6 +13,7 @@ export type Advertisement = {
   tags: string[];
   images: string[];
   chats: string[];
+  resolved: boolean;
 };
 
 export type User = {

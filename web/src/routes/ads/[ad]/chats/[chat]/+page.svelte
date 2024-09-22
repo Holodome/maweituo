@@ -5,6 +5,7 @@
   export let data: PageData;
 
   $: myId = $page.data.user?.userId;
+  $: isAuthor = $page.data.user?.userId === data.adInfo.authorId;
 </script>
 
 <div class="container mx-auto max-w-3xl">
@@ -23,6 +24,18 @@
       href="/account/{data.authorInfo.id}">{data.authorInfo.name}</a
     >
   </div>
+
+  {#if isAuthor && !data.adInfo.resolved}
+    <form use:enhance method="POST" action="?/resolved" class="mt-4">
+      <input type="hidden" name="user_id" value={data.chatInfo.client} />
+      <button type="submit" class="btn btn-outline btn-primary"
+        >Mark as resolved</button
+      >
+    </form>
+  {/if}
+  {#if data.adInfo.resolved}
+    <p class="my-8 text-red-500">Advertisement resolved</p>
+  {/if}
 
   <div class="my-8">
     {#each data.messages as msg}
@@ -49,6 +62,10 @@
       required
     ></textarea>
     <br />
-    <button type="submit" class="btn btn-primary">Send</button>
+    {#if !data.adInfo.resolved}
+      <button type="submit" class="btn btn-primary">Send</button>
+    {:else}
+      <button type="submit" class="btn btn-primary btn-disabled">Send</button>
+    {/if}
   </form>
 </div>

@@ -25,6 +25,9 @@
       href="/account/{data.adInfo.authorId}">{data.authorName}</a
     >
   </div>
+  {#if data.adInfo.resolved}
+    <p class="my-8 text-red-500">Advertisement resolved</p>
+  {/if}
   <div class="container mb-8">
     <h2 class="text-lg leading-none mt-8 mb-4">Gallery</h2>
     {#if data.images.length !== 0}
@@ -150,4 +153,6 @@
       {/each}
     </div>
   {/if}
+
+  
 </div>

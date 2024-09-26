@@ -2,23 +2,18 @@ package com.holodome.domain.repositories
 
 import com.holodome.domain.ads.*
 import com.holodome.domain.errors.InvalidAdId
-import com.holodome.domain.images.ImageId
-import com.holodome.domain.messages.ChatId
 
 import cats.MonadThrow
 import cats.data.OptionT
+import com.holodome.domain.users.UserId
 
 trait AdvertisementRepository[F[_]]:
   def create(ad: Advertisement): F[Unit]
   def all: F[List[Advertisement]]
   def find(id: AdId): OptionT[F, Advertisement]
-  def delete(id: AdId): F[Unit]
-  def addTag(id: AdId, tag: AdTag): F[Unit]
-  def addImage(id: AdId, image: ImageId): F[Unit]
-  def removeTag(id: AdId, tag: AdTag): F[Unit]
-  def removeImage(id: AdId, image: ImageId): F[Unit]
-  def addChat(id: AdId, chatId: ChatId): F[Unit]
+  def findIdsByAuthor(userId: UserId): F[List[AdId]]
   def markAsResolved(id: AdId): F[Unit]
+  def delete(id: AdId): F[Unit]
 
 object AdvertisementRepository:
   extension [F[_]: MonadThrow](repo: AdvertisementRepository[F])

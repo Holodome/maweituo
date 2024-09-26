@@ -22,5 +22,6 @@ object CodecsOrphans:
   given Meta[PasswordSalt]         = Meta[String].timap(PasswordSalt.apply)(_.value)
 
   given Meta[AdId]    = Meta[UUID].timap(AdId.apply)(_.value)
+  given Meta[AdTitle] = Meta[String].timap(AdTitle.apply)(_.value)
   given Meta[ChatId]  = Meta[UUID].timap(ChatId.apply)(_.value)
   given Meta[ImageId] = Meta[UUID].timap(ImageId.apply)(_.value)

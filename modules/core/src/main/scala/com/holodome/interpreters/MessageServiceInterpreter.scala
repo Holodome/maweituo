@@ -16,7 +16,7 @@ object MessageServiceInterpreter:
   )(using clock: TimeSource[F]): MessageService[F] = new:
     def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
       for
-        _   <- iam.authorizeChatAccess(chatId, senderId)
+        _   <- iam.authChatAccess(chatId, senderId)
         now <- clock.instant
         msg = Message(
           senderId,
@@ -28,6 +28,6 @@ object MessageServiceInterpreter:
       yield ()
 
     def history(chatId: ChatId, requester: UserId): F[HistoryResponse] =
-      iam.authorizeChatAccess(chatId, requester) *> msgRepo
+      iam.authChatAccess(chatId, requester) *> msgRepo
         .chatHistory(chatId)
         .map(HistoryResponse.apply)

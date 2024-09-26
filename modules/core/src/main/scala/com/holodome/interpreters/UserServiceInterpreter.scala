@@ -4,9 +4,9 @@ import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.{ UserEmailInUse, UserNameInUse }
-import com.holodome.domain.repositories.UserAdsRepository
 import com.holodome.domain.repositories.UserRepository
 import com.holodome.domain.services.{ IAMService, UserService }
+import com.holodome.domain.repositories.AdvertisementRepository
 import com.holodome.domain.users.*
 import com.holodome.effects.GenUUID
 
@@ -17,14 +17,14 @@ import org.typelevel.log4cats.Logger
 
 object UserServiceInterpreter:
   def make[F[_]: MonadThrow: GenUUID: Logger](
-      repo: UserRepository[F],
-      userAdRepo: UserAdsRepository[F],
+      users: UserRepository[F],
+      ads: AdvertisementRepository[F],
       iam: IAMService[F]
   ): UserService[F] = new:
-    def update(update: UpdateUserRequest, authorized: UserId): F[Unit] =
+    def update(update: UpdateUserRequest, authd: UserId): F[Unit] =
       for
-        _   <- iam.authorizeUserModification(update.id, authorized)
-        old <- repo.get(update.id)
+        _   <- iam.authUserModification(update.id, authd)
+        old <- users.get(update.id)
         updateUserInternal = UpdateUserInternal(
           update.id,
           update.name,
@@ -33,29 +33,29 @@ object UserServiceInterpreter:
             PasswordHashing.hashSaltPassword(_, old.salt)
           )
         )
-        _ <- repo.update(updateUserInternal)
-        _ <- Logger[F].info(s"Updated user ${update.id} by user $authorized")
+        _ <- users.update(updateUserInternal)
+        _ <- Logger[F].info(s"Updated user ${update.id} by user $authd")
       yield ()
 
-    def delete(subject: UserId, authorized: UserId): F[Unit] =
+    def delete(subject: UserId, authd: UserId): F[Unit] =
       for
-        _ <- iam.authorizeUserModification(subject, authorized)
-        _ <- repo.delete(subject)
-        _ <- Logger[F].info(s"Deleted user $subject by $authorized")
+        _ <- iam.authUserModification(subject, authd)
+        _ <- users.delete(subject)
+        _ <- Logger[F].info(s"Deleted user $subject by $authd")
       yield ()
 
     def get(id: UserId): F[User] =
-      repo.get(id)
+      users.get(id)
 
     def create(
         body: RegisterRequest
     ): F[UserId] =
       for
-        _ <- repo
+        _ <- users
           .findByEmail(body.email)
           .flatMap(_ => OptionT liftF UserEmailInUse(body.email).raiseError[F, Unit])
           .value
-        _ <- repo
+        _ <- users
           .findByName(body.name)
           .flatMap(_ => OptionT liftF UserNameInUse(body.name).raiseError[F, Unit])
           .value
@@ -68,17 +68,9 @@ object UserServiceInterpreter:
           PasswordHashing.hashSaltPassword(body.password, salt),
           salt
         )
-        _ <- repo.create(user)
+        _ <- users.create(user)
         _ <- Logger[F].info(s"Created user $id")
       yield user.id
 
-    def getAds(userId: UserId): F[Set[AdId]] =
-      for
-        x <- userAdRepo.get(userId).value
-        v <- x match
-          case Some(s) => s.pure[F]
-          case None =>
-            Logger[F]
-              .warn(s"Tried to get ads for user $userId, but no such user is found") *> Set[AdId]()
-              .pure[F]
-      yield v
+    def getAds(userId: UserId): F[List[AdId]] =
+      ads.findIdsByAuthor(userId)

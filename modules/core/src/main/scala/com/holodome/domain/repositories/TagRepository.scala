@@ -10,7 +10,7 @@ trait TagRepository[F[_]]:
   def addTag(tag: AdTag): F[Unit]
   def addTagToAd(adId: AdId, tag: AdTag): F[Unit]
   def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit]
-  def getAllAdsByTag(tag: AdTag): F[Set[AdId]]
+  def getAllAdsByTag(tag: AdTag): F[List[AdId]]
 
 object TagRepository:
   extension [F[_]: Monad](repo: TagRepository[F])

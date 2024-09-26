@@ -4,7 +4,6 @@ import com.holodome.domain.repositories.*
 
 sealed abstract class Repositories[F[_]]:
   val users: UserRepository[F]
-  val userAds: UserAdsRepository[F]
   val ads: AdvertisementRepository[F]
   val tags: TagRepository[F]
   val chats: ChatRepository[F]

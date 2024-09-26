@@ -23,7 +23,7 @@ object ChatServiceInterpreter:
       iam: IAMService[F]
   ): ChatService[F] = new:
     def get(id: ChatId, requester: UserId): F[Chat] =
-      iam.authorizeChatAccess(id, requester) *> chatRepo.get(id)
+      iam.authChatAccess(id, requester) *> chatRepo.get(id)
 
     def create(adId: AdId, clientId: UserId): F[ChatId] =
       for
@@ -54,7 +54,6 @@ object ChatServiceInterpreter:
           clientId
         )
         _ <- chatRepo.create(chat)
-        _ <- adRepo.addChat(adId, id)
         _ <- telemetry.userDiscussed(clientId, adId)
         _ <- Logger[F].info(s"Created chat for ad $adId and user $clientId")
       yield id
@@ -63,5 +62,5 @@ object ChatServiceInterpreter:
       chatRepo
         .findByAdAndClient(ad, user)
         .flatTap { chatId =>
-          OptionT liftF iam.authorizeChatAccess(chatId, user)
+          OptionT liftF iam.authChatAccess(chatId, user)
         }

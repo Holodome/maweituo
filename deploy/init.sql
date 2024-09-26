@@ -9,7 +9,8 @@ create table if not exists users (
 create table if not exists advertisements (
   id uuid primary key,
   title text not null,
-  author_id uuid references users(id) on delete restrict
+  author_id uuid references users(id),
+  is_resvoled boolean not null 
 );
 
 create table if not exists personalized_feed (

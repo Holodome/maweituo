@@ -38,16 +38,15 @@ object AdImageServiceInterpreter:
           contents.dataSize
         )
         _ <- imageRepo.create(image)
-        _ <- adRepo.addImage(adId, imageId)
         _ <- Logger[F].info(s"Uploaded image to $adId by $uploader")
       yield imageId
 
     def delete(imageId: ImageId, authenticated: UserId): F[Unit] =
       for
-        _     <- iam.authorizeImageDelete(imageId, authenticated)
-        image <- imageRepo.getMeta(imageId)
+        _     <- iam.authImageDelete(imageId, authenticated)
+        image <- imageRepo.get(imageId)
         _     <- objectStorage.delete(image.url.toObsID)
-        _     <- adRepo.removeImage(image.adId, imageId)
+        _     <- imageRepo.delete(imageId)
         _ <- Logger[F].info(
           s"Deleted image ${image.id} from ad ${image.adId} by user $authenticated"
         )
@@ -55,7 +54,7 @@ object AdImageServiceInterpreter:
 
     def get(imageId: ImageId): F[ImageContentsStream[F]] =
       for
-        image <- imageRepo.getMeta(imageId)
+        image <- imageRepo.get(imageId)
         stream <- objectStorage
           .get(image.url.toObsID)
           .map(ImageContentsStream(_, image.mediaType, image.size))

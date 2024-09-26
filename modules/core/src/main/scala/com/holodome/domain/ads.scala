@@ -4,8 +4,6 @@ import java.util.UUID
 
 import scala.util.Try
 
-import com.holodome.domain.images.ImageId
-import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId
 import com.holodome.utils.{ IdNewtype, Newtype }
 
@@ -29,12 +27,8 @@ final case class Advertisement(
     id: AdId,
     authorId: UserId,
     title: AdTitle,
-    tags: Set[AdTag],
-    images: Set[ImageId],
-    chats: Set[ChatId],
     resolved: Boolean
-) derives Show,
-      Codec.AsObject
+) derives Show, Codec.AsObject
 
 final case class CreateAdRequest(
     title: AdTitle

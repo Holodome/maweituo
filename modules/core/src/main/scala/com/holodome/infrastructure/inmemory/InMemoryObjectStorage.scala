@@ -2,9 +2,7 @@ package com.holodome.infrastructure.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import com.holodome.infrastructure.OBSId
-import com.holodome.infrastructure.OBSUrl
-import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.{OBSId, OBSUrl, ObjectStorage}
 
 import cats.data.OptionT
 import cats.effect.Sync

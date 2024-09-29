@@ -4,8 +4,7 @@ import java.util.UUID
 
 import scala.util.Try
 
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.AdTag
+import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.ChatId
 import com.holodome.domain.users.UserId

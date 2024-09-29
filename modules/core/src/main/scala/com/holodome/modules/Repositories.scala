@@ -1,13 +1,7 @@
 package com.holodome.modules
 
 import com.holodome.domain.repositories.*
-import com.holodome.postgres.repositories.PostgresAdImageRepository
-import com.holodome.postgres.repositories.PostgresAdRepository
-import com.holodome.postgres.repositories.PostgresChatRepository
-import com.holodome.postgres.repositories.PostgresFeedRepository
-import com.holodome.postgres.repositories.PostgresMessageRepository
-import com.holodome.postgres.repositories.PostgresTagRepository
-import com.holodome.postgres.repositories.PostgresUserRepository
+import com.holodome.postgres.repositories.*
 
 import cats.effect.kernel.Async
 import doobie.util.transactor.Transactor

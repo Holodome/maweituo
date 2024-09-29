@@ -2,7 +2,6 @@ package com.holodome.postgres.repositories
 
 import com.holodome.domain.repositories.UserRepository
 import com.holodome.domain.users.*
-import com.holodome.domain.users.User
 import com.holodome.postgres.sql.codecs.given
 
 import cats.data.OptionT

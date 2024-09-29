@@ -2,11 +2,8 @@ package com.holodome.utils
 
 import java.util.UUID
 
-import cats.Eq
-import cats.Order
-import cats.Show
-import io.circe.Decoder
-import io.circe.Encoder
+import cats.{Eq, Order, Show}
+import io.circe.{Decoder, Encoder}
 import monocle.Iso
 
 // this can be used for simple newtypes without pre-defined typeclass derivations

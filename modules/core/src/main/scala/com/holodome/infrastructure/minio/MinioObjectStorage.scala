@@ -5,16 +5,12 @@ import java.io.InputStream
 import scala.util.control.NonFatal
 
 import com.holodome.ext.catsExt.liftCompletableFuture
-import com.holodome.infrastructure.OBSId
-import com.holodome.infrastructure.OBSUrl
-import com.holodome.infrastructure.ObjectStorage
+import com.holodome.infrastructure.{OBSId, OBSUrl, ObjectStorage}
 
-import cats.Applicative
-import cats.Monad
-import cats.MonadThrow
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all.*
+import cats.{Applicative, Monad, MonadThrow}
 import io.minio.*
 import io.minio.errors.ErrorResponseException
 

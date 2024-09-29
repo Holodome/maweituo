@@ -2,14 +2,12 @@ package com.holodome
 
 import java.time.Instant
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 import cats.*
 import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
-import io.circe.Decoder
-import io.circe.Encoder
+import io.circe.{Decoder, Encoder}
 
 package object utils:
   given Eq[JwtToken]      = Eq.by(_.value)

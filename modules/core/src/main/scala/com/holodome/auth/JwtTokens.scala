@@ -1,19 +1,14 @@
 package com.holodome.auth
 
 import com.holodome.config.*
-import com.holodome.config.JwtAccessSecret
-import com.holodome.config.JwtTokenExpiration
 import com.holodome.domain.users.UserId
 
 import cats.Monad
 import cats.syntax.all.*
-import dev.profunktor.auth.jwt.JwtSecretKey
-import dev.profunktor.auth.jwt.JwtToken
-import dev.profunktor.auth.jwt.jwtEncode
+import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken, jwtEncode}
 import io.circe.Encoder
 import io.circe.syntax.EncoderOps
-import pdi.jwt.JwtAlgorithm
-import pdi.jwt.JwtClaim
+import pdi.jwt.{JwtAlgorithm, JwtClaim}
 
 trait JwtTokens[F[_]]:
   def create(userId: UserId): F[JwtToken]

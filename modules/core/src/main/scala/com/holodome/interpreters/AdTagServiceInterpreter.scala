@@ -1,7 +1,6 @@
 package com.holodome.interpreters
 
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.AdTag
+import com.holodome.domain.ads.{AdId, AdTag}
 import com.holodome.domain.repositories.TagRepository
 import com.holodome.domain.services.AdTagService
 

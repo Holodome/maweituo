@@ -7,16 +7,13 @@ import com.holodome.http.Routes
 import com.holodome.http.dto.FeedDTO
 import com.holodome.http.vars.UserIdVar
 
-import cats.MonadThrow
-import cats.Parallel
 import cats.syntax.all.*
-import org.http4s.AuthedRoutes
-import org.http4s.HttpRoutes
+import cats.{MonadThrow, Parallel}
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 
 final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F]) extends Http4sDsl[F]:
 

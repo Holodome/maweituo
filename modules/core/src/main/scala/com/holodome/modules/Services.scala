@@ -1,9 +1,7 @@
 package com.holodome.modules
 
 import com.holodome.domain.services.*
-import com.holodome.effects.Background
-import com.holodome.effects.GenUUID
-import com.holodome.effects.TimeSource
+import com.holodome.effects.{Background, GenUUID, TimeSource}
 import com.holodome.interpreters.*
 
 import cats.MonadThrow

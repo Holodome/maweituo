@@ -3,12 +3,9 @@ package com.holodome.interpreters
 import com.holodome.auth.PasswordHashing
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.errors.UserEmailInUse
-import com.holodome.domain.errors.UserNameInUse
-import com.holodome.domain.repositories.AdvertisementRepository
-import com.holodome.domain.repositories.UserRepository
-import com.holodome.domain.services.IAMService
-import com.holodome.domain.services.UserService
+import com.holodome.domain.errors.{UserEmailInUse, UserNameInUse}
+import com.holodome.domain.repositories.{AdvertisementRepository, UserRepository}
+import com.holodome.domain.services.{IAMService, UserService}
 import com.holodome.domain.users.*
 import com.holodome.effects.GenUUID
 

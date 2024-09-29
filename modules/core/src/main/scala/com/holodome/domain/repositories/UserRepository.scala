@@ -1,7 +1,6 @@
 package com.holodome.domain.repositories
 
-import com.holodome.domain.errors.InvalidUserId
-import com.holodome.domain.errors.NoUserFound
+import com.holodome.domain.errors.{InvalidUserId, NoUserFound}
 import com.holodome.domain.users.*
 
 import cats.MonadThrow

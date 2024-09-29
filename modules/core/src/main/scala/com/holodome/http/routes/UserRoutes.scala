@@ -7,14 +7,12 @@ import com.holodome.http.vars.UserIdVar
 
 import cats.effect.Concurrent
 import cats.syntax.all.*
-import org.http4s.AuthedRoutes
-import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.AuthMiddleware
-import org.http4s.server.Router
+import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
 final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](userService: UserService[F]) extends Http4sDsl[F]:

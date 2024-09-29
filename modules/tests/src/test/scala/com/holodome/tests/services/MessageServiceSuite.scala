@@ -1,37 +1,48 @@
 package com.holodome.tests.services
 
-import cats.effect.IO
-import cats.syntax.all.*
+import java.time.Instant
+
 import com.holodome.domain.errors.ChatAccessForbidden
-import com.holodome.domain.repositories.*
 import com.holodome.domain.services.*
 import com.holodome.effects.TimeSource
 import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen, sendMessageRequestGen }
 import com.holodome.tests.repositories.*
-import com.holodome.tests.services.TelemetryServiceStub
-import org.mockito.MockitoSugar
-import org.mockito.cats.MockitoCats
+import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
+import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.services.stubs.TelemetryServiceStub
+
+import cats.effect.IO
+import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-import java.time.Instant
+object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
-object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar with MockitoCats:
   given Logger[IO] = NoOpLogger[IO]
-
-  private def makeIam(ad: AdvertisementRepository[IO], chat: ChatRepository[IO]): IAMService[IO] =
-    IAMServiceInterpreter.make(ad, chat, mock[AdImageRepository[IO]])
 
   private val epoch: Long = 1711564995
   private given TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
-  private val telemetry                          = new TelemetryServiceStub[IO]
-  private val feedRepository: FeedRepository[IO] = new FeedRepositoryStub
+
+  def makeTestServies: (UserService[F], AdService[F], ChatService[F], MessageService[F]) =
+    val telemetry      = new TelemetryServiceStub[IO]
+    val userRepo       = InMemoryRepositoryFactory.users
+    val adRepo         = InMemoryRepositoryFactory.ads
+    val chatRepo       = InMemoryRepositoryFactory.chats
+    val msgRepo        = InMemoryRepositoryFactory.msgs
+    val iam            = IAMServiceInterpreter.make(adRepo, chatRepo, RepositoryStubFactory.images)
+    val users          = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
+    val feedRepository = RepositoryStubFactory.feed
+    val ads            = AdServiceInterpreter.make[IO](adRepo, RepositoryStubFactory.tags, feedRepository, iam, telemetry)
+    val chats          = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry, iam)
+    val msgs           = MessageServiceInterpreter.make[IO](msgRepo, iam)
+    (users, ads, chats, msgs)
 
   test("basic message works") {
+    val (users, ads, chats, msgs) = makeTestServies
     val gen =
       for
         reg      <- registerGen
@@ -40,23 +51,6 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
         msg      <- sendMessageRequestGen
       yield (reg, otherReg, ad, msg)
     forall(gen) { case (reg, otherReg, createAd, msg) =>
-      val userRepo = new InMemoryUserRepository[IO]
-      val adRepo   = new InMemoryAdRepository[IO]
-      val chatRepo = new InMemoryChatRepository[IO]
-      val msgRepo  = new InMemoryMessageRepository[IO]
-      val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
-      val ads =
-        AdServiceInterpreter.make[IO](
-          adRepo,
-          mock[TagRepository[IO]],
-          feedRepository,
-          new UserAdsRepositoryStub,
-          iam,
-          new TelemetryServiceStub[IO]
-        )
-      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for
         u1      <- users.create(reg)
         u2      <- users.create(otherReg)
@@ -76,6 +70,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   }
 
   test("unable to send to forbidden chat") {
+    val (users, ads, chats, msgs) = makeTestServies
     val gen =
       for
         reg1 <- registerGen
@@ -85,22 +80,6 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
         msg  <- sendMessageRequestGen
       yield (reg1, reg2, reg3, ad, msg)
     forall(gen) { case (reg1, reg2, reg3, createAd, msg) =>
-      val userRepo = new InMemoryUserRepository[IO]
-      val adRepo   = new InMemoryAdRepository[IO]
-      val chatRepo = new InMemoryChatRepository[IO]
-      val msgRepo  = new InMemoryMessageRepository[IO]
-      val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
-      val ads = AdServiceInterpreter.make[IO](
-        adRepo,
-        mock[TagRepository[IO]],
-        feedRepository,
-        new UserAdsRepositoryStub,
-        iam,
-        new TelemetryServiceStub[IO]
-      )
-      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for
         u1   <- users.create(reg1)
         u2   <- users.create(reg2)
@@ -118,6 +97,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
   }
 
   test("unable to gen history for forbidden chat") {
+    val (users, ads, chats, msgs) = makeTestServies
     val gen =
       for
         reg1 <- registerGen
@@ -127,22 +107,6 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MockitoSugar
         msg  <- sendMessageRequestGen
       yield (reg1, reg2, reg3, ad, msg)
     forall(gen) { case (reg1, reg2, reg3, createAd, msg) =>
-      val userRepo = new InMemoryUserRepository[IO]
-      val adRepo   = new InMemoryAdRepository[IO]
-      val chatRepo = new InMemoryChatRepository[IO]
-      val msgRepo  = new InMemoryMessageRepository[IO]
-      val iam      = makeIam(adRepo, chatRepo)
-      val users    = UserServiceInterpreter.make[IO](userRepo, new UserAdsRepositoryStub, iam)
-      val ads = AdServiceInterpreter.make[IO](
-        adRepo,
-        mock[TagRepository[IO]],
-        feedRepository,
-        new UserAdsRepositoryStub,
-        iam,
-        new TelemetryServiceStub[IO]
-      )
-      val chats = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry)
-      val msgs  = MessageServiceInterpreter.make[IO](msgRepo, iam)
       for
         u1   <- users.create(reg1)
         u2   <- users.create(reg2)

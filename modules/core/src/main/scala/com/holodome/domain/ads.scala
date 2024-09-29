@@ -31,7 +31,7 @@ final case class Advertisement(
 
 final case class CreateAdRequest(
     title: AdTitle
-) derives Codec.AsObject
+) derives Show, Codec.AsObject
 
 final case class AddTagRequest(
     tag: AdTag

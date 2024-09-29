@@ -2,7 +2,7 @@ package com.holodome.interpreters
 
 import com.holodome.domain.Id
 import com.holodome.domain.ads.*
-import com.holodome.domain.repositories.{ AdvertisementRepository, FeedRepository, TagRepository }
+import com.holodome.domain.repositories.{ AdRepository, FeedRepository, TagRepository }
 import com.holodome.domain.services.{ AdService, IAMService, TelemetryService }
 import com.holodome.domain.users.UserId
 import com.holodome.effects.{ GenUUID, TimeSource }
@@ -13,7 +13,7 @@ import org.typelevel.log4cats.Logger
 
 object AdServiceInterpreter:
   def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](
-      ads: AdvertisementRepository[F],
+      ads: AdRepository[F],
       tags: TagRepository[F],
       feed: FeedRepository[F],
       iam: IAMService[F],

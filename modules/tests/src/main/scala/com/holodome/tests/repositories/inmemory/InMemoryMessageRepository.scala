@@ -8,7 +8,7 @@ import com.holodome.domain.repositories.MessageRepository
 
 import cats.effect.Sync
 
-class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
+private final class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
 
   private val map = new TrieMap[Message, Unit]
 

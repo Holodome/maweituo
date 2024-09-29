@@ -13,6 +13,5 @@ trait FeedRepository[F[_]]:
   def getPersonalized(user: UserId, pag: Pagination): F[List[AdId]]
   def getGlobalSize: F[Int]
   def getGlobal(pag: Pagination): F[List[AdId]]
-
   def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: FiniteDuration): F[Unit]
   def addToGlobalFeed(ad: AdId, at: Instant): F[Unit]

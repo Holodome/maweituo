@@ -17,7 +17,7 @@ import org.typelevel.log4cats.Logger
 object AdImageServiceInterpreter:
   def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID: Logger](
       imageRepo: AdImageRepository[F],
-      adRepo: AdvertisementRepository[F],
+      adRepo: AdRepository[F],
       objectStorage: ObjectStorage[F],
       iam: IAMService[F]
   ): AdImageService[F] = new:

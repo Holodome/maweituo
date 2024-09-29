@@ -15,6 +15,7 @@ import org.http4s.dsl.Http4sDsl
 final case class LoginRoutes[F[_]: JsonDecoder: Concurrent](
     authService: AuthService[F]
 ) extends Http4sDsl[F]:
+
   private val httpRoutes: HttpRoutes[F] =
     HttpRoutes.of[F] {
       case req @ POST -> Root / "login" =>

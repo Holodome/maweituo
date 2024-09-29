@@ -4,7 +4,7 @@ import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.{ ChatAccessForbidden, InvalidAccess, NotAnAuthor }
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.{ Chat, ChatId }
-import com.holodome.domain.repositories.{ AdImageRepository, AdvertisementRepository, ChatRepository }
+import com.holodome.domain.repositories.{ AdImageRepository, AdRepository, ChatRepository }
 import com.holodome.domain.services.IAMService
 import com.holodome.domain.users.UserId
 
@@ -13,7 +13,7 @@ import cats.{ Applicative, MonadThrow }
 
 object IAMServiceInterpreter:
   def make[F[_]: MonadThrow](
-      adRepo: AdvertisementRepository[F],
+      adRepo: AdRepository[F],
       chatRepo: ChatRepository[F],
       imageRepo: AdImageRepository[F]
   ): IAMService[F] = new:

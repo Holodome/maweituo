@@ -34,7 +34,7 @@ final case class RegisterRequest(
     name: Username,
     email: Email,
     password: Password
-) derives Codec.AsObject
+) derives Codec.AsObject, Show
 
 final case class User(
     id: UserId,

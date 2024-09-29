@@ -1,7 +1,7 @@
 package com.holodome.postgres.repositories
 
 import com.holodome.domain.ads.{ AdId, Advertisement }
-import com.holodome.domain.repositories.AdvertisementRepository
+import com.holodome.domain.repositories.AdRepository
 import com.holodome.domain.users.*
 import com.holodome.postgres.sql.codecs.given
 
@@ -12,7 +12,7 @@ import doobie.*
 import doobie.implicits.*
 
 object PostgresAdRepository:
-  def make[F[_]: Async](xa: Transactor[F]): AdvertisementRepository[F] = new:
+  def make[F[_]: Async](xa: Transactor[F]): AdRepository[F] = new:
     def all: F[List[Advertisement]] =
       sql"select id, author_id, title, is_resolved from advertisements"
         .query[Advertisement]

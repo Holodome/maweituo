@@ -7,7 +7,7 @@ import com.holodome.domain.users.UserId
 import cats.MonadThrow
 import cats.data.OptionT
 
-trait AdvertisementRepository[F[_]]:
+trait AdRepository[F[_]]:
   def create(ad: Advertisement): F[Unit]
   def all: F[List[Advertisement]]
   def find(id: AdId): OptionT[F, Advertisement]
@@ -15,7 +15,7 @@ trait AdvertisementRepository[F[_]]:
   def markAsResolved(id: AdId): F[Unit]
   def delete(id: AdId): F[Unit]
 
-object AdvertisementRepository:
-  extension [F[_]: MonadThrow](repo: AdvertisementRepository[F])
+object AdRepository:
+  extension [F[_]: MonadThrow](repo: AdRepository[F])
     def get(id: AdId): F[Advertisement] =
       repo.find(id).getOrRaise(InvalidAdId(id))

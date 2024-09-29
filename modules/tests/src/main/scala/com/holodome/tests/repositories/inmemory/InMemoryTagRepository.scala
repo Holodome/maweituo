@@ -7,7 +7,7 @@ import com.holodome.domain.repositories.TagRepository
 
 import cats.effect.Sync
 
-final class InMemoryTagRepository[F[_]: Sync] extends TagRepository[F]:
+private final class InMemoryTagRepository[F[_]: Sync] extends TagRepository[F]:
 
   private val map = new TrieMap[AdTag, Set[AdId]]
 

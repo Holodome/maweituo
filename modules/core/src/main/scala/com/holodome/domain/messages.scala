@@ -5,7 +5,7 @@ import java.time.Instant
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
 import com.holodome.utils.given
-import com.holodome.utils.{IdNewtype, Newtype}
+import com.holodome.utils.{ IdNewtype, Newtype }
 
 import cats.Show
 import cats.derived.*

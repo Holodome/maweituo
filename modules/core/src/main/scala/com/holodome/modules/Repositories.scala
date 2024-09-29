@@ -8,7 +8,7 @@ import doobie.util.transactor.Transactor
 
 sealed abstract class Repositories[F[_]]:
   val users: UserRepository[F]
-  val ads: AdvertisementRepository[F]
+  val ads: AdRepository[F]
   val tags: TagRepository[F]
   val chats: ChatRepository[F]
   val messages: MessageRepository[F]

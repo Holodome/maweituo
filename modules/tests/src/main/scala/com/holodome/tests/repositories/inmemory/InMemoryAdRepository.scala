@@ -3,14 +3,14 @@ package com.holodome.tests.repositories.inmemory
 import scala.collection.concurrent.TrieMap
 
 import com.holodome.domain.ads.{ AdId, Advertisement }
-import com.holodome.domain.repositories.AdvertisementRepository
+import com.holodome.domain.repositories.AdRepository
 import com.holodome.domain.users.UserId
 
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-final class InMemoryAdRepository[F[_]: Sync] extends AdvertisementRepository[F]:
+private final class InMemoryAdRepository[F[_]: Sync] extends AdRepository[F]:
 
   private val map = new TrieMap[AdId, Advertisement]
 

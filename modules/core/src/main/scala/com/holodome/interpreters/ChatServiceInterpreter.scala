@@ -4,7 +4,7 @@ import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.{ CannotCreateChatWithMyself, ChatAlreadyExists }
 import com.holodome.domain.messages.{ Chat, ChatId }
-import com.holodome.domain.repositories.{ AdvertisementRepository, ChatRepository }
+import com.holodome.domain.repositories.{ AdRepository, ChatRepository }
 import com.holodome.domain.services.{ ChatService, IAMService, TelemetryService }
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
@@ -17,7 +17,7 @@ import org.typelevel.log4cats.Logger
 object ChatServiceInterpreter:
   def make[F[_]: MonadThrow: GenUUID: Logger](
       chatRepo: ChatRepository[F],
-      adRepo: AdvertisementRepository[F],
+      adRepo: AdRepository[F],
       telemetry: TelemetryService[F],
       iam: IAMService[F]
   ): ChatService[F] = new:

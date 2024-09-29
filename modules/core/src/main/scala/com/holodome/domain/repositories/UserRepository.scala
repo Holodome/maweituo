@@ -1,6 +1,6 @@
 package com.holodome.domain.repositories
 
-import com.holodome.domain.errors.{ InvalidUserId, NoUserFound }
+import com.holodome.domain.errors.*
 import com.holodome.domain.users.*
 
 import cats.MonadThrow
@@ -22,3 +22,6 @@ object UserRepository:
 
     def getByName(name: Username): F[User] =
       repo.findByName(name).getOrRaise(NoUserFound(name))
+
+    def getByEmail(email: Email): F[User] =
+      repo.findByEmail(email).getOrRaise(InvalidEmail(email))

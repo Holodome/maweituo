@@ -1,9 +1,10 @@
 package com.holodome.tests.auth
 
-import cats.effect.IO
-import cats.syntax.all._
 import com.holodome.auth.PasswordHashing.{genSalt, hashSaltPassword}
 import com.holodome.tests.generators.passwordGen
+
+import cats.effect.IO
+import cats.syntax.all.*
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 

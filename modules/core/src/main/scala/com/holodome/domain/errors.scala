@@ -15,6 +15,7 @@ package object errors:
 
   final case class InvalidUserId(userid: UserId)       extends ApplicationError
   final case class NoUserFound(username: Username)     extends ApplicationError
+  final case class InvalidEmail(email: Email)          extends ApplicationError
   final case class UserNameInUse(username: Username)   extends ApplicationError
   final case class UserEmailInUse(email: Email)        extends ApplicationError
   final case class InvalidPassword(username: Username) extends ApplicationError

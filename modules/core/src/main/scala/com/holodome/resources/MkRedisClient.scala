@@ -5,8 +5,9 @@ import com.holodome.config.RedisConfig
 import cats.MonadThrow
 import cats.effect.Resource
 import cats.syntax.all.*
+import dev.profunktor.redis4cats.Redis
+import dev.profunktor.redis4cats.RedisCommands
 import dev.profunktor.redis4cats.effect.MkRedis
-import dev.profunktor.redis4cats.{ Redis, RedisCommands }
 import org.typelevel.log4cats.Logger
 
 trait MkRedisClient[F[_]]:

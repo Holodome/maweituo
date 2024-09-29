@@ -11,6 +11,8 @@ import doobie.postgres.implicits.*
 import doobie.util.meta.Meta
 
 export CodecsOrphans.given
+export doobie.implicits.given
+export doobie.postgres.implicits.given
 
 object CodecsOrphans:
   given Meta[UUID] = Meta[String].imap[UUID](UUID.fromString)(_.toString)
@@ -21,7 +23,11 @@ object CodecsOrphans:
   given Meta[HashedSaltedPassword] = Meta[String].timap(HashedSaltedPassword.apply)(_.value)
   given Meta[PasswordSalt]         = Meta[String].timap(PasswordSalt.apply)(_.value)
 
-  given Meta[AdId]    = Meta[UUID].timap(AdId.apply)(_.value)
-  given Meta[AdTitle] = Meta[String].timap(AdTitle.apply)(_.value)
-  given Meta[ChatId]  = Meta[UUID].timap(ChatId.apply)(_.value)
+  given Meta[AdId]  = Meta[UUID].timap(AdId.apply)(_.value)
+  given Meta[AdTag] = Meta[String].timap(AdTag.apply)(_.value)
+
+  given Meta[AdTitle]     = Meta[String].timap(AdTitle.apply)(_.value)
+  given Meta[ChatId]      = Meta[UUID].timap(ChatId.apply)(_.value)
+  given Meta[MessageText] = Meta[String].timap(MessageText.apply)(_.value)
+
   given Meta[ImageId] = Meta[UUID].timap(ImageId.apply)(_.value)

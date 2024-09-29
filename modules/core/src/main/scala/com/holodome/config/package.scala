@@ -30,7 +30,8 @@ final case class AppConfig(
     httpServer: HttpServerConfig,
     jwt: JwtConfig,
     redis: RedisConfig,
-    minio: MinioConfig
+    minio: MinioConfig,
+    postgres: PostgresConfig
 )
 
 final case class HttpClientConfig(
@@ -52,6 +53,11 @@ final case class MinioConfig(
 final case class HttpServerConfig(
     host: Host,
     port: Port
+)
+
+final case class PostgresConfig(
+    user: String,
+    password: String
 )
 
 export CirisOrphan.given

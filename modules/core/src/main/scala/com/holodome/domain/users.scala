@@ -1,6 +1,7 @@
 package com.holodome.domain.users
 
-import com.holodome.utils.{ IdNewtype, Newtype }
+import com.holodome.utils.IdNewtype
+import com.holodome.utils.Newtype
 
 import cats.Show
 import cats.derived.*

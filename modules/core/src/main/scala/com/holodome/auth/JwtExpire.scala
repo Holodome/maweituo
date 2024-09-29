@@ -1,5 +1,7 @@
 package com.holodome.auth
 
+import java.time.Clock
+
 import com.holodome.config.*
 import com.holodome.config.JwtTokenExpiration
 import com.holodome.effects.JwtClock
@@ -7,7 +9,6 @@ import com.holodome.effects.JwtClock
 import cats.effect.Sync
 import cats.syntax.all.*
 import pdi.jwt.JwtClaim
-import java.time.Clock
 
 trait JwtExpire[F[_]]:
   def expiresIn(claim: JwtClaim, exp: JwtTokenExpiration): F[JwtClaim]

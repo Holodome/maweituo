@@ -2,17 +2,22 @@ package com.holodome.interpreters
 
 import com.holodome.domain.Id
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.errors.{ CannotCreateChatWithMyself, ChatAlreadyExists }
-import com.holodome.domain.messages.{ Chat, ChatId }
-import com.holodome.domain.repositories.{ AdvertisementRepository, ChatRepository }
+import com.holodome.domain.errors.CannotCreateChatWithMyself
+import com.holodome.domain.errors.ChatAlreadyExists
+import com.holodome.domain.messages.Chat
+import com.holodome.domain.messages.ChatId
+import com.holodome.domain.repositories.AdvertisementRepository
+import com.holodome.domain.repositories.ChatRepository
+import com.holodome.domain.services.ChatService
 import com.holodome.domain.services.IAMService
-import com.holodome.domain.services.{ ChatService, TelemetryService }
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
 
+import cats.Applicative
+import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all.*
-import cats.{ Applicative, MonadThrow }
 import org.typelevel.log4cats.Logger
 
 object ChatServiceInterpreter:
@@ -58,9 +63,9 @@ object ChatServiceInterpreter:
         _ <- Logger[F].info(s"Created chat for ad $adId and user $clientId")
       yield id
 
-    def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, ChatId] =
+    def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, Chat] =
       chatRepo
         .findByAdAndClient(ad, user)
-        .flatTap { chatId =>
-          OptionT liftF iam.authChatAccess(chatId, user)
+        .flatTap { chat =>
+          OptionT liftF iam.authChatAccess(chat.id, user)
         }

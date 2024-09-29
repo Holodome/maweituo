@@ -2,19 +2,21 @@ package com.holodome.modules
 
 import scala.concurrent.duration.DurationInt
 
-import com.holodome.domain.users.{ AuthedUser, UserJwtAuth }
-import com.holodome.http.{ *, given }
+import com.holodome.domain.users.AuthedUser
+import com.holodome.domain.users.UserJwtAuth
 import com.holodome.http.routes.*
 import com.holodome.http.routes.ads.*
+import com.holodome.http.{ *, given }
 
 import cats.Parallel
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all.*
 import dev.profunktor.auth.JwtAuthMiddleware
+import org.http4s.HttpApp
+import org.http4s.HttpRoutes
 import org.http4s.implicits.*
 import org.http4s.server.middleware.*
-import org.http4s.{ HttpApp, HttpRoutes }
 import org.typelevel.log4cats.Logger
 import pdi.jwt.JwtClaim
 

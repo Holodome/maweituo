@@ -1,5 +1,8 @@
 package com.holodome.postgres.repositories
 
+import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.Advertisement
+import com.holodome.domain.repositories.AdvertisementRepository
 import com.holodome.domain.users.*
 import com.holodome.postgres.sql.codecs.given
 
@@ -8,9 +11,6 @@ import cats.effect.Async
 import cats.syntax.all.*
 import doobie.*
 import doobie.implicits.*
-import com.holodome.domain.repositories.AdvertisementRepository
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.Advertisement
 
 object PostgresAdRepository:
   def make[F[_]: Async](xa: Transactor[F]): AdvertisementRepository[F] = new:

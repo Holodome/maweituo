@@ -1,13 +1,15 @@
 package com.holodome.modules
 
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.services.{ RecommendationService, TelemetryService }
+import com.holodome.domain.services.RecommendationService
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users
 import com.holodome.effects.GenUUID
 
+import cats.Applicative
+import cats.MonadThrow
 import cats.effect.Concurrent
 import cats.syntax.all.*
-import cats.{ Applicative, MonadThrow }
 
 sealed abstract class RecsClients[F[_]]:
   val recs: RecommendationService[F]

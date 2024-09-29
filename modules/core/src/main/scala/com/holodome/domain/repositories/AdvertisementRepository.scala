@@ -2,10 +2,10 @@ package com.holodome.domain.repositories
 
 import com.holodome.domain.ads.*
 import com.holodome.domain.errors.InvalidAdId
+import com.holodome.domain.users.UserId
 
 import cats.MonadThrow
 import cats.data.OptionT
-import com.holodome.domain.users.UserId
 
 trait AdvertisementRepository[F[_]]:
   def create(ad: Advertisement): F[Unit]

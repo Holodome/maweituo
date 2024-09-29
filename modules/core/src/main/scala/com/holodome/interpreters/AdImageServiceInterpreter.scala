@@ -5,10 +5,12 @@ import com.holodome.domain.ads.AdId
 import com.holodome.domain.errors.InternalImageUnsync
 import com.holodome.domain.images.*
 import com.holodome.domain.repositories.*
-import com.holodome.domain.services.{ AdImageService, IAMService }
+import com.holodome.domain.services.AdImageService
+import com.holodome.domain.services.IAMService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.GenUUID
-import com.holodome.infrastructure.{ GenObjectStorageId, ObjectStorage }
+import com.holodome.infrastructure.GenObjectStorageId
+import com.holodome.infrastructure.ObjectStorage
 
 import cats.MonadThrow
 import cats.syntax.all.*

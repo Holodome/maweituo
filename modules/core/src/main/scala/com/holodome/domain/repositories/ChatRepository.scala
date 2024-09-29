@@ -11,7 +11,7 @@ import cats.data.OptionT
 trait ChatRepository[F[_]]:
   def create(chat: Chat): F[Unit]
   def find(chatId: ChatId): OptionT[F, Chat]
-  def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, ChatId]
+  def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, Chat]
 
 object ChatRepository:
   extension [F[_]: MonadThrow](repo: ChatRepository[F])

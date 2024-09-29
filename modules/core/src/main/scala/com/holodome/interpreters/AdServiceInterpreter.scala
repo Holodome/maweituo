@@ -2,13 +2,18 @@ package com.holodome.interpreters
 
 import com.holodome.domain.Id
 import com.holodome.domain.ads.*
-import com.holodome.domain.repositories.{ AdvertisementRepository, FeedRepository, TagRepository }
-import com.holodome.domain.services.{ AdService, IAMService, TelemetryService }
+import com.holodome.domain.repositories.AdvertisementRepository
+import com.holodome.domain.repositories.FeedRepository
+import com.holodome.domain.repositories.TagRepository
+import com.holodome.domain.services.AdService
+import com.holodome.domain.services.IAMService
+import com.holodome.domain.services.TelemetryService
 import com.holodome.domain.users.UserId
-import com.holodome.effects.{ GenUUID, TimeSource }
+import com.holodome.effects.GenUUID
+import com.holodome.effects.TimeSource
 
+import cats.MonadThrow
 import cats.syntax.all.*
-import cats.{ Applicative, MonadThrow }
 import org.typelevel.log4cats.Logger
 
 object AdServiceInterpreter:
@@ -43,10 +48,6 @@ object AdServiceInterpreter:
     def addTag(id: AdId, tag: AdTag, userId: UserId): F[Unit] =
       for
         _ <- iam.authAdModification(id, userId)
-        _ <- tags.ensureCreated(tag).flatMap {
-          case true  => Applicative[F].unit
-          case false => Logger[F].info(s"Created new tag $tag")
-        }
         _ <- tags.addTagToAd(id, tag)
         _ <- Logger[F].info(s"Added tag $tag to ad $id by user $userId")
       yield ()

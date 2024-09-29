@@ -2,7 +2,8 @@ package com.holodome.resources
 
 import com.holodome.config.HttpClientConfig
 
-import cats.effect.{ Async, Resource }
+import cats.effect.Async
+import cats.effect.Resource
 import fs2.io.net.Network
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder

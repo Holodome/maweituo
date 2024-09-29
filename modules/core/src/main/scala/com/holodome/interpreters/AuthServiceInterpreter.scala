@@ -1,6 +1,7 @@
 package com.holodome.interpreters
 
-import com.holodome.auth.{ JwtTokens, PasswordHashing }
+import com.holodome.auth.JwtTokens
+import com.holodome.auth.PasswordHashing
 import com.holodome.domain.errors.InvalidPassword
 import com.holodome.domain.repositories.UserRepository
 import com.holodome.domain.services.AuthService

@@ -13,7 +13,8 @@ import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{ AuthMiddleware, Router }
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 
 final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F]) extends Http4sDsl[F]:
   private val prefixPath = "/ads"

@@ -4,11 +4,13 @@ import com.holodome.domain.ads.AdId
 import com.holodome.infrastructure.OBSId
 import com.holodome.utils.IdNewtype
 
-import cats.data.{ EitherT, OptionT }
+import cats.MonadThrow
+import cats.Show
+import cats.data.EitherT
+import cats.data.OptionT
 import cats.derived.*
 import cats.effect.Concurrent
 import cats.syntax.all.*
-import cats.{ MonadThrow, Show }
 import org.http4s.*
 
 type ImageId = ImageId.Type

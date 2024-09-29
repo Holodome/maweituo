@@ -5,8 +5,9 @@ import com.holodome.domain.users.UserJwtAuth
 import com.holodome.modules.*
 import com.holodome.resources.MkHttpServer
 
+import cats.effect.IO
+import cats.effect.IOApp
 import cats.effect.std.Supervisor
-import cats.effect.{ IO, IOApp }
 import dev.profunktor.auth.jwt.JwtAuth
 import dev.profunktor.redis4cats.log4cats.*
 import org.typelevel.log4cats.Logger
@@ -24,7 +25,7 @@ object Main extends IOApp.Simple:
         AppResources
           .make[IO](cfg)
           .evalMap { res =>
-            val repositories = Repositories.makePostgres[IO]
+            val repositories = Repositories.makePostgres[IO](res.postgres)
             val recs         = RecsClients.make[IO]()
             for
               infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)

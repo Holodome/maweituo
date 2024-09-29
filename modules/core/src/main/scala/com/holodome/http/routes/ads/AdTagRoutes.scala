@@ -12,21 +12,22 @@ import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{ AuthMiddleware, Router }
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 
-final case class AdTagRoutes[F[_]: Concurrent: JsonDecoder](AdService: AdService[F]) extends Http4sDsl[F]:
+final case class AdTagRoutes[F[_]: Concurrent: JsonDecoder](ads: AdService[F]) extends Http4sDsl[F]:
 
   private val prefixPath = "/ads"
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / AdIdVar(adId) / "tag" as user =>
       ar.req.decode[AddTagRequest] { tag =>
-        AdService.addTag(adId, tag.tag, user.id).flatMap(Ok(_))
+        ads.addTag(adId, tag.tag, user.id).flatMap(Ok(_))
       }
 
     case ar @ DELETE -> Root / AdIdVar(adId) / "tag" as user =>
       ar.req.decode[AddTagRequest] { tag =>
-        AdService.removeTag(adId, tag.tag, user.id).flatMap(Ok(_))
+        ads.removeTag(adId, tag.tag, user.id).flatMap(Ok(_))
       }
   }
 

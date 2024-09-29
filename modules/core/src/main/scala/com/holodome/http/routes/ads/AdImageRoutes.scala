@@ -4,16 +4,20 @@ import com.holodome.domain.images.*
 import com.holodome.domain.services.AdImageService
 import com.holodome.domain.users.*
 import com.holodome.http.Routes
-import com.holodome.http.vars.{ AdIdVar, ImageIdVar }
+import com.holodome.http.vars.AdIdVar
+import com.holodome.http.vars.ImageIdVar
 
 import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.all.*
+import org.http4s.AuthedRoutes
+import org.http4s.HttpRoutes
+import org.http4s.MediaType
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
-import org.http4s.server.{ AuthMiddleware, Router }
-import org.http4s.{ AuthedRoutes, HttpRoutes, MediaType }
+import org.http4s.server.AuthMiddleware
+import org.http4s.server.Router
 
 final case class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[F]) extends Http4sDsl[F]:
   private val prefixPath = "/ads"

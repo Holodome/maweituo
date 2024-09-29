@@ -4,14 +4,16 @@ import java.time.Instant
 
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.users.UserId
+import com.holodome.utils.IdNewtype
+import com.holodome.utils.Newtype
 import com.holodome.utils.given
-import com.holodome.utils.{ IdNewtype, Newtype }
 
 import cats.Show
 import cats.derived.*
 import io.circe.Codec
 import io.circe.Decoder
-import io.circe.{ Encoder, Json }
+import io.circe.Encoder
+import io.circe.Json
 
 type ChatId = ChatId.Type
 object ChatId extends IdNewtype

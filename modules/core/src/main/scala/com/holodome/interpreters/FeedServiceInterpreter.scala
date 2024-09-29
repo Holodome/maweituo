@@ -5,7 +5,8 @@ import scala.concurrent.duration.DurationInt
 import com.holodome.domain.ads.AdId
 import com.holodome.domain.pagination.Pagination
 import com.holodome.domain.repositories.FeedRepository
-import com.holodome.domain.services.{ FeedService, RecommendationService }
+import com.holodome.domain.services.FeedService
+import com.holodome.domain.services.RecommendationService
 import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
 

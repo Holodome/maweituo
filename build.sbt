@@ -53,7 +53,7 @@ val DoobieVersion          = "1.0.0-RC4"
 val HikariCPVersion        = "5.1.0"
 val LZ4Version             = "1.8.0"
 val IronVersion            = "2.6.0"
-val KittensVersion = "3.3.0"
+val KittensVersion         = "3.3.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -95,7 +95,7 @@ lazy val core = (project in file("modules/core"))
       "dev.profunktor"     %% "redis4cats-log4cats" % Redis4CatsVersion,
       "io.minio"            % "minio"               % MinioVersion,
       "io.github.iltotore" %% "iron"                % IronVersion,
-      "org.typelevel" %% "kittens" % KittensVersion
+      "org.typelevel"      %% "kittens"             % KittensVersion
     )
   )
 
@@ -125,3 +125,11 @@ lazy val core = (project in file("modules/core"))
 //     name := "maweituo-it",
 //     publish / skip := true
 //   )
+
+inThisBuild(
+  List(
+    scalaVersion      := "3.4.0",
+    semanticdbEnabled := true,
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
+)

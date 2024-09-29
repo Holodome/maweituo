@@ -4,6 +4,7 @@ import java.nio.file.Paths
 
 import com.holodome.config.*
 import com.holodome.config.given
+import com.holodome.config.utils.JsonConfig
 
 import cats.effect.Async
 import cats.syntax.all.*
@@ -11,8 +12,6 @@ import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
 import org.typelevel.log4cats.Logger
-
-import utils.JsonConfig
 
 object Config:
   def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
@@ -34,8 +33,15 @@ object Config:
       httpServerConfig[F],
       jwtConfig[F],
       redisConfig[F],
-      minioConfig[F]
+      minioConfig[F],
+      postgresConfig[F]
     ).parMapN(AppConfig.apply)
+
+  private def postgresConfig[F[_]](using file: JsonConfig): ConfigValue[F, PostgresConfig] =
+    (
+      file.stringField("postgres.user").as[String].covary[F],
+      file.stringField("postgres.password").as[String].covary[F]
+    ).parMapN(PostgresConfig.apply)
 
   private def httpServerConfig[F[_]](using file: JsonConfig): ConfigValue[F, HttpServerConfig] =
     (
@@ -52,7 +58,7 @@ object Config:
   private def redisConfig[F[_]](using file: JsonConfig): ConfigValue[F, RedisConfig] =
     file.stringField("redis.host").as[Host].map(RedisConfig.apply)
 
-  def minioConfig[F[_]](using file: JsonConfig): ConfigValue[F, MinioConfig] =
+  private def minioConfig[F[_]](using file: JsonConfig): ConfigValue[F, MinioConfig] =
     (
       file.stringField("minio.host").as[Host],
       file.stringField("minio.port").as[Port],

@@ -25,16 +25,13 @@ create table if not exists global_feed (
   ad_id uuid references advertisements(id)
 );
 
-create table if not exists tags (
-  tag_id uuid primary key,
-  name text not null
+create table if not exists tag_ads (
+  tag text not null, 
+  ad_id uuid references advertisements(id)
+  primary key(tag, ad_id)
 );
 
-create table if not exists tag_ads (
-  tag_id uuid references tags(id), 
-  ad_id uuid references advertisements(id)
-  primary key(tag_id, ad_id)
-);
+create index tag_ads_idx on tag_ads(tag);
 
 create table if not exists chats (
   id uuid primary key,
@@ -50,7 +47,7 @@ create table if not exists messages (
   sender_id uuid references users(id),
   chat_id uuid references chats(id),
   msg text not null, 
-  at timestamp not null,
+  at timestamptz not null,
 );
 
 create table if not exists images (

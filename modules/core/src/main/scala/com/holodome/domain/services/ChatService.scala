@@ -1,7 +1,7 @@
 package com.holodome.domain.services
 
 import com.holodome.domain.ads.*
-import com.holodome.domain.messages.{Chat, ChatId}
+import com.holodome.domain.messages.{ Chat, ChatId }
 import com.holodome.domain.users.UserId
 
 import cats.data.OptionT

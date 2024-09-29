@@ -2,10 +2,10 @@ package com.holodome.interpreters
 
 import com.holodome.domain.Id
 import com.holodome.domain.ads.*
-import com.holodome.domain.repositories.{AdvertisementRepository, FeedRepository, TagRepository}
-import com.holodome.domain.services.{AdService, IAMService, TelemetryService}
+import com.holodome.domain.repositories.{ AdvertisementRepository, FeedRepository, TagRepository }
+import com.holodome.domain.services.{ AdService, IAMService, TelemetryService }
 import com.holodome.domain.users.UserId
-import com.holodome.effects.{GenUUID, TimeSource}
+import com.holodome.effects.{ GenUUID, TimeSource }
 
 import cats.MonadThrow
 import cats.syntax.all.*

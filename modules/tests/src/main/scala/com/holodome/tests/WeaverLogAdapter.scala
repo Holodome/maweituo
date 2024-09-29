@@ -1,6 +1,6 @@
 package com.holodome.tests
 
-class WeaverLogAdapter[F[_]](log: weaver.Log[F]) extends org.typelevel.log4cats.Logger[F] {
+class WeaverLogAdapter[F[_]](log: weaver.Log[F]) extends org.typelevel.log4cats.Logger[F]:
 
   override def error(message: => String): F[Unit] =
     log.error(message)
@@ -31,5 +31,3 @@ class WeaverLogAdapter[F[_]](log: weaver.Log[F]) extends org.typelevel.log4cats.
 
   override def trace(t: Throwable)(message: => String): F[Unit] =
     log.info(s"$t: $message")
-
-}

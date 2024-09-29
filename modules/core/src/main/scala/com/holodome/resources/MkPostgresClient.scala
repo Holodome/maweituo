@@ -2,7 +2,7 @@ package com.holodome.resources
 
 import com.holodome.config.PostgresConfig
 
-import cats.effect.{Async, Resource}
+import cats.effect.{ Async, Resource }
 import com.zaxxer.hikari.HikariConfig
 import doobie.Transactor
 import doobie.hikari.HikariTransactor

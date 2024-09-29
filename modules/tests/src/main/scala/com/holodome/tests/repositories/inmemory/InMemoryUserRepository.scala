@@ -1,14 +1,15 @@
-package com.holodome.tests.repositories
-
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all._
-import com.holodome.domain.repositories.UserRepository
-import com.holodome.domain.users._
+package com.holodome.tests.repositories.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F] {
+import com.holodome.domain.repositories.UserRepository
+import com.holodome.domain.users.*
+
+import cats.data.OptionT
+import cats.effect.Sync
+import cats.syntax.all.*
+
+final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F]:
 
   private val map = new TrieMap[UserId, User]
 
@@ -43,4 +44,3 @@ final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F] {
         map.addOne(value.id -> newUser)
       }
     }
-}

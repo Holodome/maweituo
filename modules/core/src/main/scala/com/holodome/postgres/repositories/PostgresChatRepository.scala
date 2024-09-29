@@ -1,7 +1,7 @@
 package com.holodome.postgres.repositories
 
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.messages.{Chat, ChatId}
+import com.holodome.domain.messages.{ Chat, ChatId }
 import com.holodome.domain.repositories.ChatRepository
 import com.holodome.domain.users.UserId
 import com.holodome.postgres.sql.codecs.given

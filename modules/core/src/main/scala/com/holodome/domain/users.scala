@@ -1,12 +1,12 @@
 package com.holodome.domain.users
 
-import com.holodome.utils.{IdNewtype, Newtype}
+import com.holodome.utils.{ IdNewtype, Newtype }
 
 import cats.Show
 import cats.derived.*
 import cats.kernel.Eq
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
-import io.circe.{Codec, Decoder}
+import io.circe.{ Codec, Decoder }
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
 

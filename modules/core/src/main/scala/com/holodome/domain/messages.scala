@@ -9,7 +9,7 @@ import com.holodome.utils.{IdNewtype, Newtype}
 
 import cats.Show
 import cats.derived.*
-import io.circe.{Codec, Decoder, Encoder, Json}
+import io.circe.{ Codec, Decoder, Encoder, Json }
 
 type ChatId = ChatId.Type
 object ChatId extends IdNewtype

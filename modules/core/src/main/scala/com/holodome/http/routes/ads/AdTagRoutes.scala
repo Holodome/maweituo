@@ -12,7 +12,7 @@ import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.server.{ AuthMiddleware, Router }
 
 final case class AdTagRoutes[F[_]: Concurrent: JsonDecoder](ads: AdService[F]) extends Http4sDsl[F]:
 

@@ -1,7 +1,7 @@
 package com.holodome.postgres.repositories
 
 import com.holodome.domain.ads.AdId
-import com.holodome.domain.images.{Image, ImageId}
+import com.holodome.domain.images.{ Image, ImageId }
 import com.holodome.domain.repositories.AdImageRepository
 import com.holodome.postgres.sql.codecs.given
 

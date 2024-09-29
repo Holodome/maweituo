@@ -1,12 +1,12 @@
 package com.holodome.modules
 
-import com.holodome.auth.{JwtExpire, JwtTokens}
+import com.holodome.auth.{ JwtExpire, JwtTokens }
 import com.holodome.config.*
 import com.holodome.domain.Id
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.minio.MinioObjectStorage
 import com.holodome.infrastructure.redis.RedisEphemeralDict
-import com.holodome.infrastructure.{EphemeralDict, ObjectStorage}
+import com.holodome.infrastructure.{ EphemeralDict, ObjectStorage }
 
 import cats.MonadThrow
 import cats.effect.Async

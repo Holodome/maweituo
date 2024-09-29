@@ -2,7 +2,7 @@ package com.holodome.interpreters
 
 import com.holodome.domain.messages.*
 import com.holodome.domain.repositories.MessageRepository
-import com.holodome.domain.services.{IAMService, MessageService}
+import com.holodome.domain.services.{ IAMService, MessageService }
 import com.holodome.domain.users.UserId
 import com.holodome.effects.TimeSource
 

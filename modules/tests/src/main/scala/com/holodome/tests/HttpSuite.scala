@@ -1,5 +1,9 @@
 package com.holodome.tests
 
+import java.nio.charset.StandardCharsets
+
+import scala.util.control.NoStackTrace
+
 import cats.Applicative
 import cats.effect.IO
 import cats.syntax.all.*
@@ -11,16 +15,13 @@ import org.typelevel.log4cats.Logger
 import weaver.scalacheck.Checkers
 import weaver.{ Expectations, SimpleIOSuite, SourceLocation }
 
-import java.nio.charset.StandardCharsets
-import scala.util.control.NoStackTrace
-
 trait HttpSuite extends SimpleIOSuite with Checkers:
 
   case object DummyError extends NoStackTrace
 
   def expectHttpBodyAndStatus[A: Encoder](routes: HttpRoutes[IO], req: Request[IO])(
       expectedBody: A,
-      expectedStatus: Status
+      expectedStatus: org.http4s.Status
   )(using loc: SourceLocation): IO[Expectations] =
     routes.run(req).value.flatMap {
       case Some(resp) =>
@@ -32,7 +33,7 @@ trait HttpSuite extends SimpleIOSuite with Checkers:
     }
 
   def expectHttpStatus(routes: HttpRoutes[IO], req: Request[IO])(
-      expectedStatus: Status
+      expectedStatus: org.http4s.Status
   )(using loc: SourceLocation): IO[Expectations] =
     routes.run(req).value.map {
       case Some(resp) => expect.same(resp.status, expectedStatus)(loc = loc)
@@ -46,7 +47,7 @@ trait HttpSuite extends SimpleIOSuite with Checkers:
     }
 
   def expectHttpStatusLogged(routes: HttpRoutes[IO], req: Request[IO])(
-      expectedStatus: Status
+      expectedStatus: org.http4s.Status
   )(using loc: SourceLocation, l: Logger[IO]): IO[Expectations] =
     routes
       .run(req)

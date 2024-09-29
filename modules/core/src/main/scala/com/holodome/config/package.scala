@@ -6,11 +6,11 @@ import java.util.UUID
 import scala.concurrent.duration.FiniteDuration
 
 import com.holodome.utils.given
-import com.holodome.utils.{Newtype, Wrapper}
+import com.holodome.utils.{ Newtype, Wrapper }
 
 import cats.syntax.all.*
-import ciris.{ConfigDecoder, Secret}
-import com.comcast.ip4s.{Host, Port}
+import ciris.{ ConfigDecoder, Secret }
+import com.comcast.ip4s.{ Host, Port }
 
 type JwtAccessSecret = JwtAccessSecret.Type
 object JwtAccessSecret extends Newtype[String]

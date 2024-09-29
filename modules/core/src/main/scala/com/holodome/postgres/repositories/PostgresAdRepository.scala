@@ -1,6 +1,6 @@
 package com.holodome.postgres.repositories
 
-import com.holodome.domain.ads.{AdId, Advertisement}
+import com.holodome.domain.ads.{ AdId, Advertisement }
 import com.holodome.domain.repositories.AdvertisementRepository
 import com.holodome.domain.users.*
 import com.holodome.postgres.sql.codecs.given

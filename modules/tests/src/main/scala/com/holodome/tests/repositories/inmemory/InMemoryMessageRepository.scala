@@ -1,13 +1,14 @@
-package com.holodome.tests.repositories
+package com.holodome.tests.repositories.inmemory
 
-import cats.effect.Sync
+import scala.collection.concurrent.TrieMap
+
 import com.holodome.domain.messages
 import com.holodome.domain.messages.Message
 import com.holodome.domain.repositories.MessageRepository
 
-import scala.collection.concurrent.TrieMap
+import cats.effect.Sync
 
-class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F] {
+class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
 
   private val map = new TrieMap[Message, Unit]
 
@@ -15,4 +16,3 @@ class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F] {
     Sync[F].delay { map.keys.toList }
 
   override def send(message: Message): F[Unit] = Sync[F].delay { map.addOne(message -> ()) }
-}

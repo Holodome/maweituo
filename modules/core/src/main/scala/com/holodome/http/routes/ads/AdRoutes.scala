@@ -2,7 +2,7 @@ package com.holodome.http.routes.ads
 
 import com.holodome.domain.ads.*
 import com.holodome.domain.services.AdService
-import com.holodome.domain.users.{AuthedUser, UserId}
+import com.holodome.domain.users.{ AuthedUser, UserId }
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar
 
@@ -11,8 +11,8 @@ import cats.syntax.all.*
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{AuthMiddleware, Router}
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.server.{ AuthMiddleware, Router }
+import org.http4s.{ AuthedRoutes, HttpRoutes }
 
 final case class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F]) extends Http4sDsl[F]:
 

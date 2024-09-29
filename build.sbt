@@ -14,22 +14,10 @@ lazy val commonSettings = Seq(
     "-feature",
     "-language:implicitConversions",
     "-deprecation",
-    "-Wunused:imports"
+    "-Wunused:imports",
+    "-Ykind-projector:underscores"
   )
 )
-ThisBuild / libraryDependencies ++= {
-  if (scalaVersion.value.startsWith("3.")) Seq.empty
-  else
-    Seq(
-      compilerPlugin(("org.typelevel" %% "kind-projector" % "0.13.2").cross(CrossVersion.full))
-    )
-}
-ThisBuild / scalacOptions ++= {
-  CrossVersion.partialVersion(scalaVersion.value) match {
-    case Some((3, _))       => Seq("-Ykind-projector:underscores")
-    case Some((2, 12 | 13)) => Seq("-Xsource:3", "-P:kind-projector:underscore-placeholders")
-  }
-}
 
 val CatsVersion            = "2.9.0"
 val CatsEffectVersion      = "3.3.12"
@@ -59,7 +47,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core)
+  .aggregate(core, tests)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
@@ -99,24 +87,21 @@ lazy val core = (project in file("modules/core"))
     )
   )
 
-// lazy val tests = (project in file("modules/tests"))
-//   .dependsOn(core)
-//   .settings(
-//     commonSettings,
-//     name := "maweituo-tests",
-//     publish / skip := true,
-//     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
-//     libraryDependencies ++= Seq(
-//       "com.disneystreaming" %% "weaver-cats"        % WeaverVersion,
-//       "com.disneystreaming" %% "weaver-discipline"  % WeaverVersion,
-//       "com.disneystreaming" %% "weaver-scalacheck"  % WeaverVersion,
-//       "org.typelevel"       %% "log4cats-noop"      % Log4CatsVersion,
-//       "org.typelevel"       %% "cats-laws"          % CatsVersion,
-//       "dev.optics"          %% "monocle-law"        % MonocleVersion,
-//       "eu.timepit"          %% "refined-scalacheck" % RefinedVersion,
-//       "org.mockito"         %% "mockito-scala-cats" % MockitoVersion
-//     )
-//   )
+lazy val tests = (project in file("modules/tests"))
+  .dependsOn(core)
+  .settings(
+    commonSettings,
+    name           := "maweituo-tests",
+    publish / skip := true,
+    testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
+    libraryDependencies ++= Seq(
+      "com.disneystreaming" %% "weaver-cats"        % WeaverVersion,
+      "com.disneystreaming" %% "weaver-discipline"  % WeaverVersion,
+      "com.disneystreaming" %% "weaver-scalacheck"  % WeaverVersion,
+      "org.typelevel"       %% "log4cats-noop"      % Log4CatsVersion,
+      "org.typelevel"       %% "cats-laws"          % CatsVersion,
+    )
+  )
 
 // lazy val it = (project in file("modules/it"))
 //   .dependsOn(tests)

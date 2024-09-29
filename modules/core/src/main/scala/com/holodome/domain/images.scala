@@ -2,7 +2,7 @@ package com.holodome.domain.images
 
 import com.holodome.domain.ads.AdId
 import com.holodome.infrastructure.OBSId
-import com.holodome.utils.IdNewtype
+import com.holodome.utils.{ IdNewtype, Newtype }
 
 import cats.data.{ EitherT, OptionT }
 import cats.derived.*
@@ -10,7 +10,6 @@ import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{ MonadThrow, Show }
 import org.http4s.*
-import com.holodome.utils.Newtype
 
 type ImageId = ImageId.Type
 object ImageId extends IdNewtype

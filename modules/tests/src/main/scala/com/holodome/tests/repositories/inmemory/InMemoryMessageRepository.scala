@@ -1,12 +1,12 @@
 package com.holodome.tests.repositories.inmemory
 
 import scala.collection.concurrent.TrieMap
-import cats.syntax.all.given
-import com.holodome.domain.messages.Message
-import com.holodome.domain.messages.ChatId
+
+import com.holodome.domain.messages.{ ChatId, Message }
 import com.holodome.domain.repositories.MessageRepository
 
 import cats.effect.Sync
+import cats.syntax.all.given
 
 private final class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
 

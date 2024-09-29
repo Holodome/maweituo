@@ -2,27 +2,28 @@ package com.holodome.cassandra
 
 import cats.Show
 import cats.effect.IO
-import cats.syntax.all._
+import cats.syntax.all.*
 import com.holodome.cassandra.repositories.CassandraChatRepository
 import com.holodome.domain.errors.InvalidChatId
 import com.holodome.domain.messages.Chat
-import com.holodome.tests.generators.{adIdGen, chatIdGen, userIdGen}
+import com.holodome.tests.generators.{ adIdGen, chatIdGen, userIdGen }
 
-object CassandraChatRepositorySuite extends CassandraSuite {
+object CassandraChatRepositorySuite extends CassandraSuite:
   given Show[Chat] = Show.show(_ => "Chat")
   test("basic operations work") { cassandra =>
-    val gen = for {
-      id       <- chatIdGen
-      adId     <- adIdGen
-      adAuthor <- userIdGen
-      client   <- userIdGen
-    } yield Chat(id, adId, adAuthor, client)
+    val gen =
+      for
+        id       <- chatIdGen
+        adId     <- adIdGen
+        adAuthor <- userIdGen
+        client   <- userIdGen
+      yield Chat(id, adId, adAuthor, client)
     forall(gen) { chat =>
       val repo = CassandraChatRepository.make[IO](cassandra)
-      for {
+      for
         _ <- repo.create(chat)
         c <- repo.find(chat.id).getOrRaise(InvalidChatId(chat.id))
-      } yield expect.all(
+      yield expect.all(
         c.id === chat.id,
         c.client === chat.client,
         c.adAuthor === chat.adAuthor,
@@ -30,4 +31,3 @@ object CassandraChatRepositorySuite extends CassandraSuite {
       )
     }
   }
-}

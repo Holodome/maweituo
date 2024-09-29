@@ -1,4 +1,4 @@
-package com.holodome.domain
+package com.holodome.domain.errors
 
 import scala.util.control.NoStackTrace
 
@@ -7,29 +7,25 @@ import com.holodome.domain.images.*
 import com.holodome.domain.messages.*
 import com.holodome.domain.users.*
 
-package object errors:
+final case class InvalidAccess(violator: UserId) extends NoStackTrace
 
-  sealed trait ApplicationError extends NoStackTrace
+final case class InvalidUserId(userid: UserId)       extends NoStackTrace
+final case class NoUserFound(username: Username)     extends NoStackTrace
+final case class InvalidEmail(email: Email)          extends NoStackTrace
+final case class UserNameInUse(username: Username)   extends NoStackTrace
+final case class UserEmailInUse(email: Email)        extends NoStackTrace
+final case class InvalidPassword(username: Username) extends NoStackTrace
 
-  final case class InvalidAccess(reason: String) extends ApplicationError
+final case class InvalidChatId(chatId: ChatId)       extends NoStackTrace
+final case class ChatAccessForbidden(chatId: ChatId) extends NoStackTrace
 
-  final case class InvalidUserId(userid: UserId)       extends ApplicationError
-  final case class NoUserFound(username: Username)     extends ApplicationError
-  final case class InvalidEmail(email: Email)          extends ApplicationError
-  final case class UserNameInUse(username: Username)   extends ApplicationError
-  final case class UserEmailInUse(email: Email)        extends ApplicationError
-  final case class InvalidPassword(username: Username) extends ApplicationError
+final case class InvalidImageId(imageId: ImageId)    extends NoStackTrace
+final case class InternalImageUnsync(reason: String) extends NoStackTrace
 
-  final case class InvalidChatId(chatId: ChatId)       extends ApplicationError
-  final case class ChatAccessForbidden(chatId: ChatId) extends ApplicationError
+final case class InvalidAdId(id: AdId)                                extends NoStackTrace
+final case class CannotCreateChatWithMyself(adId: AdId, user: UserId) extends NoStackTrace
+final case class ChatAlreadyExists(adId: AdId, clientId: UserId)      extends NoStackTrace
+final case class NotAnAuthor(adId: AdId, userId: UserId)              extends NoStackTrace
 
-  final case class InvalidImageId(imageId: ImageId)    extends ApplicationError
-  final case class InternalImageUnsync(reason: String) extends ApplicationError
-
-  final case class InvalidAdId(id: AdId)                                extends ApplicationError
-  final case class CannotCreateChatWithMyself(adId: AdId, user: UserId) extends ApplicationError
-  final case class ChatAlreadyExists(adId: AdId, clientId: UserId)      extends ApplicationError
-  final case class NotAnAuthor(adId: AdId, userId: UserId)              extends ApplicationError
-
-  final case class DatabaseEncodingError(reason: String) extends ApplicationError
-  final case class FeedError(reason: String)             extends ApplicationError
+final case class DatabaseEncodingError(reason: String) extends NoStackTrace
+final case class FeedError(reason: String)             extends NoStackTrace

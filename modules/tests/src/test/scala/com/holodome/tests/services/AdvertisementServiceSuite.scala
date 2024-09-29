@@ -10,8 +10,8 @@ import com.holodome.tests.repositories.inmemory.*
 import com.holodome.tests.repositories.stubs.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
+import cats.data.NonEmptyList
 import cats.effect.IO
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
@@ -55,11 +55,11 @@ object Adadsuite extends SimpleIOSuite with Checkers:
         userId <- users.create(reg)
         adId   <- ads.create(userId, createAd)
         ad     <- ads.get(adId)
-      yield expect.all(
-        ad.title === createAd.title,
-        ad.id === adId,
-        ad.authorId === userId
-      )
+      yield NonEmptyList.of(
+        expect.same(ad.title, createAd.title),
+        expect.same(ad.id, adId),
+        expect.same(ad.authorId, userId)
+      ).reduce
     }
   }
 
@@ -71,8 +71,8 @@ object Adadsuite extends SimpleIOSuite with Checkers:
         adId   <- ads.create(userId, createAd)
         _      <- ads.get(adId)
         _      <- ads.delete(adId, userId)
-        x      <- ads.get(adId).map(Some(_)).recoverWith { case InvalidAdId(_) => None.pure[IO] }
-      yield expect.all(x.isEmpty)
+        x      <- ads.get(adId).attempt
+      yield expect.same(Left(InvalidAdId(adId)), x)
     }
   }
 
@@ -90,8 +90,8 @@ object Adadsuite extends SimpleIOSuite with Checkers:
         otherId <- users.create(otherReg)
         adId    <- ads.create(userId, createAd)
         _       <- ads.get(adId)
-        x       <- ads.delete(adId, otherId).map(Some(_)).recoverWith { case NotAnAuthor(_, _) => None.pure[IO] }
-        _       <- ads.get(adId)
-      yield expect.all(x.isEmpty)
+        x       <- ads.delete(adId, otherId).attempt
+        a       <- ads.get(adId)
+      yield expect.same(Left(NotAnAuthor(adId, otherId)), x) and expect.same(a.title, createAd.title)
     }
   }

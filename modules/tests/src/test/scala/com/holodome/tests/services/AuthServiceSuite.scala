@@ -16,11 +16,11 @@ import com.holodome.utils.given
 import cats.effect.IO
 import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
+import org.scalacheck.Gen
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import org.scalacheck.Gen
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers:
 

@@ -53,6 +53,6 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers:
         data <- images.get(i)
         d1   <- data.data.compile.toVector
         d2   <- imgCont.data.compile.toVector
-      yield expect.all(d1 == d2)
+      yield expect.same(d1, d2)
     }
   }

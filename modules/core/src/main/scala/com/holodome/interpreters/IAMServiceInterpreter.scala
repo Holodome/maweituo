@@ -37,7 +37,7 @@ object IAMServiceInterpreter:
     def authUserModification(target: UserId, userId: UserId): F[Unit] =
       (target === userId)
         .guard[Option]
-        .fold(InvalidAccess("User update not authd").raiseError[F, Unit])(Applicative[F].pure)
+        .fold(InvalidAccess(userId).raiseError[F, Unit])(Applicative[F].pure)
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
       user === chat.adAuthor || user === chat.client

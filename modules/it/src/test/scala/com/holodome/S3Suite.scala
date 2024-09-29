@@ -9,7 +9,7 @@ import weaver.scalacheck.Checkers
 
 import scala.util.Random
 
-object S3Suite extends SimpleIOSuite with Checkers {
+object S3Suite extends SimpleIOSuite with Checkers:
 
   test("basic minio operations work") {
     val key         = OBSId("test")
@@ -20,13 +20,12 @@ object S3Suite extends SimpleIOSuite with Checkers {
       .endpoint("http://localhost:9000")
       .credentials("minioadmin", "minioadmin")
       .build()
-    for {
+    for
       storage <- MinioObjectStorage.make[IO]("", minio, "maweituo")
       x       <- storage.get(key).value
       _       <- storage.putStream(key, valueStream, value.length)
       y       <- storage.get(key).getOrRaise(new RuntimeException(""))
       _       <- storage.delete(key)
       d1      <- y.compile.toVector
-    } yield expect.all(x.isEmpty, d1 sameElements value)
+    yield expect.all(x.isEmpty, d1 sameElements value)
   }
-}

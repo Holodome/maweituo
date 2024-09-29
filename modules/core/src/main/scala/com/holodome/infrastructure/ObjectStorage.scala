@@ -1,9 +1,9 @@
 package com.holodome.infrastructure
 
+import com.holodome.domain.images.ImageUrl
 import com.holodome.utils.Newtype
 
 import cats.data.OptionT
-import com.holodome.domain.images.ImageUrl
 
 trait ObjectStorage[F[_]]:
   def makeUrl(id: OBSId): OBSUrl

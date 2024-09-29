@@ -10,7 +10,6 @@ import com.holodome.tests.repositories.stubs.RepositoryStubFactory
 import com.holodome.tests.services.stubs.*
 
 import cats.effect.IO
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
@@ -61,13 +60,8 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
       for
         u1 <- users.create(reg)
         ad <- ads.create(u1, createAd)
-        x <- chats
-          .create(ad, u1)
-          .map(Some(_))
-          .recoverWith { case CannotCreateChatWithMyself(_, _) =>
-            None.pure[IO]
-          }
-      yield expect.all(x.isEmpty)
+        x  <- chats.create(ad, u1).attempt
+      yield expect.same(Left(CannotCreateChatWithMyself(ad, u1)), x)
     }
   }
 
@@ -85,12 +79,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
         u2 <- users.create(otherReg)
         ad <- ads.create(u1, createAd)
         _  <- chats.create(ad, u2)
-        x <- chats
-          .create(ad, u2)
-          .map(Some(_))
-          .recoverWith { case ChatAlreadyExists(_, _) =>
-            None.pure[IO]
-          }
-      yield expect.all(x.isEmpty)
+        x  <- chats.create(ad, u2).attempt
+      yield expect.same(Left(ChatAlreadyExists(ad, u2)), x)
     }
   }

@@ -2,7 +2,7 @@ package com.holodome.tests.services
 
 import java.util.UUID
 
-import com.holodome.domain.errors.{ InvalidAccess, InvalidUserId }
+import com.holodome.domain.errors.*
 import com.holodome.domain.services.UserService
 import com.holodome.domain.users.UserId
 import com.holodome.interpreters.*
@@ -11,6 +11,7 @@ import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
 import com.holodome.tests.repositories.stubs.RepositoryStubFactory
 
+import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
@@ -37,13 +38,45 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("can't register user with same email") {
+    val users = makeTestUsers
+    val gen =
+      for
+        r1 <- registerGen
+        r2 <- registerGen
+      yield r1 -> r2
+    forall(gen) { (r1, r2_0) =>
+      val r2 = r2_0.copy(email = r1.email)
+      for
+        _ <- users.create(r1)
+        x <- users.create(r2).attempt
+      yield expect.same(Left(UserEmailInUse(r1.email)), x)
+    }
+  }
+
+  test("can't register user with same name") {
+    val users = makeTestUsers
+    val gen =
+      for
+        r1 <- registerGen
+        r2 <- registerGen
+      yield r1 -> r2
+    forall(gen) { (r1, r2_0) =>
+      val r2 = r2_0.copy(name = r1.name)
+      for
+        _ <- users.create(r1)
+        x <- users.create(r2).attempt
+      yield expect.same(Left(UserNameInUse(r1.name)), x)
+    }
+  }
+
   test("register and find work") {
     val users = makeTestUsers
     forall(registerGen) { register =>
       for
         id <- users.create(register)
         u  <- users.get(id)
-      yield expect.all(u.id === id)
+      yield expect.same(id, u.id)
     }
   }
 
@@ -53,7 +86,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
       for
         id <- users.create(register)
         u  <- users.getByName(register.name)
-      yield expect.all(u.id === id)
+      yield expect.same(id, u.id)
     }
   }
 
@@ -61,13 +94,10 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     val users = makeTestUsers
     forall(registerGen) { register =>
       for
-        id <- users.create(register)
-        _  <- users.delete(id, id)
-        found <- users
-          .get(id)
-          .map(Some(_))
-          .recoverWith { case InvalidUserId(_) => None.pure[IO] }
-      yield expect.all(found.isEmpty)
+        id    <- users.create(register)
+        _     <- users.delete(id, id)
+        found <- users.get(id).attempt
+      yield expect.same(Left(InvalidUserId(id)), found)
     }
   }
 
@@ -82,14 +112,15 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
       for
         newId   <- users.create(register)
         otherId <- users.create(other)
-        x <- users
-          .delete(newId, otherId)
-          .map(Some(_))
-          .recover { case InvalidAccess(_) =>
-            None
-          }
-        _ <- users.get(newId)
-      yield expect.all(x.isEmpty)
+        x       <- users.delete(newId, otherId).attempt
+        u       <- users.get(newId)
+      yield NonEmptyList
+        .of(
+          expect.same(Left(InvalidAccess(otherId)), x),
+          expect.same(newId, u.id),
+          expect.same(register.name, u.name),
+          expect.same(register.email, u.email)
+        ).reduce
     }
   }
 
@@ -128,13 +159,13 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
         newId <- users.create(register)
         newUpd = upd.copy(id = newId)
         prior <- users.get(newId)
-        x     <- users.update(newUpd, id).map(Some(_)).recover { case InvalidAccess(_) => None }
+        x     <- users.update(newUpd, id).attempt
         got   <- users.get(newId)
-      yield expect.all(
-        x.isEmpty,
-        got.hashedPassword === prior.hashedPassword,
-        got.name === prior.name,
-        got.email === prior.email
-      )
+      yield NonEmptyList.of(
+        expect.same(Left(InvalidAccess(id)), x),
+        expect.same(prior.hashedPassword, got.hashedPassword),
+        expect.same(prior.name, got.name),
+        expect.same(prior.email, got.email)
+      ).reduce
     }
   }

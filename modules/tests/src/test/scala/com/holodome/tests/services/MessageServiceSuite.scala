@@ -12,13 +12,14 @@ import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
 import com.holodome.tests.repositories.stubs.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
+import cats.MonadThrow
+import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import cats.MonadThrow
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
@@ -79,12 +80,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
         _       <- msgs.send(chat, u2, msg)
         history <- msgs.history(chat, u2)
       yield matches(history.messages) { case List(m) =>
-        expect.all(
-          m.text === msg.text,
-          m.chat === chat,
-          m.at.getEpochSecond === epoch,
-          m.sender === u2
-        )
+        NonEmptyList.of(
+          expect.same(m.text, msg.text),
+          expect.same(m.chat, chat),
+          expect.same(m.at.getEpochSecond, epoch),
+          expect.same(m.sender, u2)
+        ).reduce
       }
     }
   }
@@ -106,13 +107,8 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
         u3   <- users.create(reg3)
         ad   <- ads.create(u1, createAd)
         chat <- chats.create(ad, u2)
-        x <- msgs
-          .send(chat, u3, msg)
-          .map(Some(_))
-          .recoverWith { case ChatAccessForbidden(_) =>
-            None.pure[IO]
-          }
-      yield expect.all(x.isEmpty)
+        x    <- msgs.send(chat, u3, msg).attempt
+      yield expect.same(Left(ChatAccessForbidden(chat)), x)
     }
   }
 
@@ -134,12 +130,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
         ad   <- ads.create(u1, createAd)
         chat <- chats.create(ad, u2)
         _    <- msgs.send(chat, u2, msg)
-        _ <- msgs
-          .history(chat, u3)
-          .map(Some(_))
-          .recoverWith { case ChatAccessForbidden(_) =>
-            None.pure[IO]
-          }
-      yield expect.all(true)
+        x    <- msgs.history(chat, u3).attempt
+      yield expect.same(Left(ChatAccessForbidden(chat)), x)
     }
   }

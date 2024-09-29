@@ -10,18 +10,15 @@ import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{ MonadThrow, Show }
 import org.http4s.*
+import com.holodome.utils.Newtype
 
 type ImageId = ImageId.Type
 object ImageId extends IdNewtype
 
-final case class ImageUrl(value: String):
-  def toObsID: OBSId = OBSId(value)
-
-object ImageUrl:
-  def fromObsId(id: OBSId): ImageUrl =
-    ImageUrl(id.value)
-
-  given Conversion[OBSId, ImageUrl] = ImageUrl.fromObsId(_)
+type ImageUrl = ImageUrl.Type
+object ImageUrl extends Newtype[String]:
+  given Conversion[ImageUrl, OBSId] with
+    def apply(x: ImageUrl): OBSId = OBSId(x.value)
 
 final case class ImageContentsStream[+F[_]](
     data: fs2.Stream[F, Byte],

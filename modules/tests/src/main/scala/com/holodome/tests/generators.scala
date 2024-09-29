@@ -14,7 +14,7 @@ import org.scalacheck.Gen
 
 def nonEmptyStringGen: Gen[String] =
   Gen
-    .chooseNum(21, 40)
+    .chooseNum(10, 20)
     .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
 
 def nesGen[A](f: String => A): Gen[A] =

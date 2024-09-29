@@ -2,7 +2,7 @@ package com.holodome.tests.services
 
 import com.holodome.auth.JwtTokens
 import com.holodome.domain.errors.NoUserFound
-import com.holodome.domain.services.{AuthService, UserService}
+import com.holodome.domain.services.{ AuthService, UserService }
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
@@ -20,15 +20,17 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import org.scalacheck.Gen
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers:
+
   given Logger[IO] = NoOpLogger[IO]
 
   private def jwtDict: EphemeralDict[IO, JwtToken, UserId]         = InMemoryEphemeralDict.make
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
-  def makeTestUsersAuth: (UserService[F], AuthService[F]) =
-    val tokens   = new TestJwtTokens
+  private def makeTestUsersAuth(tok: JwtToken): (UserService[F], AuthService[F]) =
+    val tokens   = new TestJwtTokens(tok)
     val userRepo = InMemoryRepositoryFactory.users
     val adRepo   = InMemoryRepositoryFactory.ads
     val iam      = IAMServiceInterpreter.make(adRepo, RepositoryStubFactory.chats, RepositoryStubFactory.images)
@@ -36,8 +38,13 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
     val auth     = AuthServiceInterpreter.make[IO](userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
+  private def makeTestUsersAuth0: (UserService[F], AuthService[F]) =
+    makeTestUsersAuth(JwtToken("test"))
+
+  private val jwtGen: Gen[JwtToken] = nesGen(JwtToken.apply)
+
   test("login on invalid user fails") {
-    val (users, auth) = makeTestUsersAuth
+    val (users, auth) = makeTestUsersAuth0
     val gen =
       for
         name     <- usernameGen
@@ -56,8 +63,8 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("unauthenticated user is so") {
-    val (_, auth) = makeTestUsersAuth
-    forall(nesGen(s => JwtToken(s))) { token =>
+    forall(jwtGen) { token =>
+      val (_, auth) = makeTestUsersAuth(token)
       for
         x <- auth.authed(token).value
       yield expect.all(x.isEmpty)
@@ -65,19 +72,29 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("login works") {
-    val (users, auth) = makeTestUsersAuth
-    forall(registerGen) { reg =>
+    val gen =
+      for
+        reg <- registerGen
+        jwt <- jwtGen
+      yield reg -> jwt
+    forall(gen) { (reg, jwt) =>
+      val (users, auth) = makeTestUsersAuth(jwt)
       for
         id     <- users.create(reg)
         (t, _) <- auth.login(reg.name, reg.password)
         x      <- auth.authed(t).value
-      yield expect.all(t.value === "token", x.fold(false)(_.id === id))
+      yield expect.all(t === jwt, x.fold(false)(_.id === id))
     }
   }
 
   test("logout works") {
-    val (users, auth) = makeTestUsersAuth
-    forall(registerGen) { reg =>
+    val gen =
+      for
+        reg <- registerGen
+        jwt <- jwtGen
+      yield reg -> jwt
+    forall(gen) { (reg, jwt) =>
+      val (users, auth) = makeTestUsersAuth(jwt)
       for
         id     <- users.create(reg)
         (t, _) <- auth.login(reg.name, reg.password)
@@ -87,5 +104,5 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-protected final class TestJwtTokens(tok: String = "test") extends JwtTokens[IO]:
-  def create(userId: UserId): IO[JwtToken] = JwtToken(tok).pure[IO]
+protected final class TestJwtTokens(tok: JwtToken) extends JwtTokens[IO]:
+  def create(userId: UserId): IO[JwtToken] = tok.pure[IO]

@@ -18,16 +18,17 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import cats.MonadThrow
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
   given Logger[IO] = NoOpLogger[IO]
 
   private val epoch: Long = 1711564995
-  private given TimeSource[IO] = new:
+  private given timeSource: TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
 
-  def makeTestServies: (UserService[F], AdService[F], ChatService[F], MessageService[F]) =
+  private def makeTestServies: (UserService[F], AdService[F], ChatService[F], MessageService[F]) =
     val telemetry      = new TelemetryServiceStub[IO]
     val userRepo       = InMemoryRepositoryFactory.users
     val adRepo         = InMemoryRepositoryFactory.ads
@@ -38,8 +39,27 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
     val feedRepository = RepositoryStubFactory.feed
     val ads            = AdServiceInterpreter.make[IO](adRepo, RepositoryStubFactory.tags, feedRepository, iam, telemetry)
     val chats          = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry, iam)
-    val msgs           = MessageServiceInterpreter.make[IO](msgRepo, iam)
+    val msgs           = MessageServiceInterpreter.make[IO](msgRepo, iam)(using MonadThrow[IO], timeSource)
     (users, ads, chats, msgs)
+
+  test("empty chat is empty") {
+    val (users, ads, chats, msgs) = makeTestServies
+    val gen =
+      for
+        reg      <- registerGen
+        otherReg <- registerGen
+        ad       <- createAdRequestGen
+      yield (reg, otherReg, ad)
+    forall(gen) { case (reg, otherReg, createAd) =>
+      for
+        u1      <- users.create(reg)
+        u2      <- users.create(otherReg)
+        ad      <- ads.create(u1, createAd)
+        chat    <- chats.create(ad, u2)
+        history <- msgs.history(chat, u2)
+      yield expect.all(history.messages.isEmpty)
+    }
+  }
 
   test("basic message works") {
     val (users, ads, chats, msgs) = makeTestServies

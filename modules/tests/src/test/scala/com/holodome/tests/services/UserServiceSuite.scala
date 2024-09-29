@@ -10,7 +10,6 @@ import com.holodome.tests.generators.{ registerGen, updateUserGen, userIdGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
 import com.holodome.tests.repositories.stubs.RepositoryStubFactory
-import com.holodome.tests.services.stubs.IAMServiceStub
 
 import cats.effect.IO
 import cats.syntax.all.*
@@ -20,12 +19,13 @@ import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object UserServiceSuite extends SimpleIOSuite with Checkers:
+
   given Logger[IO] = NoOpLogger[IO]
 
   private def makeTestUsers: UserService[IO] =
-    val iam  = new IAMServiceStub[IO]
     val repo = InMemoryRepositoryFactory.users
     val ads  = RepositoryStubFactory.ads
+    val iam  = IAMServiceInterpreter.make[IO](ads, RepositoryStubFactory.chats, RepositoryStubFactory.images)
     UserServiceInterpreter.make(repo, ads, iam)
 
   test("register user works") {

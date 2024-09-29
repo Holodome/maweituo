@@ -45,7 +45,7 @@ object AdImageServiceInterpreter:
       for
         _     <- iam.authImageDelete(imageId, authenticated)
         image <- imageRepo.get(imageId)
-        _     <- objectStorage.delete(image.url.toObsID)
+        _     <- objectStorage.delete(image.url)
         _     <- imageRepo.delete(imageId)
         _ <- Logger[F].info(
           s"Deleted image ${image.id} from ad ${image.adId} by user $authenticated"
@@ -56,7 +56,7 @@ object AdImageServiceInterpreter:
       for
         image <- imageRepo.get(imageId)
         stream <- objectStorage
-          .get(image.url.toObsID)
+          .get(image.url)
           .map(ImageContentsStream(_, image.mediaType, image.size))
           .getOrRaise(InternalImageUnsync("Image object not found"))
       yield stream

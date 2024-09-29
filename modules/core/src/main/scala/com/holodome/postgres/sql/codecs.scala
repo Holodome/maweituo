@@ -30,4 +30,5 @@ object CodecsOrphans:
   given Meta[ChatId]      = Meta[UUID].timap(ChatId.apply)(_.value)
   given Meta[MessageText] = Meta[String].timap(MessageText.apply)(_.value)
 
-  given Meta[ImageId] = Meta[UUID].timap(ImageId.apply)(_.value)
+  given Meta[ImageId]  = Meta[UUID].timap(ImageId.apply)(_.value)
+  given Meta[ImageUrl] = Meta[String].timap(ImageUrl.apply)(_.value)

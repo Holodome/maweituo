@@ -90,7 +90,7 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate com.holodome.storage (http://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate com.maweituo.storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
 # Bower dependency directory (https://bower.io/)

@@ -1,9 +1,9 @@
 package com.holodome
 
 import cats.effect.{ IO, Resource }
-import com.holodome.infrastructure.redis.RedisEphemeralDict
-import com.holodome.tests.ResourceSuite
-import com.holodome.tests.generators.nonEmptyStringGen
+import maweituo.infrastructure.redis.RedisEphemeralDict
+import maweituo.tests.ResourceSuite
+import maweituo.tests.generators.nonEmptyStringGen
 import dev.profunktor.redis4cats.log4cats.*
 import dev.profunktor.redis4cats.{ Redis, RedisCommands }
 import org.typelevel.log4cats.Logger

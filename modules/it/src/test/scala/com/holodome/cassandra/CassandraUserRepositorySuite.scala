@@ -1,12 +1,12 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repos.CassandraUserRepository
-import com.holodome.domain.errors.NoUserFound
-import com.holodome.domain.users.User
-import com.holodome.tests.generators.userGen
+import maweituo.cassandra.repos.CassandraUserRepository
+import maweituo.domain.errors.NoUserFound
+import maweituo.domain.users.User
+import maweituo.tests.generators.userGen
 
 object CassandraUserRepositorySuite extends CassandraSuite:
 

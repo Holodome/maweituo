@@ -1,8 +1,8 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.effect.{IO, Resource}
 import com.datastax.oss.driver.api.core.CqlSession
-import com.holodome.tests.ResourceSuite
+import maweituo.tests.ResourceSuite
 import com.ringcentral.cassandra4io.CassandraSession
 
 import java.net.InetSocketAddress

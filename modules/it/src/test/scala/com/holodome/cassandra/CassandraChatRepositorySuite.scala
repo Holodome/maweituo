@@ -1,12 +1,12 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repos.CassandraChatRepository
-import com.holodome.domain.errors.InvalidChatId
-import com.holodome.domain.messages.Chat
-import com.holodome.tests.generators.{ adIdGen, chatIdGen, userIdGen }
+import maweituo.cassandra.repos.CassandraChatRepository
+import maweituo.domain.errors.InvalidChatId
+import maweituo.domain.messages.Chat
+import maweituo.tests.generators.{ adIdGen, chatIdGen, userIdGen }
 
 object CassandraChatRepositorySuite extends CassandraSuite:
   given Show[Chat] = Show.show(_ => "Chat")

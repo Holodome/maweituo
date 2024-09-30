@@ -27,5 +27,5 @@ docker-compose -f deploy/it.docker-compose.yml up -d
 ./scripts/test-populate.py
 docker-compose -f deploy/it.docker-compose.yml down 
 docker-compose -f deploy/docker-compose.yml up -d 
-grpcurl -plaintext -import-path proto -proto proto/rec.proto -d '{}' 'localhost:11223' com.holodome.proto.RecommendationService/learn
+grpcurl -plaintext -import-path proto -proto proto/rec.proto -d '{}' 'localhost:11223' com.maweituo.proto.RecommendationService/learn
 ```

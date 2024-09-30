@@ -4,7 +4,7 @@ import sbtprotoc.ProtocPlugin.autoImport.PB
 
 ThisBuild / scalaVersion := "3.4.0"
 ThisBuild / version      := "0.1.0"
-ThisBuild / organization := "com.holodome"
+ThisBuild / organization := "maweituo"
 
 autoCompilerPlugins := true
 

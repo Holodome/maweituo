@@ -1,12 +1,12 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repos.CassandraAdImageRepository
-import com.holodome.domain.errors.InvalidImageId
-import com.holodome.domain.images.{ Image, MediaType }
-import com.holodome.tests.generators.*
+import maweituo.cassandra.repos.CassandraAdImageRepository
+import maweituo.domain.errors.InvalidImageId
+import maweituo.domain.images.{ Image, MediaType }
+import maweituo.tests.generators.*
 
 object CassandraAdImageRepositorySuite extends CassandraSuite:
   private given Show[Image] = Show.show(_ => "Image")

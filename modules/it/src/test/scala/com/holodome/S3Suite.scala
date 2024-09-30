@@ -1,8 +1,8 @@
 package com.holodome
 
 import cats.effect.IO
-import com.holodome.infrastructure.ObjectStorage.OBSId
-import com.holodome.infrastructure.minio.MinioObjectStorage
+import maweituo.infrastructure.ObjectStorage.OBSId
+import maweituo.infrastructure.minio.MinioObjectStorage
 import io.minio.MinioAsyncClient
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers

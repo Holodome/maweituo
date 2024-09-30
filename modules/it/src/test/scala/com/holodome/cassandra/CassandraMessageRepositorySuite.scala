@@ -1,11 +1,11 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repos.CassandraMessageRepository
-import com.holodome.domain.messages.Message
-import com.holodome.tests.generators.*
+import maweituo.cassandra.repos.CassandraMessageRepository
+import maweituo.domain.messages.Message
+import maweituo.tests.generators.*
 
 object CassandraMessageRepositorySuite extends CassandraSuite:
   given Show[Message] = Show.show(_ => "Message")

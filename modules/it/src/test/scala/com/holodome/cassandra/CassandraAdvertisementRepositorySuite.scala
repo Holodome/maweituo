@@ -1,12 +1,12 @@
-package com.holodome.cassandra
+package maweituo.cassandra
 
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repos.CassandraAdRepository
-import com.holodome.domain.ads.Advertisement
-import com.holodome.domain.errors.InvalidAdId
-import com.holodome.tests.generators.adGen
+import maweituo.cassandra.repos.CassandraAdRepository
+import maweituo.domain.ads.Advertisement
+import maweituo.domain.errors.InvalidAdId
+import maweituo.tests.generators.adGen
 
 object CassandraAdRepositorySuite extends CassandraSuite:
   given Show[Advertisement] = Show.show(_ => "Ad")

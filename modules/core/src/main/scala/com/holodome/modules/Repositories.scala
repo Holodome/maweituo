@@ -1,7 +1,11 @@
 package com.holodome.modules
 
-import com.holodome.domain.repositories.*
-import com.holodome.postgres.repositories.*
+import com.holodome.domain.ads.repos.*
+import com.holodome.domain.repos.*
+import com.holodome.domain.users.repos.UserRepository
+import com.holodome.postgres.ads.repos.*
+import com.holodome.postgres.repos.*
+import com.holodome.postgres.repos.users.*
 
 import cats.effect.kernel.Async
 import doobie.util.transactor.Transactor
@@ -9,7 +13,7 @@ import doobie.util.transactor.Transactor
 sealed abstract class Repositories[F[_]]:
   val users: UserRepository[F]
   val ads: AdRepository[F]
-  val tags: TagRepository[F]
+  val tags: AdTagRepository[F]
   val chats: ChatRepository[F]
   val messages: MessageRepository[F]
   val images: AdImageRepository[F]

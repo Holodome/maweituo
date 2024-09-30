@@ -1,7 +1,7 @@
 package com.holodome.http.routes.ads
 
 import com.holodome.domain.ads.*
-import com.holodome.domain.services.AdService
+import com.holodome.domain.ads.services.AdService
 import com.holodome.domain.users.{ AuthedUser, UserId }
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar

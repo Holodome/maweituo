@@ -1,9 +1,9 @@
 package com.holodome.tests.services
 
-import com.holodome.domain.repositories.{AdRepository, ChatRepository}
+import com.holodome.domain.ads.repos.{ AdRepository, ChatRepository }
 import com.holodome.domain.services.IAMService
 import com.holodome.interpreters.IAMServiceInterpreter
-import com.holodome.tests.repositories.*
+import com.holodome.tests.repos.*
 
 import cats.effect.IO
 

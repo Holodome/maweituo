@@ -1,10 +1,10 @@
 package com.holodome.interpreters
 
 import com.holodome.domain.ads.AdId
+import com.holodome.domain.ads.repos.{ AdImageRepository, AdRepository, ChatRepository }
 import com.holodome.domain.errors.{ ChatAccessForbidden, InvalidAccess, NotAnAuthor }
 import com.holodome.domain.images.ImageId
 import com.holodome.domain.messages.{ Chat, ChatId }
-import com.holodome.domain.repositories.{ AdImageRepository, AdRepository, ChatRepository }
 import com.holodome.domain.services.IAMService
 import com.holodome.domain.users.UserId
 

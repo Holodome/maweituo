@@ -1,6 +1,6 @@
 package com.holodome.http.routes.ads
 
-import com.holodome.domain.services.ChatService
+import com.holodome.domain.ads.services.ChatService
 import com.holodome.domain.users.AuthedUser
 import com.holodome.http.Routes
 import com.holodome.http.vars.{ AdIdVar, ChatIdVar }

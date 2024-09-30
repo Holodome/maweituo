@@ -1,12 +1,16 @@
 package com.holodome.tests.ads
 
 import com.holodome.domain.ads.*
+import com.holodome.domain.ads.services.*
 import com.holodome.domain.errors.{ InvalidAdId, NotAnAuthor }
 import com.holodome.domain.services.*
+import com.holodome.domain.users.services.*
 import com.holodome.interpreters.*
+import com.holodome.interpreters.ads.*
+import com.holodome.interpreters.users.*
 import com.holodome.tests.generators.*
-import com.holodome.tests.repositories.*
-import com.holodome.tests.repositories.inmemory.*
+import com.holodome.tests.repos.*
+import com.holodome.tests.repos.inmemory.*
 import com.holodome.tests.services.makeIAMService
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 

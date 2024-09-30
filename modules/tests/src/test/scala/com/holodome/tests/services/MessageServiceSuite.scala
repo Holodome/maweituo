@@ -2,13 +2,17 @@ package com.holodome.tests.services
 
 import java.time.Instant
 
+import com.holodome.domain.ads.services.*
 import com.holodome.domain.errors.ChatAccessForbidden
 import com.holodome.domain.services.*
+import com.holodome.domain.users.services.*
 import com.holodome.effects.TimeSource
 import com.holodome.interpreters.*
+import com.holodome.interpreters.ads.*
+import com.holodome.interpreters.users.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen, sendMessageRequestGen }
-import com.holodome.tests.repositories.*
-import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
+import com.holodome.tests.repos.*
+import com.holodome.tests.repos.inmemory.InMemoryRepositoryFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.MonadThrow

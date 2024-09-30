@@ -3,7 +3,7 @@ package com.holodome.cassandra
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repositories.CassandraAdImageRepository
+import com.holodome.cassandra.repos.CassandraAdImageRepository
 import com.holodome.domain.errors.InvalidImageId
 import com.holodome.domain.images.{ Image, MediaType }
 import com.holodome.tests.generators.*

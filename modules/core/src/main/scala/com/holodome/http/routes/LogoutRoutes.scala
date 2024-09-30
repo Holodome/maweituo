@@ -1,7 +1,7 @@
 package com.holodome.http.routes
 
-import com.holodome.domain.services.AuthService
 import com.holodome.domain.users.AuthedUser
+import com.holodome.domain.users.services.AuthService
 import com.holodome.http.Routes
 
 import cats.MonadThrow

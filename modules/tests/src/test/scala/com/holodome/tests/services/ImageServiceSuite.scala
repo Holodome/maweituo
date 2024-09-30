@@ -1,11 +1,15 @@
 package com.holodome.tests.services
 
+import com.holodome.domain.ads.services.*
 import com.holodome.domain.services.*
+import com.holodome.domain.users.services.*
 import com.holodome.infrastructure.inmemory.InMemoryObjectStorage
 import com.holodome.interpreters.*
+import com.holodome.interpreters.ads.*
+import com.holodome.interpreters.users.*
 import com.holodome.tests.generators.{ createAdRequestGen, imageContentsGen, registerGen }
-import com.holodome.tests.repositories.*
-import com.holodome.tests.repositories.inmemory.*
+import com.holodome.tests.repos.*
+import com.holodome.tests.repos.inmemory.*
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.effect.IO

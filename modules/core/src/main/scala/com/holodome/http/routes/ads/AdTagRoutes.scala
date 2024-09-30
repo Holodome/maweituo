@@ -1,7 +1,7 @@
 package com.holodome.http.routes.ads
 
 import com.holodome.domain.ads.AddTagRequest
-import com.holodome.domain.services.AdTagService
+import com.holodome.domain.ads.services.AdTagService
 import com.holodome.domain.users.AuthedUser
 import com.holodome.http.Routes
 import com.holodome.http.vars.AdIdVar

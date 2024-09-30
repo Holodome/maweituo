@@ -2,9 +2,9 @@ package com.holodome.interpreters
 
 import com.holodome.auth.{ JwtTokens, PasswordHashing }
 import com.holodome.domain.errors.InvalidPassword
-import com.holodome.domain.repositories.UserRepository
-import com.holodome.domain.services.AuthService
 import com.holodome.domain.users.*
+import com.holodome.domain.users.repos.UserRepository
+import com.holodome.domain.users.services.AuthService
 import com.holodome.infrastructure.EphemeralDict
 
 import cats.MonadThrow

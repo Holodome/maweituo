@@ -3,12 +3,14 @@ package com.holodome.tests.services
 import java.util.UUID
 
 import com.holodome.domain.errors.*
-import com.holodome.domain.services.{IAMService, UserService}
+import com.holodome.domain.services.IAMService
 import com.holodome.domain.users.UserId
+import com.holodome.domain.users.services.UserService
 import com.holodome.interpreters.*
+import com.holodome.interpreters.users.*
 import com.holodome.tests.generators.{ registerGen, updateUserGen, userIdGen }
-import com.holodome.tests.repositories.*
-import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
+import com.holodome.tests.repos.*
+import com.holodome.tests.repos.inmemory.InMemoryRepositoryFactory
 
 import cats.data.NonEmptyList
 import cats.effect.IO

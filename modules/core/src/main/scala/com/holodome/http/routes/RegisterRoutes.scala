@@ -1,7 +1,7 @@
 package com.holodome.http.routes
 
-import com.holodome.domain.services.UserService
 import com.holodome.domain.users.RegisterRequest
+import com.holodome.domain.users.services.UserService
 import com.holodome.http.Routes
 
 import cats.effect.Concurrent

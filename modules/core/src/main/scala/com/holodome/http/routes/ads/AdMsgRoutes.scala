@@ -1,8 +1,8 @@
 package com.holodome.http.routes.ads
 
+import com.holodome.domain.ads.services.MessageService
 import com.holodome.domain.messages.*
 import com.holodome.domain.messages.SendMessageRequest.given
-import com.holodome.domain.services.MessageService
 import com.holodome.domain.users.AuthedUser
 import com.holodome.http.Routes
 import com.holodome.http.vars.{ AdIdVar, ChatIdVar }

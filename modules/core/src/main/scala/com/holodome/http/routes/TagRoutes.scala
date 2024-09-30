@@ -1,6 +1,6 @@
 package com.holodome.http.routes
 
-import com.holodome.domain.services.AdTagService
+import com.holodome.domain.ads.services.AdTagService
 import com.holodome.http.Routes
 import com.holodome.http.vars.TagVar
 

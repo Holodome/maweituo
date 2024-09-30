@@ -3,7 +3,7 @@ package com.holodome.cassandra
 import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
-import com.holodome.cassandra.repositories.CassandraUserRepository
+import com.holodome.cassandra.repos.CassandraUserRepository
 import com.holodome.domain.errors.NoUserFound
 import com.holodome.domain.users.User
 import com.holodome.tests.generators.userGen

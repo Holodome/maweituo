@@ -1,8 +1,12 @@
 package com.holodome.modules
 
+import com.holodome.domain.ads.services.{ AdService, AdTagService, ChatService, MessageService }
 import com.holodome.domain.services.*
+import com.holodome.domain.users.services.{ AuthService, UserAdsService, UserService }
 import com.holodome.effects.{ Background, GenUUID, TimeSource }
 import com.holodome.interpreters.*
+import com.holodome.interpreters.ads.*
+import com.holodome.interpreters.users.*
 
 import cats.MonadThrow
 import org.typelevel.log4cats.Logger

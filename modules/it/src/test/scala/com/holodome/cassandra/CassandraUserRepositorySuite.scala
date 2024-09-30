@@ -4,7 +4,7 @@ import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
 import maweituo.cassandra.repos.CassandraUserRepository
-import maweituo.domain.errors.NoUserFound
+import maweituo.domain.errors.NoUserWithName
 import maweituo.domain.users.User
 import maweituo.tests.generators.userGen
 
@@ -17,7 +17,7 @@ object CassandraUserRepositorySuite extends CassandraSuite:
       val repo = CassandraUserRepository.make[IO](cassandra)
       for
         _ <- repo.create(user)
-        u <- repo.find(user.id).getOrRaise(NoUserFound(user.name))
+        u <- repo.find(user.id).getOrRaise(NoUserWithName(user.name))
         _ <- repo.delete(user.id)
       yield expect.all(
         u.id === user.id,

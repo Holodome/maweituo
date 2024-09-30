@@ -6,6 +6,7 @@ import maweituo.tests.repos.*
 import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+
 object InMemoryAdRepositorySuite extends SimpleIOSuite with Checkers:
   private def repo = InMemoryRepositoryFactory.ads[IO]
 

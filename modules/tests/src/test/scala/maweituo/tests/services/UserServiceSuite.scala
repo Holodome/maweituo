@@ -8,7 +8,7 @@ import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
 import maweituo.interpreters.*
 import maweituo.interpreters.users.UserServiceInterpreter
-import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
+import maweituo.tests.generators.{ registerGen, updateUserGen, userIdGen }
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
 import maweituo.tests.services.makeIAMService
@@ -35,7 +35,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     forall(registerGen) { register =>
       for
         _ <- users.create(register)
-      yield expect.all(true)
+      yield success
     }
   }
 
@@ -44,10 +44,9 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     val gen =
       for
         r1 <- registerGen
-        r2 <- registerGen
+        r2 <- registerGen.map(_.copy(email = r1.email))
       yield r1 -> r2
-    forall(gen) { (r1, r2_0) =>
-      val r2 = r2_0.copy(email = r1.email)
+    forall(gen) { (r1, r2) =>
       for
         _ <- users.create(r1)
         x <- users.create(r2).attempt
@@ -60,10 +59,9 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     val gen =
       for
         r1 <- registerGen
-        r2 <- registerGen
+        r2 <- registerGen.map(_.copy(name = r1.name))
       yield r1 -> r2
-    forall(gen) { (r1, r2_0) =>
-      val r2 = r2_0.copy(name = r1.name)
+    forall(gen) { (r1, r2) =>
       for
         _ <- users.create(r1)
         x <- users.create(r2).attempt
@@ -117,7 +115,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
         u       <- users.get(newId)
       yield NonEmptyList
         .of(
-          expect.same(Left(InvalidAccess(otherId)), x),
+          expect.same(Left(UserModificationForbidden(otherId)), x),
           expect.same(newId, u.id),
           expect.same(register.name, u.name),
           expect.same(register.email, u.email)
@@ -163,7 +161,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
         x     <- users.update(newUpd, id).attempt
         got   <- users.get(newId)
       yield NonEmptyList.of(
-        expect.same(Left(InvalidAccess(id)), x),
+        expect.same(Left(UserModificationForbidden(id)), x),
         expect.same(prior.hashedPassword, got.hashedPassword),
         expect.same(prior.name, got.name),
         expect.same(prior.email, got.email)

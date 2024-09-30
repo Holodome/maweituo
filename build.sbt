@@ -10,7 +10,6 @@ autoCompilerPlugins := true
 
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq(
-    "-Ymacro-annotations",
     "-feature",
     "-language:implicitConversions",
     "-deprecation",

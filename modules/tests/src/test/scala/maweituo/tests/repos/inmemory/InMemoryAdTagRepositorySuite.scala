@@ -6,7 +6,8 @@ import maweituo.tests.repos.*
 import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-object InMemoryTagRepositorySuite extends SimpleIOSuite with Checkers:
+
+object InMemoryAdTagRepositorySuite extends SimpleIOSuite with Checkers:
 
   private def repo = InMemoryRepositoryFactory.tags[IO]
 

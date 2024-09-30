@@ -26,7 +26,7 @@ object AdImageServiceInterpreter:
         contents: ImageContentsStream[F]
     ): F[ImageId] =
       for
-        objectId <- GenObjectStorageId[F].make
+        objectId <- GenObjectStorageId[F].genId
         _        <- objectStorage.putStream(objectId, contents.data, contents.dataSize)
         imageId  <- Id.make[F, ImageId]
         image = Image(

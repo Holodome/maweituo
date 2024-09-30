@@ -33,7 +33,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   private given timeSource: TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
 
-  private def makeTestServies: (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
+  private def makeTestServices: (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
     val telemetry             = new TelemetryServiceStub
     val userRepo              = InMemoryRepositoryFactory.users
     val adRepo                = InMemoryRepositoryFactory.ads
@@ -48,7 +48,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
     (users, ads, chats, msgs)
 
   test("empty chat is empty") {
-    val (users, ads, chats, msgs) = makeTestServies
+    val (users, ads, chats, msgs) = makeTestServices
     val gen =
       for
         reg      <- registerGen
@@ -67,7 +67,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("basic message works") {
-    val (users, ads, chats, msgs) = makeTestServies
+    val (users, ads, chats, msgs) = makeTestServices
     val gen =
       for
         reg      <- registerGen
@@ -95,7 +95,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("unable to send to forbidden chat") {
-    val (users, ads, chats, msgs) = makeTestServies
+    val (users, ads, chats, msgs) = makeTestServices
     val gen =
       for
         reg1 <- registerGen
@@ -117,7 +117,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("unable to gen history for forbidden chat") {
-    val (users, ads, chats, msgs) = makeTestServies
+    val (users, ads, chats, msgs) = makeTestServices
     val gen =
       for
         reg1 <- registerGen

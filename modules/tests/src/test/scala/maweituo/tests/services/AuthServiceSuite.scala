@@ -1,10 +1,10 @@
 package maweituo.tests.services
 
 import maweituo.auth.JwtTokens
-import maweituo.domain.errors.NoUserFound
+import maweituo.domain.errors.{InvalidPassword, NoUserWithName}
 import maweituo.domain.services.*
-import maweituo.domain.users.UserId
 import maweituo.domain.users.services.*
+import maweituo.domain.users.{AuthedUser, UserId}
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
 import maweituo.interpreters.*
@@ -55,22 +55,17 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
       yield name -> password
     forall(gen) { case (name, password) =>
       for
-        x <- auth
-          .login(name, password)
-          .as(None)
-          .recoverWith { case NoUserFound(name) =>
-            Some(name).pure[IO]
-          }
-      yield expect.all(x.fold(false)(_ === name))
+        x <- auth.login(name, password).attempt
+      yield expect.same(Left(NoUserWithName(name)), x)
     }
   }
 
-  test("unauthenticated user is so") {
+  test("unauthenticated user") {
     forall(jwtGen) { token =>
       val (_, auth) = makeTestUsersAuth(token)
       for
         x <- auth.authed(token).value
-      yield expect.all(x.isEmpty)
+      yield expect(x.isEmpty)
     }
   }
 
@@ -86,7 +81,22 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
         id     <- users.create(reg)
         (t, _) <- auth.login(reg.name, reg.password)
         x      <- auth.authed(t).value
-      yield expect.all(t === jwt, x.fold(false)(_.id === id))
+      yield expect.same(t, jwt) and expect.same(Some(AuthedUser(id)), x)
+    }
+  }
+
+  test("login with invalid password") {
+    val gen =
+      for
+        reg  <- registerGen
+        pass <- passwordGen
+      yield reg -> pass
+    val (users, auth) = makeTestUsersAuth0
+    forall(gen) { (reg, pass) =>
+      for
+        _ <- users.create(reg)
+        x <- auth.login(reg.name, pass).attempt
+      yield expect.same(Left(InvalidPassword(reg.name)), x)
     }
   }
 
@@ -103,7 +113,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
         (t, _) <- auth.login(reg.name, reg.password)
         _      <- auth.logout(id, t)
         x      <- auth.authed(t).value
-      yield expect.all(x.isEmpty)
+      yield expect(x.isEmpty)
     }
   }
 

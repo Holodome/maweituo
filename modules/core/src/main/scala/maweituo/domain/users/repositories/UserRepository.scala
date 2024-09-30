@@ -21,7 +21,7 @@ object UserRepository:
       repo.find(userId).getOrRaise(InvalidUserId(userId))
 
     def getByName(name: Username): F[User] =
-      repo.findByName(name).getOrRaise(NoUserFound(name))
+      repo.findByName(name).getOrRaise(NoUserWithName(name))
 
     def getByEmail(email: Email): F[User] =
-      repo.findByEmail(email).getOrRaise(InvalidEmail(email))
+      repo.findByEmail(email).getOrRaise(NoUserWithEmail(email))

@@ -15,7 +15,7 @@ object PasswordHashing:
   ): HashedSaltedPassword = HashedSaltedPassword(sha256(password.value + salt.value))
 
   def genSalt[F[_]: GenUUID: Functor]: F[PasswordSalt] =
-    GenUUID[F].make map { uuid => PasswordSalt(uuid.toString) }
+    GenUUID[F].gen map { uuid => PasswordSalt(uuid.toString) }
 
   private def sha256(string: String): String =
     MessageDigest

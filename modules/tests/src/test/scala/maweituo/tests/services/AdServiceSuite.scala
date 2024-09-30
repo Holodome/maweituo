@@ -2,7 +2,7 @@ package maweituo.tests.ads
 
 import maweituo.domain.ads.*
 import maweituo.domain.ads.services.AdService
-import maweituo.domain.errors.{ InvalidAdId, NotAnAuthor }
+import maweituo.domain.errors.{AdModificationForbidden, InvalidAdId, InvalidUserId}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.*
 import maweituo.interpreters.*
@@ -62,6 +62,15 @@ object Adadsuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("get invalid") {
+    val (users, ads) = makeTestUserAds
+    forall(userIdGen) { id =>
+      for
+        x <- users.get(id).attempt
+      yield expect.same(Left(InvalidUserId(id)), x)
+    }
+  }
+
   test("delete works") {
     val (users, ads) = makeTestUserAds
     forall(regAdGen) { case (reg, createAd) =>
@@ -91,6 +100,6 @@ object Adadsuite extends SimpleIOSuite with Checkers:
         _       <- ads.get(adId)
         x       <- ads.delete(adId, otherId).attempt
         a       <- ads.get(adId)
-      yield expect.same(Left(NotAnAuthor(adId, otherId)), x) and expect.same(a.title, createAd.title)
+      yield expect.same(Left(AdModificationForbidden(adId, otherId)), x) and expect.same(a.title, createAd.title)
     }
   }

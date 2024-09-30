@@ -1,5 +1,6 @@
 package com.holodome.domain.users
 
+import com.holodome.auth.PasswordHashing
 import com.holodome.utils.{ IdNewtype, Newtype }
 
 import cats.Show
@@ -9,7 +10,6 @@ import dev.profunktor.auth.jwt.JwtSymmetricAuth
 import io.circe.{ Codec, Decoder }
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
-import com.holodome.auth.PasswordHashing
 
 type UserId = UserId.Type
 object UserId extends IdNewtype

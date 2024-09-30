@@ -1,6 +1,6 @@
 package com.holodome.http.routes
 
-import com.holodome.domain.services.UserService
+import com.holodome.domain.services.{ UserAdsService, UserService }
 import com.holodome.domain.users.*
 import com.holodome.http.Routes
 import com.holodome.http.vars.UserIdVar
@@ -15,7 +15,10 @@ import org.http4s.server.{ AuthMiddleware, Router }
 import org.http4s.{ AuthedRoutes, HttpRoutes }
 import org.typelevel.log4cats.Logger
 
-final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](userService: UserService[F]) extends Http4sDsl[F]:
+final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
+    userService: UserService[F],
+    userAdsService: UserAdsService[F]
+) extends Http4sDsl[F]:
   private val prefixPath = "/users"
 
   private val publicRoutes: HttpRoutes[F] = HttpRoutes.of {
@@ -23,7 +26,7 @@ final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](userService: 
       userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
 
     case GET -> Root / UserIdVar(userId) / "ads" =>
-      userService.getAds(userId).flatMap(Ok(_))
+      userAdsService.getAds(userId).flatMap(Ok(_))
   }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

@@ -18,9 +18,8 @@ object AdImageServiceInterpreter:
   def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID: Logger](
       imageRepo: AdImageRepository[F],
       adRepo: AdRepository[F],
-      objectStorage: ObjectStorage[F],
-      iam: IAMService[F]
-  ): AdImageService[F] = new:
+      objectStorage: ObjectStorage[F]
+  )(using iam: IAMService[F]): AdImageService[F] = new:
     def upload(
         uploader: UserId,
         adId: AdId,

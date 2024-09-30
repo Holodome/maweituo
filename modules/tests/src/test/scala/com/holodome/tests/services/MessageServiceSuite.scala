@@ -9,7 +9,6 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen, sendMessageRequestGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
-import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.MonadThrow
@@ -23,24 +22,25 @@ import weaver.scalacheck.Checkers
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
-  given Logger[IO] = NoOpLogger[IO]
+  given Logger[IO]           = NoOpLogger[IO]
+  given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
   private val epoch: Long = 1711564995
   private given timeSource: TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
 
-  private def makeTestServies: (UserService[F], AdService[F], ChatService[F], MessageService[F]) =
-    val telemetry      = new TelemetryServiceStub[IO]
-    val userRepo       = InMemoryRepositoryFactory.users
-    val adRepo         = InMemoryRepositoryFactory.ads
-    val chatRepo       = InMemoryRepositoryFactory.chats
-    val msgRepo        = InMemoryRepositoryFactory.msgs
-    val iam            = IAMServiceInterpreter.make(adRepo, chatRepo, RepositoryStubFactory.images)
-    val users          = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
-    val feedRepository = RepositoryStubFactory.feed
-    val ads            = AdServiceInterpreter.make[IO](adRepo, RepositoryStubFactory.tags, feedRepository, iam, telemetry)
-    val chats          = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry, iam)
-    val msgs           = MessageServiceInterpreter.make[IO](msgRepo, iam)(using MonadThrow[IO], timeSource)
+  private def makeTestServies: (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
+    val telemetry             = new TelemetryServiceStub
+    val userRepo              = InMemoryRepositoryFactory.users
+    val adRepo                = InMemoryRepositoryFactory.ads
+    val chatRepo              = InMemoryRepositoryFactory.chats
+    val msgRepo               = InMemoryRepositoryFactory.msgs
+    given iam: IAMService[IO] = makeIAMService(adRepo, chatRepo)
+    val users                 = UserServiceInterpreter.make(userRepo)
+    val feedRepository        = RepositoryStubFactory.feed
+    val ads                   = AdServiceInterpreter.make(adRepo, feedRepository)
+    val chats                 = ChatServiceInterpreter.make(chatRepo, adRepo)
+    val msgs                  = MessageServiceInterpreter.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
     (users, ads, chats, msgs)
 
   test("empty chat is empty") {

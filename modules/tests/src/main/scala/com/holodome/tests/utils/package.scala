@@ -1,7 +1,8 @@
 package com.holodome.tests.utils
 
+import com.holodome.domain.users.User
+
 import cats.Show
 import cats.derived.*
-import com.holodome.domain.users.User
 
 given Show[User] = Show.derived

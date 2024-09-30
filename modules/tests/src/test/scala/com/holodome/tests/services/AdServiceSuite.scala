@@ -7,7 +7,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.*
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.*
-import com.holodome.tests.repositories.RepositoryStubFactory
+import com.holodome.tests.services.makeIAMService
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.data.NonEmptyList
@@ -18,21 +18,16 @@ import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object Adadsuite extends SimpleIOSuite with Checkers:
-  given Logger[IO] = NoOpLogger[IO]
 
-  private def makeTestUserAds: (UserService[F], AdService[F]) =
-    val userRepo = InMemoryRepositoryFactory.users[IO]
-    val adRepo   = InMemoryRepositoryFactory.ads[IO]
-    val iam      = IAMServiceInterpreter.make(adRepo, RepositoryStubFactory.chats, RepositoryStubFactory.images)
-    val users    = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
-    val ads = AdServiceInterpreter
-      .make[IO](
-        adRepo,
-        RepositoryStubFactory.tags,
-        RepositoryStubFactory.feed,
-        iam,
-        new TelemetryServiceStub[IO]
-      )
+  given Logger[IO]           = NoOpLogger[IO]
+  given TelemetryService[IO] = new TelemetryServiceStub[IO]
+
+  private def makeTestUserAds: (UserService[IO], AdService[IO]) =
+    val userRepo         = InMemoryRepositoryFactory.users
+    val adRepo           = InMemoryRepositoryFactory.ads
+    given IAMService[IO] = makeIAMService(adRepo)
+    val users            = UserServiceInterpreter.make(userRepo)
+    val ads              = AdServiceInterpreter.make(adRepo, RepositoryStubFactory.feed)
     (users, ads)
 
   private val regAdGen =

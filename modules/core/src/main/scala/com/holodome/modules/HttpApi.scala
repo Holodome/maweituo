@@ -38,9 +38,9 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
   private val adChatRoutes  = AdChatRoutes[F](services.chats).routes(usersMiddleware)
   private val adImageRoutes = AdImageRoutes[F](services.images).routes(usersMiddleware)
   private val adMsgRoutes   = AdMsgRoutes[F](services.messages).routes(usersMiddleware)
-  private val adTagRoutes   = AdTagRoutes[F](services.ads).routes(usersMiddleware)
+  private val adTagRoutes   = AdTagRoutes[F](services.tags).routes(usersMiddleware)
 
-  private val userRoutes = UserRoutes[F](services.users).routes(usersMiddleware)
+  private val userRoutes = UserRoutes[F](services.users, services.userAds).routes(usersMiddleware)
 
   private val tagRoutes = TagRoutes[F](services.tags).routes
 

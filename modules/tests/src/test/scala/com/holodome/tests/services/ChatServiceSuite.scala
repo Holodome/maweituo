@@ -6,7 +6,6 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.*
-import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.*
 
 import cats.effect.IO
@@ -17,18 +16,19 @@ import weaver.scalacheck.Checkers
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers:
 
-  given Logger[IO] = NoOpLogger[IO]
+  given Logger[IO]           = NoOpLogger[IO]
+  given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
   def makeTestServies: (UserService[F], AdService[F], ChatService[F]) =
-    val telemetry      = new TelemetryServiceStub[IO]
-    val userRepo       = InMemoryRepositoryFactory.users
-    val adRepo         = InMemoryRepositoryFactory.ads
-    val chatRepo       = InMemoryRepositoryFactory.chats
-    val iam            = IAMServiceInterpreter.make(adRepo, chatRepo, RepositoryStubFactory.images)
-    val users          = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
-    val feedRepository = RepositoryStubFactory.feed
-    val ads            = AdServiceInterpreter.make[IO](adRepo, RepositoryStubFactory.tags, feedRepository, iam, telemetry)
-    val chats          = ChatServiceInterpreter.make[IO](chatRepo, adRepo, telemetry, iam)
+    val telemetry        = new TelemetryServiceStub
+    val userRepo         = InMemoryRepositoryFactory.users
+    val adRepo           = InMemoryRepositoryFactory.ads
+    val chatRepo         = InMemoryRepositoryFactory.chats
+    given IAMService[IO] = makeIAMService(adRepo, chatRepo)
+    val users            = UserServiceInterpreter.make(userRepo)
+    val feedRepository   = RepositoryStubFactory.feed
+    val ads              = AdServiceInterpreter.make(adRepo, feedRepository)
+    val chats            = ChatServiceInterpreter.make(chatRepo, adRepo)
     (users, ads, chats)
 
   test("create works") {

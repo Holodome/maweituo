@@ -1,13 +1,13 @@
 package com.holodome.tests.repositories.inmemory
 
+import com.holodome.domain.messages.Chat
 import com.holodome.tests.generators.*
 import com.holodome.tests.repositories.*
 
 import cats.effect.IO
+import org.scalacheck.Gen
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import org.scalacheck.Gen
-import com.holodome.domain.messages.Chat
 
 object InMemoryChatRepositorySuite extends SimpleIOSuite with Checkers:
 

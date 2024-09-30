@@ -6,7 +6,6 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, imageContentsGen, registerGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.*
-import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.effect.IO
@@ -17,24 +16,18 @@ import weaver.scalacheck.Checkers
 
 object ImageServiceSuite extends SimpleIOSuite with Checkers:
 
-  given Logger[IO] = NoOpLogger[IO]
+  given Logger[IO]           = NoOpLogger[IO]
+  given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
   private def makeTestServices: (UserService[IO], AdService[IO], AdImageService[IO]) =
-    val userRepo  = InMemoryRepositoryFactory.users
-    val adRepo    = InMemoryRepositoryFactory.ads
-    val iam       = IAMServiceInterpreter.make(adRepo, RepositoryStubFactory.chats, RepositoryStubFactory.images)
-    val imageRepo = InMemoryRepositoryFactory.images
-    val os        = new InMemoryObjectStorage[IO]
-    val users     = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
-    val ads = AdServiceInterpreter
-      .make[IO](
-        adRepo,
-        RepositoryStubFactory.tags,
-        RepositoryStubFactory.feed,
-        iam,
-        new TelemetryServiceStub[IO]
-      )
-    val images = AdImageServiceInterpreter.make[IO](imageRepo, adRepo, os, iam)
+    val userRepo         = InMemoryRepositoryFactory.users
+    val adRepo           = InMemoryRepositoryFactory.ads
+    given IAMService[IO] = makeIAMService(adRepo)
+    val imageRepo        = InMemoryRepositoryFactory.images
+    val os               = new InMemoryObjectStorage
+    val users            = UserServiceInterpreter.make(userRepo)
+    val ads              = AdServiceInterpreter.make(adRepo, RepositoryStubFactory.feed)
+    val images           = AdImageServiceInterpreter.make(imageRepo, adRepo, os)
     (users, ads, images)
 
   test("create works") {

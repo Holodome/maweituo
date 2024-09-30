@@ -2,7 +2,7 @@ package com.holodome.tests.services
 
 import com.holodome.auth.JwtTokens
 import com.holodome.domain.errors.NoUserFound
-import com.holodome.domain.services.{ AuthService, UserService }
+import com.holodome.domain.services.{AuthService, IAMService, TelemetryService, UserService}
 import com.holodome.domain.users.UserId
 import com.holodome.infrastructure.EphemeralDict
 import com.holodome.infrastructure.inmemory.InMemoryEphemeralDict
@@ -10,7 +10,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.*
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
-import com.holodome.tests.repositories.RepositoryStubFactory
+import com.holodome.tests.services.stubs.TelemetryServiceStub
 import com.holodome.utils.given
 
 import cats.effect.IO
@@ -24,21 +24,22 @@ import weaver.scalacheck.Checkers
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers:
 
-  given Logger[IO] = NoOpLogger[IO]
+  given Logger[IO]           = NoOpLogger[IO]
+  given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
   private def jwtDict: EphemeralDict[IO, JwtToken, UserId]         = InMemoryEphemeralDict.make
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
-  private def makeTestUsersAuth(tok: JwtToken): (UserService[F], AuthService[F]) =
-    val tokens   = new TestJwtTokens(tok)
-    val userRepo = InMemoryRepositoryFactory.users
-    val adRepo   = InMemoryRepositoryFactory.ads
-    val iam      = IAMServiceInterpreter.make(adRepo, RepositoryStubFactory.chats, RepositoryStubFactory.images)
-    val users    = UserServiceInterpreter.make[IO](userRepo, adRepo, iam)
-    val auth     = AuthServiceInterpreter.make[IO](userRepo, authedUsersDict, jwtDict, tokens)
+  private def makeTestUsersAuth(tok: JwtToken): (UserService[IO], AuthService[IO]) =
+    val tokens           = new TestJwtTokens(tok)
+    val userRepo         = InMemoryRepositoryFactory.users
+    val adRepo           = InMemoryRepositoryFactory.ads
+    given IAMService[IO] = makeIAMService(adRepo)
+    val users            = UserServiceInterpreter.make(userRepo)
+    val auth             = AuthServiceInterpreter.make(userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
-  private def makeTestUsersAuth0: (UserService[F], AuthService[F]) =
+  private def makeTestUsersAuth0: (UserService[IO], AuthService[IO]) =
     makeTestUsersAuth(JwtToken("test"))
 
   private val jwtGen: Gen[JwtToken] = nesGen(JwtToken.apply)

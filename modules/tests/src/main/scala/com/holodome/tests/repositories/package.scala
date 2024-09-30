@@ -1,19 +1,13 @@
 package com.holodome.tests.repositories
 
+import com.holodome.domain.ads.{AdId, Advertisement}
+import com.holodome.domain.images.*
+import com.holodome.domain.messages.*
 import com.holodome.domain.repositories.*
-import com.holodome.domain.users.Email
-import com.holodome.domain.users.UpdateUserInternal
-import com.holodome.domain.users.Username
-import com.holodome.domain.users.User
-import com.holodome.domain.users.UserId
+import com.holodome.domain.users.{Email, UpdateUserInternal, User, UserId, Username}
+
 import cats.data.OptionT
 import cats.effect.IO
-import com.holodome.domain.ads.AdId
-import com.holodome.domain.ads.Advertisement
-import com.holodome.domain.messages.*
-import com.holodome.domain.messages.ChatId
-import com.holodome.domain.messages.Message
-import com.holodome.domain.images.*
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))

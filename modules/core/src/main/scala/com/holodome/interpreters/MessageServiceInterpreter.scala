@@ -11,9 +11,8 @@ import cats.syntax.all.*
 
 object MessageServiceInterpreter:
   def make[F[_]: MonadThrow](
-      msgRepo: MessageRepository[F],
-      iam: IAMService[F]
-  )(using clock: TimeSource[F]): MessageService[F] = new:
+      msgRepo: MessageRepository[F]
+  )(using clock: TimeSource[F], iam: IAMService[F]): MessageService[F] = new:
     def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit] =
       for
         _   <- iam.authChatAccess(chatId, senderId)

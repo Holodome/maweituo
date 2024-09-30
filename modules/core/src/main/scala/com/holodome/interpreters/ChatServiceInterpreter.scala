@@ -17,10 +17,8 @@ import org.typelevel.log4cats.Logger
 object ChatServiceInterpreter:
   def make[F[_]: MonadThrow: GenUUID: Logger](
       chatRepo: ChatRepository[F],
-      adRepo: AdRepository[F],
-      telemetry: TelemetryService[F],
-      iam: IAMService[F]
-  ): ChatService[F] = new:
+      adRepo: AdRepository[F]
+  )(using telemetry: TelemetryService[F], iam: IAMService[F]): ChatService[F] = new:
     def get(id: ChatId, requester: UserId): F[Chat] =
       iam.authChatAccess(id, requester) *> chatRepo.get(id)
 

@@ -2,7 +2,7 @@ package maweituo.tests.services.stubs
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.services.TelemetryService
-import maweituo.domain.{ ads, users }
+import maweituo.domain.{ads, users}
 
 import cats.Applicative
 

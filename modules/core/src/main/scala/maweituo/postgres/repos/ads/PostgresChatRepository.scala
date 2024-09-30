@@ -1,7 +1,7 @@
 package maweituo.postgres.ads.repos
 
 import maweituo.domain.ads.AdId
-import maweituo.domain.ads.messages.{ Chat, ChatId }
+import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.ChatRepository
 import maweituo.domain.users.UserId
 import maweituo.postgres.sql.codecs.given

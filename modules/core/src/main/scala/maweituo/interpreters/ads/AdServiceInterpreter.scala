@@ -5,9 +5,9 @@ import maweituo.domain.ads.*
 import maweituo.domain.ads.repos.AdRepository
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.repos.FeedRepository
-import maweituo.domain.services.{ IAMService, TelemetryService }
+import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
-import maweituo.effects.{ GenUUID, TimeSource }
+import maweituo.effects.{GenUUID, TimeSource}
 
 import cats.MonadThrow
 import cats.syntax.all.*

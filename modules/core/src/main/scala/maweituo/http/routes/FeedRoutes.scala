@@ -8,12 +8,12 @@ import maweituo.http.dto.FeedDTO
 import maweituo.http.vars.UserIdVar
 
 import cats.syntax.all.*
-import cats.{ MonadThrow, Parallel }
+import cats.{MonadThrow, Parallel}
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{ AuthMiddleware, Router }
-import org.http4s.{ AuthedRoutes, HttpRoutes }
+import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes}
 
 final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F]) extends Http4sDsl[F]:
 

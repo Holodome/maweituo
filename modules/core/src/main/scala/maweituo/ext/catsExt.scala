@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture
 
 import scala.concurrent.Future
 
-import _root_.cats.effect.{ Async, Sync }
+import _root_.cats.effect.{Async, Sync}
 
 object catsExt:
   def liftFuture[F[_]: Async, R](r: => Future[R]): F[R] =

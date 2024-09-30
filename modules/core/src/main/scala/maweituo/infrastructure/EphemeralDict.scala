@@ -2,7 +2,7 @@ package maweituo.infrastructure
 
 import cats.data.OptionT
 import cats.syntax.all.*
-import cats.{ Functor, Monad }
+import cats.{Functor, Monad}
 
 trait EphemeralDict[F[_], A, B]:
   def store(a: A, b: B): F[Unit]

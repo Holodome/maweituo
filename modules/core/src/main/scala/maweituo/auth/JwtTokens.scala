@@ -5,10 +5,10 @@ import maweituo.domain.users.UserId
 
 import cats.Monad
 import cats.syntax.all.*
-import dev.profunktor.auth.jwt.{ JwtSecretKey, JwtToken, jwtEncode }
+import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken, jwtEncode}
 import io.circe.Encoder
 import io.circe.syntax.EncoderOps
-import pdi.jwt.{ JwtAlgorithm, JwtClaim }
+import pdi.jwt.{JwtAlgorithm, JwtClaim}
 
 trait JwtTokens[F[_]]:
   def create(userId: UserId): F[JwtToken]

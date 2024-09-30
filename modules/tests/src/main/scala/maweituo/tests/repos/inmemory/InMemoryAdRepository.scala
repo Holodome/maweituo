@@ -3,7 +3,7 @@ package maweituo.tests.repos.inmemory
 import scala.collection.concurrent.TrieMap
 
 import maweituo.domain.ads.repos.AdRepository
-import maweituo.domain.ads.{ AdId, Advertisement }
+import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.UserId
 
 import cats.data.OptionT

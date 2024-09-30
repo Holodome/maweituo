@@ -1,7 +1,7 @@
 package maweituo.postgres.ads.repos
 
 import maweituo.domain.ads.repos.AdRepository
-import maweituo.domain.ads.{ AdId, Advertisement }
+import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.*
 import maweituo.postgres.sql.codecs.given
 

@@ -3,12 +3,12 @@ package maweituo.interpreters.ads
 import maweituo.domain.Id
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
-import maweituo.domain.ads.repos.{ AdImageRepository, AdRepository }
+import maweituo.domain.ads.repos.{AdImageRepository, AdRepository}
 import maweituo.domain.errors.InternalImageUnsync
-import maweituo.domain.services.{ AdImageService, IAMService }
+import maweituo.domain.services.{AdImageService, IAMService}
 import maweituo.domain.users.UserId
 import maweituo.effects.GenUUID
-import maweituo.infrastructure.{ GenObjectStorageId, ObjectStorage }
+import maweituo.infrastructure.{GenObjectStorageId, ObjectStorage}
 
 import cats.MonadThrow
 import cats.syntax.all.*

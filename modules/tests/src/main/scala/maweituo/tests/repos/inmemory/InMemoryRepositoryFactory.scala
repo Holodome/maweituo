@@ -1,5 +1,5 @@
 package maweituo.tests.repos.inmemory
-import maweituo.domain.ads.repos.{ AdImageRepository, AdRepository, AdTagRepository, ChatRepository, MessageRepository }
+import maweituo.domain.ads.repos.{AdImageRepository, AdRepository, AdTagRepository, ChatRepository, MessageRepository}
 import maweituo.domain.users.repos.UserRepository
 
 import cats.effect.kernel.Sync

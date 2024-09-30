@@ -2,7 +2,7 @@ package maweituo.interpreters.users
 
 import maweituo.auth.PasswordHashing
 import maweituo.domain.Id
-import maweituo.domain.errors.{ UserEmailInUse, UserNameInUse }
+import maweituo.domain.errors.{UserEmailInUse, UserNameInUse}
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.*
 import maweituo.domain.users.UpdateUserInternal.fromReq

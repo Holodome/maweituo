@@ -1,12 +1,12 @@
 package maweituo.modules
 
-import maweituo.auth.{ JwtExpire, JwtTokens }
+import maweituo.auth.{JwtExpire, JwtTokens}
 import maweituo.config.*
 import maweituo.domain.Id
 import maweituo.domain.users.UserId
 import maweituo.infrastructure.minio.MinioObjectStorage
 import maweituo.infrastructure.redis.RedisEphemeralDict
-import maweituo.infrastructure.{ EphemeralDict, ObjectStorage }
+import maweituo.infrastructure.{EphemeralDict, ObjectStorage}
 
 import cats.MonadThrow
 import cats.effect.Async

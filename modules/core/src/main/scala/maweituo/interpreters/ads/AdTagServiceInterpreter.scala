@@ -2,7 +2,7 @@ package maweituo.interpreters.ads
 
 import maweituo.domain.ads.repos.AdTagRepository
 import maweituo.domain.ads.services.AdTagService
-import maweituo.domain.ads.{ AdId, AdTag }
+import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
 

@@ -1,6 +1,6 @@
 package maweituo.domain.ads.repos
 
-import maweituo.domain.ads.{ AdId, AdTag }
+import maweituo.domain.ads.{AdId, AdTag}
 
 trait AdTagRepository[F[_]]:
   def getAllTags: F[List[AdTag]]

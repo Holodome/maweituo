@@ -4,10 +4,10 @@ import java.time.Instant
 
 import scala.concurrent.duration.FiniteDuration
 
-import maweituo.domain.ads.images.{ Image, ImageId }
-import maweituo.domain.ads.messages.{ Chat, ChatId, Message }
-import maweituo.domain.ads.repos.{ AdImageRepository, AdRepository, AdTagRepository, ChatRepository, MessageRepository }
-import maweituo.domain.ads.{ AdId, AdTag, Advertisement }
+import maweituo.domain.ads.images.{Image, ImageId}
+import maweituo.domain.ads.messages.{Chat, ChatId, Message}
+import maweituo.domain.ads.repos.{AdImageRepository, AdRepository, AdTagRepository, ChatRepository, MessageRepository}
+import maweituo.domain.ads.{AdId, AdTag, Advertisement}
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepository
 import maweituo.domain.users.*

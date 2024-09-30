@@ -1,9 +1,9 @@
 package maweituo.modules
 
-import maweituo.domain.ads.services.{ AdService, AdTagService, ChatService, MessageService }
+import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, MessageService}
 import maweituo.domain.services.*
-import maweituo.domain.users.services.{ AuthService, UserAdsService, UserService }
-import maweituo.effects.{ Background, GenUUID, TimeSource }
+import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
+import maweituo.effects.{Background, GenUUID, TimeSource}
 import maweituo.interpreters.*
 import maweituo.interpreters.ads.*
 import maweituo.interpreters.users.*

@@ -1,13 +1,13 @@
 package maweituo.domain.users
 
 import maweituo.auth.PasswordHashing
-import maweituo.utils.{ IdNewtype, Newtype }
+import maweituo.utils.{IdNewtype, Newtype}
 
 import cats.Show
 import cats.derived.*
 import cats.kernel.Eq
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
-import io.circe.{ Codec, Decoder }
+import io.circe.{Codec, Decoder}
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
 

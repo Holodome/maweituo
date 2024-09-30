@@ -2,10 +2,10 @@ package maweituo.modules
 
 import scala.concurrent.duration.DurationInt
 
-import maweituo.domain.users.{ AuthedUser, UserJwtAuth }
+import maweituo.domain.users.{AuthedUser, UserJwtAuth}
 import maweituo.http.routes.*
 import maweituo.http.routes.ads.*
-import maweituo.http.{ *, given }
+import maweituo.http.{*, given}
 
 import cats.Parallel
 import cats.data.OptionT
@@ -14,7 +14,7 @@ import cats.syntax.all.*
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.*
 import org.http4s.server.middleware.*
-import org.http4s.{ HttpApp, HttpRoutes }
+import org.http4s.{HttpApp, HttpRoutes}
 import org.typelevel.log4cats.Logger
 import pdi.jwt.JwtClaim
 

@@ -13,7 +13,7 @@ import org.http4s.*
 import org.http4s.circe.*
 import org.typelevel.log4cats.Logger
 import weaver.scalacheck.Checkers
-import weaver.{ Expectations, SimpleIOSuite, SourceLocation }
+import weaver.{Expectations, SimpleIOSuite, SourceLocation}
 
 trait HttpSuite extends SimpleIOSuite with Checkers:
 

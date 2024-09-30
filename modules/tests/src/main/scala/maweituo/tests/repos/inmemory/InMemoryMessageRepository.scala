@@ -2,7 +2,7 @@ package maweituo.tests.repos.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import maweituo.domain.ads.messages.{ ChatId, Message }
+import maweituo.domain.ads.messages.{ChatId, Message}
 import maweituo.domain.ads.repos.MessageRepository
 
 import cats.effect.Sync

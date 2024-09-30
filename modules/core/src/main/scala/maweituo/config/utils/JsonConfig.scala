@@ -1,11 +1,11 @@
 package maweituo.config.utils
 
-import java.nio.file.{ Files, Path }
+import java.nio.file.{Files, Path}
 
 import cats.effect.Sync
 import cats.syntax.all.*
-import ciris.{ ConfigError, ConfigKey, ConfigValue }
-import io.circe.{ ACursor, Json }
+import ciris.{ConfigError, ConfigKey, ConfigValue}
+import io.circe.{ACursor, Json}
 
 case class JsonConfig private (json: Json):
   def stringField[F[_]](location: String): ConfigValue[F, String] =

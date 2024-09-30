@@ -2,7 +2,7 @@ package maweituo.infrastructure.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import maweituo.infrastructure.{ OBSId, OBSUrl, ObjectStorage }
+import maweituo.infrastructure.{OBSId, OBSUrl, ObjectStorage}
 
 import cats.data.OptionT
 import cats.effect.Sync

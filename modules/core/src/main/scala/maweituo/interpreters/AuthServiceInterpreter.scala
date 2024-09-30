@@ -1,6 +1,6 @@
 package maweituo.interpreters
 
-import maweituo.auth.{ JwtTokens, PasswordHashing }
+import maweituo.auth.{JwtTokens, PasswordHashing}
 import maweituo.domain.errors.InvalidPassword
 import maweituo.domain.users.*
 import maweituo.domain.users.repos.UserRepository

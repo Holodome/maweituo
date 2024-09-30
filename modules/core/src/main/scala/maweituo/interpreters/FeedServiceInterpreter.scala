@@ -5,7 +5,7 @@ import scala.concurrent.duration.DurationInt
 import maweituo.domain.ads.AdId
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepository
-import maweituo.domain.services.{ FeedService, RecommendationService }
+import maweituo.domain.services.{FeedService, RecommendationService}
 import maweituo.domain.users.UserId
 import maweituo.effects.TimeSource
 

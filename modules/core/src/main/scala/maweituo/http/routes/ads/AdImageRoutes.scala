@@ -4,7 +4,7 @@ import maweituo.domain.ads.images.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.*
 import maweituo.http.Routes
-import maweituo.http.vars.{ AdIdVar, ImageIdVar }
+import maweituo.http.vars.{AdIdVar, ImageIdVar}
 
 import cats.Monad
 import cats.effect.Concurrent
@@ -12,8 +12,8 @@ import cats.syntax.all.*
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
-import org.http4s.server.{ AuthMiddleware, Router }
-import org.http4s.{ AuthedRoutes, HttpRoutes, MediaType }
+import org.http4s.server.{AuthMiddleware, Router}
+import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
 
 final case class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[F]) extends Http4sDsl[F]:
   private val prefixPath = "/ads"

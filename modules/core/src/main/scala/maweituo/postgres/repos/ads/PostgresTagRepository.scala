@@ -1,7 +1,7 @@
 package maweituo.postgres.ads.repos
 
 import maweituo.domain.ads.repos.AdTagRepository
-import maweituo.domain.ads.{ AdId, AdTag }
+import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.postgres.sql.codecs.given
 
 import cats.effect.Async

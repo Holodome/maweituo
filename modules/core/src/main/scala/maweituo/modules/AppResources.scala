@@ -1,9 +1,9 @@
 package maweituo.modules
 
 import maweituo.config.AppConfig
-import maweituo.resources.{ MkHttpClient, MkMinioClient, MkPostgresClient, MkRedisClient }
+import maweituo.resources.{MkHttpClient, MkMinioClient, MkPostgresClient, MkRedisClient}
 
-import cats.effect.{ Async, Resource }
+import cats.effect.{Async, Resource}
 import cats.syntax.all.*
 import dev.profunktor.redis4cats.RedisCommands
 import doobie.Transactor

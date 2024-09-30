@@ -1,13 +1,13 @@
 package maweituo.modules
 
 import maweituo.domain.ads.AdId
-import maweituo.domain.services.{ RecommendationService, TelemetryService }
+import maweituo.domain.services.{RecommendationService, TelemetryService}
 import maweituo.domain.users
 import maweituo.effects.GenUUID
 
 import cats.effect.Concurrent
 import cats.syntax.all.*
-import cats.{ Applicative, MonadThrow }
+import cats.{Applicative, MonadThrow}
 
 sealed abstract class RecsClients[F[_]]:
   val recs: RecommendationService[F]

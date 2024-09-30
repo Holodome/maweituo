@@ -1,6 +1,6 @@
 package maweituo.domain.ads.services
 
-import maweituo.domain.ads.{ AdId, AdTag }
+import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.domain.users.UserId
 
 trait AdTagService[F[_]]:

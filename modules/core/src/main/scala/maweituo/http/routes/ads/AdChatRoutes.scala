@@ -3,7 +3,7 @@ package maweituo.http.routes.ads
 import maweituo.domain.ads.services.ChatService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.Routes
-import maweituo.http.vars.{ AdIdVar, ChatIdVar }
+import maweituo.http.vars.{AdIdVar, ChatIdVar}
 
 import cats.Monad
 import cats.syntax.all.*
@@ -12,7 +12,7 @@ import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{ AuthMiddleware, Router }
+import org.http4s.server.{AuthMiddleware, Router}
 
 final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F]) extends Http4sDsl[F]:
   private val prefixPath = "/ads"

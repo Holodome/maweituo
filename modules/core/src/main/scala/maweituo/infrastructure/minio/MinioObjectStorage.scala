@@ -5,12 +5,12 @@ import java.io.InputStream
 import scala.util.control.NonFatal
 
 import maweituo.ext.catsExt.liftCompletableFuture
-import maweituo.infrastructure.{ OBSId, OBSUrl, ObjectStorage }
+import maweituo.infrastructure.{OBSId, OBSUrl, ObjectStorage}
 
 import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all.*
-import cats.{ Applicative, Monad, MonadThrow }
+import cats.{Applicative, Monad, MonadThrow}
 import io.minio.*
 import io.minio.errors.ErrorResponseException
 

@@ -13,6 +13,7 @@ import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
+import com.holodome.domain.users.UpdateUserInternal.fromReq
 
 object UserServiceInterpreter:
   def make[F[_]: MonadThrow: GenUUID: Logger](
@@ -24,14 +25,7 @@ object UserServiceInterpreter:
       for
         _   <- iam.authUserModification(update.id, authd)
         old <- users.get(update.id)
-        updateUserInternal = UpdateUserInternal(
-          update.id,
-          update.name,
-          update.email,
-          update.password.map(
-            PasswordHashing.hashSaltPassword(_, old.salt)
-          )
-        )
+        updateUserInternal = UpdateUserInternal.fromReq(update, old.salt)
         _ <- users.update(updateUserInternal)
         _ <- Logger[F].info(s"Updated user ${update.id} by user $authd")
       yield ()

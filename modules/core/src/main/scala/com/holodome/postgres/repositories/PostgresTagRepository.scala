@@ -18,6 +18,9 @@ object PostgresTagRepository:
       sql"select distinct ad_id from tag_ads where tag = $tag"
         .query[AdId].to[List].transact(xa)
 
+    def getAdTags(adId: AdId): F[List[AdTag]] =
+      sql"select tag from tag_ads where ad_id = $adId".query[AdTag].to[List].transact(xa)
+
     def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] =
       sql"delete * from tag_ads where ad_id = $adId and tag = $tag".update.run.transact(xa).void
 

@@ -45,6 +45,9 @@ object RepositoryStubFactory:
     def send(message: Message): F[Unit]               = unit
 
   def tags[F[_]: Monad]: TagRepository[F] = new:
+
+    def getAdTags(adId: AdId): F[List[AdTag]] = emptyList
+
     def getAllTags: F[List[AdTag]]                       = emptyList
     def addTagToAd(adId: AdId, tag: AdTag): F[Unit]      = unit
     def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] = unit

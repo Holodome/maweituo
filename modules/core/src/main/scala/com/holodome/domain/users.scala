@@ -9,6 +9,7 @@ import dev.profunktor.auth.jwt.JwtSymmetricAuth
 import io.circe.{ Codec, Decoder }
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
+import com.holodome.auth.PasswordHashing
 
 type UserId = UserId.Type
 object UserId extends IdNewtype
@@ -70,3 +71,14 @@ final case class UpdateUserInternal(
     email: Option[Email],
     password: Option[HashedSaltedPassword]
 ) derives Codec.AsObject, Show
+
+object UpdateUserInternal:
+  def fromReq(req: UpdateUserRequest, salt: PasswordSalt): UpdateUserInternal =
+    UpdateUserInternal(
+      req.id,
+      req.name,
+      req.email,
+      req.password.map(
+        PasswordHashing.hashSaltPassword(_, salt)
+      )
+    )

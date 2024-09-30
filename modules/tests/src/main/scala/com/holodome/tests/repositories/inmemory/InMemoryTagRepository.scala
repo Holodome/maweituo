@@ -17,8 +17,13 @@ private final class InMemoryTagRepository[F[_]: Sync] extends TagRepository[F]:
   override def addTagToAd(adId: AdId, tag: AdTag): F[Unit] =
     Sync[F] delay map.updateWith(tag) {
       case Some(s) => Some(s + adId)
-      case None    => None
+      case None    => Some(Set(adId))
     }
+
+  override def getAdTags(adId: AdId): F[List[AdTag]] =
+    Sync[F] delay map.view.filter {
+      (tag, ads) => ads.contains(adId)
+    }.map(_._1).toList
 
   override def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] =
     Sync[F] delay map.updateWith(tag) {

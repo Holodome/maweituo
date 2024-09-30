@@ -12,7 +12,7 @@ import com.holodome.infrastructure.OBSId
 
 import org.scalacheck.Gen
 
-def nonEmptyStringGen: Gen[String] =
+val nonEmptyStringGen: Gen[String] =
   Gen
     .chooseNum(10, 20)
     .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
@@ -20,28 +20,28 @@ def nonEmptyStringGen: Gen[String] =
 def nesGen[A](f: String => A): Gen[A] =
   nonEmptyStringGen map f
 
-def byteArrayGen: Gen[Array[Byte]] =
+val byteArrayGen: Gen[Array[Byte]] =
   Gen
     .chooseNum(32, 64)
     .flatMap(Gen.listOfN(_, Gen.chooseNum(0, 255).map(_.byteValue)).map(_.toArray))
 
-def bigByteArrayGen: Gen[Array[Byte]] =
+val bigByteArrayGen: Gen[Array[Byte]] =
   Gen.listOfN(5 * 1024 * 1024 + 1, Gen.chooseNum(0, 255).map(_.byteValue)).map(_.toArray)
 
 def idGen[A](f: UUID => A): Gen[A] = Gen.uuid map f
 
-def userIdGen: Gen[UserId] = idGen(UserId.apply)
+val userIdGen: Gen[UserId] = idGen(UserId.apply)
 
-def usernameGen: Gen[Username] =
+val usernameGen: Gen[Username] =
   nesGen(Username.apply)
 
-def passwordGen: Gen[Password] =
+val passwordGen: Gen[Password] =
   nesGen(Password.apply)
 
-def saltGen: Gen[PasswordSalt] =
+val saltGen: Gen[PasswordSalt] =
   nesGen(PasswordSalt.apply)
 
-def emailGen: Gen[Email] =
+val emailGen: Gen[Email] =
   for
     prefix  <- nonEmptyStringGen
     postfix <- nonEmptyStringGen
@@ -50,7 +50,7 @@ def emailGen: Gen[Email] =
       .flatMap(Gen.buildableOfN[String, Char](_, Gen.alphaChar))
   yield Email(prefix + "@" + postfix + "." + domain)
 
-def registerGen: Gen[RegisterRequest] =
+val registerGen: Gen[RegisterRequest] =
   for
     name     <- usernameGen
     email    <- emailGen
@@ -64,24 +64,24 @@ def updateUserGen(id: UserId): Gen[UpdateUserRequest] =
     password <- Gen.option(passwordGen)
   yield UpdateUserRequest(id, name, email, password)
 
-def adTitleGen: Gen[AdTitle] =
+val adTitleGen: Gen[AdTitle] =
   nesGen(AdTitle.apply)
 
-def createAdRequestGen: Gen[CreateAdRequest] =
+val createAdRequestGen: Gen[CreateAdRequest] =
   for
     title <- adTitleGen
   yield CreateAdRequest(title)
 
-def adIdGen: Gen[AdId] =
+val adIdGen: Gen[AdId] =
   idGen(AdId.apply)
 
-def imageIdGen: Gen[ImageId] =
+val imageIdGen: Gen[ImageId] =
   idGen(ImageId.apply)
 
-def msgTextGen: Gen[MessageText] =
+val msgTextGen: Gen[MessageText] =
   nesGen(MessageText.apply)
 
-def sendMessageRequestGen: Gen[SendMessageRequest] =
+val sendMessageRequestGen: Gen[SendMessageRequest] =
   for
     msg <- msgTextGen
   yield SendMessageRequest(msg)
@@ -95,10 +95,10 @@ def imageContentsGen[F[_]]: Gen[ImageContentsStream[F]] =
     )
   )
 
-def objectIdGen: Gen[OBSId] =
+val objectIdGen: Gen[OBSId] =
   nesGen(OBSId.apply)
 
-def userGen: Gen[User] =
+val userGen: Gen[User] =
   for
     id       <- userIdGen
     name     <- usernameGen
@@ -108,36 +108,36 @@ def userGen: Gen[User] =
     hashedPassword = PasswordHashing.hashSaltPassword(password, salt)
   yield User(id, name, email, hashedPassword, salt)
 
-def adGen: Gen[Advertisement] =
+val adGen: Gen[Advertisement] =
   for
     id     <- adIdGen
     title  <- adTitleGen
     author <- userIdGen
   yield Advertisement(id, author, title, resolved = false)
 
-def chatIdGen: Gen[ChatId] =
+val chatIdGen: Gen[ChatId] =
   idGen(ChatId.apply)
 
 private val minInstantSeconds: Long = 0L
 private val maxInstantSeconds: Long = 1893456000L
 
-def instantGen: Gen[Instant] =
+val instantGen: Gen[Instant] =
   for
     seconds        <- Gen.choose(minInstantSeconds, maxInstantSeconds)
     nanoAdjustment <- Gen.choose(0L, 999_999_999L)
   yield Instant.ofEpochSecond(seconds, nanoAdjustment)
 
-def imageUrlGen: Gen[ImageUrl] = nesGen(s => ImageUrl(s))
+val imageUrlGen: Gen[ImageUrl] = nesGen(s => ImageUrl(s))
 
-def adTagGen: Gen[AdTag] = nesGen(AdTag.apply)
+val adTagGen: Gen[AdTag] = nesGen(AdTag.apply)
 
-def loginRequestGen: Gen[LoginRequest] =
+val loginRequestGen: Gen[LoginRequest] =
   for
     name     <- usernameGen
     password <- passwordGen
   yield LoginRequest(name, password)
 
-def registerRequestGen: Gen[RegisterRequest] =
+val registerRequestGen: Gen[RegisterRequest] =
   for
     name     <- usernameGen
     email    <- emailGen

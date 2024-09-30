@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 import maweituo.cassandra.repos.CassandraAdImageRepository
 import maweituo.domain.errors.InvalidImageId
-import maweituo.domain.images.{ Image, MediaType }
+import maweituo.domain.ads.images.{ Image, MediaType }
 import maweituo.tests.generators.*
 
 object CassandraAdImageRepositorySuite extends CassandraSuite:

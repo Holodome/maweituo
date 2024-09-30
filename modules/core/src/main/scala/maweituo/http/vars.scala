@@ -4,9 +4,9 @@ import java.util.UUID
 
 import scala.util.Try
 
+import maweituo.domain.ads.images.ImageId
+import maweituo.domain.ads.messages.ChatId
 import maweituo.domain.ads.{ AdId, AdTag }
-import maweituo.domain.images.ImageId
-import maweituo.domain.messages.ChatId
 import maweituo.domain.users.UserId
 
 import cats.syntax.all.*

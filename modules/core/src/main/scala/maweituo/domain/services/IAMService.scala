@@ -1,8 +1,8 @@
 package maweituo.domain.services
 
 import maweituo.domain.ads.*
-import maweituo.domain.images.ImageId
-import maweituo.domain.messages.*
+import maweituo.domain.ads.images.ImageId
+import maweituo.domain.ads.messages.*
 import maweituo.domain.users.UserId
 
 trait IAMService[F[_]]:

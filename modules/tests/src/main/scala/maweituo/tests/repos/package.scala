@@ -1,9 +1,9 @@
 package maweituo.tests.repos
 
+import maweituo.domain.ads.images.{ Image, ImageId }
+import maweituo.domain.ads.messages.{ Chat, ChatId, Message }
 import maweituo.domain.ads.repos.{ AdImageRepository, AdRepository, ChatRepository, MessageRepository }
 import maweituo.domain.ads.{ AdId, Advertisement }
-import maweituo.domain.images.{ Image, ImageId }
-import maweituo.domain.messages.{ Chat, ChatId, Message }
 import maweituo.domain.users.repos.UserRepository
 import maweituo.domain.users.{ Email, UpdateUserInternal, User, UserId, Username }
 

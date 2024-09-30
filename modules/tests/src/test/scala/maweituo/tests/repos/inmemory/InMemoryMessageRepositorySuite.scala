@@ -1,6 +1,6 @@
 package maweituo.tests.repos.inmemory
 
-import maweituo.domain.messages.Message
+import maweituo.domain.ads.messages.Message
 import maweituo.tests.generators.*
 import maweituo.tests.repos.*
 

@@ -1,6 +1,6 @@
 package maweituo.infrastructure
 
-import maweituo.domain.images.ImageUrl
+import maweituo.domain.ads.images.ImageUrl
 import maweituo.utils.Newtype
 
 import cats.data.OptionT

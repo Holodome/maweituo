@@ -1,8 +1,8 @@
 package maweituo.interpreters.ads
 
+import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.repos.MessageRepository
 import maweituo.domain.ads.services.MessageService
-import maweituo.domain.messages.*
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
 import maweituo.effects.TimeSource

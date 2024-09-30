@@ -1,11 +1,11 @@
-package maweituo.domain.messages
+package maweituo.domain.ads.messages
 
 import java.time.Instant
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.users.UserId
 import maweituo.utils.given
-import maweituo.utils.{ IdNewtype, Newtype }
+import maweituo.utils.{IdNewtype, Newtype}
 
 import cats.Show
 import cats.derived.*

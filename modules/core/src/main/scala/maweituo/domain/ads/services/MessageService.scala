@@ -1,6 +1,6 @@
 package maweituo.domain.ads.services
 
-import maweituo.domain.messages.*
+import maweituo.domain.ads.messages.*
 import maweituo.domain.users.UserId
 
 trait MessageService[F[_]]:

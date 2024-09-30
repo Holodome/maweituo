@@ -1,8 +1,8 @@
 package maweituo.domain.ads.repos
 
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.images.*
 import maweituo.domain.errors.InvalidImageId
-import maweituo.domain.images.*
 
 import cats.MonadThrow
 import cats.data.OptionT

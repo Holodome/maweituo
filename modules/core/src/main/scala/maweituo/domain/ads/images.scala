@@ -1,4 +1,4 @@
-package maweituo.domain.images
+package maweituo.domain.ads.images
 
 import maweituo.domain.ads.AdId
 import maweituo.infrastructure.OBSId

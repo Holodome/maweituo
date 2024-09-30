@@ -1,6 +1,6 @@
 package maweituo.domain.ads.repos
 
-import maweituo.domain.messages.*
+import maweituo.domain.ads.messages.*
 
 trait MessageRepository[F[_]]:
   def chatHistory(chatId: ChatId): F[List[Message]]

@@ -3,8 +3,8 @@ package maweituo.domain.errors
 import scala.util.control.NoStackTrace
 
 import maweituo.domain.ads.*
-import maweituo.domain.images.*
-import maweituo.domain.messages.*
+import maweituo.domain.ads.images.*
+import maweituo.domain.ads.messages.*
 import maweituo.domain.users.*
 
 final case class InvalidAccess(violator: UserId) extends NoStackTrace

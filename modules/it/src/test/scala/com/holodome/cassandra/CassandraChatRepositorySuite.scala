@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 import maweituo.cassandra.repos.CassandraChatRepository
 import maweituo.domain.errors.InvalidChatId
-import maweituo.domain.messages.Chat
+import maweituo.domain.ads.messages.Chat
 import maweituo.tests.generators.{ adIdGen, chatIdGen, userIdGen }
 
 object CassandraChatRepositorySuite extends CassandraSuite:

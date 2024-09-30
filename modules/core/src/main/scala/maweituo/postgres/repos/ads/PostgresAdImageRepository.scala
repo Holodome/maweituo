@@ -1,8 +1,8 @@
 package maweituo.postgres.ads.repos
 
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.images.{ Image, ImageId }
 import maweituo.domain.ads.repos.AdImageRepository
-import maweituo.domain.images.{ Image, ImageId }
 import maweituo.postgres.sql.codecs.given
 
 import cats.data.OptionT

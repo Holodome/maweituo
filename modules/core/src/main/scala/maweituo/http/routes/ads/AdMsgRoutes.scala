@@ -1,8 +1,8 @@
 package maweituo.http.routes.ads
 
+import maweituo.domain.ads.messages.*
+import maweituo.domain.ads.messages.SendMessageRequest.given
 import maweituo.domain.ads.services.MessageService
-import maweituo.domain.messages.*
-import maweituo.domain.messages.SendMessageRequest.given
 import maweituo.domain.users.AuthedUser
 import maweituo.http.Routes
 import maweituo.http.vars.{ AdIdVar, ChatIdVar }

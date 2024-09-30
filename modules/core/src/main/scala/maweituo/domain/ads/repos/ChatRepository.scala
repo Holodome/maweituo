@@ -1,8 +1,8 @@
 package maweituo.domain.ads.repos
 
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.messages.*
 import maweituo.domain.errors.InvalidChatId
-import maweituo.domain.messages.*
 import maweituo.domain.users.UserId
 
 import cats.MonadThrow

@@ -1,7 +1,7 @@
 package maweituo.domain.services
 
 import maweituo.domain.ads.AdId
-import maweituo.domain.images.*
+import maweituo.domain.ads.images.*
 import maweituo.domain.users.UserId
 
 trait AdImageService[F[_]]:

@@ -3,8 +3,8 @@ package maweituo.tests.repos.inmemory
 import scala.collection.concurrent.TrieMap
 
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.messages.{ Chat, ChatId }
 import maweituo.domain.ads.repos.ChatRepository
-import maweituo.domain.messages.{ Chat, ChatId }
 import maweituo.domain.users.UserId
 import maweituo.domain.{ ads, users }
 

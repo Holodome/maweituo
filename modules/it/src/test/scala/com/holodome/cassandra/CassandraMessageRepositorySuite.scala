@@ -4,7 +4,7 @@ import cats.Show
 import cats.effect.IO
 import cats.syntax.all.*
 import maweituo.cassandra.repos.CassandraMessageRepository
-import maweituo.domain.messages.Message
+import maweituo.domain.ads.messages.Message
 import maweituo.tests.generators.*
 
 object CassandraMessageRepositorySuite extends CassandraSuite:

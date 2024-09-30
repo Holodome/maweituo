@@ -4,9 +4,9 @@ import java.time.Instant
 import java.util.UUID
 
 import maweituo.auth.PasswordHashing
+import maweituo.domain.ads.images.{ ImageContentsStream, ImageId, ImageUrl, MediaType }
+import maweituo.domain.ads.messages.{ ChatId, MessageText, SendMessageRequest }
 import maweituo.domain.ads.{ AdId, AdTag, AdTitle, Advertisement, CreateAdRequest }
-import maweituo.domain.images.{ ImageContentsStream, ImageId, ImageUrl, MediaType }
-import maweituo.domain.messages.{ ChatId, MessageText, SendMessageRequest }
 import maweituo.domain.users.*
 import maweituo.infrastructure.OBSId
 

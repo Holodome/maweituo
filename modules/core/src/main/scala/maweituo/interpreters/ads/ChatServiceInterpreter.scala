@@ -2,10 +2,10 @@ package maweituo.interpreters.ads
 
 import maweituo.domain.Id
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.messages.{ Chat, ChatId }
 import maweituo.domain.ads.repos.{ AdRepository, ChatRepository }
 import maweituo.domain.ads.services.ChatService
 import maweituo.domain.errors.{ CannotCreateChatWithMyself, ChatAlreadyExists }
-import maweituo.domain.messages.{ Chat, ChatId }
 import maweituo.domain.services.{ IAMService, TelemetryService }
 import maweituo.domain.users.UserId
 import maweituo.effects.GenUUID

@@ -2,9 +2,9 @@ package maweituo.interpreters.ads
 
 import maweituo.domain.Id
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.images.*
 import maweituo.domain.ads.repos.{ AdImageRepository, AdRepository }
 import maweituo.domain.errors.InternalImageUnsync
-import maweituo.domain.images.*
 import maweituo.domain.services.{ AdImageService, IAMService }
 import maweituo.domain.users.UserId
 import maweituo.effects.GenUUID

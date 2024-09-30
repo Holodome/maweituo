@@ -1,6 +1,6 @@
 package maweituo.http.routes.ads
 
-import maweituo.domain.images.*
+import maweituo.domain.ads.images.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.*
 import maweituo.http.Routes

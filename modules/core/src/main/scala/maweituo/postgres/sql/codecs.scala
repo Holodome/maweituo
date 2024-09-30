@@ -3,8 +3,8 @@ package maweituo.postgres.sql.codecs
 import java.util.UUID
 
 import maweituo.domain.ads.*
-import maweituo.domain.images.*
-import maweituo.domain.messages.*
+import maweituo.domain.ads.images.*
+import maweituo.domain.ads.messages.*
 import maweituo.domain.users.*
 
 import doobie.postgres.implicits.*

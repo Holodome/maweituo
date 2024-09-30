@@ -9,7 +9,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ registerGen, updateUserGen, userIdGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
-import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.repositories.RepositoryStubFactory
 
 import cats.data.NonEmptyList
 import cats.effect.IO

@@ -25,6 +25,4 @@ private final class InMemoryChatRepository[F[_]: Sync] extends ChatRepository[F]
       adId: AdId,
       client: UserId
   ): OptionT[F, Chat] =
-    OptionT(Sync[F].delay {
-      map.values.find(chat => chat.adId === adId && chat.client === client)
-    })
+    OptionT(Sync[F] delay map.values.find(chat => chat.adId === adId && chat.client === client))

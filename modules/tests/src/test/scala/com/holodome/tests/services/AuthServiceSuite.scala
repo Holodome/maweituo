@@ -10,7 +10,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.*
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
-import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.utils.given
 
 import cats.effect.IO

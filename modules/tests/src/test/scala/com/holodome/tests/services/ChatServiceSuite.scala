@@ -6,7 +6,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.*
-import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.*
 
 import cats.effect.IO
@@ -45,7 +45,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
         u2 <- users.create(otherReg)
         ad <- ads.create(u1, createAd)
         _  <- chats.create(ad, u2)
-      yield expect.all(true)
+      yield success
     }
   }
 

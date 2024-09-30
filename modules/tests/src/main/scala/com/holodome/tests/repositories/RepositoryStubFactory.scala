@@ -1,4 +1,4 @@
-package com.holodome.tests.repositories.stubs
+package com.holodome.tests.repositories
 
 import java.time.Instant
 

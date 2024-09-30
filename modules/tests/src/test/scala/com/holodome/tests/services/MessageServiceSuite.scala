@@ -9,7 +9,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, registerGen, sendMessageRequestGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.InMemoryRepositoryFactory
-import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.MonadThrow

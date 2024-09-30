@@ -6,7 +6,7 @@ import com.holodome.interpreters.*
 import com.holodome.tests.generators.{ createAdRequestGen, imageContentsGen, registerGen }
 import com.holodome.tests.repositories.*
 import com.holodome.tests.repositories.inmemory.*
-import com.holodome.tests.repositories.stubs.RepositoryStubFactory
+import com.holodome.tests.repositories.RepositoryStubFactory
 import com.holodome.tests.services.stubs.TelemetryServiceStub
 
 import cats.effect.IO

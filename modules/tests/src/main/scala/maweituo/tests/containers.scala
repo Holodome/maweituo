@@ -10,6 +10,13 @@ import doobie.Transactor
 import doobie.hikari.HikariTransactor
 import io.minio.MinioAsyncClient
 import org.testcontainers.utility.DockerImageName
+import doobie.util.fragment.Fragment
+import scala.io.Source
+import doobie.syntax.all.*
+import org.typelevel.log4cats.Logger
+import doobie.util.log.LogHandler
+import doobie.util.log.LogEvent
+import cats.Applicative
 
 private def makeContainerResource[F[_], C <: Container](container: F[C])(using F: Sync[F]): Resource[F, C] =
   Resource.make(container.flatTap {
@@ -63,17 +70,27 @@ private def postgresContainerDef = PostgreSQLContainer.Def(
 def makePostgresContainerResource[F[_]: Sync]: Resource[F, PostgreSQLContainer] =
   makeContainerResource(Sync[F].blocking(postgresContainerDef.start()))
 
-def makePostgresResource[F[_]: Async]: Resource[F, Transactor[F]] =
-  makePostgresContainerResource.flatMap { cont =>
-    for
-      hikariConfig <- Resource.pure {
-        val config = new HikariConfig()
-        config.setDriverClassName("org.postgresql.Driver")
-        config.setJdbcUrl(cont.jdbcUrl)
-        config.setUsername(cont.username)
-        config.setPassword(cont.password)
-        config
+def makePostgresResource[F[_]: Async: Logger]: Resource[F, Transactor[F]] =
+  makePostgresContainerResource.flatMap(makePostgres)
+
+def makePostgres[F[_]: Async: Logger](cont: PostgreSQLContainer): Resource[F, Transactor[F]] =
+  val logHandler = Some(new LogHandler[F]:
+    def run(logEvent: LogEvent): F[Unit] =
+      if logEvent.sql.contains("create table if not exists users") && false then Applicative[F].unit
+      else Logger[F].info(s"${logEvent.sql}")
+  )
+  for
+    hikariConfig <- Resource.pure {
+      val config = new HikariConfig()
+      config.setDriverClassName("org.postgresql.Driver")
+      config.setJdbcUrl(cont.jdbcUrl)
+      config.setUsername(cont.username)
+      config.setPassword(cont.password)
+      config
+    }
+    xa <- HikariTransactor.fromHikariConfig[F](hikariConfig, logHandler)
+      .evalTap { xa =>
+        Fragment.const(Source.fromResource("init.sql").mkString)
+          .update.run.transact(xa).void
       }
-      xa <- HikariTransactor.fromHikariConfig[F](hikariConfig)
-    yield xa
-  }
+  yield xa

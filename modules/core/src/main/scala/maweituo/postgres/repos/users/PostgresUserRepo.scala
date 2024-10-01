@@ -9,6 +9,8 @@ import cats.effect.Async
 import cats.syntax.all.*
 import doobie.*
 import doobie.implicits.*
+import cats.Applicative
+import cats.effect.kernel.Sync
 
 object PostgresUserRepo:
   def make[F[_]: Async](xa: Transactor[F]): UserRepo[F] = new:
@@ -16,7 +18,7 @@ object PostgresUserRepo:
     def create(req: User): F[Unit] =
       sql"""
         insert into users (id, name, email, password, salt) values
-        (${req.id}, ${req.name}, ${req.email}, ${req.hashedPassword}, ${req.salt})
+        (${req.id}::uuid, ${req.name}, ${req.email}, ${req.hashedPassword}, ${req.salt})
       """.update.run
         .transact(xa)
         .void
@@ -29,7 +31,7 @@ object PostgresUserRepo:
 
     def find(userId: UserId): OptionT[F, User] =
       OptionT(
-        sql"select id, name, email, password, salt from users where id = $userId"
+        sql"select id, name, email, password, salt from users where id = $userId::uuid"
           .query[User]
           .option
           .transact(xa)
@@ -52,17 +54,23 @@ object PostgresUserRepo:
       )
 
     def delete(id: UserId): F[Unit] =
-      sql"delete from users where id = $id".update.run.transact(xa).void
+      sql"delete from users where id = $id::uuid".update.run.transact(xa).void
 
     def update(update: UpdateUserInternal): F[Unit] =
-      updateQuery(update).update.run.transact(xa).void
+      if update.email.isEmpty && update.name.isEmpty && update.password.isEmpty then
+        Applicative[F].unit
+      else
+        updateQuery(update).update.run.transact(xa).void.onError {
+          case e: java.sql.SQLException =>
+            Sync[F].delay(println(e))
+        }
 
     private def updateQuery(update: UpdateUserInternal) =
       val sets = List(
-        update.name.map(_.value).fold(sql"")(name => sql"name = $name "),
-        update.email.map(_.value).fold(sql"")(email => sql"email = $email "),
-        update.password.map(_.value).fold(sql"")(password => sql"password = $password ")
-      )
+        update.name.map(_.value).map(name => fr" name = $name "),
+        update.email.map(_.value).map(email => fr" email = $email "),
+        update.password.map(_.value).map(password => fr" password = $password ")
+      ).map(_.toList).flatten
       assert(sets.nonEmpty)
       val id = update.id
-      (sql"update users set " ++ sets.reduce(_ ++ sql"," ++ _) ++ sql" where id = $id")
+      (fr"update users set " ++ sets.reduce(_ ++ fr"," ++ _) ++ fr" where id = $id::uuid")

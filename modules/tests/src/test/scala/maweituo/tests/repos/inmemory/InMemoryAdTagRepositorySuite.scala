@@ -7,9 +7,9 @@ import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object InMemoryAdTagRepositorySuite extends SimpleIOSuite with Checkers:
+object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
 
-  private def repo = InMemoryRepositoryFactory.tags[IO]
+  private def repo = InMemoryRepoFactory.tags[IO]
 
   private val tagAdGen =
     for

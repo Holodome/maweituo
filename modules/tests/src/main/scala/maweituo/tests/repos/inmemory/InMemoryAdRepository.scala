@@ -2,7 +2,7 @@ package maweituo.tests.repos.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import maweituo.domain.ads.repos.AdRepository
+import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.UserId
 
@@ -10,7 +10,7 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-class InMemoryAdRepository[F[_]: Sync] extends AdRepository[F]:
+class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
 
   private val map = new TrieMap[AdId, Advertisement]
 

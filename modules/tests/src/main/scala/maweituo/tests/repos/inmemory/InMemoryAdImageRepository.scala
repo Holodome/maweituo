@@ -4,13 +4,13 @@ import scala.collection.concurrent.TrieMap
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.{Image, ImageId}
-import maweituo.domain.ads.repos.AdImageRepository
+import maweituo.domain.ads.repos.AdImageRepo
 
 import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-class InMemoryAdImageRepository[F[_]: Sync] extends AdImageRepository[F]:
+class InMemoryAdImageRepo[F[_]: Sync] extends AdImageRepo[F]:
 
   private val map = new TrieMap[ImageId, Image]()
 

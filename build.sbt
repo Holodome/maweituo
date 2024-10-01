@@ -42,6 +42,7 @@ val LZ4Version             = "1.8.0"
 val IronVersion            = "2.6.0"
 val KittensVersion         = "3.3.0"
 val H2Version              = "2.3.230"
+val TestcontainersVersion  = "0.41.4"
 
 lazy val root = (project in file("."))
   .settings(
@@ -96,21 +97,25 @@ lazy val tests = (project in file("modules/tests"))
     publish / skip := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     libraryDependencies ++= Seq(
-      "com.disneystreaming" %% "weaver-cats"       % WeaverVersion,
-      "com.disneystreaming" %% "weaver-discipline" % WeaverVersion,
-      "com.disneystreaming" %% "weaver-scalacheck" % WeaverVersion,
-      "org.typelevel"       %% "log4cats-noop"     % Log4CatsVersion,
-      "org.typelevel"       %% "cats-laws"         % CatsVersion
+      "com.disneystreaming" %% "weaver-cats"                     % WeaverVersion,
+      "com.disneystreaming" %% "weaver-discipline"               % WeaverVersion,
+      "com.disneystreaming" %% "weaver-scalacheck"               % WeaverVersion,
+      "org.typelevel"       %% "log4cats-noop"                   % Log4CatsVersion,
+      "org.typelevel"       %% "cats-laws"                       % CatsVersion,
+      "com.dimafeng"        %% "testcontainers-scala"            % TestcontainersVersion,
+      "com.dimafeng"        %% "testcontainers-scala-redis"      % TestcontainersVersion,
+      "com.dimafeng"        %% "testcontainers-scala-postgresql" % TestcontainersVersion,
+      "com.dimafeng"        %% "testcontainers-scala-minio"      % TestcontainersVersion
     )
   )
 
-// lazy val it = (project in file("modules/it"))
-//   .dependsOn(tests)
-//   .settings(
-//     commonSettings,
-//     name := "maweituo-it",
-//     publish / skip := true
-//   )
+lazy val it = (project in file("modules/it"))
+  .dependsOn(tests)
+  .settings(
+    commonSettings,
+    name           := "maweituo-it",
+    publish / skip := true
+  )
 
 inThisBuild(
   List(

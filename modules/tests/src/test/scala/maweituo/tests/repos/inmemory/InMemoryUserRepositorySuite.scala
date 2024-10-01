@@ -10,9 +10,9 @@ import cats.syntax.all.*
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object InMemoryUserRepositorySuite extends SimpleIOSuite with Checkers:
+object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
   
-  private def repo = InMemoryRepositoryFactory.users[IO]
+  private def repo = InMemoryRepoFactory.users[IO]
 
   test("create and find") {
     val users = repo

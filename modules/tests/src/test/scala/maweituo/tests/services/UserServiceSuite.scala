@@ -6,11 +6,11 @@ import maweituo.domain.errors.*
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
-import maweituo.interpreters.*
-import maweituo.interpreters.users.UserServiceInterpreter
+import maweituo.interp.*
+import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
+import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 
 import cats.data.NonEmptyList
@@ -20,13 +20,13 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.users.repos.UserRepository
+import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.User
 import scala.util.control.NoStackTrace
 import cats.data.OptionT
 import maweituo.domain.users.Username
 import maweituo.domain.users.Email
-import maweituo.tests.repos.inmemory.InMemoryUserRepository
+import maweituo.tests.repos.inmemory.InMemoryUserRepo
 import maweituo.domain.users.UpdateUserInternal
 
 object UserServiceSuite extends SimpleIOSuite with Checkers:
@@ -34,10 +34,10 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
   given Logger[IO]     = NoOpLogger[IO]
   given IAMService[IO] = makeIAMService
 
-  private def makeTestUsers(repo: UserRepository[IO] = InMemoryRepositoryFactory.users): UserService[IO] =
-    UserServiceInterpreter.make(repo)
+  private def makeTestUsers(repo: UserRepo[IO] = InMemoryRepoFactory.users): UserService[IO] =
+    UserServiceInterp.make(repo)
 
-  test("register user works") {
+  test("register user works") {   
     val users = makeTestUsers()
     forall(registerGen) { register =>
       for
@@ -48,7 +48,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("create internal error") {
     case class TestError() extends NoStackTrace
-    val repo = new TestUserRepository:
+    val repo = new TestUserRepo:
       override def create(request: User): IO[Unit]               = IO.raiseError(TestError())
       override def findByEmail(emai: Email): OptionT[IO, User]   = OptionT(IO.raiseError(TestError()))
       override def findByName(name: Username): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
@@ -102,7 +102,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("get internal error") {
     case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepository[IO]:
+    class UserRepo extends InMemoryUserRepo[IO]:
       override def find(id: UserId): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
     val users = makeTestUsers(new UserRepo)
     forall(registerGen) { register =>
@@ -125,7 +125,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("get by name internal error") {
     case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepository[IO]:
+    class UserRepo extends InMemoryUserRepo[IO]:
       override def findByName(name: Username): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
     val users = makeTestUsers(new UserRepo)
     forall(registerGen) { register =>
@@ -147,7 +147,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("get by email internal error") {
     case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepository[IO]:
+    class UserRepo extends InMemoryUserRepo[IO]:
       override def findByEmail(email: Email): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
     val users = makeTestUsers(new UserRepo)
     forall(registerGen) { register =>
@@ -193,7 +193,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("delete internal error") {
     case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepository[IO]:
+    class UserRepo extends InMemoryUserRepo[IO]:
       override def delete(id: UserId): IO[Unit] = IO.raiseError(TestError())
     val users = makeTestUsers(new UserRepo)
     forall(userIdGen) { id =>
@@ -251,7 +251,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
 
   test("update internal error") {
     case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepository[IO]:
+    class UserRepo extends InMemoryUserRepo[IO]:
       override def update(update: UpdateUserInternal): IO[Unit] = IO.raiseError(TestError())
     val users = makeTestUsers(new UserRepo)
     val gen =

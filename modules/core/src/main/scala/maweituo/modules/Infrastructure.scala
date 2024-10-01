@@ -14,6 +14,7 @@ import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient
+import org.typelevel.log4cats.Logger
 
 sealed abstract class Infrastructure[F[_]]:
   val jwtTokens: JwtTokens[F]
@@ -22,7 +23,7 @@ sealed abstract class Infrastructure[F[_]]:
   val adImageStorage: ObjectStorage[F]
 
 object Infrastructure:
-  def make[F[_]: Async: MonadThrow](
+  def make[F[_]: Async: MonadThrow: Logger](
       cfg: AppConfig,
       redis: RedisCommands[F, String, String],
       minio: MinioAsyncClient

@@ -8,9 +8,9 @@ import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object InMemoryMessageRepositorySuite extends SimpleIOSuite with Checkers:
+object InMemoryMessageRepoSuite extends SimpleIOSuite with Checkers:
 
-  private def repo = InMemoryRepositoryFactory.msgs[IO]
+  private def repo = InMemoryRepoFactory.msgs[IO]
 
   val msgGen =
     for

@@ -3,12 +3,12 @@ import maweituo.domain.ads.services.AdService
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.{UserAdsService, UserService}
-import maweituo.interpreters.*
-import maweituo.interpreters.ads.AdServiceInterpreter
-import maweituo.interpreters.users.{UserAdsServiceInterpreter, UserServiceInterpreter}
+import maweituo.interp.*
+import maweituo.interp.ads.AdServiceInterp
+import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
 import maweituo.tests.generators.{createAdRequestGen, registerGen, userIdGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
+import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
@@ -17,9 +17,9 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.AdRepository
+import maweituo.domain.ads.repos.AdRepo
 import scala.util.control.NoStackTrace
-import maweituo.tests.repos.inmemory.InMemoryAdRepository
+import maweituo.tests.repos.inmemory.InMemoryAdRepo
 import maweituo.domain.ads.AdId
 
 object UserAdServiceSuite extends SimpleIOSuite with Checkers:
@@ -27,19 +27,19 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers:
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices(ads: AdRepository[IO] = InMemoryRepositoryFactory.ads)
+  private def makeTestServices(ads: AdRepo[IO] = InMemoryRepoFactory.ads)
       : (UserService[IO], UserAdsService[IO], AdService[IO]) =
-    val users            = InMemoryRepositoryFactory.users
+    val users            = InMemoryRepoFactory.users
     given IAMService[IO] = makeIAMService(ads)
     (
-      UserServiceInterpreter.make(users),
-      UserAdsServiceInterpreter.make(ads),
-      AdServiceInterpreter.make(ads, RepositoryStubFactory.feed)
+      UserServiceInterp.make(users),
+      UserAdsServiceInterp.make(ads),
+      AdServiceInterp.make(ads, RepoStubFactory.feed)
     )
 
   test("internal error") {
     case class TestError() extends NoStackTrace
-    class TestAds extends InMemoryAdRepository[IO]:
+    class TestAds extends InMemoryAdRepo[IO]:
       override def findIdsByAuthor(userId: UserId): F[List[AdId]] = IO.raiseError(TestError())
     val (users, userAds, _) = makeTestServices(new TestAds)
     forall(registerGen) { reg =>

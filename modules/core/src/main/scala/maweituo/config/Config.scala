@@ -2,6 +2,8 @@ package maweituo.config
 
 import java.nio.file.Paths
 
+import scala.io.Source
+
 import maweituo.config.*
 import maweituo.config.given
 import maweituo.config.utils.JsonConfig
@@ -12,7 +14,6 @@ import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
 import org.typelevel.log4cats.Logger
-import scala.io.Source
 
 object Config:
   enum ConfigSource:

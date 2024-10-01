@@ -4,9 +4,15 @@ import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, Messa
 import maweituo.domain.services.*
 import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
 import maweituo.effects.{Background, GenUUID, TimeSource}
-import maweituo.interpreters.*
-import maweituo.interpreters.ads.*
-import maweituo.interpreters.users.*
+import maweituo.interp.ads.{
+  AdImageServiceInterp,
+  AdServiceInterp,
+  AdTagServiceInterp,
+  ChatServiceInterp,
+  MessageServiceInterp
+}
+import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
+import maweituo.interp.{AuthServiceInterp, FeedServiceInterp, IAMServiceInterp, TelemetryServiceBackgroundInterp}
 
 import cats.MonadThrow
 import org.typelevel.log4cats.Logger
@@ -25,23 +31,23 @@ sealed abstract class Services[F[_]]:
 
 object Services:
   def make[F[_]: MonadThrow: GenUUID: TimeSource: Background: Logger](
-      repos: Repositories[F],
+      repos: Repos[F],
       infra: Infrastructure[F],
       grpc: RecsClients[F]
   ): Services[F] =
     new Services[F]:
       given iam: IAMService[F] =
-        IAMServiceInterpreter.make[F](repos.ads, repos.chats, repos.images)
-      given telemetry: TelemetryService[F]    = TelemetryServiceBackgroundInterpreter.make(grpc.telemetry)
-      override val users: UserService[F]      = UserServiceInterpreter.make(repos.users)
-      override val userAds: UserAdsService[F] = UserAdsServiceInterpreter.make(repos.ads)
+        IAMServiceInterp.make[F](repos.ads, repos.chats, repos.images)
+      given telemetry: TelemetryService[F]    = TelemetryServiceBackgroundInterp.make(grpc.telemetry)
+      override val users: UserService[F]      = UserServiceInterp.make(repos.users)
+      override val userAds: UserAdsService[F] = UserAdsServiceInterp.make(repos.ads)
       override val auth: AuthService[F] =
-        AuthServiceInterpreter.make(repos.users, infra.jwtDict, infra.usersDict, infra.jwtTokens)
-      override val ads: AdService[F]           = AdServiceInterpreter.make[F](repos.ads, repos.feed)
-      override val chats: ChatService[F]       = ChatServiceInterpreter.make[F](repos.chats, repos.ads)
-      override val messages: MessageService[F] = MessageServiceInterpreter.make[F](repos.messages)
+        AuthServiceInterp.make(repos.users, infra.jwtDict, infra.usersDict, infra.jwtTokens)
+      override val ads: AdService[F]           = AdServiceInterp.make[F](repos.ads, repos.feed)
+      override val chats: ChatService[F]       = ChatServiceInterp.make[F](repos.chats, repos.ads)
+      override val messages: MessageService[F] = MessageServiceInterp.make[F](repos.messages)
       override val images: AdImageService[F] =
-        AdImageServiceInterpreter.make[F](repos.images, repos.ads, infra.adImageStorage)
-      override val tags: AdTagService[F]          = AdTagServiceInterpreter.make[F](repos.tags)
-      override val feed: FeedService[F]           = FeedServiceInterpreter.make[F](repos.feed, grpc.recs)
+        AdImageServiceInterp.make[F](repos.images, repos.ads, infra.adImageStorage)
+      override val tags: AdTagService[F]          = AdTagServiceInterp.make[F](repos.tags)
+      override val feed: FeedService[F]           = FeedServiceInterp.make[F](repos.feed, grpc.recs)
       override val recs: RecommendationService[F] = grpc.recs

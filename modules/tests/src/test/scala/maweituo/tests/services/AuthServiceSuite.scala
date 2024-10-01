@@ -7,11 +7,11 @@ import maweituo.domain.users.services.*
 import maweituo.domain.users.{AuthedUser, UserId}
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
-import maweituo.interpreters.*
-import maweituo.interpreters.users.UserServiceInterpreter
+import maweituo.interp.*
+import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.*
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
+import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.stubs.TelemetryServiceStub
 import maweituo.utils.given
 
@@ -23,6 +23,7 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import maweituo.interp.AuthServiceInterp
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers:
 
@@ -34,11 +35,11 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers:
 
   private def makeTestUsersAuth(tok: JwtToken): (UserService[IO], AuthService[IO]) =
     val tokens           = new TestJwtTokens(tok)
-    val userRepo         = InMemoryRepositoryFactory.users
-    val adRepo           = InMemoryRepositoryFactory.ads
+    val userRepo         = InMemoryRepoFactory.users
+    val adRepo           = InMemoryRepoFactory.ads
     given IAMService[IO] = makeIAMService(adRepo)
-    val users            = UserServiceInterpreter.make(userRepo)
-    val auth             = AuthServiceInterpreter.make(userRepo, authedUsersDict, jwtDict, tokens)
+    val users            = UserServiceInterp.make(userRepo)
+    val auth             = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
   private def makeTestUsersAuth0: (UserService[IO], AuthService[IO]) =

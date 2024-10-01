@@ -5,9 +5,9 @@ import maweituo.domain.errors.{AdModificationForbidden, InvalidImageId}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.*
 import maweituo.infrastructure.inmemory.InMemoryObjectStorage
-import maweituo.interpreters.*
-import maweituo.interpreters.ads.{AdImageServiceInterpreter, AdServiceInterpreter}
-import maweituo.interpreters.users.UserServiceInterpreter
+import maweituo.interp.*
+import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
+import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{createAdRequestGen, imageContentsGen, imageIdGen, registerGen}
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*
@@ -18,7 +18,7 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.AdImageRepository
+import maweituo.domain.ads.repos.AdImageRepo
 import scala.util.control.NoStackTrace
 import maweituo.domain.ads.images.Image
 import maweituo.domain.ads.images.ImageId
@@ -30,15 +30,15 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers:
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices(imageRepo: AdImageRepository[IO] = InMemoryRepositoryFactory.images)
+  private def makeTestServices(imageRepo: AdImageRepo[IO] = InMemoryRepoFactory.images)
       : (UserService[IO], AdService[IO], AdImageService[IO]) =
-    val userRepo         = InMemoryRepositoryFactory.users
-    val adRepo           = InMemoryRepositoryFactory.ads
+    val userRepo         = InMemoryRepoFactory.users
+    val adRepo           = InMemoryRepoFactory.ads
     val os               = new InMemoryObjectStorage
     given IAMService[IO] = makeIAMService(adRepo, imageRepo)
-    val users            = UserServiceInterpreter.make(userRepo)
-    val ads              = AdServiceInterpreter.make(adRepo, RepositoryStubFactory.feed)
-    val images           = AdImageServiceInterpreter.make(imageRepo, adRepo, os)
+    val users            = UserServiceInterp.make(userRepo)
+    val ads              = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+    val images           = AdImageServiceInterp.make(imageRepo, adRepo, os)
     (users, ads, images)
 
   test("create works") {
@@ -63,7 +63,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers:
 
   test("create internal error") {
     case class TestError() extends NoStackTrace
-    class ImageRepo extends InMemoryAdImageRepository[IO]:
+    class ImageRepo extends InMemoryAdImageRepo[IO]:
       override def create(image: Image) = IO.raiseError(TestError())
     val (users, ads, images) = makeTestServices(new ImageRepo)
     val gen =
@@ -92,7 +92,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers:
 
   test("get internal error") {
     case class TestError() extends NoStackTrace
-    class ImageRepo extends InMemoryAdImageRepository[IO]:
+    class ImageRepo extends InMemoryAdImageRepo[IO]:
       override def find(id: ImageId) = OptionT(IO.raiseError(TestError()))
     val (_, _, images) = makeTestServices(new ImageRepo)
     forall(imageIdGen) { id =>
@@ -123,7 +123,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers:
 
   test("delete internal error") {
     case class TestError() extends NoStackTrace
-    class ImageRepo extends InMemoryAdImageRepository[IO]:
+    class ImageRepo extends InMemoryAdImageRepo[IO]:
       override def delete(id: ImageId) = IO.raiseError(TestError())
     val (_, _, images) = makeTestServices(new ImageRepo)
     val gen =

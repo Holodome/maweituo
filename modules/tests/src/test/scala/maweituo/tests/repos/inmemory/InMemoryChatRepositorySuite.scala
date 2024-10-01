@@ -9,7 +9,7 @@ import org.scalacheck.Gen
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object InMemoryChatRepositorySuite extends SimpleIOSuite with Checkers:
+object InMemoryChatRepoSuite extends SimpleIOSuite with Checkers:
 
   private val chatGen: Gen[Chat] =
     for
@@ -19,7 +19,7 @@ object InMemoryChatRepositorySuite extends SimpleIOSuite with Checkers:
       u2 <- userIdGen
     yield Chat(id, ad, u1, u2)
 
-  private def repo = InMemoryRepositoryFactory.chats[IO]
+  private def repo = InMemoryRepoFactory.chats[IO]
 
   test("create and find") {
     val chats = repo

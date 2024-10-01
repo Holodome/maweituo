@@ -7,12 +7,12 @@ import maweituo.domain.errors.ChatAccessForbidden
 import maweituo.domain.services.*
 import maweituo.domain.users.services.*
 import maweituo.effects.TimeSource
-import maweituo.interpreters.*
-import maweituo.interpreters.ads.{AdServiceInterpreter, ChatServiceInterpreter, MessageServiceInterpreter}
-import maweituo.interpreters.users.UserServiceInterpreter
+import maweituo.interp.*
+import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
+import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
+import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import cats.MonadThrow
@@ -23,10 +23,10 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.MessageRepository
+import maweituo.domain.ads.repos.MessageRepo
 import scala.util.control.NoStackTrace
 import maweituo.domain.ads.messages.ChatId
-import maweituo.tests.repos.inmemory.InMemoryMessageRepository
+import maweituo.tests.repos.inmemory.InMemoryMessageRepo
 import maweituo.domain.ads.messages.Message
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
@@ -38,23 +38,23 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   private given timeSource: TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
 
-  private def makeTestServices(msgRepo: MessageRepository[IO] = InMemoryRepositoryFactory.msgs)
+  private def makeTestServices(msgRepo: MessageRepo[IO] = InMemoryRepoFactory.msgs)
       : (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
     val telemetry             = new TelemetryServiceStub
-    val userRepo              = InMemoryRepositoryFactory.users
-    val adRepo                = InMemoryRepositoryFactory.ads
-    val chatRepo              = InMemoryRepositoryFactory.chats
+    val userRepo              = InMemoryRepoFactory.users
+    val adRepo                = InMemoryRepoFactory.ads
+    val chatRepo              = InMemoryRepoFactory.chats
     given iam: IAMService[IO] = makeIAMService(adRepo, chatRepo)
-    val users                 = UserServiceInterpreter.make(userRepo)
-    val feedRepository        = RepositoryStubFactory.feed
-    val ads                   = AdServiceInterpreter.make(adRepo, feedRepository)
-    val chats                 = ChatServiceInterpreter.make(chatRepo, adRepo)
-    val msgs                  = MessageServiceInterpreter.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
+    val users                 = UserServiceInterp.make(userRepo)
+    val feedRepo        = RepoStubFactory.feed
+    val ads                   = AdServiceInterp.make(adRepo, feedRepo)
+    val chats                 = ChatServiceInterp.make(chatRepo, adRepo)
+    val msgs                  = MessageServiceInterp.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
     (users, ads, chats, msgs)
 
   test("history internal error") {
     case class TestError() extends NoStackTrace
-    class ChatRepo extends InMemoryMessageRepository[IO]:
+    class ChatRepo extends InMemoryMessageRepo[IO]:
       override def chatHistory(chatId: ChatId) = IO.raiseError(TestError())
     val (users, ads, chats, msgs) = makeTestServices(new ChatRepo)
     val gen =
@@ -123,7 +123,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
   test("send internal error") {
     case class TestError() extends NoStackTrace
-    class ChatRepo extends InMemoryMessageRepository[IO]:
+    class ChatRepo extends InMemoryMessageRepo[IO]:
       override def send(message: Message) = IO.raiseError(TestError())
     val (users, ads, chats, msgs) = makeTestServices(new ChatRepo)
     val gen =

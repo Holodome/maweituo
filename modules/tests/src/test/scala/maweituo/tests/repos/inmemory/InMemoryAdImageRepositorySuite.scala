@@ -10,8 +10,8 @@ import org.scalacheck.Gen
 import maweituo.domain.ads.images.Image
 import maweituo.domain.ads.images.MediaType
 
-object InMemoryAdImageRepositorySuite extends SimpleIOSuite with Checkers:
-  private def repo = InMemoryRepositoryFactory.images[IO]
+object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
+  private def repo = InMemoryRepoFactory.images[IO]
 
   private val mediaTypeGen: Gen[MediaType] =
     for

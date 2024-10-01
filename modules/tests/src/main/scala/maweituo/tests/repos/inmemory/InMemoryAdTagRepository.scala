@@ -3,11 +3,11 @@ package maweituo.tests.repos.inmemory
 import scala.collection.concurrent.TrieMap
 
 import maweituo.domain.ads.*
-import maweituo.domain.ads.repos.AdTagRepository
+import maweituo.domain.ads.repos.AdTagRepo
 
 import cats.effect.Sync
 
-class InMemoryAdTagRepository[F[_]: Sync] extends AdTagRepository[F]:
+class InMemoryAdTagRepo[F[_]: Sync] extends AdTagRepo[F]:
 
   private val map = new TrieMap[AdTag, Set[AdId]]
 

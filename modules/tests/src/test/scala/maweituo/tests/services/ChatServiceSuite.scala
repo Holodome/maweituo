@@ -4,9 +4,9 @@ import maweituo.domain.ads.services.{AdService, ChatService}
 import maweituo.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists, InvalidChatId}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.*
-import maweituo.interpreters.*
-import maweituo.interpreters.ads.{AdServiceInterpreter, ChatServiceInterpreter}
-import maweituo.interpreters.users.UserServiceInterpreter
+import maweituo.interp.*
+import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp}
+import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{chatIdGen, createAdRequestGen, registerGen}
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*
@@ -17,7 +17,7 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.ChatRepository
+import maweituo.domain.ads.repos.ChatRepo
 import scala.util.control.NoStackTrace
 import cats.data.OptionT
 import maweituo.domain.ads.messages.ChatId
@@ -28,16 +28,16 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices(chatRepo: ChatRepository[IO] = InMemoryRepositoryFactory.chats)
+  private def makeTestServices(chatRepo: ChatRepo[IO] = InMemoryRepoFactory.chats)
       : (UserService[F], AdService[F], ChatService[F]) =
     val telemetry        = new TelemetryServiceStub
-    val userRepo         = InMemoryRepositoryFactory.users
-    val adRepo           = InMemoryRepositoryFactory.ads
+    val userRepo         = InMemoryRepoFactory.users
+    val adRepo           = InMemoryRepoFactory.ads
     given IAMService[IO] = makeIAMService(adRepo, chatRepo)
-    val users            = UserServiceInterpreter.make(userRepo)
-    val feedRepository   = RepositoryStubFactory.feed
-    val ads              = AdServiceInterpreter.make(adRepo, feedRepository)
-    val chats            = ChatServiceInterpreter.make(chatRepo, adRepo)
+    val users            = UserServiceInterp.make(userRepo)
+    val feedRepo   = RepoStubFactory.feed
+    val ads              = AdServiceInterp.make(adRepo, feedRepo)
+    val chats            = ChatServiceInterp.make(chatRepo, adRepo)
     (users, ads, chats)
 
   test("invalid chat id") {
@@ -57,7 +57,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
 
   test("get internal error") {
     case class TestError() extends NoStackTrace
-    class ChatRepo extends InMemoryChatRepository[IO]:
+    class ChatRepo extends InMemoryChatRepo[IO]:
       override def find(chatId: ChatId) = OptionT(IO.raiseError(TestError()))
     val (users, ads, chats) = makeTestServices(new ChatRepo)
     val gen =
@@ -93,7 +93,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
 
   test("create internal error") {
     case class TestError() extends NoStackTrace
-    class ChatRepo extends InMemoryChatRepository[IO]:
+    class ChatRepo extends InMemoryChatRepo[IO]:
       override def create(chat: Chat): F[Unit] = IO.raiseError(TestError())
     val (users, ads, chats) = makeTestServices(new ChatRepo)
     val gen =

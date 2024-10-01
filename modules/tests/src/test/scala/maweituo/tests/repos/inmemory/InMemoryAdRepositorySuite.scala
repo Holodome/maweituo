@@ -7,9 +7,9 @@ import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object InMemoryAdRepositorySuite extends SimpleIOSuite with Checkers:
+object InMemoryAdRepoSuite extends SimpleIOSuite with Checkers:
 
-  private def repo = InMemoryRepositoryFactory.ads[IO]
+  private def repo = InMemoryRepoFactory.ads[IO]
 
   test("create and find") {
     val ads = repo

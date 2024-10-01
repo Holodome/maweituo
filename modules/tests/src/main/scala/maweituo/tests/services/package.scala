@@ -1,23 +1,23 @@
 package maweituo.tests.services
 
-import maweituo.domain.ads.repos.{AdImageRepository, AdRepository, ChatRepository}
+import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
 import maweituo.domain.services.IAMService
-import maweituo.interpreters.IAMServiceInterpreter
+import maweituo.interp.IAMServiceInterp
 import maweituo.tests.repos.*
 
 import cats.effect.IO
 
 def makeIAMService: IAMService[IO] =
-  IAMServiceInterpreter.make[IO](new TestAdRepository, new TestChatRepository, new TestAdImageRepository)
+  IAMServiceInterp.make[IO](new TestAdRepo, new TestChatRepo, new TestAdImageRepo)
 
-def makeIAMService(ads: AdRepository[IO]): IAMService[IO] =
-  IAMServiceInterpreter.make[IO](ads, new TestChatRepository, new TestAdImageRepository)
+def makeIAMService(ads: AdRepo[IO]): IAMService[IO] =
+  IAMServiceInterp.make[IO](ads, new TestChatRepo, new TestAdImageRepo)
 
-def makeIAMService(ads: AdRepository[IO], chats: ChatRepository[IO]): IAMService[IO] =
-  IAMServiceInterpreter.make[IO](ads, chats, new TestAdImageRepository)
+def makeIAMService(ads: AdRepo[IO], chats: ChatRepo[IO]): IAMService[IO] =
+  IAMServiceInterp.make[IO](ads, chats, new TestAdImageRepo)
 
-def makeIAMService(ads: AdRepository[IO], chats: ChatRepository[IO], images: AdImageRepository[IO]): IAMService[IO] =
-  IAMServiceInterpreter.make[IO](ads, chats, images)
+def makeIAMService(ads: AdRepo[IO], chats: ChatRepo[IO], images: AdImageRepo[IO]): IAMService[IO] =
+  IAMServiceInterp.make[IO](ads, chats, images)
 
-def makeIAMService(ads: AdRepository[IO], images: AdImageRepository[IO]): IAMService[IO] =
-  IAMServiceInterpreter.make[IO](ads, new TestChatRepository, images)
+def makeIAMService(ads: AdRepo[IO], images: AdImageRepo[IO]): IAMService[IO] =
+  IAMServiceInterp.make[IO](ads, new TestChatRepo, images)

@@ -3,12 +3,12 @@ package maweituo.tests.repos.inmemory
 import scala.collection.concurrent.TrieMap
 
 import maweituo.domain.ads.messages.{ChatId, Message}
-import maweituo.domain.ads.repos.MessageRepository
+import maweituo.domain.ads.repos.MessageRepo
 
 import cats.effect.Sync
 import cats.syntax.all.given
 
-class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
+class InMemoryMessageRepo[F[_]: Sync] extends MessageRepo[F]:
 
   private val map = new TrieMap[Message, Unit]
 

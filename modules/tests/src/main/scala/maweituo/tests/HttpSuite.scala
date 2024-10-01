@@ -2,8 +2,6 @@ package maweituo.tests
 
 import java.nio.charset.StandardCharsets
 
-import scala.util.control.NoStackTrace
-
 import cats.Applicative
 import cats.effect.IO
 import cats.syntax.all.*
@@ -16,8 +14,6 @@ import weaver.scalacheck.Checkers
 import weaver.{Expectations, SimpleIOSuite, SourceLocation}
 
 trait HttpSuite extends SimpleIOSuite with Checkers:
-
-  case object DummyError extends NoStackTrace
 
   def expectHttpBodyAndStatus[A: Encoder](routes: HttpRoutes[IO], req: Request[IO])(
       expectedBody: A,

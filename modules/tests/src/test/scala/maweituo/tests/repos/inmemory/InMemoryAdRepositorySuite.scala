@@ -8,6 +8,7 @@ import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object InMemoryAdRepositorySuite extends SimpleIOSuite with Checkers:
+
   private def repo = InMemoryRepositoryFactory.ads[IO]
 
   test("create and find") {

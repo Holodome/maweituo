@@ -9,7 +9,7 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-private final class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F]:
+class InMemoryUserRepository[F[_]: Sync] extends UserRepository[F]:
 
   private val map = new TrieMap[UserId, User]
 

@@ -8,7 +8,7 @@ import maweituo.domain.ads.repos.MessageRepository
 import cats.effect.Sync
 import cats.syntax.all.given
 
-private final class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
+class InMemoryMessageRepository[F[_]: Sync] extends MessageRepository[F]:
 
   private val map = new TrieMap[Message, Unit]
 

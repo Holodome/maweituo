@@ -12,7 +12,7 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-private final class InMemoryChatRepository[F[_]: Sync] extends ChatRepository[F]:
+class InMemoryChatRepository[F[_]: Sync] extends ChatRepository[F]:
   private val map = new TrieMap[ChatId, Chat]
 
   override def create(chat: Chat): F[Unit] =

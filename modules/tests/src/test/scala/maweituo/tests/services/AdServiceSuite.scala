@@ -20,15 +20,18 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import maweituo.domain.ads.repos.AdRepository
+import scala.util.control.NoStackTrace
+import cats.data.OptionT
 
-object Adadsuite extends SimpleIOSuite with Checkers:
+object AdServiceSuite extends SimpleIOSuite with Checkers:
 
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestUserAds: (UserService[IO], AdService[IO]) =
+  private def makeTestUserAds(adRepo: AdRepository[IO] = InMemoryRepositoryFactory.ads)
+      : (UserService[IO], AdService[IO]) =
     val userRepo         = InMemoryRepositoryFactory.users
-    val adRepo           = InMemoryRepositoryFactory.ads
     given IAMService[IO] = makeIAMService(adRepo)
     val users            = UserServiceInterpreter.make(userRepo)
     val ads              = AdServiceInterpreter.make(adRepo, RepositoryStubFactory.feed)
@@ -48,7 +51,7 @@ object Adadsuite extends SimpleIOSuite with Checkers:
     yield (reg, ad, tag)
 
   test("create works") {
-    val (users, ads) = makeTestUserAds
+    val (users, ads) = makeTestUserAds()
     forall(regAdGen) { case (reg, createAd) =>
       for
         userId <- users.create(reg)
@@ -62,17 +65,42 @@ object Adadsuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("get invalid") {
-    val (users, ads) = makeTestUserAds
-    forall(userIdGen) { id =>
+  test("create internal error") {
+    case class TestError() extends NoStackTrace
+    class TestAds extends InMemoryAdRepository[IO]:
+      override def create(ad: Advertisement): F[Unit] = IO.raiseError(TestError())
+    val (users, ads) = makeTestUserAds(new TestAds)
+    forall(regAdGen) { case (reg, createAd) =>
       for
-        x <- users.get(id).attempt
-      yield expect.same(Left(InvalidUserId(id)), x)
+        userId <- users.create(reg)
+        x      <- ads.create(userId, createAd).attempt
+      yield expect.same(Left(TestError()), x)
+    }
+  }
+
+  test("get invalid") {
+    val (users, ads) = makeTestUserAds()
+    forall(adIdGen) { id =>
+      for
+        x <- ads.get(id).attempt
+      yield expect.same(Left(InvalidAdId(id)), x)
+    }
+  }
+
+  test("get internal error") {
+    case class TestError() extends NoStackTrace
+    class TestAds extends InMemoryAdRepository[IO]:
+      override def find(id: AdId): OptionT[IO, Advertisement] = OptionT(IO.raiseError(TestError()))
+    val (users, ads) = makeTestUserAds(new TestAds)
+    forall(adIdGen) { case id =>
+      for
+        x <- ads.get(id).attempt
+      yield expect.same(Left(TestError()), x)
     }
   }
 
   test("delete works") {
-    val (users, ads) = makeTestUserAds
+    val (users, ads) = makeTestUserAds()
     forall(regAdGen) { case (reg, createAd) =>
       for
         userId <- users.create(reg)
@@ -84,8 +112,25 @@ object Adadsuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("delete internal error") {
+    case class TestError() extends NoStackTrace
+    class TestAds extends InMemoryAdRepository[IO]:
+      override def delete(id: AdId) = IO.raiseError(TestError())
+    val (users, ads) = makeTestUserAds(new TestAds)
+    val gen =
+      for
+        u <- userIdGen
+        a <- adIdGen
+      yield u -> a
+    forall(gen) { case (u, a) =>
+      for
+        x <- ads.delete(a, u).attempt
+      yield expect.same(Left(InvalidAdId(a)), x)
+    }
+  }
+
   test("delete by other user is blocked") {
-    val (users, ads) = makeTestUserAds
+    val (users, ads) = makeTestUserAds()
     val gen =
       for
         reg  <- registerGen

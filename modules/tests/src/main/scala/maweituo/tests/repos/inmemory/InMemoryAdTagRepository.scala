@@ -7,7 +7,7 @@ import maweituo.domain.ads.repos.AdTagRepository
 
 import cats.effect.Sync
 
-private final class InMemoryAdTagRepository[F[_]: Sync] extends AdTagRepository[F]:
+class InMemoryAdTagRepository[F[_]: Sync] extends AdTagRepository[F]:
 
   private val map = new TrieMap[AdTag, Set[AdId]]
 

@@ -17,15 +17,19 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import maweituo.domain.ads.repos.AdRepository
+import scala.util.control.NoStackTrace
+import maweituo.tests.repos.inmemory.InMemoryAdRepository
+import maweituo.domain.ads.AdId
 
 object UserAdServiceSuite extends SimpleIOSuite with Checkers:
 
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices: (UserService[IO], UserAdsService[IO], AdService[IO]) =
+  private def makeTestServices(ads: AdRepository[IO] = InMemoryRepositoryFactory.ads)
+      : (UserService[IO], UserAdsService[IO], AdService[IO]) =
     val users            = InMemoryRepositoryFactory.users
-    val ads              = InMemoryRepositoryFactory.ads
     given IAMService[IO] = makeIAMService(ads)
     (
       UserServiceInterpreter.make(users),
@@ -33,8 +37,21 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers:
       AdServiceInterpreter.make(ads, RepositoryStubFactory.feed)
     )
 
+  test("internal error") {
+    case class TestError() extends NoStackTrace
+    class TestAds extends InMemoryAdRepository[IO]:
+      override def findIdsByAuthor(userId: UserId): F[List[AdId]] = IO.raiseError(TestError())
+    val (users, userAds, _) = makeTestServices(new TestAds)
+    forall(registerGen) { reg =>
+      for
+        u   <- users.create(reg)
+        ads <- userAds.getAds(u).attempt
+      yield expect.same(Left(TestError()), ads)
+    }
+  }
+
   test("new user has no ads") {
-    val (users, userAds, _) = makeTestServices
+    val (users, userAds, _) = makeTestServices()
     forall(registerGen) { reg =>
       for
         u   <- users.create(reg)
@@ -44,7 +61,7 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("user has ad after create") {
-    val (users, userAds, ads) = makeTestServices
+    val (users, userAds, ads) = makeTestServices()
     val gen =
       for
         r  <- registerGen
@@ -60,7 +77,7 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("invalid user has no ads") {
-    val (users, userAds, ads) = makeTestServices
+    val (users, userAds, ads) = makeTestServices()
     forall(userIdGen) { id =>
       for
         x <- userAds.getAds(id)

@@ -10,7 +10,7 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-private final class InMemoryAdRepository[F[_]: Sync] extends AdRepository[F]:
+class InMemoryAdRepository[F[_]: Sync] extends AdRepository[F]:
 
   private val map = new TrieMap[AdId, Advertisement]
 

@@ -10,7 +10,7 @@ import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
-private final class InMemoryAdImageRepository[F[_]: Sync] extends AdImageRepository[F]:
+class InMemoryAdImageRepository[F[_]: Sync] extends AdImageRepository[F]:
 
   private val map = new TrieMap[ImageId, Image]()
 

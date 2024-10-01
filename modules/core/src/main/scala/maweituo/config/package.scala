@@ -54,7 +54,10 @@ final case class HttpServerConfig(
 
 final case class PostgresConfig(
     user: String,
-    password: String
+    password: String,
+    host: Host,
+    port: Port,
+    databaseName: String
 )
 
 export CirisOrphan.given

@@ -29,12 +29,12 @@ case class JsonConfig private (json: Json):
       )(v => ciris.ConfigValue.loaded(key, v))
 
 object JsonConfig:
+  def fromString[F[_]: Sync](str: String): F[JsonConfig] =
+    io.circe.parser.parse(str).liftTo[F].map(JsonConfig.apply)
+
   def fromFile[F[_]: Sync](path: Path): F[JsonConfig] =
     Sync[F]
       .blocking {
         Files.readString(path)
       }
-      .flatMap { str =>
-        io.circe.parser.parse(str).liftTo[F]
-      }
-      .map(JsonConfig.apply)
+      .flatMap(fromString)

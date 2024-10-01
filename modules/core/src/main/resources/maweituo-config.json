@@ -1,9 +1,4 @@
 {
-  "cassandra": {
-    "port": "9042",
-    "host": "localhost",
-    "datacenter": "datacenter1"
-  },
   "http": {
     "port": "8080",
     "host": "localhost"
@@ -19,5 +14,12 @@
     "host": "localhost",
     "bucket": "maweituo",
     "url": "http://minio:9000"
+  },
+  "postgres": {
+    "user": "maweituo",
+    "password": "maweituo",
+    "host": "localhost",
+    "port": "5432",
+    "db": "maweituo"
   }
 }

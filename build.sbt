@@ -41,6 +41,7 @@ val HikariCPVersion        = "5.1.0"
 val LZ4Version             = "1.8.0"
 val IronVersion            = "2.6.0"
 val KittensVersion         = "3.3.0"
+val H2Version              = "2.3.230"
 
 lazy val root = (project in file("."))
   .settings(
@@ -59,6 +60,7 @@ lazy val core = (project in file("modules/core"))
     dockerExposedPorts ++= Seq(8080),
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
+      "com.h2database"      % "h2"                  % H2Version,
       "ch.qos.logback"      % "logback-classic"     % LogbackVersion,
       "org.typelevel"      %% "cats-core"           % CatsVersion,
       "org.typelevel"      %% "cats-effect"         % CatsEffectVersion,
@@ -94,11 +96,11 @@ lazy val tests = (project in file("modules/tests"))
     publish / skip := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     libraryDependencies ++= Seq(
-      "com.disneystreaming" %% "weaver-cats"        % WeaverVersion,
-      "com.disneystreaming" %% "weaver-discipline"  % WeaverVersion,
-      "com.disneystreaming" %% "weaver-scalacheck"  % WeaverVersion,
-      "org.typelevel"       %% "log4cats-noop"      % Log4CatsVersion,
-      "org.typelevel"       %% "cats-laws"          % CatsVersion,
+      "com.disneystreaming" %% "weaver-cats"       % WeaverVersion,
+      "com.disneystreaming" %% "weaver-discipline" % WeaverVersion,
+      "com.disneystreaming" %% "weaver-scalacheck" % WeaverVersion,
+      "org.typelevel"       %% "log4cats-noop"     % Log4CatsVersion,
+      "org.typelevel"       %% "cats-laws"         % CatsVersion
     )
   )
 

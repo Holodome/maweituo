@@ -17,8 +17,8 @@ object MkPostgresClient:
     for
       hikariConfig <- Resource.pure {
         val config = new HikariConfig()
-        config.setDriverClassName("org.h2.Driver")
-        config.setJdbcUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+        config.setDriverClassName("org.postgresql.Driver")
+        config.setJdbcUrl(f"jdbc:postgresql://${c.host}:${c.port}/${c.databaseName}")
         config.setUsername(c.user)
         config.setPassword(c.password)
         config

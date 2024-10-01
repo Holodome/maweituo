@@ -12,17 +12,24 @@ import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
 import org.typelevel.log4cats.Logger
+import scala.io.Source
 
 object Config:
+  enum ConfigSource:
+    case ConfigEnv(string: String)
+    case ConfigDefault
+
   def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
-    env("MW_CONFIG_PATH")
+    env("MW_CONFIG_PATH").map(ConfigSource.ConfigEnv.apply).default(ConfigSource.ConfigDefault)
       .load[F]
       .flatMap { path =>
-        utils.JsonConfig
-          .fromFile[F](Paths.get(path))
-          .flatMap { json =>
-            defaultAppConfig[F](using json).load[F]
-          }
+        path match
+          case ConfigSource.ConfigEnv(path) =>
+            utils.JsonConfig.fromFile[F](Paths.get(path))
+          case ConfigSource.ConfigDefault =>
+            utils.JsonConfig.fromString(Source.fromResource("maweituo-config.json").mkString)
+      }.flatMap { json =>
+        defaultAppConfig[F](using json).load[F]
       }
       .onError { case e =>
         Logger[F].error(e)("Failed to load config")
@@ -40,7 +47,10 @@ object Config:
   private def postgresConfig[F[_]](using file: JsonConfig): ConfigValue[F, PostgresConfig] =
     (
       file.stringField("postgres.user").as[String].covary[F],
-      file.stringField("postgres.password").as[String].covary[F]
+      file.stringField("postgres.password").as[String].covary[F],
+      file.stringField("postgres.host").as[Host].covary[F],
+      file.stringField("postgres.port").as[Port].covary[F],
+      file.stringField("postgres.db").as[String].covary[F]
     ).parMapN(PostgresConfig.apply)
 
   private def httpServerConfig[F[_]](using file: JsonConfig): ConfigValue[F, HttpServerConfig] =
@@ -52,7 +62,7 @@ object Config:
   private def jwtConfig[F[_]](using file: JsonConfig): ConfigValue[F, JwtConfig] =
     (
       file.stringField("jwt.expire").as[JwtTokenExpiration].covary[F],
-      env("MW_JWT_SECRET_KEY").as[JwtAccessSecret].secret
+      env("MW_JWT_SECRET_KEY").default("123").as[JwtAccessSecret].secret
     ).parMapN(JwtConfig.apply)
 
   private def redisConfig[F[_]](using file: JsonConfig): ConfigValue[F, RedisConfig] =
@@ -62,8 +72,8 @@ object Config:
     (
       file.stringField("minio.host").as[Host],
       file.stringField("minio.port").as[Port],
-      env("MW_MINIO_USER").as[String].secret,
-      env("MW_MINIO_PASSWORD").as[String].secret,
+      env("MW_MINIO_USER").default("minioadmin").as[String].secret,
+      env("MW_MINIO_PASSWORD").default("minioadmin").as[String].secret,
       file.stringField("minio.bucket").as[String],
       file.stringField("minio.url").as[String]
     ).parMapN(MinioConfig.apply)

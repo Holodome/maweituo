@@ -4,9 +4,8 @@ Classified advertisements web application with recommendation system
 
 ## Technical stack
 
-* Scala 2.13 with cats-effect
-* ScyllaDB as primary database
-* Clickhouse as recommendation system database
+* Scala 3.4 with cats-effect
+* PostgreSQL
 * minio 
 * svelte-kit
 

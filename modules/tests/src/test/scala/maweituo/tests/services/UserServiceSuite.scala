@@ -69,7 +69,7 @@ object UserServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("register and find work") {
+  test("register and find") {
     val users = makeTestUsers
     forall(registerGen) { register =>
       for

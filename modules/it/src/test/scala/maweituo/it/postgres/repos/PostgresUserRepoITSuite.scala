@@ -5,10 +5,10 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.UpdateUserInternal
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.WeaverLogAdapter
 import maweituo.tests.containers.*
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.utils.given
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
@@ -16,7 +16,7 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
 
-object PostgresUserRepoITSuite extends IOSuite with Checkers:
+object PostgresUserRepoITSuite extends ResourceSuite:
 
   type Res = Transactor[IO]
 

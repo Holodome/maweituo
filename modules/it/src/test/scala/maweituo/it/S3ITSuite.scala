@@ -8,15 +8,14 @@ import cats.effect.kernel.Resource
 
 import maweituo.infrastructure.OBSId
 import maweituo.infrastructure.minio.MinioObjectStorage
-import maweituo.tests.WeaverLogAdapter
 import maweituo.tests.containers.*
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import io.minio.MinioAsyncClient
 import org.typelevel.log4cats.Logger
 import weaver.*
-import weaver.scalacheck.Checkers
 
-object S3Suite extends IOSuite with Checkers:
+object S3Suite extends ResourceSuite:
 
   type Res = MinioAsyncClient
 

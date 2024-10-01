@@ -5,6 +5,7 @@ import scala.concurrent.duration.DurationInt
 import cats.effect.*
 
 import maweituo.infrastructure.redis.RedisEphemeralDict
+import maweituo.tests.ResourceSuite
 import maweituo.tests.containers.makeRedisResource
 import maweituo.tests.generators.nonEmptyStringGen
 
@@ -15,7 +16,7 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
 
-object RedisSuite extends IOSuite with Checkers:
+object RedisSuite extends ResourceSuite:
 
   private val Expire = 30.seconds
 

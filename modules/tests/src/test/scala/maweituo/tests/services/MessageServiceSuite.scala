@@ -10,7 +10,7 @@ import maweituo.effects.TimeSource
 import maweituo.interpreters.*
 import maweituo.interpreters.ads.{AdServiceInterpreter, ChatServiceInterpreter, MessageServiceInterpreter}
 import maweituo.interpreters.users.UserServiceInterpreter
-import maweituo.tests.generators.{ createAdRequestGen, registerGen, sendMessageRequestGen }
+import maweituo.tests.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepositoryFactory
 import maweituo.tests.services.stubs.TelemetryServiceStub
@@ -23,6 +23,11 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import maweituo.domain.ads.repos.MessageRepository
+import scala.util.control.NoStackTrace
+import maweituo.domain.ads.messages.ChatId
+import maweituo.tests.repos.inmemory.InMemoryMessageRepository
+import maweituo.domain.ads.messages.Message
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
 
@@ -33,12 +38,12 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   private given timeSource: TimeSource[IO] = new:
     def instant: IO[Instant] = Instant.ofEpochSecond(epoch).pure[IO]
 
-  private def makeTestServices: (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
+  private def makeTestServices(msgRepo: MessageRepository[IO] = InMemoryRepositoryFactory.msgs)
+      : (UserService[IO], AdService[IO], ChatService[IO], MessageService[IO]) =
     val telemetry             = new TelemetryServiceStub
     val userRepo              = InMemoryRepositoryFactory.users
     val adRepo                = InMemoryRepositoryFactory.ads
     val chatRepo              = InMemoryRepositoryFactory.chats
-    val msgRepo               = InMemoryRepositoryFactory.msgs
     given iam: IAMService[IO] = makeIAMService(adRepo, chatRepo)
     val users                 = UserServiceInterpreter.make(userRepo)
     val feedRepository        = RepositoryStubFactory.feed
@@ -47,8 +52,30 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
     val msgs                  = MessageServiceInterpreter.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
     (users, ads, chats, msgs)
 
+  test("history internal error") {
+    case class TestError() extends NoStackTrace
+    class ChatRepo extends InMemoryMessageRepository[IO]:
+      override def chatHistory(chatId: ChatId) = IO.raiseError(TestError())
+    val (users, ads, chats, msgs) = makeTestServices(new ChatRepo)
+    val gen =
+      for
+        reg      <- registerGen
+        otherReg <- registerGen
+        ad       <- createAdRequestGen
+      yield (reg, otherReg, ad)
+    forall(gen) { case (reg, otherReg, createAd) =>
+      for
+        u1   <- users.create(reg)
+        u2   <- users.create(otherReg)
+        ad   <- ads.create(u1, createAd)
+        chat <- chats.create(ad, u2)
+        x    <- msgs.history(chat, u2).attempt
+      yield expect.same(Left(TestError()), x)
+    }
+  }
+
   test("empty chat is empty") {
-    val (users, ads, chats, msgs) = makeTestServices
+    val (users, ads, chats, msgs) = makeTestServices()
     val gen =
       for
         reg      <- registerGen
@@ -67,7 +94,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("basic message works") {
-    val (users, ads, chats, msgs) = makeTestServices
+    val (users, ads, chats, msgs) = makeTestServices()
     val gen =
       for
         reg      <- registerGen
@@ -94,8 +121,31 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("send internal error") {
+    case class TestError() extends NoStackTrace
+    class ChatRepo extends InMemoryMessageRepository[IO]:
+      override def send(message: Message) = IO.raiseError(TestError())
+    val (users, ads, chats, msgs) = makeTestServices(new ChatRepo)
+    val gen =
+      for
+        reg      <- registerGen
+        otherReg <- registerGen
+        ad       <- createAdRequestGen
+        msg      <- sendMessageRequestGen
+      yield (reg, otherReg, ad, msg)
+    forall(gen) { case (reg, otherReg, createAd, msg) =>
+      for
+        u1   <- users.create(reg)
+        u2   <- users.create(otherReg)
+        ad   <- ads.create(u1, createAd)
+        chat <- chats.create(ad, u2)
+        x    <- msgs.send(chat, u2, msg).attempt
+      yield expect.same(Left(TestError()), x)
+    }
+  }
+
   test("unable to send to forbidden chat") {
-    val (users, ads, chats, msgs) = makeTestServices
+    val (users, ads, chats, msgs) = makeTestServices()
     val gen =
       for
         reg1 <- registerGen
@@ -117,7 +167,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("unable to gen history for forbidden chat") {
-    val (users, ads, chats, msgs) = makeTestServices
+    val (users, ads, chats, msgs) = makeTestServices()
     val gen =
       for
         reg1 <- registerGen

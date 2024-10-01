@@ -1,11 +1,11 @@
 package maweituo.tests.services
 
-import maweituo.domain.ads.services.{ AdService, ChatService }
+import maweituo.domain.ads.services.{AdService, ChatService}
 import maweituo.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists, InvalidChatId}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.*
 import maweituo.interpreters.*
-import maweituo.interpreters.ads.{ AdServiceInterpreter, ChatServiceInterpreter }
+import maweituo.interpreters.ads.{AdServiceInterpreter, ChatServiceInterpreter}
 import maweituo.interpreters.users.UserServiceInterpreter
 import maweituo.tests.generators.{chatIdGen, createAdRequestGen, registerGen}
 import maweituo.tests.repos.*
@@ -17,17 +17,22 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import maweituo.domain.ads.repos.ChatRepository
+import scala.util.control.NoStackTrace
+import cats.data.OptionT
+import maweituo.domain.ads.messages.ChatId
+import maweituo.domain.ads.messages.Chat
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers:
 
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices: (UserService[F], AdService[F], ChatService[F]) =
+  private def makeTestServices(chatRepo: ChatRepository[IO] = InMemoryRepositoryFactory.chats)
+      : (UserService[F], AdService[F], ChatService[F]) =
     val telemetry        = new TelemetryServiceStub
     val userRepo         = InMemoryRepositoryFactory.users
     val adRepo           = InMemoryRepositoryFactory.ads
-    val chatRepo         = InMemoryRepositoryFactory.chats
     given IAMService[IO] = makeIAMService(adRepo, chatRepo)
     val users            = UserServiceInterpreter.make(userRepo)
     val feedRepository   = RepositoryStubFactory.feed
@@ -36,7 +41,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
     (users, ads, chats)
 
   test("invalid chat id") {
-    val (users, ads, chats) = makeTestServices
+    val (users, ads, chats) = makeTestServices()
     val gen =
       for
         u <- registerGen
@@ -50,8 +55,26 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("get internal error") {
+    case class TestError() extends NoStackTrace
+    class ChatRepo extends InMemoryChatRepository[IO]:
+      override def find(chatId: ChatId) = OptionT(IO.raiseError(TestError()))
+    val (users, ads, chats) = makeTestServices(new ChatRepo)
+    val gen =
+      for
+        u <- registerGen
+        c <- chatIdGen
+      yield u -> c
+    forall(gen) { (reg, chat) =>
+      for
+        user <- users.create(reg)
+        x    <- chats.get(chat, user).attempt
+      yield expect.same(Left(TestError()), x)
+    }
+  }
+
   test("create works") {
-    val (users, ads, chats) = makeTestServices
+    val (users, ads, chats) = makeTestServices()
     val gen =
       for
         reg      <- registerGen
@@ -68,8 +91,29 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
     }
   }
 
+  test("create internal error") {
+    case class TestError() extends NoStackTrace
+    class ChatRepo extends InMemoryChatRepository[IO]:
+      override def create(chat: Chat): F[Unit] = IO.raiseError(TestError())
+    val (users, ads, chats) = makeTestServices(new ChatRepo)
+    val gen =
+      for
+        reg      <- registerGen
+        otherReg <- registerGen
+        ad       <- createAdRequestGen
+      yield (reg, otherReg, ad)
+    forall(gen) { (reg, otherReg, createAd) =>
+      for
+        u1 <- users.create(reg)
+        u2 <- users.create(otherReg)
+        ad <- ads.create(u1, createAd)
+        x  <- chats.create(ad, u2).attempt
+      yield expect.same(Left(TestError()), x)
+    }
+  }
+
   test("can't create chat with myself") {
-    val (users, ads, chats) = makeTestServices
+    val (users, ads, chats) = makeTestServices()
     val gen =
       for
         reg <- registerGen
@@ -85,7 +129,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers:
   }
 
   test("can't create same chat multiple times") {
-    val (users, ads, chats) = makeTestServices
+    val (users, ads, chats) = makeTestServices()
     val gen =
       for
         reg      <- registerGen

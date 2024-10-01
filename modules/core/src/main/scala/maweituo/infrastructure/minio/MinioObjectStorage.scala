@@ -39,6 +39,9 @@ object MinioObjectStorage:
               .build()
           )
         ).void *> Logger[F].info(f"Bucket $bucket created")
+    }.recoverWith {
+      case e =>
+        Logger[F].warn(e)("Error when creating bucket")
     }
 
 private final class MinioObjectStorage[F[_]: Async: Logger](

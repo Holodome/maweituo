@@ -12,7 +12,7 @@ trait ObjectStorage[F[_]]:
   def get(id: OBSId): OptionT[F, fs2.Stream[F, Byte]]
   def delete(id: OBSId): F[Unit]
 
-  def put(id: OBSId, data: Array[Byte]): F[Unit] =
+  def put(id: OBSId, data: Seq[Byte]): F[Unit] =
     putStream(id, fs2.Stream.emits(data), data.length)
 
 type OBSUrl = OBSUrl.Type

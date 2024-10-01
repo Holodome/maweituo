@@ -25,7 +25,7 @@ private final class RedisEphemeralDict[F[_]: Monad] private (
     redis.setEx(a, b, expire)
 
   override def delete(a: String): F[Unit] =
-    redis.get(a).void
+    redis.del(a).void
 
   override def get(a: String): OptionT[F, String] =
     OptionT(redis.get(a))

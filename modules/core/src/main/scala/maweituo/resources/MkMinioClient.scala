@@ -14,7 +14,7 @@ object MkMinioClient:
 
   given [F[_]: Sync]: MkMinioClient[F] = (cfg: MinioConfig) =>
     Resource.make[F, MinioAsyncClient](
-      Sync[F].delay(
+      Sync[F].blocking(
         MinioAsyncClient
           .builder()
           .endpoint(s"http://${cfg.host}:${cfg.port}")

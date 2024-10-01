@@ -2,6 +2,15 @@ package maweituo.tests.services
 
 import java.time.Instant
 
+import scala.util.control.NoStackTrace
+
+import cats.MonadThrow
+import cats.data.NonEmptyList
+import cats.effect.IO
+import cats.syntax.all.*
+
+import maweituo.domain.ads.messages.{ChatId, Message}
+import maweituo.domain.ads.repos.MessageRepo
 import maweituo.domain.ads.services.{AdService, ChatService, MessageService}
 import maweituo.domain.errors.ChatAccessForbidden
 import maweituo.domain.services.*
@@ -12,22 +21,13 @@ import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceIn
 import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{createAdRequestGen, registerGen, sendMessageRequestGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepoFactory
+import maweituo.tests.repos.inmemory.{InMemoryMessageRepo, InMemoryRepoFactory}
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import cats.MonadThrow
-import cats.data.NonEmptyList
-import cats.effect.IO
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.MessageRepo
-import scala.util.control.NoStackTrace
-import maweituo.domain.ads.messages.ChatId
-import maweituo.tests.repos.inmemory.InMemoryMessageRepo
-import maweituo.domain.ads.messages.Message
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers:
 

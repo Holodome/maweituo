@@ -1,8 +1,9 @@
 package maweituo.resources
 
+import cats.effect.{Async, Resource}
+
 import maweituo.config.HttpServerConfig
 
-import cats.effect.{Async, Resource}
 import fs2.io.net.Network
 import org.http4s.HttpApp
 import org.http4s.ember.server.EmberServerBuilder

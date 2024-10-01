@@ -1,5 +1,12 @@
 package maweituo.tests.services
 
+import scala.util.control.NoStackTrace
+
+import cats.data.OptionT
+import cats.effect.IO
+
+import maweituo.domain.ads.images.{Image, ImageId}
+import maweituo.domain.ads.repos.AdImageRepo
 import maweituo.domain.ads.services.*
 import maweituo.domain.errors.{AdModificationForbidden, InvalidImageId}
 import maweituo.domain.services.*
@@ -8,22 +15,15 @@ import maweituo.infrastructure.inmemory.InMemoryObjectStorage
 import maweituo.interp.*
 import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
 import maweituo.interp.users.UserServiceInterp
-import maweituo.tests.generators.{createAdRequestGen, imageContentsGen, imageIdGen, registerGen}
+import maweituo.tests.generators.{createAdRequestGen, imageContentsGen, imageIdGen, registerGen, userIdGen}
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import cats.effect.IO
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.AdImageRepo
-import scala.util.control.NoStackTrace
-import maweituo.domain.ads.images.Image
-import maweituo.domain.ads.images.ImageId
-import cats.data.OptionT
-import maweituo.tests.generators.userIdGen
 
 object ImageServiceSuite extends SimpleIOSuite with Checkers:
 

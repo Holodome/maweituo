@@ -2,15 +2,16 @@ package maweituo.modules
 
 import scala.concurrent.duration.DurationInt
 
+import cats.Parallel
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.domain.users.{AuthedUser, UserJwtAuth}
 import maweituo.http.routes.*
 import maweituo.http.routes.ads.*
 import maweituo.http.{*, given}
 
-import cats.Parallel
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.*
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.*
 import org.http4s.server.middleware.*

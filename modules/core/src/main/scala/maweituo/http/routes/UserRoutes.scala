@@ -1,12 +1,13 @@
 package maweituo.http.routes
 
+import cats.effect.Concurrent
+import cats.syntax.all.*
+
 import maweituo.domain.users.*
 import maweituo.domain.users.services.{UserAdsService, UserService}
 import maweituo.http.Routes
 import maweituo.http.vars.UserIdVar
 
-import cats.effect.Concurrent
-import cats.syntax.all.*
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.circe.JsonDecoder

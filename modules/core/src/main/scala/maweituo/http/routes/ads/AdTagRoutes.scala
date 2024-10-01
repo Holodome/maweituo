@@ -1,13 +1,14 @@
 package maweituo.http.routes.ads
 
+import cats.effect.Concurrent
+import cats.syntax.all.*
+
 import maweituo.domain.ads.AddTagRequest
 import maweituo.domain.ads.services.AdTagService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.Routes
 import maweituo.http.vars.AdIdVar
 
-import cats.effect.Concurrent
-import cats.syntax.all.*
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder

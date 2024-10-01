@@ -1,8 +1,9 @@
 package maweituo.domain.users.services
 
+import cats.data.OptionT
+
 import maweituo.domain.users.*
 
-import cats.data.OptionT
 import dev.profunktor.auth.jwt.JwtToken
 
 trait AuthService[F[_]]:

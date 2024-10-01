@@ -1,5 +1,8 @@
 package maweituo.it.postgres.repos
 
+import cats.effect.*
+import cats.syntax.all.*
+
 import maweituo.domain.users.UpdateUserInternal
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.WeaverLogAdapter
@@ -7,8 +10,6 @@ import maweituo.tests.containers.*
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.utils.given
 
-import cats.effect.*
-import cats.syntax.all.*
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
@@ -17,11 +18,11 @@ import weaver.scalacheck.Checkers
 
 object PostgresUserRepoITSuite extends IOSuite with Checkers:
 
-  given Logger[IO] = NoOpLogger[IO]
-
   type Res = Transactor[IO]
 
-  override def sharedResource: Resource[IO, Res] = makePostgresResource[IO]
+  override def sharedResource: Resource[IO, Res] =
+    given Logger[IO] = NoOpLogger[IO]
+    makePostgresResource[IO]
 
   test("create and find") { (postgres, log) =>
     given Logger[IO] = new WeaverLogAdapter[IO](log)

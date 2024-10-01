@@ -1,14 +1,15 @@
 package maweituo.postgres.ads.repos
 
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.given
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.ChatRepo
 import maweituo.domain.users.UserId
 import maweituo.postgres.sql.codecs.given
 
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.given
 import doobie.Transactor
 import doobie.implicits.given
 

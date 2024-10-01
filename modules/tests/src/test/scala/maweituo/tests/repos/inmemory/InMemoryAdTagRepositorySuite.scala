@@ -1,9 +1,10 @@
 package maweituo.tests.repos.inmemory
 
+import cats.effect.IO
+
 import maweituo.tests.generators.*
 import maweituo.tests.repos.*
 
-import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 

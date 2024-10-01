@@ -1,12 +1,13 @@
 package maweituo.tests.repos.inmemory
 
+import cats.effect.IO
+import cats.syntax.all.*
+
 import maweituo.domain.users.UpdateUserInternal
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.repos.*
 import maweituo.tests.utils.given
 
-import cats.effect.IO
-import cats.syntax.all.*
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 

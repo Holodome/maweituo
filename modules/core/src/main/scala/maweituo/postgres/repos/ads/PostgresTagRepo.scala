@@ -1,11 +1,12 @@
 package maweituo.postgres.ads.repos
 
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.domain.ads.repos.AdTagRepo
 import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.postgres.sql.codecs.given
 
-import cats.effect.Async
-import cats.syntax.all.*
 import doobie.*
 import doobie.implicits.*
 

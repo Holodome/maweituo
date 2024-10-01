@@ -1,10 +1,10 @@
 package maweituo.infrastructure
 
-import maweituo.effects.GenUUID
-import maweituo.infrastructure.OBSId
-
 import cats.Functor
 import cats.syntax.all.*
+
+import maweituo.effects.GenUUID
+import maweituo.infrastructure.OBSId
 
 trait GenObjectStorageId[F[_]]:
   def genId: F[OBSId]

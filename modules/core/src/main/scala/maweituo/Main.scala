@@ -1,12 +1,13 @@
 package maweituo
 
+import cats.effect.std.Supervisor
+import cats.effect.{IO, IOApp}
+
 import maweituo.config.Config
 import maweituo.domain.users.UserJwtAuth
 import maweituo.modules.*
 import maweituo.resources.MkHttpServer
 
-import cats.effect.std.Supervisor
-import cats.effect.{IO, IOApp}
 import dev.profunktor.auth.jwt.JwtAuth
 import dev.profunktor.redis4cats.log4cats.*
 import org.typelevel.log4cats.Logger

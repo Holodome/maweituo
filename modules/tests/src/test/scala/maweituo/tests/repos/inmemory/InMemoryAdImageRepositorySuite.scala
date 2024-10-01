@@ -1,14 +1,14 @@
 package maweituo.tests.repos.inmemory
 
+import cats.effect.IO
+
+import maweituo.domain.ads.images.{Image, MediaType}
 import maweituo.tests.generators.*
 import maweituo.tests.repos.*
 
-import cats.effect.IO
+import org.scalacheck.Gen
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import org.scalacheck.Gen
-import maweituo.domain.ads.images.Image
-import maweituo.domain.ads.images.MediaType
 
 object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
   private def repo = InMemoryRepoFactory.images[IO]

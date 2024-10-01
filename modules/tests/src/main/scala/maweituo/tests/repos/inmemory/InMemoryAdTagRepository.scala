@@ -2,10 +2,10 @@ package maweituo.tests.repos.inmemory
 
 import scala.collection.concurrent.TrieMap
 
+import cats.effect.Sync
+
 import maweituo.domain.ads.*
 import maweituo.domain.ads.repos.AdTagRepo
-
-import cats.effect.Sync
 
 class InMemoryAdTagRepo[F[_]: Sync] extends AdTagRepo[F]:
 

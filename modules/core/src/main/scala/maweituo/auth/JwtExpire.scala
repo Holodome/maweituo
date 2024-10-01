@@ -2,11 +2,12 @@ package maweituo.auth
 
 import java.time.Clock
 
+import cats.effect.Sync
+import cats.syntax.all.*
+
 import maweituo.config.*
 import maweituo.effects.JwtClock
 
-import cats.effect.Sync
-import cats.syntax.all.*
 import pdi.jwt.JwtClaim
 
 trait JwtExpire[F[_]]:

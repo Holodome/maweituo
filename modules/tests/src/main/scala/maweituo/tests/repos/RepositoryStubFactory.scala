@@ -4,6 +4,10 @@ import java.time.Instant
 
 import scala.concurrent.duration.FiniteDuration
 
+import cats.Monad
+import cats.data.OptionT
+import cats.syntax.all.*
+
 import maweituo.domain.ads.images.{Image, ImageId}
 import maweituo.domain.ads.messages.{Chat, ChatId, Message}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, AdTagRepo, ChatRepo, MessageRepo}
@@ -12,10 +16,6 @@ import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepo
 import maweituo.domain.users.*
 import maweituo.domain.users.repos.UserRepo
-
-import cats.Monad
-import cats.data.OptionT
-import cats.syntax.all.*
 
 object RepoStubFactory:
   private inline def unit[F[_]: Monad]            = Monad[F].unit

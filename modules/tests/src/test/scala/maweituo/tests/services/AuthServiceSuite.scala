@@ -1,5 +1,8 @@
 package maweituo.tests.services
 
+import cats.effect.IO
+import cats.syntax.all.*
+
 import maweituo.auth.JwtTokens
 import maweituo.domain.errors.{InvalidPassword, NoUserWithName}
 import maweituo.domain.services.*
@@ -15,15 +18,12 @@ import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.stubs.TelemetryServiceStub
 import maweituo.utils.given
 
-import cats.effect.IO
-import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
 import org.scalacheck.Gen
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.interp.AuthServiceInterp
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers:
 

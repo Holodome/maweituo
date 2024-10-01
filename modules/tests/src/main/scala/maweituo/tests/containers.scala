@@ -1,22 +1,23 @@
 package maweituo.tests.containers
 
+import scala.io.Source
+
+import cats.Applicative
 import cats.effect.kernel.{Async, Resource, Sync}
 import cats.syntax.all.*
+
 import com.dimafeng.testcontainers.{Container, MinIOContainer, PostgreSQLContainer, RedisContainer}
 import com.zaxxer.hikari.HikariConfig
 import dev.profunktor.redis4cats.effect.MkRedis
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import doobie.Transactor
 import doobie.hikari.HikariTransactor
+import doobie.syntax.all.*
+import doobie.util.fragment.Fragment
+import doobie.util.log.{LogEvent, LogHandler}
 import io.minio.MinioAsyncClient
 import org.testcontainers.utility.DockerImageName
-import doobie.util.fragment.Fragment
-import scala.io.Source
-import doobie.syntax.all.*
 import org.typelevel.log4cats.Logger
-import doobie.util.log.LogHandler
-import doobie.util.log.LogEvent
-import cats.Applicative
 
 private def makeContainerResource[F[_], C <: Container](container: F[C])(using F: Sync[F]): Resource[F, C] =
   Resource.make(container.flatTap {

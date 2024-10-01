@@ -2,6 +2,7 @@ package maweituo.ext
 
 import cats.MonadThrow
 import cats.syntax.all.*
+
 import org.typelevel.log4cats.Logger
 
 extension [F[_]: MonadThrow: Logger](logger: Logger[F])

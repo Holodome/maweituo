@@ -1,5 +1,8 @@
 package maweituo.interp.ads
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.Id
 import maweituo.domain.ads.*
 import maweituo.domain.ads.repos.AdRepo
@@ -9,8 +12,6 @@ import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.effects.{GenUUID, TimeSource}
 
-import cats.MonadThrow
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 
 object AdServiceInterp:

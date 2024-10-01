@@ -2,6 +2,9 @@ package maweituo.tests.ads
 
 import scala.util.control.NoStackTrace
 
+import cats.data.{NonEmptyList, OptionT}
+import cats.effect.IO
+
 import maweituo.domain.ads.*
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.ads.services.AdService
@@ -17,8 +20,6 @@ import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import cats.data.{NonEmptyList, OptionT}
-import cats.effect.IO
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite

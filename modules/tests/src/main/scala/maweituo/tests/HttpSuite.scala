@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets
 import cats.Applicative
 import cats.effect.IO
 import cats.syntax.all.*
+
 import io.circe.*
 import io.circe.syntax.*
 import org.http4s.*

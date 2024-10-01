@@ -1,11 +1,12 @@
 package maweituo.domain.users
 
-import maweituo.auth.PasswordHashing
-import maweituo.utils.{IdNewtype, Newtype}
-
 import cats.Show
 import cats.derived.*
 import cats.kernel.Eq
+
+import maweituo.auth.PasswordHashing
+import maweituo.utils.{IdNewtype, Newtype}
+
 import dev.profunktor.auth.jwt.JwtSymmetricAuth
 import io.circe.{Codec, Decoder}
 import io.github.iltotore.iron.*

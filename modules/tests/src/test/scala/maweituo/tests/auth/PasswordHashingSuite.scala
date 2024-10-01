@@ -1,9 +1,10 @@
 package maweituo.tests.auth
 
+import cats.effect.IO
+
 import maweituo.auth.PasswordHashing.{ genSalt, hashSaltPassword }
 import maweituo.tests.generators.passwordGen
 
-import cats.effect.IO
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 

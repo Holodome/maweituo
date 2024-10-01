@@ -1,11 +1,12 @@
 package maweituo.http.routes
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.users.AuthedUser
 import maweituo.domain.users.services.AuthService
 import maweituo.http.Routes
 
-import cats.MonadThrow
-import cats.syntax.all.*
 import dev.profunktor.auth.AuthHeaders
 import org.http4s.AuthedRoutes
 import org.http4s.circe.JsonDecoder

@@ -1,5 +1,7 @@
 package maweituo.modules
 
+import cats.MonadThrow
+
 import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, MessageService}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
@@ -14,7 +16,6 @@ import maweituo.interp.ads.{
 import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
 import maweituo.interp.{AuthServiceInterp, FeedServiceInterp, IAMServiceInterp, TelemetryServiceBackgroundInterp}
 
-import cats.MonadThrow
 import org.typelevel.log4cats.Logger
 
 sealed abstract class Services[F[_]]:

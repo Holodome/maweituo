@@ -1,12 +1,12 @@
 package maweituo.domain.ads.repos
 
+import cats.MonadThrow
+import cats.data.OptionT
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.*
 import maweituo.domain.errors.InvalidChatId
 import maweituo.domain.users.UserId
-
-import cats.MonadThrow
-import cats.data.OptionT
 
 trait ChatRepo[F[_]]:
   def create(chat: Chat): F[Unit]

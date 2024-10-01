@@ -4,13 +4,14 @@ import java.io.InputStream
 
 import scala.util.control.NonFatal
 
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.ext.catsExt.liftCompletableFuture
 import maweituo.infrastructure.{OBSId, OBSUrl, ObjectStorage}
 
 import _root_.org.typelevel.log4cats.Logger
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.*
 import io.minio.*
 import io.minio.errors.ErrorResponseException
 

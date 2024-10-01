@@ -1,13 +1,14 @@
 package maweituo.interp.ads
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.domain.ads.repos.AdTagRepo
 import maweituo.domain.ads.services.AdTagService
 import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
 
-import cats.Monad
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 
 object AdTagServiceInterp:

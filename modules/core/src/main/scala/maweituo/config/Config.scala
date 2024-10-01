@@ -4,12 +4,13 @@ import java.nio.file.Paths
 
 import scala.io.Source
 
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.config.*
 import maweituo.config.given
 import maweituo.config.utils.JsonConfig
 
-import cats.effect.Async
-import cats.syntax.all.*
 import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*

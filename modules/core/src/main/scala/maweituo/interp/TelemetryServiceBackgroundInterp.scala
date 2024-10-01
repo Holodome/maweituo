@@ -1,11 +1,11 @@
 package maweituo.interp
 
+import cats.Functor
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.services.TelemetryService
 import maweituo.domain.users.UserId
 import maweituo.effects.Background
-
-import cats.Functor
 
 object TelemetryServiceBackgroundInterp:
   def make[F[_]: Functor: Background](

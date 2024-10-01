@@ -2,10 +2,10 @@ package maweituo.infrastructure.inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import maweituo.infrastructure.EphemeralDict
-
 import cats.data.OptionT
 import cats.effect.Sync
+
+import maweituo.infrastructure.EphemeralDict
 
 object InMemoryEphemeralDict:
   def make[F[_]: Sync, K, V]: EphemeralDict[F, K, V] = new:

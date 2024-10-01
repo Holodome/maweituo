@@ -1,10 +1,10 @@
 package maweituo.domain.users.repos
 
-import maweituo.domain.errors.*
-import maweituo.domain.users.*
-
 import cats.MonadThrow
 import cats.data.OptionT
+
+import maweituo.domain.errors.*
+import maweituo.domain.users.*
 
 trait UserRepo[F[_]]:
   def create(request: User): F[Unit]

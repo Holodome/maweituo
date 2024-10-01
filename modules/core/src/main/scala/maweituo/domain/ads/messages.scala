@@ -2,13 +2,14 @@ package maweituo.domain.ads.messages
 
 import java.time.Instant
 
+import cats.Show
+import cats.derived.*
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.users.UserId
 import maweituo.utils.given
 import maweituo.utils.{IdNewtype, Newtype}
 
-import cats.Show
-import cats.derived.*
 import io.circe.{Codec, Decoder, Encoder, Json}
 
 type ChatId = ChatId.Type

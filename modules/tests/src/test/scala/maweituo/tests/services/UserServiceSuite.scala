@@ -2,32 +2,28 @@ package maweituo.tests.services
 
 import java.util.UUID
 
+import scala.util.control.NoStackTrace
+
+import cats.data.{NonEmptyList, OptionT}
+import cats.effect.IO
+import cats.syntax.all.*
+
 import maweituo.domain.errors.*
 import maweituo.domain.services.IAMService
-import maweituo.domain.users.UserId
+import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
+import maweituo.domain.users.{Email, UpdateUserInternal, User, UserId, Username}
 import maweituo.interp.*
 import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepoFactory
+import maweituo.tests.repos.inmemory.{InMemoryRepoFactory, InMemoryUserRepo}
 import maweituo.tests.services.makeIAMService
 
-import cats.data.NonEmptyList
-import cats.effect.IO
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.users.repos.UserRepo
-import maweituo.domain.users.User
-import scala.util.control.NoStackTrace
-import cats.data.OptionT
-import maweituo.domain.users.Username
-import maweituo.domain.users.Email
-import maweituo.tests.repos.inmemory.InMemoryUserRepo
-import maweituo.domain.users.UpdateUserInternal
 
 object UserServiceSuite extends SimpleIOSuite with Checkers:
 

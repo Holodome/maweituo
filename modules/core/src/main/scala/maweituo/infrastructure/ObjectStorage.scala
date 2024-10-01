@@ -1,9 +1,9 @@
 package maweituo.infrastructure
 
+import cats.data.OptionT
+
 import maweituo.domain.ads.images.ImageUrl
 import maweituo.utils.Newtype
-
-import cats.data.OptionT
 
 trait ObjectStorage[F[_]]:
   def makeUrl(id: OBSId): OBSUrl

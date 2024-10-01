@@ -2,11 +2,12 @@ package maweituo.infrastructure.redis
 
 import scala.concurrent.duration.FiniteDuration
 
-import maweituo.infrastructure.EphemeralDict
-
 import cats.Monad
 import cats.data.OptionT
 import cats.syntax.all.*
+
+import maweituo.infrastructure.EphemeralDict
+
 import dev.profunktor.redis4cats.RedisCommands
 
 object RedisEphemeralDict:

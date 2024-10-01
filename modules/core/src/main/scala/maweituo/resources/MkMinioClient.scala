@@ -1,9 +1,10 @@
 package maweituo.resources
 
-import maweituo.config.MinioConfig
-
 import cats.Applicative
 import cats.effect.{Resource, Sync}
+
+import maweituo.config.MinioConfig
+
 import io.minio.MinioAsyncClient
 
 trait MkMinioClient[F[_]]:

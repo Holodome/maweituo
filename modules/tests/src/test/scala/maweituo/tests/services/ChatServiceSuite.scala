@@ -1,5 +1,12 @@
 package maweituo.tests.services
 
+import scala.util.control.NoStackTrace
+
+import cats.data.OptionT
+import cats.effect.IO
+
+import maweituo.domain.ads.messages.{Chat, ChatId}
+import maweituo.domain.ads.repos.ChatRepo
 import maweituo.domain.ads.services.{AdService, ChatService}
 import maweituo.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists, InvalidChatId}
 import maweituo.domain.services.*
@@ -12,16 +19,10 @@ import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.stubs.*
 
-import cats.effect.IO
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.ChatRepo
-import scala.util.control.NoStackTrace
-import cats.data.OptionT
-import maweituo.domain.ads.messages.ChatId
-import maweituo.domain.ads.messages.Chat
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers:
 

@@ -1,5 +1,8 @@
 package maweituo.interp.ads
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.Id
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
@@ -10,8 +13,6 @@ import maweituo.domain.users.UserId
 import maweituo.effects.GenUUID
 import maweituo.infrastructure.{GenObjectStorageId, ObjectStorage}
 
-import cats.MonadThrow
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 
 object AdImageServiceInterp:

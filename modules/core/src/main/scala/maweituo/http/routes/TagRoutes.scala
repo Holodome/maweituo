@@ -1,11 +1,12 @@
 package maweituo.http.routes
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.ads.services.AdTagService
 import maweituo.http.Routes
 import maweituo.http.vars.TagVar
 
-import cats.MonadThrow
-import cats.syntax.all.*
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder

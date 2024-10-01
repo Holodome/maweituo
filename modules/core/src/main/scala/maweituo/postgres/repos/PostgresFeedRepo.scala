@@ -4,14 +4,15 @@ import java.time.Instant
 
 import scala.concurrent.duration.FiniteDuration
 
+import cats.effect.Async
+import cats.syntax.all.given
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepo
 import maweituo.domain.users.UserId
 import maweituo.postgres.sql.codecs.given
 
-import cats.effect.Async
-import cats.syntax.all.given
 import doobie.Transactor
 import doobie.implicits.given
 import doobie.postgres.implicits.given

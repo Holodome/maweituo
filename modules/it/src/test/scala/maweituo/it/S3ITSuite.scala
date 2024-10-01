@@ -2,14 +2,15 @@ package maweituo.it
 
 import scala.util.Random
 
+import cats.data.OptionT
+import cats.effect.*
+import cats.effect.kernel.Resource
+
 import maweituo.infrastructure.OBSId
 import maweituo.infrastructure.minio.MinioObjectStorage
 import maweituo.tests.WeaverLogAdapter
 import maweituo.tests.containers.*
 
-import cats.data.OptionT
-import cats.effect.*
-import cats.effect.kernel.Resource
 import io.minio.MinioAsyncClient
 import org.typelevel.log4cats.Logger
 import weaver.*

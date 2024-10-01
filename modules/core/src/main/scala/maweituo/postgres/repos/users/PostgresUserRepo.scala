@@ -1,16 +1,17 @@
 package maweituo.postgres.repos.users
 
+import cats.Applicative
+import cats.data.OptionT
+import cats.effect.Async
+import cats.effect.kernel.Sync
+import cats.syntax.all.*
+
 import maweituo.domain.users.*
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.sql.codecs.given
 
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.*
 import doobie.*
 import doobie.implicits.*
-import cats.Applicative
-import cats.effect.kernel.Sync
 
 object PostgresUserRepo:
   def make[F[_]: Async](xa: Transactor[F]): UserRepo[F] = new:

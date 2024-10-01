@@ -3,6 +3,7 @@ package maweituo.http
 import cats.Semigroup
 import cats.effect.Async
 import cats.syntax.all.*
+
 import org.http4s.HttpRoutes
 
 final case class Routes[F[_]](public: Option[HttpRoutes[F]], authed: Option[HttpRoutes[F]])

@@ -1,5 +1,9 @@
 package maweituo.interp.users
 
+import cats.MonadThrow
+import cats.data.OptionT
+import cats.syntax.all.*
+
 import maweituo.auth.PasswordHashing
 import maweituo.domain.Id
 import maweituo.domain.errors.{UserEmailInUse, UserNameInUse}
@@ -10,9 +14,6 @@ import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
 import maweituo.effects.GenUUID
 
-import cats.MonadThrow
-import cats.data.OptionT
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 
 object UserServiceInterp:

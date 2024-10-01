@@ -1,12 +1,13 @@
 package maweituo.http.routes.ads
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.domain.ads.services.ChatService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.Routes
 import maweituo.http.vars.{AdIdVar, ChatIdVar}
 
-import cats.Monad
-import cats.syntax.all.*
 import io.circe.Json
 import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes

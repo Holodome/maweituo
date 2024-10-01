@@ -1,5 +1,9 @@
 package maweituo.modules
 
+import cats.MonadThrow
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.auth.{JwtExpire, JwtTokens}
 import maweituo.config.*
 import maweituo.domain.Id
@@ -8,9 +12,6 @@ import maweituo.infrastructure.minio.MinioObjectStorage
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.infrastructure.{EphemeralDict, ObjectStorage}
 
-import cats.MonadThrow
-import cats.effect.Async
-import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
 import io.minio.MinioAsyncClient

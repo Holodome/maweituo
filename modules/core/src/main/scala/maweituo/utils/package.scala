@@ -6,6 +6,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration}
 
 import cats.*
 import cats.syntax.all.*
+
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Decoder, Encoder}
 

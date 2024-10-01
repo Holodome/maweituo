@@ -1,8 +1,9 @@
 package maweituo.resources
 
+import cats.effect.{Async, Resource}
+
 import maweituo.config.PostgresConfig
 
-import cats.effect.{Async, Resource}
 import com.zaxxer.hikari.HikariConfig
 import doobie.Transactor
 import doobie.hikari.HikariTransactor

@@ -1,11 +1,12 @@
 package maweituo.http.routes
 
+import cats.effect.Concurrent
+import cats.syntax.all.*
+
 import maweituo.domain.users.RegisterRequest
 import maweituo.domain.users.services.UserService
 import maweituo.http.Routes
 
-import cats.effect.Concurrent
-import cats.syntax.all.*
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder

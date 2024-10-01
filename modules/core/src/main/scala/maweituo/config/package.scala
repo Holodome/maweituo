@@ -5,10 +5,11 @@ import java.util.UUID
 
 import scala.concurrent.duration.FiniteDuration
 
+import cats.syntax.all.*
+
 import maweituo.utils.given
 import maweituo.utils.{Newtype, Wrapper}
 
-import cats.syntax.all.*
 import ciris.{ConfigDecoder, Secret}
 import com.comcast.ip4s.{Host, Port}
 

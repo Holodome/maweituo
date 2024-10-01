@@ -2,11 +2,11 @@ package maweituo.auth
 
 import java.security.MessageDigest
 
-import maweituo.domain.users.*
-import maweituo.effects.GenUUID
-
 import cats.Functor
 import cats.syntax.all.*
+
+import maweituo.domain.users.*
+import maweituo.effects.GenUUID
 
 object PasswordHashing:
   def hashSaltPassword(

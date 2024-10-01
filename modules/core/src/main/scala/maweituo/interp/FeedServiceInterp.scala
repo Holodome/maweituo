@@ -2,6 +2,9 @@ package maweituo.interp
 
 import scala.concurrent.duration.DurationInt
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepo
@@ -9,8 +12,6 @@ import maweituo.domain.services.{FeedService, RecommendationService}
 import maweituo.domain.users.UserId
 import maweituo.effects.TimeSource
 
-import cats.MonadThrow
-import cats.syntax.all.*
 import org.typelevel.log4cats.Logger
 
 object FeedServiceInterp:

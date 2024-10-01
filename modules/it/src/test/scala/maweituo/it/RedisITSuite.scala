@@ -2,11 +2,12 @@ package maweituo.it
 
 import scala.concurrent.duration.DurationInt
 
+import cats.effect.*
+
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.tests.containers.makeRedisResource
 import maweituo.tests.generators.nonEmptyStringGen
 
-import cats.effect.*
 import dev.profunktor.redis4cats.RedisCommands
 import dev.profunktor.redis4cats.log4cats.*
 import org.typelevel.log4cats.Logger

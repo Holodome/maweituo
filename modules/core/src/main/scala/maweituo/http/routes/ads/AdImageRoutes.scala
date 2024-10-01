@@ -1,14 +1,15 @@
 package maweituo.http.routes.ads
 
+import cats.Monad
+import cats.effect.Concurrent
+import cats.syntax.all.*
+
 import maweituo.domain.ads.images.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.*
 import maweituo.http.Routes
 import maweituo.http.vars.{AdIdVar, ImageIdVar}
 
-import cats.Monad
-import cats.effect.Concurrent
-import cats.syntax.all.*
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`

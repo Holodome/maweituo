@@ -4,13 +4,14 @@ import java.util.UUID
 
 import scala.util.Try
 
-import maweituo.domain.users.UserId
-import maweituo.utils.{IdNewtype, Newtype}
-
 import cats.Show
 import cats.derived.*
 import cats.kernel.Eq
 import cats.syntax.all.*
+
+import maweituo.domain.users.UserId
+import maweituo.utils.{IdNewtype, Newtype}
+
 import io.circe.{Codec, Decoder, Encoder}
 
 type AdId = AdId.Type

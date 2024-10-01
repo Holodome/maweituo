@@ -1,5 +1,9 @@
 package maweituo.interp.ads
 
+import cats.data.OptionT
+import cats.syntax.all.*
+import cats.{Applicative, MonadThrow}
+
 import maweituo.domain.Id
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.{Chat, ChatId}
@@ -10,9 +14,6 @@ import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.effects.GenUUID
 
-import cats.data.OptionT
-import cats.syntax.all.*
-import cats.{Applicative, MonadThrow}
 import org.typelevel.log4cats.Logger
 
 object ChatServiceInterp:

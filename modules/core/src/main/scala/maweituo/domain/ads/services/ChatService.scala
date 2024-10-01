@@ -1,10 +1,10 @@
 package maweituo.domain.ads.services
 
+import cats.data.OptionT
+
 import maweituo.domain.ads.*
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.users.UserId
-
-import cats.data.OptionT
 
 trait ChatService[F[_]]:
   def get(id: ChatId, requester: UserId): F[Chat]

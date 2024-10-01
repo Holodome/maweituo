@@ -1,5 +1,8 @@
 package maweituo.http.routes
 
+import cats.syntax.all.*
+import cats.{MonadThrow, Parallel}
+
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.services.FeedService
 import maweituo.domain.users.AuthedUser
@@ -7,8 +10,6 @@ import maweituo.http.Routes
 import maweituo.http.dto.FeedDTO
 import maweituo.http.vars.UserIdVar
 
-import cats.syntax.all.*
-import cats.{MonadThrow, Parallel}
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl

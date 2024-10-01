@@ -1,5 +1,7 @@
 package maweituo.modules
 
+import cats.effect.kernel.Async
+
 import maweituo.domain.ads.repos.*
 import maweituo.domain.repos.*
 import maweituo.domain.users.repos.UserRepo
@@ -7,7 +9,6 @@ import maweituo.postgres.ads.repos.*
 import maweituo.postgres.repos.*
 import maweituo.postgres.repos.users.*
 
-import cats.effect.kernel.Async
 import doobie.util.transactor.Transactor
 
 sealed abstract class Repos[F[_]]:

@@ -1,10 +1,11 @@
 package maweituo.auth
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.config.*
 import maweituo.domain.users.UserId
 
-import cats.Monad
-import cats.syntax.all.*
 import dev.profunktor.auth.jwt.{JwtSecretKey, JwtToken, jwtEncode}
 import io.circe.Encoder
 import io.circe.syntax.EncoderOps

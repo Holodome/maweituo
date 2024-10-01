@@ -1,11 +1,11 @@
 package maweituo.domain.ads.repos
 
+import cats.MonadThrow
+import cats.data.OptionT
+
 import maweituo.domain.ads.*
 import maweituo.domain.errors.InvalidAdId
 import maweituo.domain.users.UserId
-
-import cats.MonadThrow
-import cats.data.OptionT
 
 trait AdRepo[F[_]]:
   def create(ad: Advertisement): F[Unit]

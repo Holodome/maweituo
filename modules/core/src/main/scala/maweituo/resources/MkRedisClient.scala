@@ -1,10 +1,11 @@
 package maweituo.resources
 
-import maweituo.config.RedisConfig
-
 import cats.MonadThrow
 import cats.effect.Resource
 import cats.syntax.all.*
+
+import maweituo.config.RedisConfig
+
 import dev.profunktor.redis4cats.effect.MkRedis
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
 import org.typelevel.log4cats.Logger

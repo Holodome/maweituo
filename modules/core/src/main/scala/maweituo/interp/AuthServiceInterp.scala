@@ -1,5 +1,9 @@
 package maweituo.interp
 
+import cats.MonadThrow
+import cats.data.OptionT
+import cats.syntax.all.*
+
 import maweituo.auth.{JwtTokens, PasswordHashing}
 import maweituo.domain.errors.InvalidPassword
 import maweituo.domain.users.*
@@ -7,9 +11,6 @@ import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.AuthService
 import maweituo.infrastructure.EphemeralDict
 
-import cats.MonadThrow
-import cats.data.OptionT
-import cats.syntax.all.*
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
 

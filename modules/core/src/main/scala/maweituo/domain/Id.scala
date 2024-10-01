@@ -1,10 +1,10 @@
 package maweituo.domain
 
-import maweituo.effects.GenUUID
-import maweituo.utils.IsUUID
-
 import cats.Functor
 import cats.syntax.all.*
+
+import maweituo.effects.GenUUID
+import maweituo.utils.IsUUID
 
 object Id:
   def make[F[_]: Functor: GenUUID, A: IsUUID]: F[A] =

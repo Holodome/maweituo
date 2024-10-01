@@ -1,4 +1,10 @@
 package maweituo.tests.services
+import scala.util.control.NoStackTrace
+
+import cats.effect.IO
+
+import maweituo.domain.ads.AdId
+import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
@@ -8,19 +14,14 @@ import maweituo.interp.ads.AdServiceInterp
 import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
 import maweituo.tests.generators.{createAdRequestGen, registerGen, userIdGen}
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.InMemoryRepoFactory
+import maweituo.tests.repos.inmemory.{InMemoryAdRepo, InMemoryRepoFactory}
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import cats.effect.IO
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.AdRepo
-import scala.util.control.NoStackTrace
-import maweituo.tests.repos.inmemory.InMemoryAdRepo
-import maweituo.domain.ads.AdId
 
 object UserAdServiceSuite extends SimpleIOSuite with Checkers:
 

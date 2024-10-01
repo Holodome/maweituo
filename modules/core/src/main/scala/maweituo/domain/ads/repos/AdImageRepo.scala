@@ -1,11 +1,11 @@
 package maweituo.domain.ads.repos
 
+import cats.MonadThrow
+import cats.data.OptionT
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
 import maweituo.domain.errors.InvalidImageId
-
-import cats.MonadThrow
-import cats.data.OptionT
 
 trait AdImageRepo[F[_]]:
   def create(image: Image): F[Unit]

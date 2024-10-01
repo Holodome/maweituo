@@ -4,12 +4,12 @@ import java.util.UUID
 
 import scala.util.Try
 
+import cats.syntax.all.*
+
 import maweituo.domain.ads.images.ImageId
 import maweituo.domain.ads.messages.ChatId
 import maweituo.domain.ads.{AdId, AdTag}
 import maweituo.domain.users.UserId
-
-import cats.syntax.all.*
 
 sealed class UUIDVar[A](f: UUID => A):
   def unapply(str: String): Option[A] =

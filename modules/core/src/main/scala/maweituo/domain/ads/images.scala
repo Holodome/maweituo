@@ -1,14 +1,15 @@
 package maweituo.domain.ads.images
 
-import maweituo.domain.ads.AdId
-import maweituo.infrastructure.OBSId
-import maweituo.utils.{IdNewtype, Newtype}
-
 import cats.data.{EitherT, OptionT}
 import cats.derived.*
 import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{MonadThrow, Show}
+
+import maweituo.domain.ads.AdId
+import maweituo.infrastructure.OBSId
+import maweituo.utils.{IdNewtype, Newtype}
+
 import org.http4s.*
 
 type ImageId = ImageId.Type

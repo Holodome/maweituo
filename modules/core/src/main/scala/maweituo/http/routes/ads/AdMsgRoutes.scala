@@ -1,5 +1,9 @@
 package maweituo.http.routes.ads
 
+import cats.MonadThrow
+import cats.effect.Concurrent
+import cats.syntax.all.*
+
 import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.messages.SendMessageRequest.given
 import maweituo.domain.ads.services.MessageService
@@ -7,9 +11,6 @@ import maweituo.domain.users.AuthedUser
 import maweituo.http.Routes
 import maweituo.http.vars.{AdIdVar, ChatIdVar}
 
-import cats.MonadThrow
-import cats.effect.Concurrent
-import cats.syntax.all.*
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder

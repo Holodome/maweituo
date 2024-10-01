@@ -1,8 +1,8 @@
 package maweituo.tests.repos.inmemory
+import cats.effect.kernel.Sync
+
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, AdTagRepo, ChatRepo, MessageRepo}
 import maweituo.domain.users.repos.UserRepo
-
-import cats.effect.kernel.Sync
 
 object InMemoryRepoFactory:
   def images[F[_]: Sync]: AdImageRepo[F] = new InMemoryAdImageRepo[F]

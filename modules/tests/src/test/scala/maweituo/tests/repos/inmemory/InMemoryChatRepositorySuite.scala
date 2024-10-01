@@ -1,10 +1,11 @@
 package maweituo.tests.repos.inmemory
 
+import cats.effect.IO
+
 import maweituo.domain.ads.messages.Chat
 import maweituo.tests.generators.*
 import maweituo.tests.repos.*
 
-import cats.effect.IO
 import org.scalacheck.Gen
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers

@@ -21,25 +21,25 @@ object PostgresAdRepo:
         .transact(xa)
 
     def delete(id: AdId): F[Unit] =
-      sql"delete from advertisements where id = $id".update.run.transact(xa).void
+      sql"delete from advertisements where id = $id::uuid".update.run.transact(xa).void
 
     def create(ad: Advertisement): F[Unit] =
       sql"""
-        insert into advertisements(id, author_id, title, is_resolved) " +
-        values (${ad.id}, ${ad.authorId}, ${ad.title}, ${ad.resolved})
+        insert into advertisements(id, author_id, title, is_resolved) 
+        values (${ad.id}::uuid, ${ad.authorId}::uuid, ${ad.title}, ${ad.resolved})
       """.update.run.transact(xa).void
 
     def find(id: AdId): OptionT[F, Advertisement] =
       OptionT(
-        sql"select id, author_id, title, is_resolved from advertisements where id = $id"
+        sql"select id, author_id, title, is_resolved from advertisements where id = $id::uuid"
           .query[Advertisement].option.transact(xa)
       )
 
     def findIdsByAuthor(userId: UserId): F[List[AdId]] =
-      sql"select id from advertisements where author_id = $userId"
+      sql"select id from advertisements where author_id = $userId::uuid"
         .query[AdId]
         .to[List]
         .transact(xa)
 
     def markAsResolved(id: AdId): F[Unit] =
-      sql"update advertisements where id = $id set is_resolved = true".update.run.transact(xa).void
+      sql"update advertisements set is_resolved = true where id = $id::uuid".update.run.transact(xa).void

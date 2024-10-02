@@ -15,6 +15,7 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
+import maweituo.domain.users.repos.UserRepo
 
 object PostgresUserRepoITSuite extends ResourceSuite:
 
@@ -24,9 +25,14 @@ object PostgresUserRepoITSuite extends ResourceSuite:
     given Logger[IO] = NoOpLogger[IO]
     makePostgresResource[IO]
 
-  test("create and find") { (postgres, log) =>
-    given Logger[IO] = new WeaverLogAdapter[IO](log)
-    val users        = PostgresUserRepo.make(postgres)
+  private def usersTest(name: String)(fn: UserRepo[IO] => F[Expectations]) =
+    test(name) { (postgres, log) =>
+      given Logger[IO] = new WeaverLogAdapter[IO](log)
+      val ads          = PostgresUserRepo.make(postgres)
+      fn(ads)
+    }
+    
+  usersTest("create and find") { users =>
     forall(userGen) { user =>
       for
         _ <- users.create(user)
@@ -35,9 +41,7 @@ object PostgresUserRepoITSuite extends ResourceSuite:
     }
   }
 
-  test("create and find by name") { (postgres, log) =>
-    given Logger[IO] = new WeaverLogAdapter[IO](log)
-    val users        = PostgresUserRepo.make(postgres)
+  usersTest("create and find by name") { users =>
     forall(userGen) { user =>
       for
         _ <- users.create(user)
@@ -46,10 +50,8 @@ object PostgresUserRepoITSuite extends ResourceSuite:
     }
   }
 
-  test("create and find by email") { (postgres, log) =>
-    given Logger[IO] = new WeaverLogAdapter[IO](log)
+  usersTest("create and find by email") { users =>
     forall(userGen) { user =>
-      val users = PostgresUserRepo.make(postgres)
       for
         _ <- users.create(user)
         u <- users.findByEmail(user.email).value
@@ -57,9 +59,7 @@ object PostgresUserRepoITSuite extends ResourceSuite:
     }
   }
 
-  test("delete") { (postgres, log) =>
-    given Logger[IO] = new WeaverLogAdapter[IO](log)
-    val users        = PostgresUserRepo.make(postgres)
+  usersTest("delete") { users =>
     forall(userGen) { user =>
       for
         _ <- users.create(user)
@@ -69,14 +69,12 @@ object PostgresUserRepoITSuite extends ResourceSuite:
     }
   }
 
-  test("update") { (postgres, log) =>
-    given Logger[IO] = new WeaverLogAdapter[IO](log)
+  usersTest("update") { users =>
     val gen =
       for
         u   <- userGen
         upd <- updateUserGen(u.id)
       yield u -> upd
-    val users = PostgresUserRepo.make(postgres)
     forall(gen) { (user, upd0) =>
       val upd = UpdateUserInternal.fromReq(upd0, user.salt)
       for

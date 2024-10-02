@@ -11,6 +11,7 @@ import maweituo.domain.users.*
 import maweituo.infrastructure.OBSId
 
 import org.scalacheck.Gen
+import maweituo.domain.ads.images.Image
 
 val nonEmptyStringGen: Gen[String] =
   Gen
@@ -143,3 +144,17 @@ val registerRequestGen: Gen[RegisterRequest] =
     email    <- emailGen
     password <- passwordGen
   yield RegisterRequest(name, email, password)
+
+val mediaTypeGen: Gen[MediaType] =
+  for
+    s1 <- nonEmptyStringGen
+    s2 <- nonEmptyStringGen
+  yield MediaType(s1, s2)
+
+def imageGen(adId: AdId): Gen[Image] =
+  for
+    id   <- imageIdGen
+    url  <- imageUrlGen
+    m    <- mediaTypeGen
+    s    <- Gen.chooseNum(10, 20)
+  yield Image(id, adId, url, m, s)

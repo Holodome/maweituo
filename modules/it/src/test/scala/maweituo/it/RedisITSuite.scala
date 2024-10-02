@@ -15,10 +15,9 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
+import maweituo.infrastructure.EphemeralDict
 
 object RedisSuite extends ResourceSuite:
-
-  private val Expire = 30.seconds
 
   type Res = RedisCommands[IO, String, String]
 
@@ -32,8 +31,14 @@ object RedisSuite extends ResourceSuite:
       b <- nonEmptyStringGen
     yield a -> b
 
-  test("get invalid") { redis =>
-    val dict = RedisEphemeralDict.make[IO](redis, Expire)
+  private val Expire = 30.seconds
+
+  private def redisTest(name: String)(fn: EphemeralDict[IO, String, String] => F[Expectations]) =
+    test(name) { redis =>
+      fn(RedisEphemeralDict.make[IO](redis, Expire))
+    }
+
+  redisTest("get invalid") { dict =>
     forall(nonEmptyStringGen) { key =>
       for
         x <- dict.get(key).value
@@ -41,8 +46,7 @@ object RedisSuite extends ResourceSuite:
     }
   }
 
-  test("create and get") { redis =>
-    val dict = RedisEphemeralDict.make[IO](redis, Expire)
+  redisTest("create and get") { dict =>
     forall(kwGen) { (key, value) =>
       for
         _ <- dict.store(key, value)
@@ -51,8 +55,7 @@ object RedisSuite extends ResourceSuite:
     }
   }
 
-  test("delete") { redis =>
-    val dict = RedisEphemeralDict.make[IO](redis, Expire)
+  redisTest("delete") { dict =>
     forall(kwGen) { (key, value) =>
       for
         _ <- dict.store(key, value)

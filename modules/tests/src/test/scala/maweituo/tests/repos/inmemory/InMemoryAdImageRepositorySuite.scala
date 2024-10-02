@@ -2,31 +2,22 @@ package maweituo.tests.repos.inmemory
 
 import cats.effect.IO
 
-import maweituo.domain.ads.images.{Image, MediaType}
-import maweituo.tests.generators.*
+import maweituo.domain.ads.images.Image
+import maweituo.tests.generators.{adIdGen, imageGen as imageGen0}
 import maweituo.tests.repos.*
 
-import org.scalacheck.Gen
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
+
   private def repo = InMemoryRepoFactory.images[IO]
 
-  private val mediaTypeGen: Gen[MediaType] =
+  private val imageGen =
     for
-      s1 <- nonEmptyStringGen
-      s2 <- nonEmptyStringGen
-    yield MediaType(s1, s2)
-
-  private val imageGen: Gen[Image] =
-    for
-      id   <- imageIdGen
-      adId <- adIdGen
-      url  <- imageUrlGen
-      m    <- mediaTypeGen
-      s    <- Gen.chooseNum(10, 20)
-    yield Image(id, adId, url, m, s)
+      id  <- adIdGen
+      img <- imageGen0(id)
+    yield img
 
   test("create and find") {
     val images = repo
@@ -63,7 +54,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
     val images = repo
     val gen =
       for
-        i1 <- imageGen
+        i1   <- imageGen
         i2_0 <- imageGen
         i2 = i2_0.copy(adId = i1.adId)
       yield i1 -> i2

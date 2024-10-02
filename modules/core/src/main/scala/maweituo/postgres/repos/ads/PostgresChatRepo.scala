@@ -18,17 +18,19 @@ object PostgresChatRepo:
     def create(chat: Chat): F[Unit] =
       sql"""
         insert into chats(id, ad_id, ad_author_id, client_id) 
-        values (${chat.id}, ${chat.adId}, ${chat.adAuthor}, ${chat.client})
+        values (${chat.id}::uuid, ${chat.adId}::uuid, ${chat.adAuthor}::uuid, ${chat.client}::uuid)
       """.update.run.transact(xa).void
 
     def find(chatId: ChatId): OptionT[F, Chat] =
       OptionT(
-        sql"select id, ad_id, ad_author_id, client_id from chats where id = $chatId".query[Chat].option.transact(xa)
+        sql"select id, ad_id, ad_author_id, client_id from chats where id = $chatId::uuid"
+          .query[Chat].option.transact(xa)
       )
 
     def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, Chat] =
       OptionT(
-        sql"select id, ad_id, ad_author_id, client_id from chats where ad_id = $adId and client_id = $client".query[
-          Chat
-        ].option.transact(xa)
+        sql"""
+          select id, ad_id, ad_author_id, client_id from chats 
+          where ad_id = $adId::uuid and client_id = $client::uuid
+        """.query[Chat].option.transact(xa)
       )

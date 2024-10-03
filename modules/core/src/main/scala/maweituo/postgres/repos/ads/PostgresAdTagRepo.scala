@@ -10,10 +10,10 @@ import maweituo.postgres.sql.codecs.given
 import doobie.*
 import doobie.implicits.*
 
-object PostgresTagRepo:
+object PostgresAdTagRepo:
   def make[F[_]: Async](xa: Transactor[F]): AdTagRepo[F] = new:
     def addTagToAd(adId: AdId, tag: AdTag): F[Unit] =
-      sql"insert into tag_ads(tag, ad_id) values ($adId::uuid, $tag)".update.run.transact(xa).void
+      sql"insert into tag_ads(tag, ad_id) values ($tag, $adId::uuid)".update.run.transact(xa).void
 
     def getAllAdsByTag(tag: AdTag): F[List[AdId]] =
       sql"select distinct ad_id from tag_ads where tag = $tag"
@@ -23,7 +23,7 @@ object PostgresTagRepo:
       sql"select tag from tag_ads where ad_id = $adId::uuid".query[AdTag].to[List].transact(xa)
 
     def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] =
-      sql"delete * from tag_ads where ad_id = $adId::uuid and tag = $tag".update.run.transact(xa).void
+      sql"delete from tag_ads where ad_id = $adId::uuid and tag = $tag".update.run.transact(xa).void
 
     def getAllTags: F[List[AdTag]] =
       sql"select distinct tag from tag_ads".query[AdTag].to[List].transact(xa)

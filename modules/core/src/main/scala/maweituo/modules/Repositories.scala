@@ -24,7 +24,7 @@ object Repositories:
   def makePostgres[F[_]: Async](xa: Transactor[F]): Repos[F] = new:
     val users    = PostgresUserRepo.make[F](xa)
     val ads      = PostgresAdRepo.make[F](xa)
-    val tags     = PostgresTagRepo.make[F](xa)
+    val tags     = PostgresAdTagRepo.make[F](xa)
     val chats    = PostgresChatRepo.make[F](xa)
     val messages = PostgresMessageRepo.make[F](xa)
     val images   = PostgresAdImageRepo.make[F](xa)

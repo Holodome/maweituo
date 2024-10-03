@@ -1,9 +1,10 @@
 package maweituo.it.postgres.repos
 
 import cats.effect.*
-import cats.syntax.all.*
 
-import maweituo.domain.users.UpdateUserInternal
+import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
+import maweituo.domain.users.repos.UserRepo
+import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.containers.*
 import maweituo.tests.generators.*
@@ -15,12 +16,6 @@ import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
-import maweituo.postgres.ads.repos.PostgresAdRepo
-import maweituo.domain.ads.repos.AdRepo
-import maweituo.domain.users.repos.UserRepo
-import maweituo.tests.generators.adGen
-import maweituo.domain.ads.repos.AdImageRepo
-import maweituo.postgres.ads.repos.PostgresAdImageRepo
 
 object PostgresAdImageRepoITSuite extends ResourceSuite:
 

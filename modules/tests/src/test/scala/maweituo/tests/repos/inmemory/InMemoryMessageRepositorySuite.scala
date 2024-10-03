@@ -13,7 +13,7 @@ object InMemoryMessageRepoSuite extends SimpleIOSuite with Checkers:
 
   private def repo = InMemoryRepoFactory.msgs[IO]
 
-  val msgGen =
+  private val msgGen =
     for
       chat <- chatIdGen
       text <- msgTextGen

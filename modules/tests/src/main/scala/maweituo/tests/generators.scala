@@ -4,14 +4,13 @@ import java.time.Instant
 import java.util.UUID
 
 import maweituo.auth.PasswordHashing
-import maweituo.domain.ads.images.{ImageContentsStream, ImageId, ImageUrl, MediaType}
+import maweituo.domain.ads.images.{Image, ImageContentsStream, ImageId, ImageUrl, MediaType}
 import maweituo.domain.ads.messages.{ChatId, MessageText, SendMessageRequest}
 import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}
 import maweituo.domain.users.*
 import maweituo.infrastructure.OBSId
 
 import org.scalacheck.Gen
-import maweituo.domain.ads.images.Image
 
 val nonEmptyStringGen: Gen[String] =
   Gen

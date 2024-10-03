@@ -5,14 +5,12 @@ import cats.effect.Async
 import cats.syntax.all.given
 
 import maweituo.domain.ads.AdId
-import maweituo.domain.ads.images.{Image, ImageId}
+import maweituo.domain.ads.images.{Image, ImageId, ImageUrl, MediaType}
 import maweituo.domain.ads.repos.AdImageRepo
 import maweituo.postgres.sql.codecs.given
 
 import doobie.Transactor
 import doobie.implicits.given
-import maweituo.domain.ads.images.ImageUrl
-import maweituo.domain.ads.images.MediaType
 
 object PostgresAdImageRepo:
   def make[F[_]: Async](xa: Transactor[F]): AdImageRepo[F] = new:

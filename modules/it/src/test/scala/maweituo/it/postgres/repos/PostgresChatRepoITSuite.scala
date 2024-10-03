@@ -2,32 +2,27 @@ package maweituo.it.postgres.repos
 
 import cats.effect.*
 
-import maweituo.domain.ads.repos.AdRepo
+import maweituo.domain.ads.messages.Chat
+import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.containers.*
-import maweituo.tests.generators.{adGen, userGen}
+import maweituo.tests.generators.{adGen, chatIdGen, userGen}
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.ChatRepo
-import maweituo.postgres.ads.repos.PostgresChatRepo
-import maweituo.domain.ads.messages.Chat
-import maweituo.tests.generators.chatIdGen
 
-object PostgresChatRepoITSuite extends ResourceSuite:
+class PostgresChatRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makePostgresResource[IO]
+    global.getOrFailR[PgCon]().map(_.xa)
 
   private def chatTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], ChatRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

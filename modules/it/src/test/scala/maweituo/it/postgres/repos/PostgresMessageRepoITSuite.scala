@@ -2,39 +2,28 @@ package maweituo.it.postgres.repos
 
 import cats.effect.*
 
-import maweituo.domain.ads.repos.AdRepo
+import maweituo.domain.ads.messages.{Chat, ChatId, Message}
+import maweituo.domain.ads.repos.{AdRepo, ChatRepo, MessageRepo}
+import maweituo.domain.users.UserId
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.containers.*
-import maweituo.tests.generators.{adGen, userGen}
+import maweituo.tests.generators.{adGen, chatIdGen, instantGen, msgTextGen, userGen}
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.ChatRepo
-import maweituo.postgres.ads.repos.PostgresChatRepo
-import maweituo.domain.ads.messages.Chat
-import maweituo.tests.generators.chatIdGen
-import maweituo.postgres.ads.repos.PostgresMessageRepo
-import maweituo.domain.ads.repos.MessageRepo
-import maweituo.domain.users.UserId
-import maweituo.domain.ads.messages.ChatId
-import maweituo.tests.generators.msgTextGen
-import maweituo.tests.generators.instantGen
-import maweituo.domain.ads.messages.Message
 
-object PostgresMessageRepoITSuite extends ResourceSuite:
+class PostgresMessageRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makePostgresResource[IO]
+    global.getOrFailR[PgCon]().map(_.xa)
 
   private def msgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], ChatRepo[IO], MessageRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

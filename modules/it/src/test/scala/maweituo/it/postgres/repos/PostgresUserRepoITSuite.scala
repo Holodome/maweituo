@@ -4,26 +4,24 @@ import cats.effect.*
 import cats.syntax.all.*
 
 import maweituo.domain.users.UpdateUserInternal
+import maweituo.domain.users.repos.UserRepo
+import maweituo.it.resources.PostgresContainerResource.PgCon
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.containers.*
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
-import maweituo.domain.users.repos.UserRepo
 
-object PostgresUserRepoITSuite extends ResourceSuite:
+class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makePostgresResource[IO]
+    global.getOrFailR[PgCon]().map(_.xa)
 
   private def usersTest(name: String)(fn: UserRepo[IO] => F[Expectations]) =
     test(name) { (postgres, log) =>
@@ -31,7 +29,7 @@ object PostgresUserRepoITSuite extends ResourceSuite:
       val ads          = PostgresUserRepo.make(postgres)
       fn(ads)
     }
-    
+
   usersTest("create and find") { users =>
     forall(userGen) { user =>
       for

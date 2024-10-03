@@ -4,26 +4,24 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.users.repos.UserRepo
+import maweituo.it.resources.PostgresContainerResource.PgCon
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.containers.*
 import maweituo.tests.generators.{adGen, userGen}
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
 
-object PostgresAdRepoITSuite extends ResourceSuite:
+class PostgresAdRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makePostgresResource[IO]
+    global.getOrFailR[PgCon]().map(_.xa)
 
   private def adsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

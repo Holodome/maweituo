@@ -4,6 +4,7 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
 import maweituo.domain.users.repos.UserRepo
+import maweituo.it.resources.PostgresContainerResource.PgCon
 import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.containers.*
@@ -17,13 +18,12 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
 
-object PostgresAdImageRepoITSuite extends ResourceSuite:
+class PostgresAdImageRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makePostgresResource[IO]
+    global.getOrFailR[PgCon]().map(_.xa)
 
   private def imgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdImageRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>
@@ -52,7 +52,7 @@ object PostgresAdImageRepoITSuite extends ResourceSuite:
       yield expect.same(Some(img), x)
     }
   }
-  
+
   imgTest("create and find by ad") { (users, ads, images) =>
     forall(gen) { (u, ad, img) =>
       for
@@ -63,7 +63,7 @@ object PostgresAdImageRepoITSuite extends ResourceSuite:
       yield expect.same(List(img.id), x)
     }
   }
-  
+
   imgTest("delete") { (users, ads, images) =>
     forall(gen) { (u, ad, img) =>
       for

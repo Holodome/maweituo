@@ -6,21 +6,20 @@ import cats.data.OptionT
 import cats.effect.*
 import cats.effect.kernel.Resource
 
-import maweituo.infrastructure.OBSId
 import maweituo.infrastructure.minio.MinioObjectStorage
-import maweituo.tests.containers.*
+import maweituo.infrastructure.{OBSId, ObjectStorage}
+import maweituo.it.resources.*
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import io.minio.MinioAsyncClient
 import org.typelevel.log4cats.Logger
 import weaver.*
-import maweituo.infrastructure.ObjectStorage
 
-object S3Suite extends ResourceSuite:
+class S3Suite(global: GlobalRead) extends ResourceSuite:
 
   type Res = MinioAsyncClient
 
-  override def sharedResource: Resource[IO, Res] = makeMinioResource[IO]
+  override def sharedResource: Resource[IO, Res] = global.minio
 
   private def minioTest(name: String)(fn: ObjectStorage[IO] => F[Expectations]) =
     test(name) { (minio, log) =>

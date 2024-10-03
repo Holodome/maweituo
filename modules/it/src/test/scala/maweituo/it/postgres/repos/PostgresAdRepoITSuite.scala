@@ -4,7 +4,7 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, userGen}
@@ -21,7 +21,7 @@ class PostgresAdRepoITSuite(global: GlobalRead) extends ResourceSuite:
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    global.getOrFailR[PgCon]().map(_.xa)
+    global.postgres
 
   private def adsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

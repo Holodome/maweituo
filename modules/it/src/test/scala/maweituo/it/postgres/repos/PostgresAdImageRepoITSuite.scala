@@ -4,17 +4,15 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.it.resources.postgres
 import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.containers.*
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
 
@@ -23,7 +21,7 @@ class PostgresAdImageRepoITSuite(global: GlobalRead) extends ResourceSuite:
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    global.getOrFailR[PgCon]().map(_.xa)
+    global.postgres
 
   private def imgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdImageRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

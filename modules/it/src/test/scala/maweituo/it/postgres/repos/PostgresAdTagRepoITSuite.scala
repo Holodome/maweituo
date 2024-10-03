@@ -4,7 +4,7 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.{AdRepo, AdTagRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresAdTagRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, adTagGen, userGen}
@@ -21,7 +21,7 @@ class PostgresAdTagRepoITSuite(global: GlobalRead) extends ResourceSuite:
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    global.getOrFailR[PgCon]().map(_.xa)
+    global.postgres
 
   private def tagsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

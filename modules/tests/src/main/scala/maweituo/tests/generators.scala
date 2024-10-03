@@ -152,8 +152,8 @@ val mediaTypeGen: Gen[MediaType] =
 
 def imageGen(adId: AdId): Gen[Image] =
   for
-    id   <- imageIdGen
-    url  <- imageUrlGen
-    m    <- mediaTypeGen
-    s    <- Gen.chooseNum(10, 20)
+    id  <- imageIdGen
+    url <- imageUrlGen
+    m   <- mediaTypeGen
+    s   <- Gen.chooseNum(10, 20)
   yield Image(id, adId, url, m, s)

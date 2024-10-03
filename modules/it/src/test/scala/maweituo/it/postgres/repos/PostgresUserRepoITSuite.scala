@@ -5,7 +5,7 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.UpdateUserInternal
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.it.resources.*
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.utils.given
@@ -21,7 +21,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    global.getOrFailR[PgCon]().map(_.xa)
+    global.postgres
 
   private def usersTest(name: String)(fn: UserRepo[IO] => F[Expectations]) =
     test(name) { (postgres, log) =>

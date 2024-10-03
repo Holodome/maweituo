@@ -4,26 +4,21 @@ import scala.concurrent.duration.DurationInt
 
 import cats.effect.*
 
+import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.redis.RedisEphemeralDict
+import maweituo.it.resources.*
 import maweituo.tests.ResourceSuite
-import maweituo.tests.containers.makeRedisResource
 import maweituo.tests.generators.nonEmptyStringGen
 
 import dev.profunktor.redis4cats.RedisCommands
-import dev.profunktor.redis4cats.log4cats.*
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.*
 import weaver.scalacheck.Checkers
-import maweituo.infrastructure.EphemeralDict
 
-object RedisSuite extends ResourceSuite:
+class RedisSuite(global: GlobalRead) extends ResourceSuite:
 
   type Res = RedisCommands[IO, String, String]
 
-  override def sharedResource: Resource[IO, Res] =
-    given Logger[IO] = NoOpLogger[IO]
-    makeRedisResource[IO]
+  override def sharedResource: Resource[IO, Res] = global.redis
 
   private val kwGen =
     for

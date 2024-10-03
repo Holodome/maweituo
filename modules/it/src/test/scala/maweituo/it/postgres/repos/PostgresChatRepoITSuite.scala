@@ -5,7 +5,7 @@ import cats.effect.*
 import maweituo.domain.ads.messages.Chat
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.PostgresContainerResource.PgCon
+import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, chatIdGen, userGen}
@@ -22,7 +22,7 @@ class PostgresChatRepoITSuite(global: GlobalRead) extends ResourceSuite:
   type Res = Transactor[IO]
 
   override def sharedResource: Resource[IO, Res] =
-    global.getOrFailR[PgCon]().map(_.xa)
+    global.postgres
 
   private def chatTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], ChatRepo[IO]) => F[Expectations]) =
     test(name) { (postgres, log) =>

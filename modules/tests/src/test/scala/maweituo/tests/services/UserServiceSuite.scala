@@ -1,23 +1,13 @@
 package maweituo.tests.services
-
-import java.util.UUID
-
-import scala.util.control.NoStackTrace
-
-import cats.data.{NonEmptyList, OptionT}
 import cats.effect.IO
-import cats.syntax.all.*
 
-import maweituo.domain.errors.*
 import maweituo.domain.services.IAMService
-import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
-import maweituo.domain.users.{Email, UpdateUserInternal, User, UserId, Username}
 import maweituo.interp.*
 import maweituo.interp.users.UserServiceInterp
-import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
+import maweituo.tests.properties.services.UserServiceProperties
 import maweituo.tests.repos.*
-import maweituo.tests.repos.inmemory.{InMemoryRepoFactory, InMemoryUserRepo}
+import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 
 import org.typelevel.log4cats.Logger
@@ -25,241 +15,17 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object UserServiceSuite extends SimpleIOSuite with Checkers:
+object UserServiceSuite extends SimpleIOSuite with Checkers with UserServiceProperties:
 
-  given Logger[IO]     = NoOpLogger[IO]
-  given IAMService[IO] = makeIAMService
-
-  private def makeTestUsers(repo: UserRepo[IO] = InMemoryRepoFactory.users): UserService[IO] =
+  private def makeTestUsers: UserService[IO] =
+    given Logger[IO]     = NoOpLogger[IO]
+    given IAMService[IO] = makeIAMService
+    val repo             = InMemoryRepoFactory.users
     UserServiceInterp.make(repo)
 
-  test("register user works") {   
-    val users = makeTestUsers()
-    forall(registerGen) { register =>
-      for
-        _ <- users.create(register)
-      yield success
-    }
-  }
-
-  test("create internal error") {
-    case class TestError() extends NoStackTrace
-    val repo = new TestUserRepo:
-      override def create(request: User): IO[Unit]               = IO.raiseError(TestError())
-      override def findByEmail(emai: Email): OptionT[IO, User]   = OptionT(IO.raiseError(TestError()))
-      override def findByName(name: Username): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
-    val users = makeTestUsers(repo)
-    forall(registerGen) { register =>
-      for
-        x <- users.create(register).attempt
-      yield expect.same(Left(TestError()), x)
-    }
-  }
-
-  test("can't register user with same email") {
-    val users = makeTestUsers()
-    val gen =
-      for
-        r1 <- registerGen
-        r2 <- registerGen.map(_.copy(email = r1.email))
-      yield r1 -> r2
-    forall(gen) { (r1, r2) =>
-      for
-        _ <- users.create(r1)
-        x <- users.create(r2).attempt
-      yield expect.same(Left(UserEmailInUse(r1.email)), x)
-    }
-  }
-
-  test("can't register user with same name") {
-    val users = makeTestUsers()
-    val gen =
-      for
-        r1 <- registerGen
-        r2 <- registerGen.map(_.copy(name = r1.name))
-      yield r1 -> r2
-    forall(gen) { (r1, r2) =>
-      for
-        _ <- users.create(r1)
-        x <- users.create(r2).attempt
-      yield expect.same(Left(UserNameInUse(r1.name)), x)
-    }
-  }
-
-  test("register and find") {
-    val users = makeTestUsers()
-    forall(registerGen) { register =>
-      for
-        id <- users.create(register)
-        u  <- users.get(id)
-      yield expect.same(id, u.id)
-    }
-  }
-
-  test("get internal error") {
-    case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepo[IO]:
-      override def find(id: UserId): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
-    val users = makeTestUsers(new UserRepo)
-    forall(registerGen) { register =>
-      for
-        id <- users.create(register)
-        x  <- users.get(id).attempt
-      yield expect.same(Left(TestError()), x)
-    }
-  }
-
-  test("register and find by name work") {
-    val users = makeTestUsers()
-    forall(registerGen) { register =>
-      for
-        id <- users.create(register)
-        u  <- users.getByName(register.name)
-      yield expect.same(id, u.id)
-    }
-  }
-
-  test("get by name internal error") {
-    case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepo[IO]:
-      override def findByName(name: Username): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
-    val users = makeTestUsers(new UserRepo)
-    forall(registerGen) { register =>
-      for
-        x <- users.getByName(register.name).attempt
-      yield expect.same(Left(TestError()), x)
-    }
-  }
-
-  test("register and find by email work") {
-    val users = makeTestUsers()
-    forall(registerGen) { register =>
-      for
-        id <- users.create(register)
-        u  <- users.getByEmail(register.email)
-      yield expect.same(id, u.id)
-    }
-  }
-
-  test("get by email internal error") {
-    case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepo[IO]:
-      override def findByEmail(email: Email): OptionT[IO, User] = OptionT(IO.raiseError(TestError()))
-    val users = makeTestUsers(new UserRepo)
-    forall(registerGen) { register =>
-      for
-        x <- users.getByEmail(register.email).attempt
-      yield expect.same(Left(TestError()), x)
-    }
-  }
-
-  test("register and delete work") {
-    val users = makeTestUsers()
-    forall(registerGen) { register =>
-      for
-        id    <- users.create(register)
-        _     <- users.delete(id, id)
-        found <- users.get(id).attempt
-      yield expect.same(Left(InvalidUserId(id)), found)
-    }
-  }
-
-  test("user delete by other person is forbidden") {
-    val users = makeTestUsers()
-    val gen =
-      for
-        r     <- registerGen
-        other <- registerGen
-      yield r -> other
-    forall(gen) { case (register, other) =>
-      for
-        newId   <- users.create(register)
-        otherId <- users.create(other)
-        x       <- users.delete(newId, otherId).attempt
-        u       <- users.get(newId)
-      yield NonEmptyList
-        .of(
-          expect.same(Left(UserModificationForbidden(otherId)), x),
-          expect.same(newId, u.id),
-          expect.same(register.name, u.name),
-          expect.same(register.email, u.email)
-        ).reduce
-    }
-  }
-
-  test("delete internal error") {
-    case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepo[IO]:
-      override def delete(id: UserId): IO[Unit] = IO.raiseError(TestError())
-    val users = makeTestUsers(new UserRepo)
-    forall(userIdGen) { id =>
-      for
-        x <- users.delete(id, id).attempt
-      yield expect.same(Left(TestError()), x)
-    }
-  }
-
-  test("user update works") {
-    val users = makeTestUsers()
-    val gen =
-      for
-        r   <- registerGen
-        upd <- updateUserGen(UserId(UUID.randomUUID()))
-      yield (r, upd)
-    forall(gen) { case (register, upd) =>
-      for
-        newId <- users.create(register)
-        newUpd = upd.copy(id = newId)
-        prior   <- users.get(newId)
-        _       <- users.update(newUpd, newId)
-        updated <- users.get(newId)
-      yield expect.all(
-        newUpd.email.fold(true)(_ === updated.email),
-        newUpd.name.fold(true)(_ === updated.name),
-        newUpd.password.fold(true)(_ => prior.hashedPassword =!= updated.hashedPassword)
-      )
-    }
-  }
-
-  test("user update by other person is forbidden") {
-    val users = makeTestUsers()
-    val gen =
-      for
-        r   <- registerGen
-        upd <- updateUserGen(UserId(UUID.randomUUID()))
-        id  <- userIdGen
-      yield (r, upd, id)
-    forall(gen) { case (register, upd, id) =>
-      for
-        newId <- users.create(register)
-        newUpd = upd.copy(id = newId)
-        prior <- users.get(newId)
-        x     <- users.update(newUpd, id).attempt
-        got   <- users.get(newId)
-      yield NonEmptyList.of(
-        expect.same(Left(UserModificationForbidden(id)), x),
-        expect.same(prior.hashedPassword, got.hashedPassword),
-        expect.same(prior.name, got.name),
-        expect.same(prior.email, got.email)
-      ).reduce
-    }
-  }
-
-  test("update internal error") {
-    case class TestError() extends NoStackTrace
-    class UserRepo extends InMemoryUserRepo[IO]:
-      override def update(update: UpdateUserInternal): IO[Unit] = IO.raiseError(TestError())
-    val users = makeTestUsers(new UserRepo)
-    val gen =
-      for
-        reg <- registerGen
-        upd <- updateUserGen(UserId(UUID.randomUUID()))
-      yield reg -> upd
-    forall(gen) { (reg, upd0) =>
-      for
-        uid <- users.create(reg)
-        upd = upd0.copy(id = uid)
-        x <- users.update(upd, upd.id).attempt
-      yield expect.same(Left(TestError()), x)
-    }
+  properties.foreach {
+    case Property(name, fn) =>
+      test(name) {
+        fn(makeTestUsers)
+      }
   }

@@ -5,7 +5,6 @@ import cats.effect.IO
 import maweituo.auth.JwtTokens
 import maweituo.domain.services.*
 import maweituo.domain.users.UserId
-import maweituo.domain.users.services.*
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
 import maweituo.interp.*
@@ -26,7 +25,7 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with AuthServiceProp
   private def jwtDict: EphemeralDict[IO, JwtToken, UserId]         = InMemoryEphemeralDict.make
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
-  private def makeTestUsersAuth(tokens: JwtTokens[IO]): (UserService[IO], AuthService[IO]) =
+  private def makeTestUsersAuth(tokens: JwtTokens[IO]) =
     given Logger[IO]           = NoOpLogger[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val userRepo               = InMemoryRepoFactory.users

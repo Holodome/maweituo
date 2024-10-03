@@ -4,15 +4,15 @@ import cats.effect.{Async, Resource}
 import cats.syntax.all.*
 
 import maweituo.config.AppConfig
+import maweituo.infrastructure.minio.MinioConnection
 import maweituo.resources.{MkHttpClient, MkMinioClient, MkPostgresClient, MkRedisClient}
 
 import dev.profunktor.redis4cats.RedisCommands
 import doobie.Transactor
-import io.minio.MinioAsyncClient
 
 sealed abstract class AppResources[F[_]](
     val redis: RedisCommands[F, String, String],
-    val minio: MinioAsyncClient,
+    val minio: MinioConnection,
     val postgres: Transactor[F]
 )
 

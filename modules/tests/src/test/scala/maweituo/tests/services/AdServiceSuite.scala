@@ -1,10 +1,7 @@
 package maweituo.tests.ads
 import cats.effect.IO
 
-import maweituo.domain.ads.*
-import maweituo.domain.ads.services.AdService
 import maweituo.domain.services.*
-import maweituo.domain.users.services.*
 import maweituo.interp.*
 import maweituo.interp.ads.AdServiceInterp
 import maweituo.interp.users.UserServiceInterp
@@ -21,7 +18,7 @@ import weaver.scalacheck.Checkers
 
 object AdServiceSuite extends SimpleIOSuite with Checkers with AdServiceProperties:
 
-  private def makeTestUserAds: (UserService[IO], AdService[IO]) =
+  private def makeTestUserAds =
     given Logger[IO]           = NoOpLogger[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val adRepo                 = InMemoryRepoFactory.ads

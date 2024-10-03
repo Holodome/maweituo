@@ -1,9 +1,7 @@
 package maweituo.tests.services
 import cats.effect.IO
 
-import maweituo.domain.ads.services.*
 import maweituo.domain.services.*
-import maweituo.domain.users.services.*
 import maweituo.infrastructure.inmemory.InMemoryObjectStorage
 import maweituo.interp.*
 import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
@@ -20,7 +18,7 @@ import weaver.scalacheck.Checkers
 
 object ImageServiceSuite extends SimpleIOSuite with Checkers with AdImageServiceProperties:
 
-  private def makeTestServices: (UserService[IO], AdService[IO], AdImageService[IO]) =
+  private def makeTestServices =
     given Logger[IO]           = NoOpLogger[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val imageRepo              = InMemoryRepoFactory.images

@@ -1,9 +1,8 @@
 package maweituo.tests.services
+
 import cats.effect.IO
 
-import maweituo.domain.ads.services.{AdService, ChatService}
 import maweituo.domain.services.*
-import maweituo.domain.users.services.*
 import maweituo.interp.*
 import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp}
 import maweituo.interp.users.UserServiceInterp
@@ -19,11 +18,10 @@ import weaver.scalacheck.Checkers
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProperties:
 
-  private def makeTestServices: (UserService[F], AdService[F], ChatService[F]) =
+  private def makeTestServices =
     given Logger[IO]           = NoOpLogger[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val chatRepo               = InMemoryRepoFactory.chats
-    val telemetry              = new TelemetryServiceStub
     val userRepo               = InMemoryRepoFactory.users
     val adRepo                 = InMemoryRepoFactory.ads
     given IAMService[IO]       = makeIAMService(adRepo, chatRepo)

@@ -2,7 +2,6 @@ package maweituo.tests.services
 import cats.effect.IO
 
 import maweituo.domain.services.IAMService
-import maweituo.domain.users.services.UserService
 import maweituo.interp.*
 import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.UserServiceProperties
@@ -17,7 +16,7 @@ import weaver.scalacheck.Checkers
 
 object UserServiceSuite extends SimpleIOSuite with Checkers with UserServiceProperties:
 
-  private def makeTestUsers: UserService[IO] =
+  private def makeTestUsers =
     given Logger[IO]     = NoOpLogger[IO]
     given IAMService[IO] = makeIAMService
     val repo             = InMemoryRepoFactory.users

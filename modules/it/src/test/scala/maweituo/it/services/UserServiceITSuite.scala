@@ -4,7 +4,6 @@ import cats.effect.IO
 import cats.effect.kernel.Resource
 
 import maweituo.domain.services.IAMService
-import maweituo.domain.users.services.UserService
 import maweituo.interp.users.UserServiceInterp
 import maweituo.it.resources.*
 import maweituo.postgres.repos.users.PostgresUserRepo
@@ -22,7 +21,7 @@ class UserServiceITSuite(global: GlobalRead) extends ResourceSuite with UserServ
 
   override def sharedResource: Resource[IO, Res] = global.postgres
 
-  private def makeTestUsers(xa: Transactor[IO])(using Logger[IO]): UserService[IO] =
+  private def makeTestUsers(xa: Transactor[IO])(using Logger[IO]) =
     given IAMService[IO] = makeIAMService
     val repo             = PostgresUserRepo.make[IO](xa)
     UserServiceInterp.make(repo)

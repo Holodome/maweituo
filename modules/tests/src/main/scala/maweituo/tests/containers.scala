@@ -6,6 +6,8 @@ import cats.Applicative
 import cats.effect.kernel.{Async, Resource, Sync}
 import cats.syntax.all.*
 
+import maweituo.infrastructure.minio.MinioConnection
+
 import com.dimafeng.testcontainers.{Container, MinIOContainer, PostgreSQLContainer, RedisContainer}
 import com.zaxxer.hikari.HikariConfig
 import dev.profunktor.redis4cats.effect.MkRedis
@@ -47,16 +49,19 @@ private val minioContainerDef = MinIOContainer.Def(
 def makeMinioContainerResource[F[_]: Sync]: Resource[F, MinIOContainer] =
   makeContainerResource(Sync[F].blocking(minioContainerDef.start()))
 
-def makeMinioResource[F[_]: Sync]: Resource[F, MinioAsyncClient] =
+def makeMinioResource[F[_]: Sync]: Resource[F, MinioConnection] =
   makeMinioContainerResource
     .flatMap(cont =>
       Resource.make {
         Sync[F].blocking(
-          MinioAsyncClient
-            .builder()
-            .endpoint(cont.s3URL)
-            .credentials(cont.userName, cont.password)
-            .build()
+          MinioConnection(
+            cont.s3URL,
+            MinioAsyncClient
+              .builder()
+              .endpoint(cont.s3URL)
+              .credentials(cont.userName, cont.password)
+              .build()
+          )
         )
       } { _ => Sync[F].unit }
     )

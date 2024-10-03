@@ -1,0 +1,52 @@
+package maweituo.it.services
+
+import cats.effect.IO
+import cats.effect.kernel.Resource
+import cats.syntax.all.*
+
+import maweituo.domain.services.{IAMService, TelemetryService}
+import maweituo.interp.ads.AdServiceInterp
+import maweituo.interp.users.UserServiceInterp
+import maweituo.it.resources.*
+import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.postgres.repos.users.PostgresUserRepo
+import maweituo.tests.properties.services.AdImageServiceProperties
+import maweituo.tests.repos.RepoStubFactory
+import maweituo.tests.services.makeIAMService
+import maweituo.tests.services.stubs.TelemetryServiceStub
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
+
+import doobie.util.transactor.Transactor
+import org.typelevel.log4cats.Logger
+import weaver.GlobalRead
+import maweituo.postgres.ads.repos.PostgresAdImageRepo
+import maweituo.infrastructure.minio.MinioObjectStorage
+import maweituo.infrastructure.minio.MinioConnection
+import maweituo.interp.ads.AdImageServiceInterp
+
+class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdImageServiceProperties:
+
+  type Res = (Transactor[IO], MinioConnection)
+
+  override def sharedResource: Resource[IO, Res] = (global.postgres, global.minio).tupled
+
+  private def testServices(xa: Transactor[IO], minio: MinioConnection)(using Logger[IO]) =
+    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    val imageRepo              = PostgresAdImageRepo.make(xa)
+    val adRepo                 = PostgresAdRepo.make(xa)
+    val userRepo               = PostgresUserRepo.make(xa)
+    for
+      os <- MinioObjectStorage.make(minio, "maweituo")
+      given IAMService[IO] = makeIAMService(adRepo, imageRepo)
+      users                = UserServiceInterp.make(userRepo)
+      ads                  = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+      images               = AdImageServiceInterp.make(imageRepo, adRepo, os)
+    yield (users, ads, images)
+
+  properties.foreach {
+    case Property(name, fn) =>
+      test(name) { (res, log) =>
+        given Logger[IO] = new WeaverLogAdapter[IO](log)
+        testServices.tupled(res).flatMap(fn.tupled)
+      }
+  }

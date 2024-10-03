@@ -2,9 +2,7 @@ package maweituo.tests.servicesimport
 
 import cats.effect.IO
 
-import maweituo.domain.ads.services.AdService
 import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.domain.users.services.{UserAdsService, UserService}
 import maweituo.interp.*
 import maweituo.interp.ads.AdServiceInterp
 import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
@@ -24,7 +22,7 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers with UserAdsServic
   given Logger[IO]           = NoOpLogger[IO]
   given TelemetryService[IO] = new TelemetryServiceStub[IO]
 
-  private def makeTestServices: (UserService[IO], AdService[IO], UserAdsService[IO]) =
+  private def makeTestServices =
     val ads              = InMemoryRepoFactory.ads
     val users            = InMemoryRepoFactory.users
     given IAMService[IO] = makeIAMService(ads)

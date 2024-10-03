@@ -26,6 +26,7 @@ object RecsClients:
           List.empty[AdId].pure[F]
 
         override def learn: F[Unit] = Applicative[F].unit
+
       override val telemetry: TelemetryService[F] = new TelemetryService[F]:
 
         override def userCreated(user: users.UserId, ad: AdId): F[Unit] = Applicative[F].unit

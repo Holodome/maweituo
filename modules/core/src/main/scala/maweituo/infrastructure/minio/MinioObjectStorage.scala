@@ -15,13 +15,14 @@ import _root_.org.typelevel.log4cats.Logger
 import io.minio.*
 import io.minio.errors.ErrorResponseException
 
+final case class MinioConnection(baseUrl: String, client: MinioAsyncClient)
+
 object MinioObjectStorage:
   def make[F[_]: Async: Logger](
-      baseUrl: String,
-      client: MinioAsyncClient,
+      conn: MinioConnection,
       bucket: String
   ): F[ObjectStorage[F]] =
-    ensureBucketIsCreated(client, bucket).as(new MinioObjectStorage(baseUrl, client, bucket))
+    ensureBucketIsCreated(conn.client, bucket).as(new MinioObjectStorage(conn.baseUrl, conn.client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Logger](
       minio: MinioAsyncClient,

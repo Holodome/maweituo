@@ -61,9 +61,9 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
   }
 
   private val loggers: HttpApp[F] => HttpApp[F] = { (http: HttpApp[F]) =>
-    RequestLogger.httpApp(logHeaders = true, logBody = false)(http)
+    RequestLogger.httpApp(logHeaders = true, logBody = true)(http)
   } andThen { (http: HttpApp[F]) =>
-    ResponseLogger.httpApp(logHeaders = true, logBody = false)(http)
+    ResponseLogger.httpApp(logHeaders = true, logBody = true)(http)
   }
 
   private def errorHandler(t: Throwable, msg: => String): OptionT[F, Unit] =
@@ -71,4 +71,12 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
       org.typelevel.log4cats.Logger[F].error(t)(msg)
     )
 
-  val httpApp: HttpApp[F] = loggers(middleware(routes).orNotFound)
+  def withErrorLogging(routes: HttpRoutes[F]) = ErrorHandling.Recover.total(
+    ErrorAction.log(
+      routes,
+      messageFailureLogAction = errorHandler,
+      serviceErrorLogAction = errorHandler
+    )
+  )
+
+  val httpApp: HttpApp[F] = loggers(middleware(withErrorLogging(routes)).orNotFound)

@@ -27,13 +27,6 @@ trait AdServiceProperties:
       ad  <- createAdRequestGen
     yield reg -> ad
 
-  private val regAdTagGen =
-    for
-      reg <- registerGen
-      ad  <- createAdRequestGen
-      tag <- adTagGen
-    yield (reg, ad, tag)
-
   protected val properties = List(
     Property(
       "create works",

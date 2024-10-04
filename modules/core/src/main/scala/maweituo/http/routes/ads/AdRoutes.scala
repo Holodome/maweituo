@@ -19,11 +19,12 @@ final case class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F]
 
   private val prefixPath = "/ads"
 
-  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] { case GET -> Root / AdIdVar(adId) =>
-    adService
-      .get(adId)
-      .flatMap(Ok(_))
-  }
+  private val publicRoutes: HttpRoutes[F] =
+    HttpRoutes.of[F] { case GET -> Root / AdIdVar(adId) =>
+      adService
+        .get(adId)
+        .flatMap(Ok(_))
+    }
 
   private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root as user =>

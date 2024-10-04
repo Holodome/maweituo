@@ -8,7 +8,7 @@ import maweituo.domain.errors.*
 import maweituo.domain.users.services.{AuthService, UserService}
 import maweituo.domain.users.{AuthedUser, UserId}
 import maweituo.tests.generators.*
-import maweituo.utils.given
+import maweituo.tests.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.scalacheck.Gen

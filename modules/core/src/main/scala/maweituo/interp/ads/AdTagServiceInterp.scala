@@ -32,3 +32,6 @@ object AdTagServiceInterp:
         _ <- tags.removeTagFromAd(id, tag)
         _ <- Logger[F].info(s"Removed tag $tag from ad $id by user $userId")
       yield ()
+
+    def adTags(adId: AdId): F[List[AdTag]] =
+      tags.getAdTags(adId)

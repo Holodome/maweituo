@@ -96,7 +96,7 @@ def makePostgres[F[_]: Async: Logger](cont: PostgreSQLContainer): Resource[F, Tr
     }
     xa <- HikariTransactor.fromHikariConfig[F](hikariConfig, logHandler)
       .evalTap { xa =>
-        Fragment.const(Source.fromResource("init.sql").mkString)
+        Fragment.const(Source.fromFile("deploy/init.sql").mkString)
           .update.run.transact(xa).void
       }
   yield xa

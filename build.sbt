@@ -14,7 +14,8 @@ lazy val commonSettings = Seq(
     "-language:implicitConversions",
     "-deprecation",
     "-Wunused:imports",
-    "-Ykind-projector:underscores"
+    "-Ykind-projector:underscores",
+    "-Wunused:all"
   )
 )
 
@@ -97,6 +98,7 @@ lazy val tests = (project in file("modules/tests"))
     publish / skip := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     libraryDependencies ++= Seq(
+      "io.circe"            %% "circe-testing"                   % CirceVersion,
       "com.disneystreaming" %% "weaver-cats"                     % WeaverVersion,
       "com.disneystreaming" %% "weaver-discipline"               % WeaverVersion,
       "com.disneystreaming" %% "weaver-scalacheck"               % WeaverVersion,
@@ -116,7 +118,7 @@ lazy val it = (project in file("modules/it"))
     name           := "maweituo-it",
     publish / skip := true
   )
-  
+
 lazy val e2e = (project in file("modules/e2e"))
   .dependsOn(tests)
   .settings(

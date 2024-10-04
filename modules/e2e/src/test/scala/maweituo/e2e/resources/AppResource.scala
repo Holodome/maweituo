@@ -16,13 +16,13 @@ import com.comcast.ip4s.*
 import com.dimafeng.testcontainers.{DockerComposeContainer, ExposedService}
 import doobie.implicits.*
 import doobie.util.fragment.Fragment
-import org.http4s.implicits.*
 import weaver.{GlobalRead, GlobalResource, GlobalWrite}
 
 object AppResource extends GlobalResource:
 
   private val appComposeDef = DockerComposeContainer.Def(
-    composeFiles = DockerComposeContainer.ComposeFile(Left(new File("src/test/resources/docker-compose.yml"))),
+    composeFiles =
+      DockerComposeContainer.ComposeFile(Left(new File("modules/e2e/src/test/resources/docker-compose.yml"))),
     exposedServices = List(
       ExposedService("core", 8080),
       ExposedService("postgres", 5432)
@@ -30,18 +30,23 @@ object AppResource extends GlobalResource:
   )
 
   def appResource: Resource[IO, AppClient] =
-    Resource.pure(appComposeDef.start())
-      .flatMap { container =>
-        MkPostgresClient[IO]
-          .newClient(PostgresConfig("maweituo", "maweituo", host"localhost", port"5432", "maweituo"))
-      }
-      .evalTap { xa =>
-        Fragment.const(Source.fromResource("init.sql").mkString)
-          .update.run.transact(xa).void
-      }.flatMap { _ =>
+    Resource.eval(IO.delay(appComposeDef.start()))
+      .evalTap { container =>
+        val pgHost = Host.fromString(container.getServiceHost("postgres", 5432)).get
+        val pgPort = Port.fromInt(container.getServicePort("postgres", 5432)).get
+        val cfg    = PostgresConfig("maweituo", "maweituo", pgHost, pgPort, "maweituo")
+        MkPostgresClient[IO].newClient(cfg).use {
+          xa =>
+            Fragment.const(Source.fromFile("deploy/init.sql").mkString)
+              .update.run.transact(xa).void
+        }
+      }.flatMap { container =>
+        val host = container.getServiceHost("core", 8080)
+        val port = container.getServicePort("core", 8080)
         MkHttpClient[IO].newEmber(HttpClientConfig(5.seconds, 5.seconds))
-      }.map { client =>
-        new AppClient(uri"http://localhost:8080", client)
+          .map(x => (x, f"http://$host:$port"))
+      }.map { (client, uri) =>
+        new AppClient(uri, client)
       }
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
@@ -51,7 +56,7 @@ object AppResource extends GlobalResource:
     yield ()
 
 extension (global: GlobalRead)
-  def redis: Resource[IO, AppClient] =
+  def app: Resource[IO, AppClient] =
     global.getR[AppClient]().flatMap {
       case Some(value) => Resource.pure(value)
       case None        => AppResource.appResource

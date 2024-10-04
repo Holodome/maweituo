@@ -28,10 +28,13 @@ object AuthServiceInterp:
           if passwordsMatch(user, password) then
             jwtDict
               .get(user.id)
-              .getOrElseF(tokens.create(user.id) flatTap { t =>
-                jwtDict.store(user.id, t) *>
-                  authedUserDict.store(t, user.id)
-              })
+              .getOrElseF(
+                tokens.create(user.id)
+                  .flatTap { t =>
+                    jwtDict.store(user.id, t) *>
+                      authedUserDict.store(t, user.id)
+                  }
+              )
               .map(t => (t, user.id))
           else
             Logger[F].warn(s"Invalid login attempt for user $username") *>

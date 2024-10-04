@@ -6,13 +6,12 @@ import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
+import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.*
 import maweituo.tests.resources.postgres
 import maweituo.tests.utils.given
-import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.*
 import weaver.scalacheck.Checkers
 
@@ -24,11 +23,10 @@ class PostgresAdImageRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def imgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdImageRepo[IO]) => F[Expectations]) =
-    test(name) { (postgres, log) =>
-      given Logger[IO] = new WeaverLogAdapter[IO](log)
-      val users        = PostgresUserRepo.make(postgres)
-      val ads          = PostgresAdRepo.make(postgres)
-      val images       = PostgresAdImageRepo.make(postgres)
+    test(name) { postgres =>
+      val users  = PostgresUserRepo.make(postgres)
+      val ads    = PostgresAdRepo.make(postgres)
+      val images = PostgresAdImageRepo.make(postgres)
       fn(users, ads, images)
     }
 

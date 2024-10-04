@@ -22,7 +22,7 @@ class InMemoryAdTagRepo[F[_]: Sync] extends AdTagRepo[F]:
 
   override def getAdTags(adId: AdId): F[List[AdTag]] =
     Sync[F] delay map.view.filter {
-      (tag, ads) => ads.contains(adId)
+      (_, ads) => ads.contains(adId)
     }.map(_._1).toList
 
   override def removeTagFromAd(adId: AdId, tag: AdTag): F[Unit] =

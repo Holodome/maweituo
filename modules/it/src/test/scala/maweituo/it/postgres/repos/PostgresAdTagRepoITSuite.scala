@@ -6,13 +6,12 @@ import maweituo.domain.ads.repos.{AdRepo, AdTagRepo}
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresAdTagRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
+import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.{adGen, adTagGen, userGen}
 import maweituo.tests.resources.*
 import maweituo.tests.utils.given
-import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.*
 import weaver.scalacheck.Checkers
 
@@ -24,11 +23,10 @@ class PostgresAdTagRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def tagsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO]) => F[Expectations]) =
-    test(name) { (postgres, log) =>
-      given Logger[IO] = new WeaverLogAdapter[IO](log)
-      val users        = PostgresUserRepo.make(postgres)
-      val ads          = PostgresAdRepo.make(postgres)
-      val tags         = PostgresAdTagRepo.make(postgres)
+    test(name) { postgres =>
+      val users = PostgresUserRepo.make(postgres)
+      val ads   = PostgresAdRepo.make(postgres)
+      val tags  = PostgresAdTagRepo.make(postgres)
       fn(users, ads, tags)
     }
 

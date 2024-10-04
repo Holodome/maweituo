@@ -8,13 +8,12 @@ import maweituo.domain.users.UserId
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
+import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.{adGen, chatIdGen, instantGen, msgTextGen, userGen}
 import maweituo.tests.resources.*
 import maweituo.tests.utils.given
-import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.*
 import weaver.scalacheck.Checkers
 
@@ -26,12 +25,11 @@ class PostgresMessageRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def msgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], ChatRepo[IO], MessageRepo[IO]) => F[Expectations]) =
-    test(name) { (postgres, log) =>
-      given Logger[IO] = new WeaverLogAdapter[IO](log)
-      val users        = PostgresUserRepo.make(postgres)
-      val ads          = PostgresAdRepo.make(postgres)
-      val chats        = PostgresChatRepo.make(postgres)
-      val msgs         = PostgresMessageRepo.make(postgres)
+    test(name) { postgres =>
+      val users = PostgresUserRepo.make(postgres)
+      val ads   = PostgresAdRepo.make(postgres)
+      val chats = PostgresChatRepo.make(postgres)
+      val msgs  = PostgresMessageRepo.make(postgres)
       fn(users, ads, chats, msgs)
     }
 

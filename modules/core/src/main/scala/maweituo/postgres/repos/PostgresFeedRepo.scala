@@ -26,7 +26,7 @@ object PostgresFeedRepo:
     def setPersonalized(userId: UserId, ads: List[AdId], ttlSecs: FiniteDuration): F[Unit] = Async[F].unit
 
     def addToGlobalFeed(ad: AdId, at: Instant): F[Unit] =
-      sql"insert into global_feed(at, ad_id) values ($at, $ad)".update.run.transact(xa).void
+      sql"insert into global_feed(at, ad_id) values ($at, $ad::uuid)".update.run.transact(xa).void
 
     def getPersonalizedSize(user: UserId): F[Int] = Async[F].pure(0)
 

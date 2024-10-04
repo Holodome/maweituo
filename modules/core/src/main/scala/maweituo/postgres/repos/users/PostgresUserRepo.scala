@@ -3,7 +3,6 @@ package maweituo.postgres.repos.users
 import cats.Applicative
 import cats.data.OptionT
 import cats.effect.Async
-import cats.effect.kernel.Sync
 import cats.syntax.all.*
 
 import maweituo.domain.users.*
@@ -61,10 +60,7 @@ object PostgresUserRepo:
       if update.email.isEmpty && update.name.isEmpty && update.password.isEmpty then
         Applicative[F].unit
       else
-        updateQuery(update).update.run.transact(xa).void.onError {
-          case e: java.sql.SQLException =>
-            Sync[F].delay(println(e))
-        }
+        updateQuery(update).update.run.transact(xa).void
 
     private def updateQuery(update: UpdateUserInternal) =
       val sets = List(

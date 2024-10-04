@@ -12,7 +12,6 @@ import maweituo.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.AuthServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
-import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
@@ -26,13 +25,12 @@ object AuthServiceSuite extends SimpleIOSuite with Checkers with AuthServiceProp
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
   private def makeTestUsersAuth(tokens: JwtTokens[IO]) =
-    given Logger[IO]           = NoOpLogger[IO]
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
-    val userRepo               = InMemoryRepoFactory.users
-    val adRepo                 = InMemoryRepoFactory.ads
-    given IAMService[IO]       = makeIAMService(adRepo)
-    val users                  = UserServiceInterp.make(userRepo)
-    val auth                   = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
+    given Logger[IO]     = NoOpLogger[IO]
+    val userRepo         = InMemoryRepoFactory.users
+    val adRepo           = InMemoryRepoFactory.ads
+    given IAMService[IO] = makeIAMService(adRepo)
+    val users            = UserServiceInterp.make(userRepo)
+    val auth             = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
   properties.foreach {

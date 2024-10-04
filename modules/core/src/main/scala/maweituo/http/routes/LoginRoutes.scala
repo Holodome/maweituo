@@ -23,7 +23,7 @@ final case class LoginRoutes[F[_]: JsonDecoder: Concurrent](
         req.decode[LoginRequest] { login =>
           authService
             .login(login.name, login.password)
-            .map(_._1)
+            .map { (jwt, _) => jwt }
             .flatMap(Ok(_))
         }
     }

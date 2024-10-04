@@ -30,8 +30,7 @@ object MinioObjectStorage:
           _ <- Logger[F].info(f"Bucket $bucket created")
         yield ()
     }.recoverWith {
-      case e =>
-        Logger[F].warn(e)("Error when creating bucket")
+      case e => Logger[F].warn(e)("Error when creating bucket")
     }
 
 private final class MinioObjectStorage[F[_]: Async: Logger](

@@ -1,19 +1,18 @@
-package maweituo.it.resources
+package maweituo.tests.resources
 
-import weaver.GlobalResource
-import weaver.GlobalWrite
-import weaver.GlobalRead
+import cats.effect.{IO, Resource}
 
-import cats.effect.IO
-import cats.effect.Resource
+import maweituo.tests.containers.makePostgresResource
+
+import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
-import maweituo.tests.containers.makePostgresResource
-import doobie.util.transactor.Transactor
+import weaver.{GlobalRead, GlobalResource, GlobalWrite}
 
-object PostgresContainerResource extends GlobalResource:
+final case class PgCon(xa: Transactor[IO])
 
-  final case class PgCon(xa: Transactor[IO])
+trait PostgresContainerResource:
+  this: GlobalResource =>
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
     given Logger[IO] = NoOpLogger[IO]
@@ -25,7 +24,7 @@ object PostgresContainerResource extends GlobalResource:
 extension (global: GlobalRead)
   def postgres: Resource[IO, Transactor[IO]] =
     given Logger[IO] = NoOpLogger[IO]
-    global.getR[PostgresContainerResource.PgCon]().flatMap {
+    global.getR[PgCon]().flatMap {
       case Some(value) => Resource.pure(value.xa)
       case None        => makePostgresResource[IO]
     }

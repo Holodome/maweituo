@@ -5,13 +5,14 @@ import cats.effect.kernel.Resource
 import cats.syntax.all.*
 
 import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.interp.ads.AdServiceInterp
+import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
+import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
 import maweituo.interp.users.UserServiceInterp
-import maweituo.it.resources.*
-import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdImageServiceProperties
 import maweituo.tests.repos.RepoStubFactory
+import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
@@ -19,10 +20,6 @@ import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 import weaver.GlobalRead
-import maweituo.postgres.ads.repos.PostgresAdImageRepo
-import maweituo.infrastructure.minio.MinioObjectStorage
-import maweituo.infrastructure.minio.MinioConnection
-import maweituo.interp.ads.AdImageServiceInterp
 
 class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdImageServiceProperties:
 

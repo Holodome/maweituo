@@ -13,6 +13,7 @@ import io.circe.{Decoder, Encoder}
 given Eq[JwtToken]      = Eq.by(_.value)
 given Show[JwtToken]    = Show[String].contramap[JwtToken](_.value)
 given Encoder[JwtToken] = Encoder.forProduct1("access_token")(_.value)
+given Decoder[JwtToken] = Decoder.forProduct1("access_token")(JwtToken.apply)
 
 given Show[Instant] = Show[String].contramap[Instant](_.toString())
 

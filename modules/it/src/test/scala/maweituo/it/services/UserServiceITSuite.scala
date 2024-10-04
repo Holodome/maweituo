@@ -5,9 +5,9 @@ import cats.effect.kernel.Resource
 
 import maweituo.domain.services.IAMService
 import maweituo.interp.users.UserServiceInterp
-import maweituo.it.resources.*
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.UserServiceProperties
+import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

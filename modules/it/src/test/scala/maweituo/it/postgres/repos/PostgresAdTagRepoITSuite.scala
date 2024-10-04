@@ -4,10 +4,10 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.{AdRepo, AdTagRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresAdTagRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, adTagGen, userGen}
+import maweituo.tests.resources.*
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

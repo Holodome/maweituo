@@ -48,7 +48,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests)
+  .aggregate(core, tests, it, e2e)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
@@ -114,6 +114,14 @@ lazy val it = (project in file("modules/it"))
   .settings(
     commonSettings,
     name           := "maweituo-it",
+    publish / skip := true
+  )
+  
+lazy val e2e = (project in file("modules/e2e"))
+  .dependsOn(tests)
+  .settings(
+    commonSettings,
+    name           := "maweituo-e2e",
     publish / skip := true
   )
 

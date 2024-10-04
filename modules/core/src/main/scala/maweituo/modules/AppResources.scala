@@ -17,9 +17,14 @@ sealed abstract class AppResources[F[_]](
 )
 
 object AppResources:
-  def make[F[_]: MkRedisClient: MkMinioClient: MkHttpClient: MkPostgresClient: Async](
-      cfg: AppConfig
-  ): Resource[F, AppResources[F]] =
+  def fromRaw[F[_]](
+      redis: RedisCommands[F, String, String],
+      minio: MinioConnection,
+      postgres: Transactor[F]
+  ): AppResources[F] = new AppResources[F](redis, minio, postgres) {}
+
+  def make[F[_]: MkRedisClient: MkMinioClient: MkHttpClient: MkPostgresClient: Async](cfg: AppConfig)
+      : Resource[F, AppResources[F]] =
     (
       MkRedisClient[F].newClient(cfg.redis),
       MkMinioClient[F].newClient(cfg.minio),

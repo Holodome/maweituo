@@ -8,7 +8,7 @@ import cats.effect.kernel.Resource
 
 import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.infrastructure.{OBSId, ObjectStorage}
-import maweituo.it.resources.*
+import maweituo.tests.resources.*
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import org.typelevel.log4cats.Logger

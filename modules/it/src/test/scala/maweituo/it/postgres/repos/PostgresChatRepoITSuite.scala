@@ -5,10 +5,10 @@ import cats.effect.*
 import maweituo.domain.ads.messages.Chat
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, chatIdGen, userGen}
+import maweituo.tests.resources.*
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

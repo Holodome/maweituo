@@ -6,11 +6,11 @@ import cats.effect.kernel.Resource
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.interp.ads.AdServiceInterp
 import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
-import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.UserAdsServiceProperties
 import maweituo.tests.repos.RepoStubFactory
+import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}

@@ -8,11 +8,11 @@ import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.interp.*
 import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
 import maweituo.interp.users.UserServiceInterp
-import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.MessageServiceProperties
 import maweituo.tests.repos.*
+import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.*
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}

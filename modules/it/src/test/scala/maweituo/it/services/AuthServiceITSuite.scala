@@ -11,10 +11,10 @@ import maweituo.domain.services.IAMService
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.interp.AuthServiceInterp
 import maweituo.interp.users.UserServiceInterp
-import maweituo.it.resources.*
 import maweituo.modules.Infrastructure
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AuthServiceProperties
+import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

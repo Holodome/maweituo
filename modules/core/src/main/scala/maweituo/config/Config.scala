@@ -22,7 +22,9 @@ object Config:
     case ConfigDefault
 
   def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
-    env("MW_CONFIG_PATH").map(ConfigSource.ConfigEnv.apply).default(ConfigSource.ConfigDefault)
+    env("MW_CONFIG_PATH")
+      .map(ConfigSource.ConfigEnv.apply)
+      .default(ConfigSource.ConfigDefault)
       .load[F]
       .flatMap { path =>
         path match

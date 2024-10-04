@@ -1,4 +1,4 @@
-package maweituo.it.resources
+package maweituo.tests.resources
 
 import cats.effect.{IO, Resource}
 
@@ -9,20 +9,21 @@ import org.typelevel.log4cats.*
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.{GlobalRead, GlobalResource, GlobalWrite}
 
-object MinioContainerResource extends GlobalResource:
+final case class MinioCon(value: MinioConnection)
 
-  final case class MinioCon(value: MinioConnection)
+trait MinioContainerResource:
+  this: GlobalResource =>
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
     given Logger[IO] = NoOpLogger[IO]
     for
-      pg <- makeMinioResource[IO].map(MinioCon.apply)
-      _  <- global.putR(pg)
+      minio <- makeMinioResource[IO].map(MinioCon.apply)
+      _     <- global.putR(minio)
     yield ()
 
 extension (global: GlobalRead)
   def minio: Resource[IO, MinioConnection] =
-    global.getR[MinioContainerResource.MinioCon]().flatMap {
+    global.getR[MinioCon]().flatMap {
       case Some(value) => Resource.pure(value.value)
       case None        => makeMinioResource[IO]
     }

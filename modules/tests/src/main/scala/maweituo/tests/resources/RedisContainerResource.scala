@@ -1,4 +1,4 @@
-package maweituo.it.resources
+package maweituo.tests.resources
 
 import cats.effect.{IO, Resource}
 
@@ -10,20 +10,21 @@ import org.typelevel.log4cats.*
 import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.{GlobalRead, GlobalResource, GlobalWrite}
 
-object RedisContainerResource extends GlobalResource:
+final case class RedisCon(value: RedisCommands[IO, String, String])
 
-  final case class RedisCon(value: RedisCommands[IO, String, String])
+trait RedisContainerResource:
+  this: GlobalResource =>
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
     given Logger[IO] = NoOpLogger[IO]
     for
-      pg <- makeRedisResource[IO].map(RedisCon.apply)
-      _  <- global.putR(pg)
+      redis <- makeRedisResource[IO].map(RedisCon.apply)
+      _     <- global.putR(redis)
     yield ()
 
 extension (global: GlobalRead)
   def redis: Resource[IO, RedisCommands[IO, String, String]] =
-    global.getR[RedisContainerResource.RedisCon]().flatMap {
+    global.getR[RedisCon]().flatMap {
       case Some(value) => Resource.pure(value.value)
       case None =>
         given Logger[IO] = NoOpLogger[IO]

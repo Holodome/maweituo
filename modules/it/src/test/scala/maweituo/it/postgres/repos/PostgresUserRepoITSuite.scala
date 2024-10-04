@@ -5,9 +5,9 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.UpdateUserInternal
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.*
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{updateUserGen, userGen}
+import maweituo.tests.resources.*
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

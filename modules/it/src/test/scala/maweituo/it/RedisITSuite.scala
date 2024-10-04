@@ -6,9 +6,9 @@ import cats.effect.*
 
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.redis.RedisEphemeralDict
-import maweituo.it.resources.*
 import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.nonEmptyStringGen
+import maweituo.tests.resources.*
 
 import dev.profunktor.redis4cats.RedisCommands
 import weaver.*

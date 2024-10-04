@@ -1,0 +1,25 @@
+{
+  "http": {
+    "port": "8080",
+    "host": "core"
+  },
+  "jwt": {
+    "expire": "1 hour"
+  },
+  "redis": {
+    "host": "redis"
+  },
+  "minio": {
+    "port": "9000",
+    "host": "minio",
+    "bucket": "maweituo",
+    "url": "http://minio:9000"
+  },
+  "postgres": {
+    "user": "maweituo",
+    "password": "maweituo",
+    "host": "postgres",
+    "port": "5432",
+    "db": "maweituo"
+  }
+}

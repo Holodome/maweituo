@@ -6,10 +6,10 @@ import maweituo.domain.ads.messages.{Chat, ChatId, Message}
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo, MessageRepo}
 import maweituo.domain.users.UserId
 import maweituo.domain.users.repos.UserRepo
-import maweituo.it.resources.*
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.{adGen, chatIdGen, instantGen, msgTextGen, userGen}
+import maweituo.tests.resources.*
 import maweituo.tests.utils.given
 import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 

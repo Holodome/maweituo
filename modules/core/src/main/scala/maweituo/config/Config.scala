@@ -19,17 +19,20 @@ import org.typelevel.log4cats.Logger
 object Config:
   enum ConfigSource:
     case ConfigEnv(string: String)
+    case ConfigTest
     case ConfigDefault
 
   def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
-    env("MW_CONFIG_PATH")
-      .map(ConfigSource.ConfigEnv.apply)
+    env("MW_CONFIG_PATH").map(ConfigSource.ConfigEnv.apply)
+      .or(env("MW_TEST_CONFIG").map(_ => ConfigSource.ConfigTest))
       .default(ConfigSource.ConfigDefault)
       .load[F]
       .flatMap { path =>
         path match
           case ConfigSource.ConfigEnv(path) =>
             utils.JsonConfig.fromFile[F](Paths.get(path))
+          case ConfigSource.ConfigTest =>
+            utils.JsonConfig.fromString(Source.fromResource("maweituo-config-test.json").mkString)
           case ConfigSource.ConfigDefault =>
             utils.JsonConfig.fromString(Source.fromResource("maweituo-config.json").mkString)
       }.flatMap { json =>

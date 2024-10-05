@@ -3,8 +3,6 @@ version: "3.4"
 services:
   core:
     image: 'maweituo-core:0.1.0'
-    volumes:
-      - ./maweituo-config.json:/etc/maweituo-config.json
     restart: always
     networks:
       - backend
@@ -16,10 +14,10 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      - MW_TEST_CONFIG=1
       - MW_JWT_SECRET_KEY=123
       - MW_MINIO_USER=minioadmin
       - MW_MINIO_PASSWORD=minioadmin
-      - MW_CONFIG_PATH=/etc/maweituo-config.json
 
   redis:
     image: 'redis:6.2-alpine'

@@ -160,3 +160,5 @@ lerna-debug.log
 .DS_Store
 Thumbs.db
 *.dylib
+
+allure-report

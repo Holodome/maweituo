@@ -63,6 +63,7 @@ integration:
 #     - when: always
 #   allow_failure: true
 
+
 report:
   stage: report
   image: holodome/my-allure:latest
@@ -73,10 +74,11 @@ report:
     - 'curl --header "PRIVATE-TOKEN: $REPORT_TOKEN" --location "https://git.iu7.bmstu.ru/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_COMMIT_BRANCH/download?job=report" --output artifacts.zip || true' 
     - unzip artifacts.zip || true
     - cp -r ./allure-report/history ./allure-results || true
+    - rm -rf allure-report 
     - cp modules/tests/target/test-reports/* allure-results || true
     - cp modules/it/target/test-reports/* allure-results || true
     - cp modules/e2e/target/test-reports/* allure-results || true
-    - allure generate allure-results -o allure-report --clean
+    - allure generate allure-results -o allure-report 
   artifacts:
     paths:
       - allure-report

@@ -11,7 +11,7 @@ variables:
 
 stages:
   - unit-test
-  # - integration-test
+  - integration-test
   # - e2e-test
   - report 
   
@@ -32,22 +32,22 @@ unit:
     - when: always
   allow_failure: true
 
-# integration:
-#   stage: integration-test
-#   image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
-#   script: 
-#     - echo INTEGRATION_SUCCESS=0 | tee >> $GITLAB_ENV
-#     - export INTEGRATION_SUCCESS=0
-#     - printenv
-#     - sbt it/test
-#     - echo INTEGRATION_SUCCESS=1 | tee >> $GITLAB_ENV
-#   artifacts:
-#     when: always
-#     paths:
-#       - modules/it/target/test-reports
-#   rules:
-#     - when: always
-#   allow_failure: true
+integration:
+  stage: integration-test
+  image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
+  script: 
+    - echo INTEGRATION_SUCCESS=0 | tee >> $GITLAB_ENV
+    - export INTEGRATION_SUCCESS=0
+    - printenv
+    - sbt it/test
+    - echo INTEGRATION_SUCCESS=1 | tee >> $GITLAB_ENV
+  artifacts:
+    when: always
+    paths:
+      - modules/it/target/test-reports
+  rules:
+    - when: always
+  allow_failure: true
 
 # e2e:
 #   stage: e2e-test

@@ -54,6 +54,7 @@ integration:
   stage: integration-test
   image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
   script: 
+    - apk add docker-compose
     - echo INTEGRATION_SUCCESS=0 | tee >> $GITLAB_ENV
     - export INTEGRATION_SUCCESS=0
     - printenv

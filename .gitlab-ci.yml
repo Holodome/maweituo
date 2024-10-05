@@ -67,6 +67,7 @@ report:
   stage: report
   image: frankescobar/allure-docker-service:latest
   script: 
+    - apt-get update && apt-get install unzip
     - mkdir allure-results 
     - echo $CI_COMMIT_BRANCH
     - echo $REPORT_TOKEN

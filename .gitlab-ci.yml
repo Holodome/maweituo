@@ -76,7 +76,7 @@ report:
     - cp modules/tests/target/test-reports/* allure-results || true
     - cp modules/it/target/test-reports/* allure-results || true
     - cp modules/e2e/target/test-reports/* allure-results || true
-    - allure generate allure-results -o allure-report
+    - allure generate allure-results -o allure-report --clean
   artifacts:
     paths:
       - allure-report

@@ -14,13 +14,13 @@ private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
 
 class TestUserRepo extends UserRepo[IO]:
-  override def findByName(name: Username): OptionT[IO, User] = OptionT(makeError("TestUserRepo.findByName"))
-  override def delete(id: UserId): IO[Unit]                  = makeError("TestUserRepo.delete")
-  override def all: IO[List[User]]                           = makeError("TestUserRepo.all")
-  override def findByEmail(email: Email): OptionT[IO, User]  = OptionT(makeError("TestUserRepo.findByEmail"))
-  override def create(request: User): IO[Unit]               = makeError("TestUserRepo.create")
-  override def find(userId: UserId): OptionT[IO, User]       = OptionT(makeError("TestUserRepo.find"))
-  override def update(update: UpdateUserRepoRequest): IO[Unit]  = makeError("TestUserRepo.update")
+  override def findByName(name: Username): OptionT[IO, User]   = OptionT(makeError("TestUserRepo.findByName"))
+  override def delete(id: UserId): IO[Unit]                    = makeError("TestUserRepo.delete")
+  override def all: IO[List[User]]                             = makeError("TestUserRepo.all")
+  override def findByEmail(email: Email): OptionT[IO, User]    = OptionT(makeError("TestUserRepo.findByEmail"))
+  override def create(request: User): IO[Unit]                 = makeError("TestUserRepo.create")
+  override def find(userId: UserId): OptionT[IO, User]         = OptionT(makeError("TestUserRepo.find"))
+  override def update(update: UpdateUserRepoRequest): IO[Unit] = makeError("TestUserRepo.update")
 
 class TestAdRepo extends AdRepo[IO]:
   override def delete(id: AdId): IO[Unit]                      = makeError("TestAdRepo.delete")

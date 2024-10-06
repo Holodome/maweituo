@@ -6,6 +6,7 @@ import cats.syntax.all.*
 import maweituo.domain.users.*
 import maweituo.domain.users.services.UserAdsService
 import maweituo.http.PublicRoutes
+import maweituo.http.dto.UserAdsResponseDto
 import maweituo.http.vars.UserIdVar
 
 import org.http4s.HttpRoutes
@@ -13,7 +14,6 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.typelevel.log4cats.Logger
-import maweituo.http.dto.UserAdsResponseDto
 
 final case class UserAdRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     userAdsService: UserAdsService[F]

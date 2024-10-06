@@ -6,6 +6,7 @@ import cats.syntax.all.*
 import maweituo.domain.users.*
 import maweituo.domain.users.services.UserService
 import maweituo.http.BothRoutes
+import maweituo.http.dto.{UpdateUserRequestDto, UserPublicInfoDto}
 import maweituo.http.vars.UserIdVar
 
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
@@ -14,8 +15,6 @@ import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
-import maweituo.http.dto.UpdateUserRequestDto
-import maweituo.http.dto.UserPublicInfoDto
 
 final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     userService: UserService[F]

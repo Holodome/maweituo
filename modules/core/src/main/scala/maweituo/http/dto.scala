@@ -2,11 +2,13 @@ package maweituo.http.dto
 
 import java.time.Instant
 
-import cats.Show
-import cats.syntax.all.*
-import cats.effect.Concurrent
+import cats.data.{EitherT, OptionT}
 import cats.derived.derived
+import cats.effect.Concurrent
+import cats.syntax.all.*
+import cats.{MonadThrow, Show}
 
+import maweituo.domain.ads.images.{ImageContentsStream, MediaType}
 import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}
 import maweituo.domain.users.*
@@ -14,15 +16,7 @@ import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
-import maweituo.domain.ads.images.MediaType
-import org.http4s.EntityDecoder
-import org.http4s.Media
-import org.http4s.MediaRange
-import cats.MonadThrow
-import cats.data.EitherT
-import cats.data.OptionT
-import org.http4s.MalformedMessageBodyFailure
-import maweituo.domain.ads.images.ImageContentsStream
+import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
 final case class FeedResponseDto(ads: List[AdId], total: Int) derives Codec.AsObject
 

@@ -6,7 +6,7 @@ import cats.syntax.all.*
 import maweituo.auth.JwtTokens
 import maweituo.domain.errors.*
 import maweituo.domain.users.services.{AuthService, UserService}
-import maweituo.domain.users.{AuthedUser, UserId}
+import maweituo.domain.users.{AuthedUser, LoginRequest, UserId}
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 
@@ -14,7 +14,6 @@ import dev.profunktor.auth.jwt.JwtToken
 import org.scalacheck.Gen
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}
-import maweituo.domain.users.LoginRequest
 
 trait AuthServiceProperties:
   this: MutableIOSuite & Checkers =>

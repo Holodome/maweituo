@@ -4,7 +4,6 @@ import cats.effect.IO
 
 import maweituo.domain.ads.AdId
 import maweituo.http.dto.*
-import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.*

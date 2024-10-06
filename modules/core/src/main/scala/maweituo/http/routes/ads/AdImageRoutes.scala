@@ -8,12 +8,12 @@ import maweituo.domain.ads.images.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.*
 import maweituo.http.BothRoutes
+import maweituo.http.dto.UploadImageRequestDto
 import maweituo.http.vars.{AdIdVar, ImageIdVar}
 
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
-import maweituo.http.dto.UploadImageRequestDto
 
 final case class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[F])
     extends Http4sDsl[F] with BothRoutes[F]:

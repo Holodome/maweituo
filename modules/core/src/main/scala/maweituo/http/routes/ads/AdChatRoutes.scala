@@ -6,6 +6,7 @@ import cats.syntax.all.*
 import maweituo.domain.ads.services.ChatService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.UserAuthRoutes
+import maweituo.http.dto.ChatDto
 import maweituo.http.vars.{AdIdVar, ChatIdVar}
 
 import io.circe.Json
@@ -13,8 +14,6 @@ import io.circe.syntax.EncoderOps
 import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
-
-import maweituo.http.dto.ChatDto
 
 final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
     extends Http4sDsl[F] with UserAuthRoutes[F]:

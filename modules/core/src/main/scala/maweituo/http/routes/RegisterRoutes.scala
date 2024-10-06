@@ -5,16 +5,17 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.RegisterRequest
 import maweituo.domain.users.services.UserService
-import maweituo.http.Routes
+import maweituo.http.PublicRoutes
 
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class RegisterRoutes[F[_]: Concurrent: JsonDecoder](userService: UserService[F]) extends Http4sDsl[F]:
+final case class RegisterRoutes[F[_]: Concurrent: JsonDecoder](userService: UserService[F])
+    extends Http4sDsl[F] with PublicRoutes[F]:
 
-  private val httpRoutes: HttpRoutes[F] =
+  override val routes: HttpRoutes[F] =
     HttpRoutes.of {
       case req @ POST -> Root / "register" =>
         req.decode[RegisterRequest] { register =>
@@ -23,6 +24,3 @@ final case class RegisterRoutes[F[_]: Concurrent: JsonDecoder](userService: User
             .flatMap(Ok(_))
         }
     }
-
-  def routes: Routes[F] =
-    Routes[F](Some(httpRoutes), None)

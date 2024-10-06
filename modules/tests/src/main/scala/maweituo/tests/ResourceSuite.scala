@@ -1,16 +1,11 @@
 package maweituo.tests
 
 import cats.effect.*
+import cats.effect.std.Env
 import cats.syntax.all.*
 
-import weaver.IOSuite
 import weaver.scalacheck.{CheckConfig, Checkers}
-import weaver.TestName
-import weaver.Expectations
-import weaver.Log
-import weaver.Test
-import cats.effect.std.Env
-import cats.Applicative
+import weaver.{Expectations, IOSuite, Log, TestName}
 
 abstract class ResourceSuite extends IOSuite with Checkers:
   // For it:tests, one is enough

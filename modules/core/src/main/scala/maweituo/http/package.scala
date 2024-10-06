@@ -1,12 +1,32 @@
 package maweituo.http
-
-import cats.Semigroup
 import cats.effect.Async
 import cats.syntax.all.*
 
-import org.http4s.HttpRoutes
+import maweituo.domain.users.AuthedUser
 
-final case class Routes[F[_]](public: Option[HttpRoutes[F]], authed: Option[HttpRoutes[F]])
+import org.http4s.server.AuthMiddleware
+import org.http4s.{AuthedRoutes, HttpRoutes}
+
+sealed trait Routes[F[_]]:
+  val publicRoutesOpt: Option[HttpRoutes[F]]             = None
+  val authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = None
+
+trait PublicRoutes[F[_]] extends Routes[F]:
+  override val publicRoutesOpt: Option[HttpRoutes[F]] = Some(routes)
+
+  val routes: HttpRoutes[F]
+
+trait UserAuthRoutes[F[_]] extends Routes[F]:
+  override val authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(routes)
+
+  val routes: AuthedRoutes[AuthedUser, F]
+
+trait BothRoutes[F[_]] extends Routes[F]:
+  override val publicRoutesOpt: Option[HttpRoutes[F]]             = Some(publicRoutes)
+  override val authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(authRoutes)
+
+  val publicRoutes: HttpRoutes[F]
+  val authRoutes: AuthedRoutes[AuthedUser, F]
 
 private def combineOptHttpRoutes[F[_]: Async](
     a: Option[HttpRoutes[F]],
@@ -18,13 +38,10 @@ private def combineOptHttpRoutes[F[_]: Async](
     case (None, Some(_))      => b
     case (None, None)         => None
 
-extension [F[_]: Async](routes: Routes[F])
-  def collapse: HttpRoutes[F] =
-    combineOptHttpRoutes(routes.public, routes.authed).get
+private def routesToTuple[F[_]](routes: Routes[F], auth: AuthMiddleware[F, AuthedUser]) =
+  (routes.publicRoutesOpt, routes.authRoutesOpt.map(auth(_)))
 
-given [F[_]: Async]: Semigroup[Routes[F]] =
-  (x: Routes[F], y: Routes[F]) =>
-    Routes(
-      combineOptHttpRoutes(x.public, y.public),
-      combineOptHttpRoutes(x.authed, y.authed)
-    )
+def buildRoutes[F[_]: Async](routes: List[Routes[F]], auth: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
+  val publicRoutes = routes.map(_.publicRoutesOpt).reduce(combineOptHttpRoutes)
+  val authRoutes   = routes.map(x => x.authRoutesOpt.map(auth)).reduce(combineOptHttpRoutes)
+  combineOptHttpRoutes(publicRoutes, authRoutes).get

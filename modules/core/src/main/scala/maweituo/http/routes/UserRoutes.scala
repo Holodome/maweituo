@@ -5,35 +5,33 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.*
 import maweituo.domain.users.services.{UserAdsService, UserService}
-import maweituo.http.Routes
+import maweituo.http.BothRoutes
 import maweituo.http.vars.UserIdVar
 
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-import org.http4s.server.{AuthMiddleware, Router}
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
 final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     userService: UserService[F],
     userAdsService: UserAdsService[F]
-) extends Http4sDsl[F]:
-  private val prefixPath = "/users"
+) extends Http4sDsl[F] with BothRoutes[F]:
 
-  private val publicRoutes: HttpRoutes[F] = HttpRoutes.of {
-    case GET -> Root / UserIdVar(userId) =>
+  override val publicRoutes = HttpRoutes.of {
+    case GET -> Root / "users" / UserIdVar(userId) =>
       userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
 
-    case GET -> Root / UserIdVar(userId) / "ads" =>
+    case GET -> Root / "users" / UserIdVar(userId) / "ads" =>
       userAdsService.getAds(userId).flatMap(Ok(_))
   }
 
-  private val authedRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case DELETE -> Root / UserIdVar(userId) as user =>
+  override val authRoutes = AuthedRoutes.of {
+    case DELETE -> Root / "users" / UserIdVar(userId) as user =>
       userService.delete(userId, user.id) *> NoContent()
-    case ar @ PUT -> Root / UserIdVar(userId) as user =>
+    case ar @ PUT -> Root / "users" / UserIdVar(userId) as user =>
       ar.req.decode[UpdateUserRequest] { update =>
         // This check is here only because we are restful
         if userId === update.id then
@@ -44,9 +42,3 @@ final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
           BadRequest()
       }
   }
-
-  def routes(authMiddleware: AuthMiddleware[F, AuthedUser]): Routes[F] =
-    Routes(
-      Some(Router(prefixPath -> publicRoutes)),
-      Some(Router(prefixPath -> authMiddleware(authedRoutes)))
-    )

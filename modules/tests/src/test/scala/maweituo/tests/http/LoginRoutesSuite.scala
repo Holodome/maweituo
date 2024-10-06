@@ -7,7 +7,6 @@ import maweituo.auth.JwtTokens
 import maweituo.domain.services.*
 import maweituo.domain.users.services.{AuthService, UserService}
 import maweituo.domain.users.{LoginRequest, UserId}
-import maweituo.http.collapse
 import maweituo.http.routes.{LoginRoutes, RegisterRoutes}
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
@@ -83,8 +82,8 @@ object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
           method = Method.POST,
           uri = uri"/login"
         ).withEntity(LoginRequest(reg.name, reg.password))
-      val login    = LoginRoutes[IO](auth).routes.collapse
-      val register = RegisterRoutes[IO](users).routes.collapse
+      val login    = LoginRoutes[IO](auth).routes
+      val register = RegisterRoutes[IO](users).routes
       for
         x  <- expectHttpStatusLogged(register, regReq)(Status.Ok)
         x1 <- expectHttpBodyAndStatus(login, loginReq)(testToken, Status.Ok)

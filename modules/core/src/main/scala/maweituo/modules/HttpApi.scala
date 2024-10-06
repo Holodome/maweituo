@@ -5,12 +5,11 @@ import scala.concurrent.duration.DurationInt
 import cats.Parallel
 import cats.data.OptionT
 import cats.effect.Async
-import cats.syntax.all.*
 
 import maweituo.domain.users.{AuthedUser, UserJwtAuth}
+import maweituo.http.*
 import maweituo.http.routes.*
 import maweituo.http.routes.ads.*
-import maweituo.http.{*, given}
 
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.*
@@ -28,27 +27,24 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
     userJwtAuth: UserJwtAuth
 ):
 
+  private val routeList = List(
+    LoginRoutes[F](services.auth),
+    LogoutRoutes[F](services.auth),
+    RegisterRoutes[F](services.users),
+    AdRoutes[F](services.ads),
+    AdChatRoutes[F](services.chats),
+    AdImageRoutes[F](services.images),
+    AdMsgRoutes[F](services.messages),
+    AdTagRoutes[F](services.tags),
+    UserRoutes[F](services.users, services.userAds),
+    TagRoutes[F](services.tags),
+    FeedRoutes[F](services.feed)
+  )
+
   private val usersMiddleware =
     JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => (c: JwtClaim) => services.auth.authed(t).value)
 
-  private val loginRoutes    = LoginRoutes[F](services.auth).routes
-  private val logoutRoutes   = LogoutRoutes[F](services.auth).routes(usersMiddleware)
-  private val registerRoutes = RegisterRoutes[F](services.users).routes
-
-  private val adRoutes      = AdRoutes[F](services.ads).routes(usersMiddleware)
-  private val adChatRoutes  = AdChatRoutes[F](services.chats).routes(usersMiddleware)
-  private val adImageRoutes = AdImageRoutes[F](services.images).routes(usersMiddleware)
-  private val adMsgRoutes   = AdMsgRoutes[F](services.messages).routes(usersMiddleware)
-  private val adTagRoutes   = AdTagRoutes[F](services.tags).routes(usersMiddleware)
-
-  private val userRoutes = UserRoutes[F](services.users, services.userAds).routes(usersMiddleware)
-
-  private val tagRoutes = TagRoutes[F](services.tags).routes
-
-  private val feedRoutes = FeedRoutes[F](services.feed).routes(usersMiddleware)
-
-  private val routes: HttpRoutes[F] =
-    (loginRoutes |+| registerRoutes |+| tagRoutes |+| adRoutes |+| adChatRoutes |+| adImageRoutes |+| adMsgRoutes |+| adTagRoutes |+| userRoutes |+| logoutRoutes |+| feedRoutes).collapse
+  private val routes = buildRoutes(routeList, usersMiddleware)
 
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = { (http: HttpRoutes[F]) =>
     AutoSlash(http)

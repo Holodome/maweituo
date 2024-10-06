@@ -10,6 +10,7 @@ import maweituo.domain.users.{AuthedUser, UserJwtAuth}
 import maweituo.http.*
 import maweituo.http.routes.*
 import maweituo.http.routes.ads.*
+import maweituo.http.routes.users.{UserAdRoutes, UserRoutes}
 
 import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.*
@@ -36,7 +37,8 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
     AdImageRoutes[F](services.images),
     AdMsgRoutes[F](services.messages),
     AdTagRoutes[F](services.tags),
-    UserRoutes[F](services.users, services.userAds),
+    UserRoutes[F](services.users),
+    UserAdRoutes[F](services.userAds),
     TagRoutes[F](services.tags),
     FeedRoutes[F](services.feed)
   )

@@ -1,10 +1,10 @@
-package maweituo.http.routes
+package maweituo.http.routes.users
 
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
 import maweituo.domain.users.*
-import maweituo.domain.users.services.{UserAdsService, UserService}
+import maweituo.domain.users.services.UserService
 import maweituo.http.BothRoutes
 import maweituo.http.vars.UserIdVar
 
@@ -16,16 +16,12 @@ import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
 final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
-    userService: UserService[F],
-    userAdsService: UserAdsService[F]
+    userService: UserService[F]
 ) extends Http4sDsl[F] with BothRoutes[F]:
 
   override val publicRoutes = HttpRoutes.of {
     case GET -> Root / "users" / UserIdVar(userId) =>
       userService.get(userId).map(UserPublicInfo.fromUser).flatMap(Ok(_))
-
-    case GET -> Root / "users" / UserIdVar(userId) / "ads" =>
-      userAdsService.getAds(userId).flatMap(Ok(_))
   }
 
   override val authRoutes = AuthedRoutes.of {

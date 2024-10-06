@@ -3,6 +3,7 @@ package maweituo.http.routes.ads
 import cats.Monad
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.ChatService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.UserAuthRoutes
@@ -20,14 +21,16 @@ final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
 
   override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case GET -> Root / "ads" / AdIdVar(_) / "chat" / ChatIdVar(chatId) as user =>
+      given Identity = Identity(user.id)
       chatService
-        .get(chatId, user.id)
+        .get(chatId)
         .map(ChatDto.fromDomain)
         .flatMap(Ok(_))
 
     case GET -> Root / "ads" / AdIdVar(adId) / "myChat" as user =>
+      given Identity = Identity(user.id)
       chatService
-        .findForAdAndUser(adId, user.id)
+        .findForAdAndUser(adId)
         .value
         .flatMap {
           case Some(chat) => Ok(ChatDto.fromDomain(chat))
@@ -35,5 +38,6 @@ final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
         }
 
     case POST -> Root / "ads" / AdIdVar(adId) / "chat" as user =>
-      chatService.create(adId, user.id) *> NoContent()
+      given Identity = Identity(user.id)
+      chatService.create(adId) *> NoContent()
   }

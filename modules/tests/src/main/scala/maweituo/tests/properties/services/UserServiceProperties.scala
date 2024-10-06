@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.errors.{InvalidUserId, UserEmailInUse, UserModificationForbidden, UserNameInUse}
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
@@ -96,7 +97,7 @@ trait UserServiceProperties:
         forall(registerGen) { register =>
           for
             id    <- users.create(register)
-            _     <- users.delete(id, id)
+            _     <- users.delete(id)(using Identity(id))
             found <- users.get(id).attempt
           yield expect.same(Left(InvalidUserId(id)), found)
         }
@@ -113,7 +114,7 @@ trait UserServiceProperties:
           for
             newId   <- users.create(register)
             otherId <- users.create(other)
-            x       <- users.delete(newId, otherId).attempt
+            x       <- users.delete(newId)(using Identity(otherId)).attempt
             u       <- users.get(newId)
           yield NonEmptyList
             .of(
@@ -138,7 +139,7 @@ trait UserServiceProperties:
             newId <- users.create(register)
             newUpd = upd.copy(id = newId)
             prior   <- users.get(newId)
-            _       <- users.update(newUpd, newId)
+            _       <- users.update(newUpd)(using Identity(newId))
             updated <- users.get(newId)
           yield expect.all(
             newUpd.email.fold(true)(_ === updated.email),
@@ -162,7 +163,7 @@ trait UserServiceProperties:
             newId <- users.create(register)
             newUpd = upd.copy(id = newId)
             prior <- users.get(newId)
-            x     <- users.update(newUpd, id).attempt
+            x     <- users.update(newUpd)(using Identity(id)).attempt
             got   <- users.get(newId)
           yield NonEmptyList.of(
             expect.same(Left(UserModificationForbidden(id)), x),

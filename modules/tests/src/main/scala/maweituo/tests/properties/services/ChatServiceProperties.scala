@@ -3,6 +3,7 @@ package maweituo.tests.properties.services
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.{AdService, ChatService}
 import maweituo.domain.errors.*
 import maweituo.domain.users.services.UserService
@@ -31,7 +32,8 @@ trait ChatServiceProperties:
         forall(gen) { (reg, chat) =>
           for
             user <- users.create(reg)
-            x    <- chats.get(chat, user).attempt
+            given Identity = Identity(user)
+            x <- chats.get(chat).attempt
           yield expect.same(Left(InvalidChatId(chat)), x)
         }
     ),
@@ -48,8 +50,9 @@ trait ChatServiceProperties:
           for
             u1 <- users.create(reg)
             u2 <- users.create(otherReg)
-            ad <- ads.create(u1, createAd)
-            _  <- chats.create(ad, u2)
+            given Identity = Identity(u1)
+            ad <- ads.create(createAd)
+            _  <- chats.create(ad)(using Identity(u2))
           yield success
         }
     ),
@@ -64,8 +67,9 @@ trait ChatServiceProperties:
         forall(gen) { case (reg, createAd) =>
           for
             u1 <- users.create(reg)
-            ad <- ads.create(u1, createAd)
-            x  <- chats.create(ad, u1).attempt
+            given Identity = Identity(u1)
+            ad <- ads.create(createAd)
+            x  <- chats.create(ad).attempt
           yield expect.same(Left(CannotCreateChatWithMyself(ad, u1)), x)
         }
     ),
@@ -82,9 +86,10 @@ trait ChatServiceProperties:
           for
             u1 <- users.create(reg)
             u2 <- users.create(otherReg)
-            ad <- ads.create(u1, createAd)
-            _  <- chats.create(ad, u2)
-            x  <- chats.create(ad, u2).attempt
+            ad <- ads.create(createAd)(using Identity(u1))
+            given Identity = Identity(u2)
+            _ <- chats.create(ad)
+            x <- chats.create(ad).attempt
           yield expect.same(Left(ChatAlreadyExists(ad, u2)), x)
         }
     )

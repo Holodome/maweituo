@@ -2,6 +2,7 @@ package maweituo.tests.properties.services
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.{UserAdsService, UserService}
@@ -40,7 +41,7 @@ trait UserAdsServiceProperties:
         forall(gen) { (reg, ad) =>
           for
             u <- users.create(reg)
-            a <- ads.create(u, ad)
+            a <- ads.create(ad)(using Identity(u))
             x <- userAds.getAds(u)
           yield expect.same(List(a), x)
         }

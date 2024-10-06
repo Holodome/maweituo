@@ -3,6 +3,7 @@ package maweituo.http.routes
 import cats.MonadThrow
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.users.AuthedUser
 import maweituo.domain.users.services.AuthService
 import maweituo.http.UserAuthRoutes
@@ -18,6 +19,6 @@ final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthSe
   override val routes: AuthedRoutes[AuthedUser, F] =
     AuthedRoutes.of {
       case ar @ POST -> Root / "logout" as user =>
-        AuthHeaders.getBearerToken(ar.req)
-          .traverse_(authService.logout(user.id, _)) *> NoContent()
+        given Identity = Identity(user.id)
+        AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(_)) *> NoContent()
     }

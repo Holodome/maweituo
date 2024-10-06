@@ -4,6 +4,7 @@ import cats.MonadThrow
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.services.MessageService
 import maweituo.domain.users.AuthedUser
@@ -21,15 +22,17 @@ final case class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](msgServi
 
   override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case GET -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
+      given Identity = Identity(user.id)
       msgService
-        .history(chatId, user.id)
+        .history(chatId)
         .map(HistoryResponseDto.fromDomain)
         .flatMap(Ok(_))
 
     case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[SendMessageRequestDto] { msg =>
         msgService
-          .send(chatId, user.id, msg.toDomain)
+          .send(chatId, msg.toDomain)
           .flatMap(Ok(_))
       }
   }

@@ -4,6 +4,7 @@ import cats.Monad
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.images.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.*
@@ -34,11 +35,13 @@ final case class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageSer
 
   override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "ads" / AdIdVar(adIdVar) / "img" as user =>
+      given Identity = Identity(user.id)
       ar.req.as[UploadImageRequestDto[F]].flatMap { contents =>
-        imageService.upload(user.id, adIdVar, contents.toDomain) *> NoContent()
+        imageService.upload(adIdVar, contents.toDomain) *> NoContent()
       }
 
     case DELETE -> Root / "ads" / AdIdVar(_) / "img" / ImageIdVar(img) as user =>
-      imageService.delete(img, user.id) *> NoContent()
+      given Identity = Identity(user.id)
+      imageService.delete(img) *> NoContent()
 
   }

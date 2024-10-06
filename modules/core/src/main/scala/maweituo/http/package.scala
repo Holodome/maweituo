@@ -13,18 +13,18 @@ sealed trait Routes[F[_]]:
   def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = None
 
 trait PublicRoutes[F[_]] extends Routes[F]:
-  override def publicRoutesOpt: Option[HttpRoutes[F]] = Some(routes)
+  override final def publicRoutesOpt: Option[HttpRoutes[F]] = Some(routes)
 
   def routes: HttpRoutes[F]
 
 trait UserAuthRoutes[F[_]] extends Routes[F]:
-  override def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(routes)
+  override final def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(routes)
 
   def routes: AuthedRoutes[AuthedUser, F]
 
 trait BothRoutes[F[_]] extends Routes[F]:
-  override def publicRoutesOpt: Option[HttpRoutes[F]]             = Some(publicRoutes)
-  override def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(authRoutes)
+  override final def publicRoutesOpt: Option[HttpRoutes[F]]             = Some(publicRoutes)
+  override final def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(authRoutes)
 
   def publicRoutes: HttpRoutes[F]
   def authRoutes: AuthedRoutes[AuthedUser, F]

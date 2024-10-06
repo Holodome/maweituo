@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.errors.*
 import maweituo.domain.users.UserId
@@ -34,8 +35,9 @@ trait AdServiceProperties:
         forall(regAdGen) { case (reg, createAd) =>
           for
             userId <- users.create(reg)
-            adId   <- ads.create(userId, createAd)
-            ad     <- ads.get(adId)
+            given Identity = Identity(userId)
+            adId <- ads.create(createAd)
+            ad   <- ads.get(adId)
           yield NonEmptyList.of(
             expect.same(ad.title, createAd.title),
             expect.same(ad.id, adId),
@@ -58,10 +60,11 @@ trait AdServiceProperties:
         forall(regAdGen) { case (reg, createAd) =>
           for
             userId <- users.create(reg)
-            adId   <- ads.create(userId, createAd)
-            _      <- ads.get(adId)
-            _      <- ads.delete(adId, userId)
-            x      <- ads.get(adId).attempt
+            given Identity = Identity(userId)
+            adId <- ads.create(createAd)
+            _    <- ads.get(adId)
+            _    <- ads.delete(adId)
+            x    <- ads.get(adId).attempt
           yield expect.same(Left(InvalidAdId(adId)), x)
         }
     ),
@@ -78,10 +81,11 @@ trait AdServiceProperties:
           for
             userId  <- users.create(reg)
             otherId <- users.create(otherReg)
-            adId    <- ads.create(userId, createAd)
-            _       <- ads.get(adId)
-            x       <- ads.delete(adId, otherId).attempt
-            a       <- ads.get(adId)
+            given Identity = Identity(userId)
+            adId <- ads.create(createAd)
+            _    <- ads.get(adId)
+            x    <- ads.delete(adId)(using Identity(otherId)).attempt
+            a    <- ads.get(adId)
           yield expect.same(Left(AdModificationForbidden(adId, otherId)), x) and expect.same(a.title, createAd.title)
         }
     )

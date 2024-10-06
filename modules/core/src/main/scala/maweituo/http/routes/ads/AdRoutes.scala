@@ -3,6 +3,7 @@ package maweituo.http.routes.ads
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.*
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.users.AuthedUser
@@ -28,18 +29,21 @@ final case class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F]
 
   override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "ads" as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[CreateAdRequestDto] { create =>
         adService
-          .create(user.id, create.toDomain)
+          .create(create.toDomain)
           .map(CreateAdResponseDto.apply)
           .flatMap(Ok(_))
       }
 
     case DELETE -> Root / "ads" / AdIdVar(adId) as user =>
-      adService.delete(adId, user.id) *> NoContent()
+      given Identity = Identity(user.id)
+      adService.delete(adId) *> NoContent()
 
     case ar @ POST -> Root / "ads" / AdIdVar(adId) / "resolved" as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[MarkAdResolvedRequestDto] { req =>
-        adService.markAsResolved(adId, user.id, req.withWhom) *> NoContent()
+        adService.markAsResolved(adId, req.withWhom) *> NoContent()
       }
   }

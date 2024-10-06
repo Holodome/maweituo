@@ -3,6 +3,7 @@ package maweituo.http.routes.ads
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.AdTagService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.BothRoutes
@@ -27,12 +28,14 @@ final case class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F
 
   override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
     case ar @ POST -> Root / "ads" / AdIdVar(adId) / "tag" as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[AddTagRequestDto] { tag =>
-        tags.addTag(adId, tag.tag, user.id) *> NoContent()
+        tags.addTag(adId, tag.tag) *> NoContent()
       }
 
     case ar @ DELETE -> Root / "ads" / AdIdVar(adId) / "tag" as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[DeleteTagRequestDto] { tag =>
-        tags.removeTag(adId, tag.tag, user.id) *> NoContent()
+        tags.removeTag(adId, tag.tag) *> NoContent()
       }
   }

@@ -4,6 +4,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 
 import maweituo.auth.JwtTokens
+import maweituo.domain.Identity
 import maweituo.domain.errors.*
 import maweituo.domain.users.services.{AuthService, UserService}
 import maweituo.domain.users.{AuthedUser, LoginRequest, UserId}
@@ -100,8 +101,9 @@ trait AuthServiceProperties:
           for
             id <- users.create(reg)
             t  <- auth.login(LoginRequest(reg.name, reg.password)).map(_.jwt)
-            _  <- auth.logout(id, t)
-            x  <- auth.authed(t).value
+            given Identity = Identity(id)
+            _ <- auth.logout(t)
+            x <- auth.authed(t).value
           yield expect(x.isEmpty)
         }
     )

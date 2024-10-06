@@ -6,6 +6,7 @@ import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.*
 import maweituo.domain.errors.*
 import maweituo.domain.users.UserId
@@ -40,11 +41,12 @@ trait MessageServiceProperties:
           yield (reg, otherReg, ad)
         forall(gen) { case (reg, otherReg, createAd) =>
           for
-            u1      <- users.create(reg)
-            u2      <- users.create(otherReg)
-            ad      <- ads.create(u1, createAd)
-            chat    <- chats.create(ad, u2)
-            history <- msgs.history(chat, u2)
+            u1 <- users.create(reg)
+            u2 <- users.create(otherReg)
+            ad <- ads.create(createAd)(using Identity(u1))
+            given Identity = Identity(u2)
+            chat    <- chats.create(ad)
+            history <- msgs.history(chat)
           yield expect.all(history.messages.isEmpty)
         }
     ),
@@ -60,12 +62,13 @@ trait MessageServiceProperties:
           yield (reg, otherReg, ad, msg)
         forall(gen) { case (reg, otherReg, createAd, msg) =>
           for
-            u1      <- users.create(reg)
-            u2      <- users.create(otherReg)
-            ad      <- ads.create(u1, createAd)
-            chat    <- chats.create(ad, u2)
-            _       <- msgs.send(chat, u2, msg)
-            history <- msgs.history(chat, u2)
+            u1 <- users.create(reg)
+            u2 <- users.create(otherReg)
+            ad <- ads.create(createAd)(using Identity(u1))
+            given Identity = Identity(u2)
+            chat    <- chats.create(ad)
+            _       <- msgs.send(chat, msg)
+            history <- msgs.history(chat)
           yield matches(history.messages) { case List(m) =>
             NonEmptyList.of(
               expect.same(m.text, msg.text),
@@ -92,9 +95,9 @@ trait MessageServiceProperties:
             u1   <- users.create(reg1)
             u2   <- users.create(reg2)
             u3   <- users.create(reg3)
-            ad   <- ads.create(u1, createAd)
-            chat <- chats.create(ad, u2)
-            x    <- msgs.send(chat, u3, msg).attempt
+            ad   <- ads.create(createAd)(using Identity(u1))
+            chat <- chats.create(ad)(using Identity(u2))
+            x    <- msgs.send(chat, msg)(using Identity(u3)).attempt
           yield expect.same(Left(ChatAccessForbidden(chat)), x)
         }
     ),
@@ -114,10 +117,10 @@ trait MessageServiceProperties:
             u1   <- users.create(reg1)
             u2   <- users.create(reg2)
             u3   <- users.create(reg3)
-            ad   <- ads.create(u1, createAd)
-            chat <- chats.create(ad, u2)
-            _    <- msgs.send(chat, u2, msg)
-            x    <- msgs.history(chat, u3).attempt
+            ad   <- ads.create(createAd)(using Identity(u1))
+            chat <- chats.create(ad)(using Identity(u2))
+            _    <- msgs.send(chat, msg)(using Identity(u2))
+            x    <- msgs.history(chat)(using Identity(u3)).attempt
           yield expect.same(Left(ChatAccessForbidden(chat)), x)
         }
     )

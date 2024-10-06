@@ -3,6 +3,7 @@ package maweituo.interp
 import cats.syntax.all.*
 import cats.{Applicative, MonadThrow}
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.ImageId
 import maweituo.domain.ads.messages.{Chat, ChatId}
@@ -17,7 +18,7 @@ object IAMServiceInterp:
       chatRepo: ChatRepo[F],
       imageRepo: AdImageRepo[F]
   ): IAMService[F] = new:
-    def authChatAccess(chatId: ChatId, userId: UserId): F[Unit] =
+    def authChatAccess(chatId: ChatId)(using userId: Identity): F[Unit] =
       chatRepo
         .get(chatId)
         .flatMap {
@@ -26,7 +27,7 @@ object IAMServiceInterp:
           case _ => ChatAccessForbidden(chatId).raiseError[F, Unit]
         }
 
-    def authAdModification(adId: AdId, userId: UserId): F[Unit] =
+    def authAdModification(adId: AdId)(using userId: Identity): F[Unit] =
       adRepo
         .get(adId)
         .flatMap {
@@ -34,7 +35,7 @@ object IAMServiceInterp:
           case _                            => AdModificationForbidden(adId, userId).raiseError[F, Unit]
         }
 
-    def authUserModification(target: UserId, userId: UserId): F[Unit] =
+    def authUserModification(target: UserId)(using userId: Identity): F[Unit] =
       (target === userId)
         .guard[Option]
         .fold(UserModificationForbidden(userId).raiseError[F, Unit])(Applicative[F].pure)
@@ -42,7 +43,6 @@ object IAMServiceInterp:
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
       user === chat.adAuthor || user === chat.client
 
-    def authImageDelete(imageId: ImageId, userId: UserId): F[Unit] =
-      imageRepo
-        .get(imageId)
-        .flatMap(image => authAdModification(image.adId, userId))
+    def authImageDelete(imageId: ImageId)(using userId: Identity): F[Unit] =
+      imageRepo.get(imageId)
+        .flatMap(image => authAdModification(image.adId))

@@ -4,7 +4,6 @@ import cats.data.OptionT
 import cats.syntax.all.*
 import cats.{Applicative, MonadThrow}
 
-import maweituo.domain.Id
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
@@ -12,6 +11,7 @@ import maweituo.domain.ads.services.ChatService
 import maweituo.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists}
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
+import maweituo.domain.{Id, Identity}
 import maweituo.effects.GenUUID
 
 import org.typelevel.log4cats.Logger
@@ -21,10 +21,10 @@ object ChatServiceInterp:
       chatRepo: ChatRepo[F],
       adRepo: AdRepo[F]
   )(using telemetry: TelemetryService[F], iam: IAMService[F]): ChatService[F] = new:
-    def get(id: ChatId, requester: UserId): F[Chat] =
-      iam.authChatAccess(id, requester) *> chatRepo.get(id)
+    def get(id: ChatId)(using Identity): F[Chat] =
+      iam.authChatAccess(id) *> chatRepo.get(id)
 
-    def create(adId: AdId, clientId: UserId): F[ChatId] =
+    def create(adId: AdId)(using clientId: Identity): F[ChatId] =
       for
         _ <- chatRepo
           .findByAdAndClient(adId, clientId)
@@ -57,9 +57,9 @@ object ChatServiceInterp:
         _ <- Logger[F].info(s"Created chat for ad $adId and user $clientId")
       yield id
 
-    def findForAdAndUser(ad: AdId, user: UserId): OptionT[F, Chat] =
+    def findForAdAndUser(ad: AdId)(using id: Identity): OptionT[F, Chat] =
       chatRepo
-        .findByAdAndClient(ad, user)
+        .findByAdAndClient(ad, id)
         .flatTap { chat =>
-          OptionT liftF iam.authChatAccess(chat.id, user)
+          OptionT liftF iam.authChatAccess(chat.id)
         }

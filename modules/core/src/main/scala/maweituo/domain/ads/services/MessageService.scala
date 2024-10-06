@@ -1,8 +1,8 @@
 package maweituo.domain.ads.services
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.messages.*
-import maweituo.domain.users.UserId
 
 trait MessageService[F[_]]:
-  def send(chatId: ChatId, senderId: UserId, req: SendMessageRequest): F[Unit]
-  def history(chatId: ChatId, requester: UserId): F[HistoryResponse]
+  def send(chatId: ChatId, req: SendMessageRequest)(using Identity): F[Unit]
+  def history(chatId: ChatId)(using Identity): F[HistoryResponse]

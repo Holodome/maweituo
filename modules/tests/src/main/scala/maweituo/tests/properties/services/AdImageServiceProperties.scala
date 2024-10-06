@@ -3,6 +3,7 @@ package maweituo.tests.properties.services
 import cats.effect.IO
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.ads.services.AdService
 import maweituo.domain.errors.*
 import maweituo.domain.services.AdImageService
@@ -32,9 +33,10 @@ trait AdImageServiceProperties:
           yield (reg, ad, img)
         forall(gen) { case (reg, createAd, imgCont) =>
           for
-            u    <- users.create(reg)
-            a    <- ads.create(u, createAd)
-            i    <- images.upload(u, a, imgCont)
+            u <- users.create(reg)
+            given Identity = Identity(u)
+            a    <- ads.create(createAd)
+            i    <- images.upload(a, imgCont)
             data <- images.get(i)
             d1   <- data.data.compile.toVector
             d2   <- imgCont.data.compile.toVector
@@ -62,9 +64,10 @@ trait AdImageServiceProperties:
         forall(gen) { case (reg, createAd, imgCont) =>
           for
             u <- users.create(reg)
-            a <- ads.create(u, createAd)
-            i <- images.upload(u, a, imgCont)
-            _ <- images.delete(i, u)
+            given Identity = Identity(u)
+            a <- ads.create(createAd)
+            i <- images.upload(a, imgCont)
+            _ <- images.delete(i)
             x <- images.get(i).attempt
           yield expect.same(Left(InvalidImageId(i)), x)
         }
@@ -83,9 +86,10 @@ trait AdImageServiceProperties:
           for
             u  <- users.create(reg)
             u1 <- users.create(reg1)
-            a  <- ads.create(u, createAd)
-            i  <- images.upload(u, a, imgCont)
-            x  <- images.delete(i, u1).attempt
+            given Identity = Identity(u)
+            a <- ads.create(createAd)
+            i <- images.upload(a, imgCont)
+            x <- images.delete(i)(using Identity(u1)).attempt
           yield expect.same(Left(AdModificationForbidden(a, u1)), x)
         }
     )

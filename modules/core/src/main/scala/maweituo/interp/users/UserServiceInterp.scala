@@ -5,13 +5,13 @@ import cats.data.OptionT
 import cats.syntax.all.*
 
 import maweituo.auth.PasswordHashing
-import maweituo.domain.Id
 import maweituo.domain.errors.{UserEmailInUse, UserNameInUse}
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.*
 import maweituo.domain.users.UpdateUserRepoRequest.fromReq
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
+import maweituo.domain.{Id, Identity}
 import maweituo.effects.GenUUID
 
 import org.typelevel.log4cats.Logger
@@ -20,20 +20,20 @@ object UserServiceInterp:
   def make[F[_]: MonadThrow: GenUUID: Logger](
       users: UserRepo[F]
   )(using iam: IAMService[F]): UserService[F] = new:
-    def update(update: UpdateUserRequest, authd: UserId): F[Unit] =
+    def update(update: UpdateUserRequest)(using Identity): F[Unit] =
       for
-        _   <- iam.authUserModification(update.id, authd)
+        _   <- iam.authUserModification(update.id)
         old <- users.get(update.id)
         updateUserInternal = UpdateUserRepoRequest.fromReq(update, old.salt)
         _ <- users.update(updateUserInternal)
-        _ <- Logger[F].info(s"Updated user ${update.id} by user $authd")
+        _ <- Logger[F].info(s"Updated user ${update.id} by user ${summon[Identity]}")
       yield ()
 
-    def delete(subject: UserId, authd: UserId): F[Unit] =
+    def delete(subject: UserId)(using Identity): F[Unit] =
       for
-        _ <- iam.authUserModification(subject, authd)
+        _ <- iam.authUserModification(subject)
         _ <- users.delete(subject)
-        _ <- Logger[F].info(s"Deleted user $subject by $authd")
+        _ <- Logger[F].info(s"Deleted user $subject by ${summon[Identity]}")
       yield ()
 
     def get(id: UserId): F[User] =

@@ -5,6 +5,7 @@ import cats.data.OptionT
 import cats.syntax.all.*
 
 import maweituo.auth.{JwtTokens, PasswordHashing}
+import maweituo.domain.Identity
 import maweituo.domain.errors.InvalidPassword
 import maweituo.domain.users.*
 import maweituo.domain.users.repos.UserRepo
@@ -46,8 +47,8 @@ object AuthServiceInterp:
           Logger[F].warn(e)(s"Attempt to login invalid used")
         }
 
-    def logout(uid: UserId, token: JwtToken): F[Unit] =
-      jwtDict.delete(uid) *> authedUserDict.delete(token)
+    def logout(token: JwtToken)(using id: Identity): F[Unit] =
+      jwtDict.delete(id) *> authedUserDict.delete(token)
 
     def authed(token: JwtToken): OptionT[F, AuthedUser] =
       authedUserDict

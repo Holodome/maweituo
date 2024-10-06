@@ -3,6 +3,7 @@ package maweituo.http.routes.users
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
+import maweituo.domain.Identity
 import maweituo.domain.users.*
 import maweituo.domain.users.services.UserService
 import maweituo.http.BothRoutes
@@ -30,14 +31,12 @@ final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
 
   override val authRoutes = AuthedRoutes.of {
     case DELETE -> Root / "users" / UserIdVar(userId) as user =>
-      userService.delete(userId, user.id) *> NoContent()
+      given Identity = Identity(user.id)
+      userService.delete(userId) *> NoContent()
 
     case ar @ PUT -> Root / "users" / UserIdVar(userId) as user =>
+      given Identity = Identity(user.id)
       ar.req.decode[UpdateUserRequestDto] { update =>
-        // This check is here only because we are restful
-        if userId === update.id then
-          userService.update(update.toDomain, user.id) *> NoContent()
-        else
-          BadRequest()
+        userService.update(update.toDomain) *> NoContent()
       }
   }

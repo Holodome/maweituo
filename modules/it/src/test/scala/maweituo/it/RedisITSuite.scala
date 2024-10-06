@@ -29,7 +29,7 @@ class RedisSuite(global: GlobalRead) extends ResourceSuite:
   private val Expire = 30.seconds
 
   private def redisTest(name: String)(fn: EphemeralDict[IO, String, String] => F[Expectations]) =
-    test(name) { redis =>
+    itTest(name) { redis =>
       fn(RedisEphemeralDict.make[IO](redis, Expire))
     }
 

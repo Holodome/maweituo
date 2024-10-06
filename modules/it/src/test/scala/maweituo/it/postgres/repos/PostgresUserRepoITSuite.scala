@@ -23,7 +23,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def usersTest(name: String)(fn: UserRepo[IO] => F[Expectations]) =
-    test(name) { postgres =>
+    itTest(name) { postgres =>
       val ads = PostgresUserRepo.make(postgres)
       fn(ads)
     }

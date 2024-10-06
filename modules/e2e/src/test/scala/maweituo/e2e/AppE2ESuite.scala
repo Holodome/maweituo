@@ -19,7 +19,7 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
   override def sharedResource: Resource[IO, Res] = global.app
 
-  test("create ad with tag") { client =>
+  e2eTest("create ad with tag") { client =>
     val gen =
       for
         r   <- registerGen

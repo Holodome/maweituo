@@ -23,7 +23,7 @@ class PostgresAdImageRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def imgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdImageRepo[IO]) => F[Expectations]) =
-    test(name) { postgres =>
+    itTest(name) { postgres =>
       val users  = PostgresUserRepo.make(postgres)
       val ads    = PostgresAdRepo.make(postgres)
       val images = PostgresAdImageRepo.make(postgres)

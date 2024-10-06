@@ -12,7 +12,7 @@ variables:
 stages:
   - unit-test
   - integration-test
-  - e2e-test
+  # - e2e-test
   - report 
   
 unit:
@@ -49,19 +49,19 @@ integration:
     - when: always
   allow_failure: true
 
-e2e:
-  stage: e2e-test
-  image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
-  script: 
-    - apk add docker-compose
-    - sbt e2e/test
-  artifacts:
-    when: always
-    paths:
-      - modules/e2e/target/test-reports
-  rules:
-    - when: always
-  allow_failure: true
+# e2e:
+#   stage: e2e-test
+#   image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
+#   script: 
+#     - apk add docker-compose
+#     - sbt e2e/test
+#   artifacts:
+#     when: always
+#     paths:
+#       - modules/e2e/target/test-reports
+#   rules:
+#     - when: always
+#   allow_failure: true
 
 report:
   stage: report

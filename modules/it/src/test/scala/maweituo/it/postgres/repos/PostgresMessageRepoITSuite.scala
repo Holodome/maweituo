@@ -25,7 +25,7 @@ class PostgresMessageRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def msgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], ChatRepo[IO], MessageRepo[IO]) => F[Expectations]) =
-    test(name) { postgres =>
+    itTest(name) { postgres =>
       val users = PostgresUserRepo.make(postgres)
       val ads   = PostgresAdRepo.make(postgres)
       val chats = PostgresChatRepo.make(postgres)

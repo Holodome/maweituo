@@ -41,7 +41,7 @@ class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServ
 
   properties.foreach {
     case Property(name, fn) =>
-      test(name) { (res, log) =>
+      itTest(name) { (res, log) =>
         given Logger[IO] = new WeaverLogAdapter[IO](log)
         fn(makeTestServices.tupled(res))
       }

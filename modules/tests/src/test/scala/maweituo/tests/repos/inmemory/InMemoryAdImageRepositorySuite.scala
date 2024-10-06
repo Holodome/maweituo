@@ -36,7 +36,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
         _ <- images.create(img)
         _ <- images.delete(img.id)
         x <- images.find(img.id).value
-      yield expect.same(Some(img), x)
+      yield expect.same(None, x)
     }
   }
 

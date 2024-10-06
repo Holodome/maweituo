@@ -7,7 +7,7 @@ variables:
   DOCKER_DRIVER: overlay2
   TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
   ALLURE_OUTPUT_PATH: "/builds/via21u815/test-2024"
-
+  CI: 1
 
 stages:
   - unit-test

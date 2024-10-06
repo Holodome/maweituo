@@ -7,8 +7,8 @@ import cats.kernel.Eq
 import maweituo.auth.PasswordHashing
 import maweituo.utils.{IdNewtype, Newtype}
 
-import dev.profunktor.auth.jwt.JwtSymmetricAuth
-import io.circe.{Codec, Decoder}
+import dev.profunktor.auth.jwt.{JwtSymmetricAuth, JwtToken}
+import io.circe.Decoder
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
 
@@ -30,13 +30,14 @@ object HashedSaltedPassword extends Newtype[String]
 type PasswordSalt = PasswordSalt.Type
 object PasswordSalt extends Newtype[String]
 
-final case class LoginRequest(name: Username, password: Password) derives Codec.AsObject
+final case class LoginRequest(name: Username, password: Password)
+final case class LoginResponse(id: UserId, jwt: JwtToken)
 
 final case class RegisterRequest(
     name: Username,
     email: Email,
     password: Password
-) derives Codec.AsObject, Show
+) derives Show
 
 final case class User(
     id: UserId,
@@ -46,16 +47,6 @@ final case class User(
     salt: PasswordSalt
 )
 
-final case class UserPublicInfo(
-    id: UserId,
-    name: Username,
-    email: Email
-) derives Codec.AsObject, Show
-
-object UserPublicInfo:
-  def fromUser(user: User): UserPublicInfo =
-    UserPublicInfo(user.id, user.name, user.email)
-
 final case class AuthedUser(id: UserId)
 final case class UserJwtAuth(value: JwtSymmetricAuth)
 
@@ -64,18 +55,18 @@ final case class UpdateUserRequest(
     name: Option[Username],
     email: Option[Email],
     password: Option[Password]
-) derives Codec.AsObject, Show
+) derives Show
 
-final case class UpdateUserInternal(
+final case class UpdateUserRepoRequest(
     id: UserId,
     name: Option[Username],
     email: Option[Email],
     password: Option[HashedSaltedPassword]
-) derives Codec.AsObject, Show
+) derives Show
 
-object UpdateUserInternal:
-  def fromReq(req: UpdateUserRequest, salt: PasswordSalt): UpdateUserInternal =
-    UpdateUserInternal(
+object UpdateUserRepoRequest:
+  def fromReq(req: UpdateUserRequest, salt: PasswordSalt): UpdateUserRepoRequest =
+    UpdateUserRepoRequest(
       req.id,
       req.name,
       req.email,

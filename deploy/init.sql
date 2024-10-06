@@ -21,7 +21,7 @@ create table if not exists personalized_feed (
 );
 
 create table if not exists global_feed (
-  at timestamp primary key,
+  at timestamp,
   ad_id uuid references advertisements(id)
 );
 

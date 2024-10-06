@@ -60,7 +60,7 @@ object RepoStubFactory:
     def findByEmail(email: Email): OptionT[F, User]  = emptyOptionT
     def findByName(name: Username): OptionT[F, User] = emptyOptionT
     def delete(id: UserId): F[Unit]                  = unit
-    def update(update: UpdateUserInternal): F[Unit]  = unit
+    def update(update: UpdateUserRepoRequest): F[Unit]  = unit
 
   def feed[F[_]: Monad]: FeedRepo[F] = new:
     def getPersonalizedSize(user: UserId): F[Int]                                          = pure(0)

@@ -31,7 +31,7 @@ class InMemoryUserRepo[F[_]: Sync] extends UserRepo[F]:
   override def delete(id: UserId): F[Unit] =
     Sync[F] delay map.remove(id)
 
-  override def update(update: UpdateUserInternal): F[Unit] =
+  override def update(update: UpdateUserRepoRequest): F[Unit] =
     Sync[F] delay map.get(update.id).map { value =>
       val newUser = User(
         update.id,

@@ -8,8 +8,11 @@ import weaver.scalacheck.{CheckConfig, Checkers}
 import weaver.{Expectations, IOSuite, Log, TestName}
 
 abstract class ResourceSuite extends IOSuite with Checkers:
+  
+  override def maxParallelism: Int = 1
   // For it:tests, one is enough
-  override def checkConfig: CheckConfig = CheckConfig.default.copy(minimumSuccessful = 1)
+  override def checkConfig: CheckConfig = 
+    CheckConfig.default.copy(minimumSuccessful = 1)
 
   extension (res: Resource[IO, Res])
     def beforeAll(f: Res => IO[Unit]): Resource[IO, Res] =

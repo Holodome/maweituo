@@ -13,7 +13,7 @@ trait UserRepo[F[_]]:
   def findByEmail(email: Email): OptionT[F, User]
   def findByName(name: Username): OptionT[F, User]
   def delete(id: UserId): F[Unit]
-  def update(update: UpdateUserInternal): F[Unit]
+  def update(update: UpdateUserRepoRequest): F[Unit]
 
 object UserRepo:
   extension [F[_]: MonadThrow](repo: UserRepo[F])

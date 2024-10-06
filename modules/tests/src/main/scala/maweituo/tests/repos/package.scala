@@ -8,7 +8,7 @@ import maweituo.domain.ads.messages.{Chat, ChatId, Message}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo, MessageRepo}
 import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.domain.users.{Email, UpdateUserInternal, User, UserId, Username}
+import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
@@ -20,7 +20,7 @@ class TestUserRepo extends UserRepo[IO]:
   override def findByEmail(email: Email): OptionT[IO, User]  = OptionT(makeError("TestUserRepo.findByEmail"))
   override def create(request: User): IO[Unit]               = makeError("TestUserRepo.create")
   override def find(userId: UserId): OptionT[IO, User]       = OptionT(makeError("TestUserRepo.find"))
-  override def update(update: UpdateUserInternal): IO[Unit]  = makeError("TestUserRepo.update")
+  override def update(update: UpdateUserRepoRequest): IO[Unit]  = makeError("TestUserRepo.update")
 
 class TestAdRepo extends AdRepo[IO]:
   override def delete(id: AdId): IO[Unit]                      = makeError("TestAdRepo.delete")

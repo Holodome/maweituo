@@ -14,6 +14,8 @@ import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
 
+import maweituo.http.dto.ChatDto
+
 final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
     extends Http4sDsl[F] with UserAuthRoutes[F]:
 
@@ -21,16 +23,18 @@ final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
     case GET -> Root / "ads" / AdIdVar(_) / "chat" / ChatIdVar(chatId) as user =>
       chatService
         .get(chatId, user.id)
+        .map(ChatDto.fromDomain)
         .flatMap(Ok(_))
 
     case GET -> Root / "ads" / AdIdVar(adId) / "myChat" as user =>
       chatService
         .findForAdAndUser(adId, user.id)
-        .fold(Ok(Json.obj(("errors", "chat not found".asJson))))(id => Ok(id))
-        .flatten
+        .value
+        .flatMap {
+          case Some(chat) => Ok(ChatDto.fromDomain(chat))
+          case None       => Ok(Json.obj(("errors", "chat not found".asJson)))
+        }
 
     case POST -> Root / "ads" / AdIdVar(adId) / "chat" as user =>
-      chatService
-        .create(adId, user.id)
-        .flatMap(Ok(_))
+      chatService.create(adId, user.id) *> NoContent()
   }

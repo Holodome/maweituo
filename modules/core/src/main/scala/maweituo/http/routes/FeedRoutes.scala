@@ -7,7 +7,7 @@ import maweituo.domain.pagination.Pagination
 import maweituo.domain.services.FeedService
 import maweituo.domain.users.AuthedUser
 import maweituo.http.BothRoutes
-import maweituo.http.dto.FeedDTO
+import maweituo.http.dto.FeedResponseDto
 import maweituo.http.vars.UserIdVar
 
 import org.http4s.circe.CirceEntityEncoder.*
@@ -31,7 +31,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
       val p = makePagination(page, pageSize)
       (feed.getGlobal(p), feed.getGlobalSize)
         .parMapN { case (feed, size) =>
-          FeedDTO(feed, size)
+          FeedResponseDto(feed, size)
         }
         .flatMap(Ok(_))
   }
@@ -42,7 +42,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
         val p = makePagination(page, pageSize)
         (feed.getPersonalized(user.id, p), feed.getPersonalizedSize(user.id))
           .parMapN { case (feed, size) =>
-            FeedDTO(feed, size)
+            FeedResponseDto(feed, size)
           }
           .flatMap(Ok(_))
       else

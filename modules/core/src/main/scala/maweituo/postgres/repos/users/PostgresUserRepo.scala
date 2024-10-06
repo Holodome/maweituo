@@ -56,13 +56,13 @@ object PostgresUserRepo:
     def delete(id: UserId): F[Unit] =
       sql"delete from users where id = $id::uuid".update.run.transact(xa).void
 
-    def update(update: UpdateUserInternal): F[Unit] =
+    def update(update: UpdateUserRepoRequest): F[Unit] =
       if update.email.isEmpty && update.name.isEmpty && update.password.isEmpty then
         Applicative[F].unit
       else
         updateQuery(update).update.run.transact(xa).void
 
-    private def updateQuery(update: UpdateUserInternal) =
+    private def updateQuery(update: UpdateUserRepoRequest) =
       val sets = List(
         update.name.map(_.value).map(name => fr" name = $name "),
         update.email.map(_.value).map(email => fr" email = $email "),

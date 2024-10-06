@@ -21,9 +21,11 @@ object AuthServiceInterp:
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
       tokens: JwtTokens[F]
   ): AuthService[F] = new:
-    def login(username: Username, password: Password): F[(JwtToken, UserId)] =
+    def login(req: LoginRequest): F[LoginResponse] =
+      val name     = req.name
+      val password = req.password
       userRepo
-        .getByName(username)
+        .getByName(name)
         .flatMap { user =>
           if passwordsMatch(user, password) then
             jwtDict
@@ -35,10 +37,10 @@ object AuthServiceInterp:
                       authedUserDict.store(t, user.id)
                   }
               )
-              .map(t => (t, user.id))
+              .map(t => LoginResponse(user.id, t))
           else
-            Logger[F].warn(s"Invalid login attempt for user $username") *>
-              InvalidPassword(username).raiseError[F, (JwtToken, UserId)]
+            Logger[F].warn(s"Invalid login attempt for user $name") *>
+              InvalidPassword(name).raiseError[F, LoginResponse]
         }
         .onError { case e =>
           Logger[F].warn(e)(s"Attempt to login invalid used")

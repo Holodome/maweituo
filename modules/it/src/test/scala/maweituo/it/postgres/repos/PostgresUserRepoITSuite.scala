@@ -3,7 +3,7 @@ package maweituo.it.postgres.repos
 import cats.effect.*
 import cats.syntax.all.*
 
-import maweituo.domain.users.UpdateUserInternal
+import maweituo.domain.users.UpdateUserRepoRequest
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.ResourceSuite
@@ -72,7 +72,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
         upd <- updateUserGen(u.id)
       yield u -> upd
     forall(gen) { (user, upd0) =>
-      val upd = UpdateUserInternal.fromReq(upd0, user.salt)
+      val upd = UpdateUserRepoRequest.fromReq(upd0, user.salt)
       for
         _ <- users.create(user)
         _ <- users.update(upd)

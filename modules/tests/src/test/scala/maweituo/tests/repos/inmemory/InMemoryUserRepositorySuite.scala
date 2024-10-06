@@ -3,7 +3,7 @@ package maweituo.tests.repos.inmemory
 import cats.effect.IO
 import cats.syntax.all.*
 
-import maweituo.domain.users.UpdateUserInternal
+import maweituo.domain.users.UpdateUserRepoRequest
 import maweituo.tests.generators.{updateUserGen, userGen}
 import maweituo.tests.repos.*
 import maweituo.tests.utils.given
@@ -64,7 +64,7 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
         upd <- updateUserGen(u.id)
       yield u -> upd
     forall(gen) { (user, upd0) =>
-      val upd = UpdateUserInternal.fromReq(upd0, user.salt)
+      val upd = UpdateUserRepoRequest.fromReq(upd0, user.salt)
       for
         _ <- users.create(user)
         _ <- users.update(upd)

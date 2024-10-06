@@ -5,8 +5,9 @@ import cats.syntax.all.*
 
 import maweituo.auth.JwtTokens
 import maweituo.domain.services.*
+import maweituo.domain.users.UserId
 import maweituo.domain.users.services.{AuthService, UserService}
-import maweituo.domain.users.{LoginRequest, UserId}
+import maweituo.http.dto.{LoginRequestDto, LoginResponseDto, RegisterRequestDto}
 import maweituo.http.routes.{LoginRoutes, RegisterRoutes}
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
@@ -18,7 +19,6 @@ import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.utils.given
 import maweituo.tests.{HttpSuite, WeaverLogAdapter}
-import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.*
@@ -39,12 +39,12 @@ object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
   private def makeTestUsersAuth(tokens: JwtTokens[IO]) =
-    given Logger[IO]           = NoOpLogger[IO]
-    val userRepo               = InMemoryRepoFactory.users
-    val adRepo                 = InMemoryRepoFactory.ads
-    given IAMService[IO]       = makeIAMService(adRepo)
-    val users                  = UserServiceInterp.make(userRepo)
-    val auth                   = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
+    given Logger[IO]     = NoOpLogger[IO]
+    val userRepo         = InMemoryRepoFactory.users
+    val adRepo           = InMemoryRepoFactory.ads
+    given IAMService[IO] = makeIAMService(adRepo)
+    val users            = UserServiceInterp.make(userRepo)
+    val auth             = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
   private def loginTest(name: String)(fn: (UserService[IO], AuthService[IO], Logger[IO]) => IO[Expectations]) =
@@ -76,18 +76,18 @@ object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
         Request[IO](
           method = Method.POST,
           uri = uri"/register"
-        ).withEntity(reg)
+        ).withEntity(RegisterRequestDto(reg.name, reg.email, reg.password))
       val loginReq =
         Request[IO](
           method = Method.POST,
           uri = uri"/login"
-        ).withEntity(LoginRequest(reg.name, reg.password))
+        ).withEntity(LoginRequestDto(reg.name, reg.password))
       val login    = LoginRoutes[IO](auth).routes
       val register = RegisterRoutes[IO](users).routes
       for
         x  <- expectHttpStatusLogged(register, regReq)(Status.Ok)
-        x1 <- expectHttpBodyAndStatus(login, loginReq)(testToken, Status.Ok)
-      yield x and x1 
+        x1 <- expectHttpBodyAndStatus(login, loginReq)(LoginResponseDto(testToken), Status.Ok)
+      yield x and x1
     }
   }
 

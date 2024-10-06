@@ -14,6 +14,7 @@ import dev.profunktor.auth.jwt.JwtToken
 import org.scalacheck.Gen
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}
+import maweituo.domain.users.LoginRequest
 
 trait AuthServiceProperties:
   this: MutableIOSuite & Checkers =>
@@ -40,7 +41,7 @@ trait AuthServiceProperties:
           yield name -> password
         forall(gen) { case (name, password) =>
           for
-            x <- auth.login(name, password).attempt
+            x <- auth.login(LoginRequest(name, password)).attempt
           yield expect.same(Left(NoUserWithName(name)), x)
         }
     ),
@@ -65,9 +66,9 @@ trait AuthServiceProperties:
         forall(gen) { (reg, jwt) =>
           val (users, auth) = create(makeJwt(jwt))
           for
-            id     <- users.create(reg)
-            (t, _) <- auth.login(reg.name, reg.password)
-            x      <- auth.authed(t).value
+            id <- users.create(reg)
+            t  <- auth.login(LoginRequest(reg.name, reg.password)).map(_.jwt)
+            x  <- auth.authed(t).value
           yield expect.same(t, jwt) and expect.same(Some(AuthedUser(id)), x)
         }
     ),
@@ -83,7 +84,7 @@ trait AuthServiceProperties:
         forall(gen) { (reg, pass) =>
           for
             _ <- users.create(reg)
-            x <- auth.login(reg.name, pass).attempt
+            x <- auth.login(LoginRequest(reg.name, pass)).attempt
           yield expect.same(Left(InvalidPassword(reg.name)), x)
         }
     ),
@@ -98,10 +99,10 @@ trait AuthServiceProperties:
         forall(gen) { (reg, jwt) =>
           val (users, auth) = create(makeJwt(jwt))
           for
-            id     <- users.create(reg)
-            (t, _) <- auth.login(reg.name, reg.password)
-            _      <- auth.logout(id, t)
-            x      <- auth.authed(t).value
+            id <- users.create(reg)
+            t  <- auth.login(LoginRequest(reg.name, reg.password)).map(_.jwt)
+            _  <- auth.logout(id, t)
+            x  <- auth.authed(t).value
           yield expect(x.isEmpty)
         }
     )

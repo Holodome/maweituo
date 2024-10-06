@@ -3,10 +3,9 @@ package maweituo.http.routes
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
-import maweituo.domain.users.LoginRequest
 import maweituo.domain.users.services.AuthService
 import maweituo.http.PublicRoutes
-import maweituo.utils.given
+import maweituo.http.dto.{LoginRequestDto, LoginResponseDto}
 
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.given
@@ -17,13 +16,13 @@ final case class LoginRoutes[F[_]: JsonDecoder: Concurrent](
     authService: AuthService[F]
 ) extends Http4sDsl[F] with PublicRoutes[F]:
 
-  override val routes: HttpRoutes[F] =
+  override def routes: HttpRoutes[F] =
     HttpRoutes.of[F] {
       case req @ POST -> Root / "login" =>
-        req.decode[LoginRequest] { login =>
+        req.decode[LoginRequestDto] { login =>
           authService
-            .login(login.name, login.password)
-            .map { (jwt, _) => jwt }
+            .login(login.toDomain)
+            .map { x => LoginResponseDto(x.jwt) }
             .flatMap(Ok(_))
         }
     }

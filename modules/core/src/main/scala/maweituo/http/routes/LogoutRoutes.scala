@@ -18,5 +18,6 @@ final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthSe
   override val routes: AuthedRoutes[AuthedUser, F] =
     AuthedRoutes.of {
       case ar @ POST -> Root / "logout" as user =>
-        AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(user.id, _)) *> NoContent()
+        AuthHeaders.getBearerToken(ar.req)
+          .traverse_(authService.logout(user.id, _)) *> NoContent()
     }

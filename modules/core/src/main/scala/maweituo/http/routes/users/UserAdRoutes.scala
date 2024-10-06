@@ -13,6 +13,7 @@ import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.typelevel.log4cats.Logger
+import maweituo.http.dto.UserAdsResponseDto
 
 final case class UserAdRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     userAdsService: UserAdsService[F]
@@ -20,5 +21,8 @@ final case class UserAdRoutes[F[_]: JsonDecoder: Logger: Concurrent](
 
   override val routes = HttpRoutes.of {
     case GET -> Root / "users" / UserIdVar(userId) / "ads" =>
-      userAdsService.getAds(userId).flatMap(Ok(_))
+      userAdsService
+        .getAds(userId)
+        .map(UserAdsResponseDto.apply)
+        .flatMap(Ok(_))
   }

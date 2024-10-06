@@ -9,7 +9,7 @@ import maweituo.domain.Id
 import maweituo.domain.errors.{UserEmailInUse, UserNameInUse}
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.*
-import maweituo.domain.users.UpdateUserInternal.fromReq
+import maweituo.domain.users.UpdateUserRepoRequest.fromReq
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
 import maweituo.effects.GenUUID
@@ -24,7 +24,7 @@ object UserServiceInterp:
       for
         _   <- iam.authUserModification(update.id, authd)
         old <- users.get(update.id)
-        updateUserInternal = UpdateUserInternal.fromReq(update, old.salt)
+        updateUserInternal = UpdateUserRepoRequest.fromReq(update, old.salt)
         _ <- users.update(updateUserInternal)
         _ <- Logger[F].info(s"Updated user ${update.id} by user $authd")
       yield ()

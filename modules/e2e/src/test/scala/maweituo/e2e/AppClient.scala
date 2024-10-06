@@ -2,8 +2,8 @@ package maweituo.e2e
 
 import cats.effect.IO
 
-import maweituo.domain.ads.{AdId, AdTag, AddTagRequest, Advertisement, CreateAdRequest}
-import maweituo.domain.users.*
+import maweituo.domain.ads.AdId
+import maweituo.http.dto.*
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
@@ -22,24 +22,24 @@ final class AppClient(base: String, client: Client[IO]):
 
   def makeUri(subpath: String): Uri = Uri.unsafeFromString(f"$base/$subpath")
 
-  def login(body: LoginRequest): IO[JwtToken] =
-    client.expectOr[JwtToken](
+  def login(body: LoginRequestDto): IO[LoginResponseDto] =
+    client.expectOr[LoginResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("login")
       ).withEntity(body)
     )(onError)
 
-  def register(body: RegisterRequest): IO[Unit] =
-    client.expectOr[AdId](
+  def register(body: RegisterRequestDto): IO[Unit] =
+    client.expectOr[RegisterResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("register")
       ).withEntity(body)
     )(onError).void
 
-  def createAd(body: CreateAdRequest)(using jwt: JwtToken): IO[AdId] =
-    client.expectOr[AdId](
+  def createAd(body: CreateAdRequestDto)(using jwt: JwtToken): IO[CreateAdResponseDto] =
+    client.expectOr[CreateAdResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("ads"),
@@ -50,8 +50,8 @@ final class AppClient(base: String, client: Client[IO]):
       ).withEntity(body)
     )(onError)
 
-  def addTag(ad: AdId, tag: AddTagRequest)(using jwt: JwtToken): IO[Unit] =
-    client.expectOr[Unit](
+  def addTag(ad: AdId, tag: AddTagRequestDto)(using jwt: JwtToken): IO[Unit] =
+    client.successful(
       Request[IO](
         method = Method.POST,
         uri = makeUri(f"ads/$ad/tag"),
@@ -60,10 +60,13 @@ final class AppClient(base: String, client: Client[IO]):
           Accept(MediaType.application.json)
         )
       ).withEntity(tag)
-    )(onError)
+    ).flatMap {
+      case true  => IO.unit
+      case false => IO.raiseError(new RuntimeException("no success"))
+    }
 
-  def getAd(ad: AdId): IO[Advertisement] =
-    client.expectOr[Advertisement](makeUri(f"ads/$ad"))(onError)
+  def getAd(ad: AdId): IO[AdDto] =
+    client.expectOr[AdDto](makeUri(f"ads/$ad"))(onError)
 
-  def getAdTags(ad: AdId): IO[List[AdTag]] =
-    client.expectOr[List[AdTag]](makeUri(f"ads/$ad/tag"))(onError)
+  def getAdTags(ad: AdId): IO[AdTagsResponseDto] =
+    client.expectOr[AdTagsResponseDto](makeUri(f"ads/$ad/tag"))(onError)

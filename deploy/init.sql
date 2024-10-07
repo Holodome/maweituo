@@ -62,4 +62,26 @@ create table if not exists images (
   size bigint
 );
 
+create table if not exists user_viewed (
+  us uuid references users(id) not null,
+  ad uuid references advertisements(id) not null,
+  at timestamptz not null
+);
 
+create table if not exists user_created (
+  us uuid references users(id) not null,
+  ad uuid references advertisements(id) not null,
+  at timestamptz not null
+);
+
+create table if not exists user_bought (
+  us uuid references users(id) not null,
+  ad uuid references advertisements(id) not null,
+  at timestamptz not null
+);
+
+create table if not exists user_discussed (
+  us uuid references users(id) not null,
+  ad uuid references advertisements(id) not null,
+  at timestamptz not null
+);

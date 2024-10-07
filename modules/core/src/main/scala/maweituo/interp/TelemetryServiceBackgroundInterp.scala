@@ -11,6 +11,9 @@ object TelemetryServiceBackgroundInterp:
   def make[F[_]: Functor: Background](
       internal: TelemetryService[F]
   ): TelemetryService[F] = new:
+    def userViewed(user: UserId, ad: AdId): F[Unit] =
+      runInBackground(internal.userViewed(user, ad))
+
     def userCreated(user: UserId, ad: AdId): F[Unit] =
       runInBackground(internal.userCreated(user, ad))
 

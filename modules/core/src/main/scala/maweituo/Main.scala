@@ -26,10 +26,9 @@ object Main extends IOApp.Simple:
           .make[IO](cfg)
           .evalMap { res =>
             val repositories = Repositories.makePostgres[IO](res.postgres)
-            val recs         = RecsClients.make[IO]()
             for
               infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
-              services = Services.make[IO](repositories, infrastructure, recs)
+              services = Services.make[IO](repositories, infrastructure)
               api = HttpApi.make[IO](
                 services,
                 UserJwtAuth(JwtAuth.hmac(cfg.jwt.accessSecret.value.value, JwtAlgorithm.HS256))

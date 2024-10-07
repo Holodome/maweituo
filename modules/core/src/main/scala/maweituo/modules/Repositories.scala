@@ -20,13 +20,15 @@ sealed abstract class Repos[F[_]]:
   val messages: MessageRepo[F]
   val images: AdImageRepo[F]
   val feed: FeedRepo[F]
+  val telemetry: TelemetryRepo[F]
 
 object Repositories:
   def makePostgres[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): Repos[F] = new:
-    val users    = PostgresUserRepo.make[F](xa)
-    val ads      = PostgresAdRepo.make[F](xa)
-    val tags     = PostgresAdTagRepo.make[F](xa)
-    val chats    = PostgresChatRepo.make[F](xa)
-    val messages = PostgresMessageRepo.make[F](xa)
-    val images   = PostgresAdImageRepo.make[F](xa)
-    val feed     = PostgresFeedRepo.make[F](xa)
+    val users     = PostgresUserRepo.make[F](xa)
+    val ads       = PostgresAdRepo.make[F](xa)
+    val tags      = PostgresAdTagRepo.make[F](xa)
+    val chats     = PostgresChatRepo.make[F](xa)
+    val messages  = PostgresMessageRepo.make[F](xa)
+    val images    = PostgresAdImageRepo.make[F](xa)
+    val feed      = PostgresFeedRepo.make[F](xa)
+    val telemetry = PostgresTelemetryRepo.make[F](xa)

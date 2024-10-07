@@ -27,8 +27,7 @@ object MessageServiceSuite extends SimpleIOSuite with Checkers with MessageServi
     val chatRepo               = InMemoryRepoFactory.chats
     given iam: IAMService[IO]  = makeIAMService(adRepo, chatRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val feedRepo               = RepoStubFactory.feed
-    val ads                    = AdServiceInterp.make(adRepo, feedRepo)
+    val ads                    = AdServiceInterp.make(adRepo)
     val chats                  = ChatServiceInterp.make(chatRepo, adRepo)
     val msgs                   = MessageServiceInterp.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
     (users, ads, chats, msgs)

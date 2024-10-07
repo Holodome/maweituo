@@ -25,7 +25,7 @@ object AdServiceSuite extends SimpleIOSuite with Checkers with AdServiceProperti
     val userRepo               = InMemoryRepoFactory.users
     given IAMService[IO]       = makeIAMService(adRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val ads                    = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+    val ads                    = AdServiceInterp.make(adRepo)
     (users, ads)
 
   properties.foreach {

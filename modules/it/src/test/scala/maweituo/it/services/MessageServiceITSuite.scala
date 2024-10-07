@@ -11,7 +11,6 @@ import maweituo.interp.users.UserServiceInterp
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.MessageServiceProperties
-import maweituo.tests.repos.*
 import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.*
@@ -35,8 +34,7 @@ class MessageServiceITSuite(global: GlobalRead) extends ResourceSuite with Messa
     val msgRepo                = PostgresMessageRepo.make(xa)
     given iam: IAMService[IO]  = makeIAMService(adRepo, chatRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val feedRepo               = RepoStubFactory.feed
-    val ads                    = AdServiceInterp.make(adRepo, feedRepo)
+    val ads                    = AdServiceInterp.make(adRepo)
     val chats                  = ChatServiceInterp.make(chatRepo, adRepo)
     val msgs                   = MessageServiceInterp.make(msgRepo)(using MonadThrow[IO], timeSource, iam)
     (users, ads, chats, msgs)

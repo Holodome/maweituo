@@ -28,7 +28,7 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers with UserAdsServic
     given IAMService[IO] = makeIAMService(ads)
     (
       UserServiceInterp.make(users),
-      AdServiceInterp.make(ads, RepoStubFactory.feed),
+      AdServiceInterp.make(ads),
       UserAdsServiceInterp.make(ads)
     )
 

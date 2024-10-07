@@ -6,6 +6,8 @@ import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.ads.AdId
+import maweituo.domain.ads.PaginatedAdsResponse
+import maweituo.domain.ads.AdSortOrder
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.repos.FeedRepo
 import maweituo.domain.services.{FeedService, RecommendationService}
@@ -13,24 +15,25 @@ import maweituo.domain.users.UserId
 import maweituo.effects.TimeSource
 
 import org.typelevel.log4cats.Logger
+import maweituo.domain.ads.repos.AdRepo
 
 object FeedServiceInterp:
   def make[F[_]: MonadThrow: Logger: TimeSource](
-      repo: FeedRepo[F],
+      ads: AdRepo[F],
+      feed: FeedRepo[F],
       recs: RecommendationService[F]
   ): FeedService[F] = new:
     def getPersonalized(user: UserId, pag: Pagination): F[List[AdId]] =
-      repo.getPersonalized(user, pag).flatMap {
+      feed.getPersonalized(user, pag).flatMap {
         case List() =>
           for
             recs <- recs.getRecs(user, 100)
-            _    <- repo.setPersonalized(user, recs, (60 * 60).seconds)
-            r    <- repo.getPersonalized(user, pag)
+            _    <- feed.setPersonalized(user, recs, (60 * 60).seconds)
+            r    <- feed.getPersonalized(user, pag)
             _    <- Logger[F].info(s"Generated feed for user $user")
           yield r
         case lst => lst.pure[F]
       }
 
-    def getGlobal(pag: Pagination): F[List[AdId]] = repo.getGlobal(pag)
-    def getGlobalSize: F[Int]                     = repo.getGlobalSize
-    def getPersonalizedSize(user: UserId): F[Int] = repo.getPersonalizedSize(user)
+    def getGlobal(pag: Pagination, order: AdSortOrder): F[PaginatedAdsResponse] = ads.all(pag, order)
+    def getPersonalizedSize(user: UserId): F[Int]                               = feed.getPersonalizedSize(user)

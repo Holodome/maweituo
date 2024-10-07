@@ -10,7 +10,6 @@ import maweituo.interp.users.UserServiceInterp
 import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.ChatServiceProperties
-import maweituo.tests.repos.*
 import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.*
@@ -33,8 +32,7 @@ class ChatServiceITSuite(global: GlobalRead) extends ResourceSuite with ChatServ
     val adRepo                 = PostgresAdRepo.make(xa)
     given IAMService[IO]       = makeIAMService(adRepo, chatRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val feedRepo               = RepoStubFactory.feed
-    val ads                    = AdServiceInterp.make(adRepo, feedRepo)
+    val ads                    = AdServiceInterp.make(adRepo)
     val chats                  = ChatServiceInterp.make(chatRepo, adRepo)
     (users, ads, chats)
 

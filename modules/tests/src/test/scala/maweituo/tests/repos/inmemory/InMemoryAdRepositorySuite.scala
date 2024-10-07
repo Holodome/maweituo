@@ -25,32 +25,6 @@ object InMemoryAdRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("create and list in all") {
-    forall(adGen) { ad =>
-      val ads = repo
-      for
-        _ <- ads.create(ad)
-        a <- ads.all
-      yield expect.same(List(ad), a)
-    }
-  }
-
-  test("create two and list in all") {
-    val gen =
-      for
-        a1 <- adGen
-        a2 <- adGen
-      yield a1 -> a2
-    forall(gen) { (ad1, ad2) =>
-      val ads = repo
-      for
-        _ <- ads.create(ad1)
-        _ <- ads.create(ad2)
-        a <- ads.all
-      yield expect.same(List(ad1, ad2).sortBy(_.id), a.sortBy(_.id))
-    }
-  }
-
   test("delete") {
     val ads = repo
     forall(adGen) { ad =>

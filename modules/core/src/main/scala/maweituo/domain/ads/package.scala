@@ -12,6 +12,7 @@ import cats.syntax.all.*
 
 import maweituo.domain.users.UserId
 import maweituo.utils.{IdNewtype, Newtype, given}
+import maweituo.domain.pagination.Pagination
 
 type AdId = AdId.Type
 object AdId extends IdNewtype
@@ -38,3 +39,25 @@ final case class CreateAdRequest(
 final case class AdParam(value: String) derives Eq, Show:
   def toDomain: Option[AdId] =
     Try(UUID.fromString(value)).map(AdId.apply).toOption
+
+enum AdSortOrder:
+  case CreatedAtAsc, UpdatedAtAsc, Alphabetic, Author
+
+final case class PaginatedAdsResponse(
+    pag: Pagination,
+    adIds: List[AdId],
+    totalPages: Int,
+    totalItems: Int,
+    sortOrder: AdSortOrder
+)
+
+object PaginatedAdsResponse:
+  def make(pag: Pagination, order: AdSortOrder, ids: List[AdId], totalCount: Int): PaginatedAdsResponse =
+    val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize
+    PaginatedAdsResponse(
+      pag,
+      ids,
+      totalPages,
+      totalCount,
+      order
+    )

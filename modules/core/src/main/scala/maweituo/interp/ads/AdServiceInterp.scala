@@ -6,7 +6,6 @@ import cats.syntax.all.*
 import maweituo.domain.ads.*
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.ads.services.AdService
-import maweituo.domain.repos.FeedRepo
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.domain.{Id, Identity}
@@ -16,8 +15,7 @@ import org.typelevel.log4cats.Logger
 
 object AdServiceInterp:
   def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](
-      ads: AdRepo[F],
-      feed: FeedRepo[F]
+      ads: AdRepo[F]
   )(using iam: IAMService[F], telemetry: TelemetryService[F]): AdService[F] = new:
     def get(id: AdId): F[Advertisement] =
       ads.get(id)
@@ -28,7 +26,6 @@ object AdServiceInterp:
         at <- TimeSource[F].instant
         ad = Advertisement(id, authorId, create.title, resolved = false, createdAt = at, updatedAt = at)
         _ <- ads.create(ad)
-        _ <- feed.addToGlobalFeed(id, at)
         _ <- telemetry.userCreated(authorId, id)
         _ <- Logger[F].info(s"Created ad $id by user $authorId")
       yield id

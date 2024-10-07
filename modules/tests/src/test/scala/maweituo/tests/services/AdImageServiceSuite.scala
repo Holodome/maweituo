@@ -27,7 +27,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with AdImageService
     val os                     = new InMemoryObjectStorage
     given IAMService[IO]       = makeIAMService(adRepo, imageRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val ads                    = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+    val ads                    = AdServiceInterp.make(adRepo)
     val images                 = AdImageServiceInterp.make(imageRepo, adRepo, os)
     (users, ads, images)
 

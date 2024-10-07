@@ -11,7 +11,6 @@ import maweituo.interp.users.UserServiceInterp
 import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdImageServiceProperties
-import maweituo.tests.repos.RepoStubFactory
 import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
@@ -36,7 +35,7 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
       os <- MinioObjectStorage.make(minio, "maweituo")
       given IAMService[IO] = makeIAMService(adRepo, imageRepo)
       users                = UserServiceInterp.make(userRepo)
-      ads                  = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+      ads                  = AdServiceInterp.make(adRepo)
       images               = AdImageServiceInterp.make(imageRepo, adRepo, os)
     yield (users, ads, images)
 

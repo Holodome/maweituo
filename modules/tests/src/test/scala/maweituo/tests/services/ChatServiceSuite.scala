@@ -26,8 +26,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProp
     val adRepo                 = InMemoryRepoFactory.ads
     given IAMService[IO]       = makeIAMService(adRepo, chatRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val feedRepo               = RepoStubFactory.feed
-    val ads                    = AdServiceInterp.make(adRepo, feedRepo)
+    val ads                    = AdServiceInterp.make(adRepo)
     val chats                  = ChatServiceInterp.make(chatRepo, adRepo)
     (users, ads, chats)
 

@@ -15,9 +15,29 @@ export doobie.implicits.given
 import doobie.Transactor
 import doobie.postgres.implicits.given
 import java.time.Instant
+import maweituo.domain.pagination.Pagination
+import maweituo.domain.ads.AdSortOrder
+import maweituo.domain.ads.PaginatedAdsResponse
+import cats.NonEmptyParallel
 
 object PostgresAdRepo:
-  def make[F[_]: Async](xa: Transactor[F]): AdRepo[F] = new:
+  def make[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): AdRepo[F] = new:
+    private def adCount: F[Int] =
+      sql"select count(*) from advertisements".query[Int].unique.transact(xa)
+
+    def all(pag: Pagination, order: AdSortOrder): F[PaginatedAdsResponse] =
+      val base = fr"select id from advertisements"
+      val sort = order match
+        case AdSortOrder.CreatedAtAsc => fr"order by created_at asc"
+        case AdSortOrder.UpdatedAtAsc => fr"order by updated_at desc"
+        case AdSortOrder.Alphabetic   => fr"order by title asc"
+        case AdSortOrder.Author       => fr"order by (select name from users where id = author_id)"
+      val limit = fr"limit ${pag.limit} offset ${pag.offset}"
+      val query = (base ++ sort ++ limit).query[AdId].to[List].transact(xa)
+      (query, adCount).parMapN { (ads, count) =>
+        PaginatedAdsResponse.make(pag, order, ads, count)
+      }
+
     def all: F[List[Advertisement]] =
       sql"select id, author_id, title, is_resolved, created_at, updated_at from advertisements"
         .query[Advertisement]

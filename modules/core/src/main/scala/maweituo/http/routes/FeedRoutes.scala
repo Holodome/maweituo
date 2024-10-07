@@ -6,6 +6,7 @@ import cats.{MonadThrow, Parallel}
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.services.FeedService
 import maweituo.domain.users.AuthedUser
+import maweituo.domain.ads.AdSortOrder
 import maweituo.http.BothRoutes
 import maweituo.http.dto.FeedResponseDto
 import maweituo.http.vars.UserIdVar
@@ -29,10 +30,8 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
   override val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root / "feed" :? PageMatcher(page) :? PageSizeMatcher(pageSize) =>
       val p = makePagination(page, pageSize)
-      (feed.getGlobal(p), feed.getGlobalSize)
-        .parMapN { case (feed, size) =>
-          FeedResponseDto(feed, size)
-        }
+      feed.getGlobal(p, AdSortOrder.CreatedAtAsc)
+        .map(x => FeedResponseDto(x.pag, x.adIds, x.totalPages, x.totalItems))
         .flatMap(Ok(_))
   }
 
@@ -42,7 +41,7 @@ final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedS
         val p = makePagination(page, pageSize)
         (feed.getPersonalized(user.id, p), feed.getPersonalizedSize(user.id))
           .parMapN { case (feed, size) =>
-            FeedResponseDto(feed, size)
+            FeedResponseDto(p, feed, 0, size)
           }
           .flatMap(Ok(_))
       else

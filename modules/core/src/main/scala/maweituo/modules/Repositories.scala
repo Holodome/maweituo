@@ -10,6 +10,7 @@ import maweituo.postgres.repos.*
 import maweituo.postgres.repos.users.*
 
 import doobie.util.transactor.Transactor
+import cats.NonEmptyParallel
 
 sealed abstract class Repos[F[_]]:
   val users: UserRepo[F]
@@ -21,7 +22,7 @@ sealed abstract class Repos[F[_]]:
   val feed: FeedRepo[F]
 
 object Repositories:
-  def makePostgres[F[_]: Async](xa: Transactor[F]): Repos[F] = new:
+  def makePostgres[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): Repos[F] = new:
     val users    = PostgresUserRepo.make[F](xa)
     val ads      = PostgresAdRepo.make[F](xa)
     val tags     = PostgresAdTagRepo.make[F](xa)

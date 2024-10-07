@@ -44,11 +44,11 @@ object Services:
       override val userAds: UserAdsService[F] = UserAdsServiceInterp.make(repos.ads)
       override val auth: AuthService[F] =
         AuthServiceInterp.make(repos.users, infra.jwtDict, infra.usersDict, infra.jwtTokens)
-      override val ads: AdService[F]           = AdServiceInterp.make[F](repos.ads, repos.feed)
+      override val ads: AdService[F]           = AdServiceInterp.make[F](repos.ads)
       override val chats: ChatService[F]       = ChatServiceInterp.make[F](repos.chats, repos.ads)
       override val messages: MessageService[F] = MessageServiceInterp.make[F](repos.messages)
       override val images: AdImageService[F] =
         AdImageServiceInterp.make[F](repos.images, repos.ads, infra.adImageStorage)
       override val tags: AdTagService[F]          = AdTagServiceInterp.make[F](repos.tags)
-      override val feed: FeedService[F]           = FeedServiceInterp.make[F](repos.feed, grpc.recs)
+      override val feed: FeedService[F]           = FeedServiceInterp.make[F](repos.ads, repos.feed, grpc.recs)
       override val recs: RecommendationService[F] = grpc.recs

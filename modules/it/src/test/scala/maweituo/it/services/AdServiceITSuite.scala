@@ -9,7 +9,6 @@ import maweituo.interp.users.UserServiceInterp
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdServiceProperties
-import maweituo.tests.repos.RepoStubFactory
 import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
@@ -31,7 +30,7 @@ class AdServiceITSuite(global: GlobalRead) extends ResourceSuite with AdServiceP
     val userRepo               = PostgresUserRepo.make[IO](xa)
     given IAMService[IO]       = makeIAMService(adRepo)
     val users                  = UserServiceInterp.make(userRepo)
-    val ads                    = AdServiceInterp.make(adRepo, RepoStubFactory.feed)
+    val ads                    = AdServiceInterp.make(adRepo)
     (users, ads)
 
   properties.foreach {

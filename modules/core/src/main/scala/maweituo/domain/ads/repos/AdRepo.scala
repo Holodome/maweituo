@@ -8,10 +8,11 @@ import cats.data.OptionT
 import maweituo.domain.ads.*
 import maweituo.domain.errors.InvalidAdId
 import maweituo.domain.users.UserId
+import maweituo.domain.pagination.Pagination
 
 trait AdRepo[F[_]]:
   def create(ad: Advertisement): F[Unit]
-  def all: F[List[Advertisement]]
+  def all(pag: Pagination, order: AdSortOrder): F[PaginatedAdsResponse]
   def find(id: AdId): OptionT[F, Advertisement]
   def findIdsByAuthor(userId: UserId): F[List[AdId]]
   def markAsResolved(id: AdId, at: Instant): F[Unit]

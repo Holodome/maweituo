@@ -11,6 +11,9 @@ import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo, MessageRepo}
 import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
+import maweituo.domain.pagination.Pagination
+import maweituo.domain.ads.AdSortOrder
+import maweituo.domain.ads.PaginatedAdsResponse
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
@@ -25,12 +28,12 @@ class TestUserRepo extends UserRepo[IO]:
   override def update(update: UpdateUserRepoRequest): IO[Unit] = makeError("TestUserRepo.update")
 
 class TestAdRepo extends AdRepo[IO]:
-  override def delete(id: AdId): IO[Unit]                      = makeError("TestAdRepo.delete")
-  override def findIdsByAuthor(userId: UserId): IO[List[AdId]] = makeError("TestAdRepo.findIdsByAuthor")
-  override def create(ad: Advertisement): IO[Unit]             = makeError("TestAdRepo.create")
-  override def find(id: AdId): OptionT[IO, Advertisement]      = OptionT(makeError("TestAdRepo.find"))
-  override def all: IO[List[Advertisement]]                    = makeError("TestAdRepo.all")
-  override def markAsResolved(id: AdId, at: Instant): IO[Unit] = makeError("TestAdRepo.markAsResolved")
+  override def delete(id: AdId): IO[Unit]                                         = makeError("TestAdRepo.delete")
+  override def findIdsByAuthor(userId: UserId): IO[List[AdId]]                    = makeError("TestAdRepo.findIdsByAuthor")
+  override def create(ad: Advertisement): IO[Unit]                                = makeError("TestAdRepo.create")
+  override def find(id: AdId): OptionT[IO, Advertisement]                         = OptionT(makeError("TestAdRepo.find"))
+  override def all(pag: Pagination, order: AdSortOrder): IO[PaginatedAdsResponse] = makeError("TestAdRepo.all")
+  override def markAsResolved(id: AdId, at: Instant): IO[Unit]                    = makeError("TestAdRepo.markAsResolved")
 
 class TestChatRepo extends ChatRepo[IO]:
   override def create(chat: Chat): IO[Unit]            = makeError("TestChatRepo.create")

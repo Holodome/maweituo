@@ -17,8 +17,14 @@ import maweituo.utils.given
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
+import maweituo.domain.pagination.Pagination
 
-final case class FeedResponseDto(ads: List[AdId], total: Int) derives Codec.AsObject
+final case class FeedResponseDto(
+    pag: Pagination,
+    adIds: List[AdId],
+    totalPages: Int,
+    totalItems: Int
+) derives Codec.AsObject
 
 final case class LoginRequestDto(name: Username, password: Password) derives Codec.AsObject:
   def toDomain: LoginRequest = LoginRequest(name, password)

@@ -7,6 +7,7 @@ import maweituo.domain.ads.services.AdService
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.{UserAdsService, UserService}
 import maweituo.tests.generators.*
+import maweituo.tests.utils.given
 
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}

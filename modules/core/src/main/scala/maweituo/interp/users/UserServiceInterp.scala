@@ -15,18 +15,19 @@ import maweituo.domain.{Id, Identity}
 import maweituo.effects.GenUUID
 
 import org.typelevel.log4cats.Logger
+import maweituo.effects.TimeSource
 
 object UserServiceInterp:
-  def make[F[_]: MonadThrow: GenUUID: Logger](
+  def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](
       users: UserRepo[F]
   )(using iam: IAMService[F]): UserService[F] = new:
     def update(update: UpdateUserRequest)(using Identity): F[Unit] =
       for
-        _   <- iam.authUserModification(update.id)
-        old <- users.get(update.id)
-        updateUserInternal = UpdateUserRepoRequest.fromReq(update, old.salt)
-        _ <- users.update(updateUserInternal)
-        _ <- Logger[F].info(s"Updated user ${update.id} by user ${summon[Identity]}")
+        _       <- iam.authUserModification(update.id)
+        old     <- users.get(update.id)
+        updRepo <- UpdateUserRepoRequest.fromReq(update, old.salt)
+        _       <- users.update(updRepo)
+        _       <- Logger[F].info(s"Updated user ${update.id} by user ${summon[Identity]}")
       yield ()
 
     def delete(subject: UserId)(using Identity): F[Unit] =
@@ -59,12 +60,15 @@ object UserServiceInterp:
           .value
         salt <- PasswordHashing.genSalt[F]
         id   <- Id.make[F, UserId]
+        at   <- TimeSource[F].instant
         user = User(
           id,
           body.name,
           body.email,
           PasswordHashing.hashSaltPassword(body.password, salt),
-          salt
+          salt,
+          at,
+          at
         )
         _ <- users.create(user)
         _ <- Logger[F].info(s"Created user $id")

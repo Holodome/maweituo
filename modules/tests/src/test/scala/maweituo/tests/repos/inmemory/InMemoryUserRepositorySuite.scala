@@ -12,7 +12,7 @@ import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
 object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
-  
+
   private def repo = InMemoryRepoFactory.users[IO]
 
   test("create and find") {
@@ -64,11 +64,11 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
         upd <- updateUserGen(u.id)
       yield u -> upd
     forall(gen) { (user, upd0) =>
-      val upd = UpdateUserRepoRequest.fromReq(upd0, user.salt)
       for
-        _ <- users.create(user)
-        _ <- users.update(upd)
-        u <- users.find(user.id).value
+        upd <- UpdateUserRepoRequest.fromReq(upd0, user.salt)
+        _   <- users.create(user)
+        _   <- users.update(upd)
+        u   <- users.find(user.id).value
       yield matches(u) { case Some(u) =>
         expect.all(
           upd.email.fold(true)(_ === u.email),

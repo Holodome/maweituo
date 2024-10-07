@@ -33,7 +33,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
       for
         _ <- users.create(user)
         u <- users.find(user.id).value
-      yield expect.same(u, Some(user))
+      yield expect.same(Some(user), u)
     }
   }
 
@@ -42,7 +42,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
       for
         _ <- users.create(user)
         u <- users.findByName(user.name).value
-      yield expect.same(u, Some(user))
+      yield expect.same(Some(user), u)
     }
   }
 
@@ -51,7 +51,7 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
       for
         _ <- users.create(user)
         u <- users.findByEmail(user.email).value
-      yield expect.same(u, Some(user))
+      yield expect.same(Some(user), u)
     }
   }
 
@@ -72,11 +72,11 @@ class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
         upd <- updateUserGen(u.id)
       yield u -> upd
     forall(gen) { (user, upd0) =>
-      val upd = UpdateUserRepoRequest.fromReq(upd0, user.salt)
       for
-        _ <- users.create(user)
-        _ <- users.update(upd)
-        u <- users.find(user.id).value
+        upd <- UpdateUserRepoRequest.fromReq(upd0, user.salt)
+        _   <- users.create(user)
+        _   <- users.update(upd)
+        u   <- users.find(user.id).value
       yield matches(u) { case Some(u) =>
         expect.all(
           upd.email.fold(true)(_ === u.email),

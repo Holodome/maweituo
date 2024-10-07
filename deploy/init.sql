@@ -3,7 +3,9 @@ create table if not exists users (
   email text unique not null,
   name text unique not null,
   password text not null,
-  salt text not null
+  salt text not null,
+  created_at timestamptz not null,
+  updated_at timestamptz not null
 );
 
 create table if not exists advertisements (

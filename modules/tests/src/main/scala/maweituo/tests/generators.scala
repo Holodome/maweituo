@@ -1,6 +1,7 @@
 package maweituo.tests.generators
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 import maweituo.auth.PasswordHashing
@@ -100,13 +101,15 @@ val objectIdGen: Gen[OBSId] =
 
 val userGen: Gen[User] =
   for
-    id       <- userIdGen
-    name     <- usernameGen
-    email    <- emailGen
-    password <- passwordGen
-    salt     <- saltGen
+    id        <- userIdGen
+    name      <- usernameGen
+    email     <- emailGen
+    password  <- passwordGen
+    salt      <- saltGen
+    createdAt <- instantGen
+    updatedAt      = createdAt
     hashedPassword = PasswordHashing.hashSaltPassword(password, salt)
-  yield User(id, name, email, hashedPassword, salt)
+  yield User(id, name, email, hashedPassword, salt, createdAt, updatedAt)
 
 val adGen: Gen[Advertisement] =
   for
@@ -125,7 +128,7 @@ val instantGen: Gen[Instant] =
   for
     seconds        <- Gen.choose(minInstantSeconds, maxInstantSeconds)
     nanoAdjustment <- Gen.choose(0L, 999_999_999L)
-  yield Instant.ofEpochSecond(seconds, nanoAdjustment)
+  yield Instant.ofEpochSecond(seconds, nanoAdjustment).truncatedTo(ChronoUnit.MICROS)
 
 val imageUrlGen: Gen[ImageUrl] = nesGen(s => ImageUrl(s))
 

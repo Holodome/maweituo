@@ -1,6 +1,7 @@
 package maweituo.effects
 
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 import cats.effect.Sync
 
@@ -11,4 +12,4 @@ object TimeSource:
   def apply[F[_]: TimeSource]: TimeSource[F] = summon
 
   given [F[_]: Sync]: TimeSource[F] with
-    def instant: F[Instant] = Sync[F].delay(Instant.now)
+    def instant: F[Instant] = Sync[F].delay(Instant.now().truncatedTo(ChronoUnit.MICROS))

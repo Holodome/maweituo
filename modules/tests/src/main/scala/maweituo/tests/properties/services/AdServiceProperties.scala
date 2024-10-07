@@ -10,6 +10,7 @@ import maweituo.domain.errors.*
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
 import maweituo.tests.generators.*
+import maweituo.tests.utils.given
 
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}

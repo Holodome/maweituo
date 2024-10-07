@@ -38,7 +38,9 @@ class InMemoryUserRepo[F[_]: Sync] extends UserRepo[F]:
         update.name.getOrElse(value.name),
         update.email.getOrElse(value.email),
         update.password.getOrElse(value.hashedPassword),
-        value.salt
+        value.salt,
+        value.createdAt,
+        value.updatedAt
       )
       map.addOne(value.id -> newUser)
     }

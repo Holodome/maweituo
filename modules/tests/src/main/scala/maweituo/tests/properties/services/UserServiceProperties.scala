@@ -8,8 +8,8 @@ import maweituo.domain.Identity
 import maweituo.domain.errors.{InvalidUserId, UserEmailInUse, UserModificationForbidden, UserNameInUse}
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
-import maweituo.tests.utils.given
 import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
+import maweituo.tests.utils.given
 
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}

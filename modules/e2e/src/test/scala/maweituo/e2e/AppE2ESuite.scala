@@ -6,8 +6,8 @@ import cats.effect.kernel.Resource
 import maweituo.e2e.resources.app
 import maweituo.http.dto.{AddTagRequestDto, CreateAdRequestDto, LoginRequestDto, RegisterRequestDto}
 import maweituo.tests.generators.*
-import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 import maweituo.tests.utils.given
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger

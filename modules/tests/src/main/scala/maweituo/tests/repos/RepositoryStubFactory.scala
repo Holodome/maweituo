@@ -34,7 +34,7 @@ object RepoStubFactory:
     def all: F[List[Advertisement]]                    = emptyList
     def find(id: AdId): OptionT[F, Advertisement]      = emptyOptionT
     def findIdsByAuthor(userId: UserId): F[List[AdId]] = emptyList
-    def markAsResolved(id: AdId): F[Unit]              = unit
+    def markAsResolved(id: AdId, at: Instant): F[Unit] = unit
     def delete(id: AdId): F[Unit]                      = unit
 
   def chats[F[_]: Monad]: ChatRepo[F] = new:

@@ -12,7 +12,9 @@ create table if not exists advertisements (
   id uuid primary key,
   title text not null,
   author_id uuid references users(id),
-  is_resolved boolean not null 
+  is_resolved boolean not null,
+  created_at timestamptz not null,
+  updated_at timestamptz not null
 );
 
 create table if not exists personalized_feed (

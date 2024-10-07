@@ -12,10 +12,9 @@ import maweituo.domain.users.UpdateUserRepoRequest.fromReq
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.UserService
 import maweituo.domain.{Id, Identity}
-import maweituo.effects.GenUUID
+import maweituo.effects.{GenUUID, TimeSource}
 
 import org.typelevel.log4cats.Logger
-import maweituo.effects.TimeSource
 
 object UserServiceInterp:
   def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](

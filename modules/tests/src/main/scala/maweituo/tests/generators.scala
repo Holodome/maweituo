@@ -116,7 +116,8 @@ val adGen: Gen[Advertisement] =
     id     <- adIdGen
     title  <- adTitleGen
     author <- userIdGen
-  yield Advertisement(id, author, title, resolved = false)
+    at     <- instantGen
+  yield Advertisement(id, author, title, resolved = false, createdAt = at, updatedAt = at)
 
 val chatIdGen: Gen[ChatId] =
   idGen(ChatId.apply)

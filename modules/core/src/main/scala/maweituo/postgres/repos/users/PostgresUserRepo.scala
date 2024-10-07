@@ -12,8 +12,6 @@ import maweituo.postgres.sql.codecs.given
 import doobie.*
 import doobie.implicits.*
 export doobie.implicits.given
-export doobie.postgres.implicits.given
-
 import doobie.Transactor
 import doobie.postgres.implicits.given
 import cats.data.NonEmptyList

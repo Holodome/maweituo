@@ -7,9 +7,10 @@ import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.ResourceSuite
-import maweituo.tests.generators.{adGen, userGen}
+import maweituo.tests.generators.{adGen, instantGen, userGen}
 import maweituo.tests.resources.*
 import maweituo.tests.utils.given
+import maweituo.utils.given
 
 import doobie.util.transactor.Transactor
 import weaver.*
@@ -58,12 +59,17 @@ class PostgresAdRepoITSuite(global: GlobalRead) extends ResourceSuite:
   }
 
   adsTest("mark as resolved") { (users, ads) =>
-    forall(userAdGen) { (u, ad) =>
+    val gen =
+      for
+        i  <- instantGen
+        (u, ad) <- userAdGen
+      yield (i, u, ad)
+    forall(gen) { (at, u, ad) =>
       for
         _ <- users.create(u)
         _ <- ads.create(ad)
-        _ <- ads.markAsResolved(ad.id)
+        _ <- ads.markAsResolved(ad.id, at)
         a <- ads.find(ad.id).value
-      yield expect.same(Some(true), a.map(_.resolved))
+      yield expect.same(Some(true), a.map(_.resolved)) and expect.same(Some(at), a.map(_.updatedAt))
     }
   }

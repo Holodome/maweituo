@@ -5,7 +5,6 @@ import java.time.Instant
 import cats.data.NonEmptyList
 import cats.effect.IO
 import cats.syntax.all.*
-import maweituo.tests.utils.given
 
 import maweituo.domain.Identity
 import maweituo.domain.ads.services.*
@@ -14,6 +13,7 @@ import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
 import maweituo.effects.TimeSource
 import maweituo.tests.generators.*
+import maweituo.tests.utils.given
 
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, MutableIOSuite}

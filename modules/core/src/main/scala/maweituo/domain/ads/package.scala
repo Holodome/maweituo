@@ -1,5 +1,6 @@
 package maweituo.domain.ads
 
+import java.time.Instant
 import java.util.UUID
 
 import scala.util.Try
@@ -10,7 +11,7 @@ import cats.kernel.Eq
 import cats.syntax.all.*
 
 import maweituo.domain.users.UserId
-import maweituo.utils.{IdNewtype, Newtype}
+import maweituo.utils.{IdNewtype, Newtype, given}
 
 type AdId = AdId.Type
 object AdId extends IdNewtype
@@ -25,7 +26,9 @@ final case class Advertisement(
     id: AdId,
     authorId: UserId,
     title: AdTitle,
-    resolved: Boolean
+    resolved: Boolean,
+    createdAt: Instant,
+    updatedAt: Instant
 ) derives Show
 
 final case class CreateAdRequest(

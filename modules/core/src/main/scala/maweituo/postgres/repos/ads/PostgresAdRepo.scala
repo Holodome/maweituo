@@ -11,11 +11,15 @@ import maweituo.postgres.sql.codecs.given
 
 import doobie.*
 import doobie.implicits.*
+export doobie.implicits.given
+import doobie.Transactor
+import doobie.postgres.implicits.given
+import java.time.Instant
 
 object PostgresAdRepo:
   def make[F[_]: Async](xa: Transactor[F]): AdRepo[F] = new:
     def all: F[List[Advertisement]] =
-      sql"select id, author_id, title, is_resolved from advertisements"
+      sql"select id, author_id, title, is_resolved, created_at, updated_at from advertisements"
         .query[Advertisement]
         .to[List]
         .transact(xa)
@@ -25,14 +29,16 @@ object PostgresAdRepo:
 
     def create(ad: Advertisement): F[Unit] =
       sql"""
-        insert into advertisements(id, author_id, title, is_resolved) 
-        values (${ad.id}::uuid, ${ad.authorId}::uuid, ${ad.title}, ${ad.resolved})
+        insert into advertisements(id, author_id, title, is_resolved, created_at, updated_at) 
+        values (${ad.id}::uuid, ${ad.authorId}::uuid, ${ad.title}, 
+                ${ad.resolved}, ${ad.createdAt}, ${ad.updatedAt})
       """.update.run.transact(xa).void
 
     def find(id: AdId): OptionT[F, Advertisement] =
       OptionT(
-        sql"select id, author_id, title, is_resolved from advertisements where id = $id::uuid"
-          .query[Advertisement].option.transact(xa)
+        sql"""select id, author_id, title, is_resolved, created_at, updated_at 
+              from advertisements where id = $id::uuid
+          """.query[Advertisement].option.transact(xa)
       )
 
     def findIdsByAuthor(userId: UserId): F[List[AdId]] =
@@ -41,5 +47,7 @@ object PostgresAdRepo:
         .to[List]
         .transact(xa)
 
-    def markAsResolved(id: AdId): F[Unit] =
-      sql"update advertisements set is_resolved = true where id = $id::uuid".update.run.transact(xa).void
+    def markAsResolved(id: AdId, at: Instant): F[Unit] =
+      sql"""update advertisements 
+            set is_resolved = true, updated_at = $at 
+            where id = $id::uuid""".update.run.transact(xa).void

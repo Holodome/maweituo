@@ -1,5 +1,7 @@
 package maweituo.tests.repos.inmemory
 
+import java.time.Instant
+
 import scala.collection.concurrent.TrieMap
 
 import cats.data.OptionT
@@ -26,9 +28,9 @@ class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
   override def delete(id: AdId): F[Unit] =
     Sync[F] delay map.remove(id)
 
-  override def markAsResolved(id: AdId): F[Unit] =
+  override def markAsResolved(id: AdId, at: Instant): F[Unit] =
     Sync[F] delay map.updateWith(id) {
-      case Some(ad) => Some(ad.copy(resolved = true))
+      case Some(ad) => Some(ad.copy(resolved = true, updatedAt = at))
       case None     => None
     }
 

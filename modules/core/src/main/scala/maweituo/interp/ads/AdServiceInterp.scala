@@ -25,12 +25,12 @@ object AdServiceInterp:
     def create(create: CreateAdRequest)(using authorId: Identity): F[AdId] =
       for
         id <- Id.make[F, AdId]
-        ad = Advertisement(id, authorId, create.title, resolved = false)
-        _  <- ads.create(ad)
         at <- TimeSource[F].instant
-        _  <- feed.addToGlobalFeed(id, at)
-        _  <- telemetry.userCreated(authorId, id)
-        _  <- Logger[F].info(s"Created ad $id by user $authorId")
+        ad = Advertisement(id, authorId, create.title, resolved = false, createdAt = at, updatedAt = at)
+        _ <- ads.create(ad)
+        _ <- feed.addToGlobalFeed(id, at)
+        _ <- telemetry.userCreated(authorId, id)
+        _ <- Logger[F].info(s"Created ad $id by user $authorId")
       yield id
 
     def delete(id: AdId)(using Identity): F[Unit] =
@@ -42,7 +42,8 @@ object AdServiceInterp:
 
     def markAsResolved(id: AdId, withWhom: UserId)(using Identity): F[Unit] =
       for
-        _ <- iam.authAdModification(id)
-        _ <- ads.markAsResolved(id)
-        _ <- telemetry.userBought(withWhom, id)
+        at <- TimeSource[F].instant
+        _  <- iam.authAdModification(id)
+        _  <- ads.markAsResolved(id, at)
+        _  <- telemetry.userBought(withWhom, id)
       yield ()

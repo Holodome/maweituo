@@ -1,5 +1,7 @@
 package maweituo.tests.repos
 
+import java.time.Instant
+
 import cats.data.OptionT
 import cats.effect.IO
 
@@ -28,7 +30,7 @@ class TestAdRepo extends AdRepo[IO]:
   override def create(ad: Advertisement): IO[Unit]             = makeError("TestAdRepo.create")
   override def find(id: AdId): OptionT[IO, Advertisement]      = OptionT(makeError("TestAdRepo.find"))
   override def all: IO[List[Advertisement]]                    = makeError("TestAdRepo.all")
-  override def markAsResolved(id: AdId): IO[Unit]              = makeError("TestAdRepo.markAsResolved")
+  override def markAsResolved(id: AdId, at: Instant): IO[Unit] = makeError("TestAdRepo.markAsResolved")
 
 class TestChatRepo extends ChatRepo[IO]:
   override def create(chat: Chat): IO[Unit]            = makeError("TestChatRepo.create")

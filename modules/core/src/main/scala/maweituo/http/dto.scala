@@ -8,18 +8,16 @@ import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{MonadThrow, Show}
 
+import maweituo.domain.ads.*
 import maweituo.domain.ads.images.{ImageContentsStream, MediaType}
 import maweituo.domain.ads.messages.*
-import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}
-import maweituo.domain.Pagination
 import maweituo.domain.users.*
+import maweituo.domain.{PaginatedCollection, Pagination}
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
-import maweituo.domain.ads.PaginatedAdsResponse
-import maweituo.domain.PaginatedCollection
 
 final case class FeedResponseDto(
     items: List[AdId],

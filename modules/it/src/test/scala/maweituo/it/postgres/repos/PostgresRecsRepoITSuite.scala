@@ -3,24 +3,22 @@ package maweituo.it.postgres.repos
 import cats.effect.*
 import cats.syntax.all.*
 
+import maweituo.domain.Pagination
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.repos.RecsRepo
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.ads.repos.PostgresAdRepo
 import maweituo.postgres.repos.PostgresRecsRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.*
 import maweituo.tests.resources.postgres
 import maweituo.tests.utils.given
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
-import weaver.*
-import weaver.scalacheck.Checkers
 import org.typelevel.log4cats.Logger
-import maweituo.tests.WeaverLogAdapter
-import weaver.scalacheck.CheckConfig
-import maweituo.domain.Pagination
+import weaver.*
+import weaver.scalacheck.{CheckConfig, Checkers}
 
 class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
 

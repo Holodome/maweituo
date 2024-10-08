@@ -47,3 +47,7 @@ final case class PaginatedAdsResponse(
     col: PaginatedCollection[AdId],
     sortOrder: AdSortOrder
 )
+
+object PaginatedAdsResponse:
+  def empty: PaginatedAdsResponse =
+    PaginatedAdsResponse(PaginatedCollection.empty, AdSortOrder.CreatedAtAsc)

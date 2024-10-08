@@ -19,6 +19,9 @@ final case class PaginatedCollection[+A](
 ) derives Show
 
 object PaginatedCollection:
+  def empty[A]: PaginatedCollection[A] =
+    PaginatedCollection(List(), Pagination(0, 0), 0, 0)
+
   def apply[A](ids: List[A], pag: Pagination, totalCount: Int): PaginatedCollection[A] =
     val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize
     PaginatedCollection(

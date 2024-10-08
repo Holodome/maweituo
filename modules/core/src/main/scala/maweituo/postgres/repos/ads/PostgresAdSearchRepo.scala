@@ -1,24 +1,20 @@
 package maweituo.postgres.repos.ads
 
+import cats.NonEmptyParallel
+import cats.data.NonEmptyList
 import cats.effect.Async
 import cats.syntax.all.*
 
-import maweituo.domain.ads.AdId
 import maweituo.domain.ads.repos.AdSearchRepo
+import maweituo.domain.ads.{AdId, AdSearchRequest, AdSortOrder, AdTag}
+import maweituo.domain.users.UserId
+import maweituo.domain.{PaginatedCollection, Pagination}
 import maweituo.postgres.sql.codecs.given
 
 import doobie.*
 import doobie.implicits.*
 export doobie.implicits.given
 import doobie.Transactor
-import maweituo.domain.Pagination
-import maweituo.domain.ads.AdSortOrder
-import cats.NonEmptyParallel
-import maweituo.domain.PaginatedCollection
-import maweituo.domain.ads.AdTag
-import cats.data.NonEmptyList
-import maweituo.domain.users.UserId
-import maweituo.domain.ads.AdSearchRequest
 
 object PostgresAdSearchRepo:
   def make[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): AdSearchRepo[F] = new:

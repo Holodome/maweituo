@@ -1,4 +1,5 @@
 package maweituo.domain.ads.repos
+
 import maweituo.domain.PaginatedCollection
 import maweituo.domain.ads.*
 

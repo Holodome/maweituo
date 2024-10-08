@@ -15,10 +15,12 @@ export doobie.implicits.given
 import doobie.Transactor
 import doobie.postgres.implicits.given
 import java.time.Instant
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.Pagination
+import maweituo.postgres.utils.*
 import maweituo.domain.ads.AdSortOrder
 import maweituo.domain.ads.PaginatedAdsResponse
 import cats.NonEmptyParallel
+import maweituo.domain.PaginatedCollection
 
 object PostgresAdRepo:
   def make[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): AdRepo[F] = new:
@@ -26,16 +28,12 @@ object PostgresAdRepo:
       sql"select count(*) from advertisements".query[Int].unique.transact(xa)
 
     def all(pag: Pagination, order: AdSortOrder): F[PaginatedAdsResponse] =
-      val base = fr"select id from advertisements"
-      val sort = order match
-        case AdSortOrder.CreatedAtAsc => fr"order by created_at asc"
-        case AdSortOrder.UpdatedAtAsc => fr"order by updated_at desc"
-        case AdSortOrder.Alphabetic   => fr"order by title asc"
-        case AdSortOrder.Author       => fr"order by (select name from users where id = author_id)"
+      val base  = fr"select id from advertisements"
+      val sort  = adSortOrderToSql(order)
       val limit = fr"limit ${pag.limit} offset ${pag.offset}"
       val query = (base ++ sort ++ limit).query[AdId].to[List].transact(xa)
       (query, adCount).parMapN { (ads, count) =>
-        PaginatedAdsResponse.make(pag, order, ads, count)
+        PaginatedAdsResponse(PaginatedCollection(ads, pag, count), order)
       }
 
     def all: F[List[Advertisement]] =

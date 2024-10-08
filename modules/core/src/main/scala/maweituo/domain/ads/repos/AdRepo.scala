@@ -7,7 +7,7 @@ import cats.data.OptionT
 
 import maweituo.domain.ads.*
 import maweituo.domain.errors.InvalidAdId
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.Pagination
 import maweituo.domain.users.UserId
 
 trait AdRepo[F[_]]:

@@ -11,20 +11,29 @@ import cats.{MonadThrow, Show}
 import maweituo.domain.ads.images.{ImageContentsStream, MediaType}
 import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.Pagination
 import maweituo.domain.users.*
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
+import maweituo.domain.ads.PaginatedAdsResponse
+import maweituo.domain.PaginatedCollection
 
 final case class FeedResponseDto(
+    items: List[AdId],
     pag: Pagination,
-    adIds: List[AdId],
     totalPages: Int,
     totalItems: Int
 ) derives Codec.AsObject
+
+object FeedResponseDto:
+  def fromDomain(domain: PaginatedCollection[AdId]): FeedResponseDto =
+    FeedResponseDto(domain.items, domain.pag, domain.totalPages, domain.totalItems)
+
+  def fromDomain(domain: PaginatedAdsResponse): FeedResponseDto =
+    FeedResponseDto(domain.col.items, domain.col.pag, domain.col.totalPages, domain.col.totalItems)
 
 final case class LoginRequestDto(name: Username, password: Password) derives Codec.AsObject:
   def toDomain: LoginRequest = LoginRequest(name, password)

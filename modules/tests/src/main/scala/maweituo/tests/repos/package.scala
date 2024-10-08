@@ -9,7 +9,7 @@ import maweituo.domain.ads.images.{Image, ImageId}
 import maweituo.domain.ads.messages.{Chat, ChatId, Message}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo, MessageRepo}
 import maweituo.domain.ads.{AdId, AdSortOrder, Advertisement, PaginatedAdsResponse}
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.Pagination
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
 

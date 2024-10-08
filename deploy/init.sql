@@ -19,13 +19,6 @@ create table if not exists advertisements (
   updated_at timestamptz not null
 );
 
-create table if not exists personalized_feed (
-  user_id uuid not null,
-  idx int not null,
-  ad_id uuid references advertisements(id),
-  primary key(user_id, idx)
-);
-
 create table if not exists tag_ads (
   tag text not null, 
   ad_id uuid references advertisements(id),

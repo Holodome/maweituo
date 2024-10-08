@@ -10,7 +10,7 @@ import cats.syntax.all.*
 
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.ads.{AdId, AdSortOrder, Advertisement, PaginatedAdsResponse}
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.Pagination
 import maweituo.domain.users.UserId
 
 class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:

@@ -10,7 +10,7 @@ import cats.derived.*
 import cats.kernel.Eq
 import cats.syntax.all.*
 
-import maweituo.domain.pagination.Pagination
+import maweituo.domain.PaginatedCollection
 import maweituo.domain.users.UserId
 import maweituo.utils.{IdNewtype, Newtype, given}
 
@@ -44,20 +44,6 @@ enum AdSortOrder:
   case CreatedAtAsc, UpdatedAtAsc, Alphabetic, Author
 
 final case class PaginatedAdsResponse(
-    pag: Pagination,
-    adIds: List[AdId],
-    totalPages: Int,
-    totalItems: Int,
+    col: PaginatedCollection[AdId],
     sortOrder: AdSortOrder
 )
-
-object PaginatedAdsResponse:
-  def make(pag: Pagination, order: AdSortOrder, ids: List[AdId], totalCount: Int): PaginatedAdsResponse =
-    val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize
-    PaginatedAdsResponse(
-      pag,
-      ids,
-      totalPages,
-      totalCount,
-      order
-    )

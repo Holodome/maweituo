@@ -20,6 +20,7 @@ import weaver.scalacheck.Checkers
 import org.typelevel.log4cats.Logger
 import maweituo.tests.WeaverLogAdapter
 import weaver.scalacheck.CheckConfig
+import maweituo.domain.Pagination
 
 class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
@@ -54,7 +55,7 @@ class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
         _ <- users.create(user)
         _ <- ads.create(ad)
         _ <- recs.learn
-        x <- recs.getClosestAds(user.id, 1)
-      yield expect(x.length === 1)
+        x <- recs.getClosestAds(user.id, Pagination(1, 0))
+      yield expect(x.items.length === 1)
     }
   }

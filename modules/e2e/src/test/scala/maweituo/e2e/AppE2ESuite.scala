@@ -5,12 +5,11 @@ import cats.effect.kernel.Resource
 
 import maweituo.e2e.resources.app
 import maweituo.http.dto.{AddTagRequestDto, CreateAdRequestDto, LoginRequestDto, RegisterRequestDto}
+import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
-import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import dev.profunktor.auth.jwt.JwtToken
-import org.typelevel.log4cats.Logger
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
 
@@ -25,7 +24,6 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
   override def sharedResource: Resource[IO, Res] = global.app
 
   e2eTest("create ad with tag") { (client, log) =>
-    given Logger[IO] = WeaverLogAdapter(log)
     val gen =
       for
         r   <- registerGen

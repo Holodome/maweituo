@@ -67,7 +67,7 @@ def makeMinioResource[F[_]: Sync]: Resource[F, MinioConnection] =
     )
 
 private def postgresContainerDef = PostgreSQLContainer.Def(
-  dockerImageName = DockerImageName.parse("postgres:17.0"),
+  dockerImageName = DockerImageName.parse("pgvector/pgvector:pg17").asCompatibleSubstituteFor("postgres"),
   username = "maweituo",
   password = "maweituo",
   databaseName = "maweituo"

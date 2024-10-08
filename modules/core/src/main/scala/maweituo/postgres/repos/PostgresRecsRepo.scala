@@ -7,6 +7,7 @@ import maweituo.domain.ads.AdId
 import maweituo.domain.repos.RecsRepo
 import maweituo.domain.users.*
 import maweituo.postgres.sql.codecs.given
+import org.typelevel.log4cats.syntax.*
 
 import doobie.*
 import doobie.implicits.*
@@ -16,9 +17,10 @@ import doobie.postgres.implicits.given
 import cats.NonEmptyParallel
 import cats.data.NonEmptyList
 import maweituo.domain.ads.AdTag
+import org.typelevel.log4cats.Logger
 
 object PostgresRecsRepo:
-  def make[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): RecsRepo[F] = new:
+  def make[F[_]: Async: NonEmptyParallel: Logger](xa: Transactor[F]): RecsRepo[F] = new:
 
     def getClosestAds(user: UserId, count: Int): F[List[AdId]] =
       sql"""select aw.ad from ad_weights aw
@@ -86,7 +88,7 @@ object PostgresRecsRepo:
         }
 
     private def calculateSingleAdWeight(tagWeights: TagWeights, adId: AdId): F[Vector[Float]] =
-      sql"select tag from tag_ads where ad_id == $adId::uuid"
+      sql"select tag from tag_ads where ad_id = $adId::uuid"
         .query[AdTag]
         .to[List]
         .transact(xa)
@@ -103,23 +105,39 @@ object PostgresRecsRepo:
 
     private def getNewWeights: F[(UserWeights, AdWeights)] =
       for
+        _     <- info"calulating tag weights"
         tagW  <- calculateTagWeights
+        _     <- info"calculated ${tagW.knownSize} tag weights"
+        _     <- info"calculating ad weights"
         adW   <- calculateAdWeights(tagW)
+        _     <- info"calculated ${adW.knownSize} ad weights"
+        _     <- info"calculating user weights"
         userW <- calculateUserWeights(adW)
+        _     <- info"calculated ${userW.knownSize} user weights"
       yield userW -> adW
 
+    private def resetDbWeights(userW: UserWeights, adW: AdWeights): F[Unit] =
+      val ops =
+        for
+          _ <- sql"truncate user_weights".update.run
+          _ <- sql"truncate ad_weights".update.run
+          _ <-
+            Update[(UserId, Weights)]("insert into user_weights(us, embedding) values (?::uuid, ?)")
+              .updateMany(userW.map(x => x).toList)
+          _ <-
+            Update[(AdId, Weights)]("insert into ad_weights(ad, embedding) values (?::uuid, ?)")
+              .updateMany(adW.map(x => x).toList)
+        yield ()
+      ops.transact(xa).void
+
     def learn: F[Unit] =
-      getNewWeights.flatMap { (userW, adW) =>
-        val ops =
-          for
-            _ <- sql"truncate user_weights".update.run
-            _ <- sql"truncate ad_weights".update.run
-            _ <-
-              Update[(UserId, Weights)]("insert into user_weights(us, embedding) values (?, ?)")
-                .updateMany(userW.map(x => x).toList)
-            _ <-
-              Update[(AdId, Weights)]("insert into ad_weights(ad, embedding) values (?, ?)")
-                .updateMany(adW.map(x => x).toList)
-          yield ()
-        ops.transact(xa).void
-      }
+      for
+        _ <- info"running learn"
+        _ <- info"calculating new weights"
+        w <- getNewWeights
+        _ <- info"finished weights calculation"
+        _ <- info"inserting new weights"
+        _ <- resetDbWeights.tupled(w)
+        _ <- info"finished weights insertion"
+        _ <- info"finisher learning"
+      yield ()

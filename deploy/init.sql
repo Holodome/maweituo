@@ -1,3 +1,5 @@
+CREATE EXTENSION vector;
+
 create table if not exists users (
   id uuid primary key,
   email text unique not null,
@@ -82,11 +84,11 @@ create table if not exists user_discussed (
 );
 
 create table if not exists user_weights (
-  us uuid references users(id) not null,
+  us uuid /* references users(id) */ not null,
   embedding vector(16) not null
 );
 
 create table if not exists ad_weights (
-  ad uuid references advertisements(id) not null, 
+  ad uuid /* references advertisements(id) */ not null, 
   embedding vector(16) not null
 );

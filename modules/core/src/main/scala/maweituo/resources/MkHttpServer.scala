@@ -12,7 +12,7 @@ import org.http4s.server.defaults.Banner
 import org.typelevel.log4cats.Logger
 
 trait MkHttpServer[F[_]]:
-  def newEmber(
+  def newClient(
       config: HttpServerConfig,
       httpApp: HttpApp[F]
   ): Resource[F, Server]

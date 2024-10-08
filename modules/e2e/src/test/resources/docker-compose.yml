@@ -38,7 +38,7 @@ services:
       - MINIO_DEFAULT_BUCKETS=maweituo
       
   postgres:
-    image: 'postgres:17.0'
+    image: 'pgvector/pgvector:pg17'
     restart: always 
     networks:
       - backend

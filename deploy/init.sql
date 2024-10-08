@@ -24,11 +24,6 @@ create table if not exists personalized_feed (
   primary key(user_id, idx)
 );
 
-create table if not exists global_feed (
-  at timestamp,
-  ad_id uuid references advertisements(id)
-);
-
 create table if not exists tag_ads (
   tag text not null, 
   ad_id uuid references advertisements(id),
@@ -84,4 +79,14 @@ create table if not exists user_discussed (
   us uuid references users(id) not null,
   ad uuid references advertisements(id) not null,
   at timestamptz not null
+);
+
+create table if not exists user_weights (
+  us uuid references users(id) not null,
+  embedding vector(16) not null
+);
+
+create table if not exists ad_weights (
+  ad uuid references advertisements(id) not null, 
+  embedding vector(16) not null
 );

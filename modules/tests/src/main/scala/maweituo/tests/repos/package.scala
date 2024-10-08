@@ -8,12 +8,10 @@ import cats.effect.IO
 import maweituo.domain.ads.images.{Image, ImageId}
 import maweituo.domain.ads.messages.{Chat, ChatId, Message}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo, MessageRepo}
-import maweituo.domain.ads.{AdId, Advertisement}
+import maweituo.domain.ads.{AdId, AdSortOrder, Advertisement, PaginatedAdsResponse}
+import maweituo.domain.pagination.Pagination
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
-import maweituo.domain.pagination.Pagination
-import maweituo.domain.ads.AdSortOrder
-import maweituo.domain.ads.PaginatedAdsResponse
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))

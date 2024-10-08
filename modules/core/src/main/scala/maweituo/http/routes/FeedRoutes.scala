@@ -3,10 +3,10 @@ package maweituo.http.routes
 import cats.syntax.all.*
 import cats.{MonadThrow, Parallel}
 
+import maweituo.domain.ads.AdSortOrder
 import maweituo.domain.pagination.Pagination
 import maweituo.domain.services.FeedService
 import maweituo.domain.users.AuthedUser
-import maweituo.domain.ads.AdSortOrder
 import maweituo.http.BothRoutes
 import maweituo.http.dto.FeedResponseDto
 import maweituo.http.vars.UserIdVar

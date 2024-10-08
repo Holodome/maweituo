@@ -43,7 +43,7 @@ object AppResource extends GlobalResource:
       }.flatMap { container =>
         val host = container.getServiceHost("core", 8080)
         val port = container.getServicePort("core", 8080)
-        MkHttpClient[IO].newEmber(HttpClientConfig(5.seconds, 5.seconds))
+        MkHttpClient[IO].newClient(HttpClientConfig(5.seconds, 5.seconds))
           .map(x => (x, f"http://$host:$port"))
       }.map { (client, uri) =>
         new AppClient(uri, client)

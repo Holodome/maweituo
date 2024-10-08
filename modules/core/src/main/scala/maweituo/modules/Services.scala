@@ -14,10 +14,15 @@ import maweituo.interp.ads.{
   MessageServiceInterp
 }
 import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
-import maweituo.interp.{AuthServiceInterp, FeedServiceInterp, IAMServiceInterp, TelemetryServiceBackgroundInterp}
+import maweituo.interp.{
+  AuthServiceInterp,
+  FeedServiceInterp,
+  IAMServiceInterp,
+  TelemetryServiceBackgroundInterp,
+  TelemetryServiceInterp
+}
 
 import org.typelevel.log4cats.Logger
-import maweituo.interp.TelemetryServiceInterp
 
 sealed abstract class Services[F[_]]:
   val users: UserService[F]

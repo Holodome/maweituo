@@ -4,8 +4,8 @@ import cats.Applicative
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.services.TelemetryService
-import maweituo.domain.{ads, users}
 import maweituo.domain.users.UserId
+import maweituo.domain.{ads, users}
 
 class TelemetryServiceStub[F[_]: Applicative] extends TelemetryService[F]:
 

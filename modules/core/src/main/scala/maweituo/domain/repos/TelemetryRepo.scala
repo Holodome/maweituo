@@ -1,8 +1,9 @@
 package maweituo.domain.repos
 
+import java.time.Instant
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.users.UserId
-import java.time.Instant
 
 trait TelemetryRepo[F[_]]:
   def userViewed(user: UserId, ad: AdId, at: Instant): F[Unit]

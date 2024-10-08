@@ -36,7 +36,7 @@ object Main extends IOApp.Simple:
             yield cfg.httpServer -> api.httpApp
           }
           .flatMap { case (cfg, httpApp) =>
-            MkHttpServer[IO].newEmber(cfg, httpApp)
+            MkHttpServer[IO].newClient(cfg, httpApp)
           }
           .useForever
       }

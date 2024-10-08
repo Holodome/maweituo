@@ -35,18 +35,12 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
     forall(gen) { (reg, adTitle, tag) =>
       for
         _   <- client.register(RegisterRequestDto(reg.name, reg.email, reg.password))
-        _   <- Logger[IO].info("register done")
         jwt <- client.login(LoginRequestDto(reg.name, reg.password)).map(_.jwt)
-        _   <- Logger[IO].info("login done")
         given JwtToken = jwt
         adId <- client.createAd(CreateAdRequestDto(adTitle)).map(_.id)
-        _    <- Logger[IO].info("create ad done")
         _    <- client.addTag(adId, AddTagRequestDto(tag))
-        _    <- Logger[IO].info("add tag done")
         ad   <- client.getAd(adId)
-        _    <- Logger[IO].info("get ad done")
         tags <- client.getAdTags(adId).map(_.tags)
-        _    <- Logger[IO].info("get ad tags done")
       yield expect.same(ad.title, adTitle) and expect.same(List(tag), tags)
     }
   }

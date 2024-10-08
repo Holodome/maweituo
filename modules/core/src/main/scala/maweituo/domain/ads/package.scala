@@ -10,9 +10,9 @@ import cats.derived.*
 import cats.kernel.Eq
 import cats.syntax.all.*
 
+import maweituo.domain.pagination.Pagination
 import maweituo.domain.users.UserId
 import maweituo.utils.{IdNewtype, Newtype, given}
-import maweituo.domain.pagination.Pagination
 
 type AdId = AdId.Type
 object AdId extends IdNewtype

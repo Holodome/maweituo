@@ -11,13 +11,13 @@ import cats.{MonadThrow, Show}
 import maweituo.domain.ads.images.{ImageContentsStream, MediaType}
 import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}
+import maweituo.domain.pagination.Pagination
 import maweituo.domain.users.*
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
-import maweituo.domain.pagination.Pagination
 
 final case class FeedResponseDto(
     pag: Pagination,

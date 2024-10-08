@@ -1,4 +1,4 @@
-package maweituo.postgres.ads.repos
+package maweituo.postgres.repos.ads
 
 import cats.data.OptionT
 import cats.effect.Async

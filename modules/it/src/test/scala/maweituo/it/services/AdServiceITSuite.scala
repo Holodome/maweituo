@@ -6,7 +6,7 @@ import cats.effect.kernel.Resource
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.interp.ads.AdServiceInterp
 import maweituo.interp.users.UserServiceInterp
-import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.postgres.repos.ads.PostgresAdRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdServiceProperties
 import maweituo.tests.resources.*

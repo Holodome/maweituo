@@ -4,7 +4,7 @@ import cats.effect.*
 
 import maweituo.domain.ads.repos.{AdRepo, AdTagRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresAdTagRepo}
+import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresAdTagRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.{adGen, adTagGen, userGen}

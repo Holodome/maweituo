@@ -8,7 +8,7 @@ import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.interp.*
 import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
 import maweituo.interp.users.UserServiceInterp
-import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
+import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.MessageServiceProperties
 import maweituo.tests.resources.*

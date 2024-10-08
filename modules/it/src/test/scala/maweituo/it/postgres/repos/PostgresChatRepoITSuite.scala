@@ -5,7 +5,7 @@ import cats.effect.*
 import maweituo.domain.ads.messages.Chat
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.{PostgresAdRepo, PostgresChatRepo}
+import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresChatRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.{adGen, chatIdGen, userGen}

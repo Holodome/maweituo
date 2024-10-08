@@ -7,7 +7,7 @@ import maweituo.domain.Pagination
 import maweituo.domain.ads.repos.AdRepo
 import maweituo.domain.repos.RecsRepo
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.PostgresAdRepo
+import maweituo.postgres.repos.ads.PostgresAdRepo
 import maweituo.postgres.repos.PostgresRecsRepo
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.generators.*

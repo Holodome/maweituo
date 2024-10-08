@@ -6,9 +6,9 @@ import cats.effect.kernel.Async
 import maweituo.domain.ads.repos.*
 import maweituo.domain.repos.*
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.ads.repos.*
 import maweituo.postgres.repos.*
 import maweituo.postgres.repos.users.*
+import maweituo.postgres.repos.ads.*
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
@@ -22,6 +22,7 @@ sealed abstract class Repos[F[_]]:
   val images: AdImageRepo[F]
   val telemetry: TelemetryRepo[F]
   val recs: RecsRepo[F]
+  val adSearch: AdSearchRepo[F]
 
 object Repositories:
   def makePostgres[F[_]: Async: NonEmptyParallel: Logger](xa: Transactor[F]): Repos[F] = new:
@@ -33,3 +34,4 @@ object Repositories:
     val images    = PostgresAdImageRepo.make[F](xa)
     val telemetry = PostgresTelemetryRepo.make[F](xa)
     val recs      = PostgresRecsRepo.make[F](xa)
+    val adSearch  = PostgresAdSearchRepo.make[F](xa)

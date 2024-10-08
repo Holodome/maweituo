@@ -4,14 +4,13 @@ import java.time.Instant
 
 import scala.collection.concurrent.TrieMap
 
-import cats.data.{NonEmptyList, OptionT}
+import cats.data.OptionT
 import cats.effect.Sync
 import cats.syntax.all.*
 
 import maweituo.domain.ads.repos.AdRepo
-import maweituo.domain.ads.{AdId, AdSortOrder, AdTag, Advertisement}
+import maweituo.domain.ads.{AdId, Advertisement}
 import maweituo.domain.users.UserId
-import maweituo.domain.{PaginatedCollection, Pagination}
 
 class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
 
@@ -19,15 +18,6 @@ class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
 
   override def create(ad: Advertisement): F[Unit] =
     Sync[F] delay map.addOne(ad.id -> ad)
-
-  override def all(pag: Pagination, order: AdSortOrder): F[PaginatedCollection[AdId]] =
-    Sync[F].raiseError(new RuntimeException("InMemoryAdRepo.all unsupported"))
-
-  override def allFiltered(
-      pag: Pagination,
-      order: AdSortOrder,
-      allowedTags: NonEmptyList[AdTag]
-  ): F[PaginatedCollection[AdId]] = Sync[F].raiseError(new RuntimeException("InMemoryAdRepo.allFiltered unsupported"))
 
   override def find(id: AdId): OptionT[F, Advertisement] =
     OptionT(Sync[F] delay map.get(id))

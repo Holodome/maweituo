@@ -8,7 +8,7 @@ import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
 import maweituo.interp.users.UserServiceInterp
-import maweituo.postgres.ads.repos.{PostgresAdImageRepo, PostgresAdRepo}
+import maweituo.postgres.repos.ads.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdImageServiceProperties
 import maweituo.tests.resources.*

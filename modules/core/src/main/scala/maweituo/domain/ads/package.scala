@@ -6,12 +6,13 @@ import java.util.UUID
 import scala.util.Try
 
 import cats.Show
+import cats.data.NonEmptyList
 import cats.derived.*
 import cats.kernel.Eq
 import cats.syntax.all.*
 
-import maweituo.domain.PaginatedCollection
 import maweituo.domain.users.UserId
+import maweituo.domain.{PaginatedCollection, Pagination}
 import maweituo.utils.{IdNewtype, Newtype, given}
 
 type AdId = AdId.Type
@@ -40,8 +41,16 @@ final case class AdParam(value: String) derives Eq, Show:
   def toDomain: Option[AdId] =
     Try(UUID.fromString(value)).map(AdId.apply).toOption
 
-enum AdSortOrder:
+enum AdSortOrder derives Show:
   case CreatedAtAsc, UpdatedAtAsc, Alphabetic, Author
+  case Recs(user: UserId)
+
+final case class AdSearchRequest(
+    pag: Pagination,
+    order: AdSortOrder,
+    filterTags: Option[NonEmptyList[AdTag]],
+    nameLike: Option[String]
+)
 
 final case class PaginatedAdsResponse(
     col: PaginatedCollection[AdId],

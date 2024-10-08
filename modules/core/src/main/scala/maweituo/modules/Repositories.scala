@@ -7,8 +7,8 @@ import maweituo.domain.ads.repos.*
 import maweituo.domain.repos.*
 import maweituo.domain.users.repos.UserRepo
 import maweituo.postgres.repos.*
-import maweituo.postgres.repos.users.*
 import maweituo.postgres.repos.ads.*
+import maweituo.postgres.repos.users.*
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger

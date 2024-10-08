@@ -55,4 +55,4 @@ object Services:
       override val images: AdImageService[F] =
         AdImageServiceInterp.make[F](repos.images, repos.ads, infra.adImageStorage)
       override val tags: AdTagService[F] = AdTagServiceInterp.make[F](repos.tags)
-      override val feed: FeedService[F]  = FeedServiceInterp.make[F](repos.adSearch, repos.recs)
+      override val feed: FeedService[F]  = FeedServiceInterp.make[F](repos.adSearch)

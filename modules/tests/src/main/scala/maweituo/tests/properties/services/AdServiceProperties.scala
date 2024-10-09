@@ -87,7 +87,10 @@ trait AdServiceProperties:
             _    <- ads.get(adId)
             x    <- ads.delete(adId)(using Identity(otherId)).attempt
             a    <- ads.get(adId)
-          yield expect.same(Left(DomainError.AdModificationForbidden(adId, otherId)), x) and expect.same(a.title, createAd.title)
+          yield expect.same(Left(DomainError.AdModificationForbidden(adId, otherId)), x) and expect.same(
+            a.title,
+            createAd.title
+          )
         }
     )
   )

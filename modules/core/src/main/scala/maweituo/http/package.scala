@@ -4,10 +4,10 @@ import cats.effect.Async
 import cats.syntax.all.*
 
 import maweituo.domain.users.AuthedUser
+import maweituo.http.errors.HttpDomainErrorHandler
 
 import org.http4s.server.AuthMiddleware
 import org.http4s.{AuthedRoutes, HttpRoutes}
-import maweituo.http.errors.HttpDomainErrorHandler
 import org.typelevel.log4cats.Logger
 
 sealed trait Routes[F[_]]:

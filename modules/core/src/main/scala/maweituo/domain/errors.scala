@@ -2,12 +2,18 @@ package maweituo.domain.errors
 
 import scala.util.control.NoStackTrace
 
+import cats.Show
+import cats.derived.derived
+import cats.syntax.all.*
+
 import maweituo.domain.ads.*
 import maweituo.domain.ads.images.*
 import maweituo.domain.ads.messages.*
 import maweituo.domain.users.*
 
-enum DomainError extends NoStackTrace:
+enum DomainError extends NoStackTrace derives Show:
+
+  override def getMessage(): String = this.show
 
   case UserModificationForbidden(violator: UserId)
 

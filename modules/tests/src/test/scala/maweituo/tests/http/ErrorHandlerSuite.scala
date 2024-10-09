@@ -7,7 +7,7 @@ import cats.syntax.all.*
 import maweituo.domain.errors.DomainError
 import maweituo.domain.users.Username
 import maweituo.http.dto.ErrorResponseDto
-import maweituo.http.errors.httpDomainErrorHandler
+import maweituo.http.errors.HttpDomainErrorHandler
 import maweituo.tests.{HttpSuite, WeaverLogAdapter}
 
 import org.http4s.*
@@ -19,13 +19,12 @@ object httpDomainErrorHandlerSuite extends SimpleIOSuite with Checkers with Http
 
   loggedTest("domain errors are converted to http") { log =>
     given Logger[IO] = WeaverLogAdapter(log)
-    val handler      = httpDomainErrorHandler[IO]
     val errorRoutes = Kleisli { (req: Request[F]) =>
       OptionT.liftF(
         DomainError.NoUserWithName(Username("test")).raiseError[IO, Response[IO]]
       )
     }
-    expectHttpBodyAndStatus(handler(errorRoutes), Request())(
+    expectHttpBodyAndStatus(HttpDomainErrorHandler(errorRoutes), Request())(
       ErrorResponseDto(List("no user with name test found")),
       Status.BadRequest
     )

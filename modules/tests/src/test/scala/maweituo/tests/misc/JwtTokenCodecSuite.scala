@@ -1,4 +1,5 @@
 package maweituo.tests.misc
+
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken

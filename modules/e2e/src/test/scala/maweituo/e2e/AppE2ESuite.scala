@@ -4,17 +4,16 @@ import cats.effect.IO
 import cats.effect.kernel.Resource
 
 import maweituo.e2e.resources.app
-import maweituo.http.dto.{AddTagRequestDto, CreateAdRequestDto, LoginRequestDto, RegisterRequestDto}
+import maweituo.http.dto.{AddTagRequestDto, CreateAdRequestDto, ErrorResponseDto, LoginRequestDto, RegisterRequestDto}
 import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
-import org.http4s.circe.CirceEntityCodec.given
+
 import dev.profunktor.auth.jwt.JwtToken
+import org.http4s.circe.CirceEntityCodec.given
+import org.http4s.{Method, Request}
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
-import maweituo.http.dto.ErrorResponseDto
-import org.http4s.Request
-import org.http4s.Method
 
 class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 

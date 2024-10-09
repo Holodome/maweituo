@@ -8,9 +8,9 @@ import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.ImageId
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
-import maweituo.domain.errors.DomainError
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
+import maweituo.logic.errors.DomainError
 
 object IAMServiceInterp:
   def make[F[_]: MonadThrow](

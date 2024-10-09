@@ -5,8 +5,8 @@ import cats.syntax.all.*
 
 import maweituo.domain.Identity
 import maweituo.domain.ads.services.{AdService, ChatService}
-import maweituo.domain.errors.*
 import maweituo.domain.users.services.UserService
+import maweituo.logic.errors.*
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 
@@ -58,7 +58,7 @@ trait ChatServiceProperties:
         }
     ),
     Property(
-      "can't create chat with myself",
+      "can't create chat with mysels",
       (users, ads, chats) =>
         val gen =
           for

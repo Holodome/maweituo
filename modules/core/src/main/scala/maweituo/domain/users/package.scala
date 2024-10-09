@@ -6,8 +6,8 @@ import cats.kernel.Eq
 import cats.syntax.all.*
 import cats.{Functor, Show}
 
-import maweituo.logic.auth.PasswordHashing
 import maweituo.infrastructure.effects.TimeSource
+import maweituo.logic.auth.PasswordHashing
 import maweituo.utils.{IdNewtype, Newtype}
 
 import dev.profunktor.auth.jwt.{JwtSymmetricAuth, JwtToken}

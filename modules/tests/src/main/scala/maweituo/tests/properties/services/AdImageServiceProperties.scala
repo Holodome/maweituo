@@ -5,9 +5,9 @@ import cats.syntax.all.*
 
 import maweituo.domain.Identity
 import maweituo.domain.ads.services.AdService
-import maweituo.domain.errors.*
 import maweituo.domain.services.AdImageService
 import maweituo.domain.users.services.UserService
+import maweituo.logic.errors.*
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 

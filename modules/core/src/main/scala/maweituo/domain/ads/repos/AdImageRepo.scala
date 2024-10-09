@@ -5,7 +5,7 @@ import cats.data.OptionT
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
-import maweituo.domain.errors.DomainError
+import maweituo.logic.errors.DomainError
 
 trait AdImageRepo[F[_]]:
   def create(image: Image): F[Unit]

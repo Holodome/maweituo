@@ -3,8 +3,8 @@ package maweituo.infrastructure
 import cats.Functor
 import cats.syntax.all.*
 
-import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.OBSId
+import maweituo.infrastructure.effects.GenUUID
 
 trait GenObjectStorageId[F[_]]:
   def genId: F[OBSId]

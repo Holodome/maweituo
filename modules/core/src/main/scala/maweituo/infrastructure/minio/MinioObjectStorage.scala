@@ -22,12 +22,12 @@ object MinioObjectStorage:
       bucket: String
   ): F[Unit] =
     minio.bucketExists(bucket).flatMap {
-      case true => Logger[F].info(f"Bucket $bucket already exists")
+      case true => Logger[F].info(s"Bucket $bucket already exists")
       case false =>
         for
-          _ <- Logger[F].info(f"Bucket $bucket does not exist, creating")
+          _ <- Logger[F].info(s"Bucket $bucket does not exist, creating")
           _ <- minio.createBucket(bucket)
-          _ <- Logger[F].info(f"Bucket $bucket created")
+          _ <- Logger[F].info(s"Bucket $bucket created")
         yield ()
     }.recoverWith {
       case e => Logger[F].warn(e)("Error when creating bucket")
@@ -40,9 +40,9 @@ private final class MinioObjectStorage[F[_]: Async: Logger](
 
   override def putStream(id: OBSId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
     for
-      _ <- Logger[F].info(f"Putting blob $id of size $dataSize")
+      _ <- Logger[F].info(s"Putting blob $id of size $dataSize")
       x <- client.putStream(bucket, id, blob, dataSize)
-      _ <- Logger[F].info(f"Finished putting blob $id")
+      _ <- Logger[F].info(s"Finished putting blob $id")
     yield x
 
   override def get(id: OBSId): OptionT[F, fs2.Stream[F, Byte]] =
@@ -50,9 +50,9 @@ private final class MinioObjectStorage[F[_]: Async: Logger](
 
   override def delete(id: OBSId): F[Unit] =
     for
-      _ <- Logger[F].info(f"Deleting blob $id")
+      _ <- Logger[F].info(s"Deleting blob $id")
       _ <- client.delete(bucket, id)
-      _ <- Logger[F].info(f"Deleted blob $id")
+      _ <- Logger[F].info(s"Deleted blob $id")
     yield ()
 
   override def makeUrl(id: OBSId): OBSUrl =

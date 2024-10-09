@@ -3,11 +3,11 @@ package maweituo.tests.properties.services
 import cats.effect.IO
 import cats.syntax.all.*
 
-import maweituo.logic.auth.JwtTokens
 import maweituo.domain.Identity
-import maweituo.domain.errors.*
 import maweituo.domain.users.services.{AuthService, UserService}
 import maweituo.domain.users.{AuthedUser, LoginRequest, UserId}
+import maweituo.logic.auth.JwtTokens
+import maweituo.logic.errors.*
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 

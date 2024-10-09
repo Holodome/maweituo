@@ -20,7 +20,7 @@ object MkPostgresClient:
         hikariConfig <- Resource.pure {
           val config = new HikariConfig()
           config.setDriverClassName("org.postgresql.Driver")
-          config.setJdbcUrl(f"jdbc:postgresql://${c.host}:${c.port}/${c.databaseName}")
+          config.setJdbcUrl(s"jdbc:postgresql://${c.host}:${c.port}/${c.databaseName}")
           config.setUsername(c.user)
           config.setPassword(c.password)
           config

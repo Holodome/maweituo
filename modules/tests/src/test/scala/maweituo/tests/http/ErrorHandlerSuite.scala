@@ -4,7 +4,7 @@ import cats.data.{Kleisli, OptionT}
 import cats.effect.IO
 import cats.syntax.all.*
 
-import maweituo.domain.errors.DomainError
+import maweituo.logic.errors.DomainError
 import maweituo.domain.users.Username
 import maweituo.http.dto.ErrorResponseDto
 import maweituo.http.errors.HttpDomainErrorHandler

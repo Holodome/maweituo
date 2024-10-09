@@ -5,8 +5,8 @@ import cats.data.OptionT
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.*
-import maweituo.domain.errors.DomainError
 import maweituo.domain.users.UserId
+import maweituo.logic.errors.DomainError
 
 trait ChatRepo[F[_]]:
   def create(chat: Chat): F[Unit]

@@ -1,6 +1,6 @@
 package maweituo.tests.misc
 
-import maweituo.domain.errors.DomainError
+import maweituo.logic.errors.DomainError
 import maweituo.domain.users.Username
 
 import io.circe.testing.ArbitraryInstances

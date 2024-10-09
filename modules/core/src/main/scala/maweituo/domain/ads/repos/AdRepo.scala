@@ -6,8 +6,8 @@ import cats.MonadThrow
 import cats.data.OptionT
 
 import maweituo.domain.ads.*
-import maweituo.domain.errors.DomainError
 import maweituo.domain.users.UserId
+import maweituo.logic.errors.DomainError
 
 trait AdRepo[F[_]]:
   def create(ad: Advertisement): F[Unit]

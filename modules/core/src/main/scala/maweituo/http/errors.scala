@@ -4,9 +4,9 @@ import cats.data.{Kleisli, OptionT}
 import cats.effect.Concurrent
 import cats.syntax.all.*
 
-import maweituo.domain.errors.DomainError
 import maweituo.domain.users.UserId
 import maweituo.http.dto.ErrorResponseDto
+import maweituo.logic.errors.DomainError
 
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.dsl.Http4sDsl
@@ -21,24 +21,24 @@ private final case class ErrorHandler[F[_]: Concurrent: Logger]() extends Http4s
   private def errorToResponse(error: DomainError): F[Response[F]] =
     error match
       case DomainError.UserModificationForbidden(violator) =>
-        forbidden(f"user modification forbidden by user $violator")
-      case DomainError.InvalidUserId(userId)       => badRequest(f"invalid user id $userId")
-      case DomainError.NoUserWithName(username)    => badRequest(f"no user with name $username found")
-      case DomainError.NoUserWithEmail(email)      => badRequest(f"no user with email $email found")
-      case DomainError.UserNameInUse(username)     => conflict(f"name $username is aleady taken")
-      case DomainError.UserEmailInUse(email)       => conflict(f"email $email is already taken")
-      case DomainError.InvalidPassword(username)   => forbidden(f"invalid password for user $username")
-      case DomainError.InvalidChatId(chatId)       => badRequest(f"invalid chat id $chatId")
-      case DomainError.ChatAccessForbidden(chatId) => forbidden(f"access to chat $chatId forbidden")
-      case DomainError.InvalidImageId(imageId)     => badRequest(f"invalid image id $imageId")
+        forbidden(s"user modification forbidden by user $violator")
+      case DomainError.InvalidUserId(userId)       => badRequest(s"invalid user id $userId")
+      case DomainError.NoUserWithName(username)    => badRequest(s"no user with name $username found")
+      case DomainError.NoUserWithEmail(email)      => badRequest(s"no user with email $email found")
+      case DomainError.UserNameInUse(username)     => conflict(s"name $username is aleady taken")
+      case DomainError.UserEmailInUse(email)       => conflict(s"email $email is already taken")
+      case DomainError.InvalidPassword(username)   => forbidden(s"invalid password for user $username")
+      case DomainError.InvalidChatId(chatId)       => badRequest(s"invalid chat id $chatId")
+      case DomainError.ChatAccessForbidden(chatId) => forbidden(s"access to chat $chatId forbidden")
+      case DomainError.InvalidImageId(imageId)     => badRequest(s"invalid image id $imageId")
       case DomainError.InternalImageUnsync(reason) => InternalServerError()
-      case DomainError.InvalidAdId(id)             => badRequest(f"invalid ad id $id")
+      case DomainError.InvalidAdId(id)             => badRequest(s"invalid ad id $id")
       case DomainError.CannotCreateChatWithMyself(adId, user) =>
-        conflict(f"can't create chat with yourself for user $user ad $adId")
+        conflict(s"can't create chat with yourself for user $user ad $adId")
       case DomainError.ChatAlreadyExists(adId, clientId) =>
-        conflict(f"chat for ad $adId with user $clientId already exists")
+        conflict(s"chat for ad $adId with user $clientId already exists")
       case DomainError.AdModificationForbidden(adId, userId) =>
-        forbidden(f"ad $adId modification by user $userId forbidden")
+        forbidden(s"ad $adId modification by user $userId forbidden")
       case DomainError.InvalidSearchParams(errors) => BadRequest(ErrorResponseDto(errors.map(_.show)))
 
   def httpDomainErrorHandler(routes: HttpRoutes[F]): HttpRoutes[F] =

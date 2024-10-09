@@ -16,10 +16,10 @@ import org.http4s.headers.{Accept, Authorization}
 final class AppClient(base: String, val client: Client[IO]):
   def onError(resp: Response[IO]) =
     resp.body.compile.toList.map { body =>
-      new RuntimeException(f"got unexpected response ${resp.toString} with body '${body.map(_.toChar).mkString}'")
+      new RuntimeException(s"got unexpected response ${resp.toString} with body '${body.map(_.toChar).mkString}'")
     }
 
-  def makeUri(subpath: String): Uri = Uri.unsafeFromString(f"$base/$subpath")
+  def makeUri(subpath: String): Uri = Uri.unsafeFromString(s"$base/$subpath")
   
   def query[A](req: Request[IO])(using EntityDecoder[IO, A]): IO[A] = 
     client.expectOr[A](req)(onError)
@@ -56,7 +56,7 @@ final class AppClient(base: String, val client: Client[IO]):
     client.successful(
       Request[IO](
         method = Method.POST,
-        uri = makeUri(f"ads/$ad/tag"),
+        uri = makeUri(s"ads/$ad/tag"),
         headers = Headers(
           Authorization(Credentials.Token(AuthScheme.Bearer, jwt.value)),
           Accept(MediaType.application.json)
@@ -68,7 +68,7 @@ final class AppClient(base: String, val client: Client[IO]):
     }
 
   def getAd(ad: AdId): IO[AdResponseDto] =
-    client.expectOr[AdResponseDto](makeUri(f"ads/$ad"))(onError)
+    client.expectOr[AdResponseDto](makeUri(s"ads/$ad"))(onError)
 
   def getAdTags(ad: AdId): IO[AdTagsResponseDto] =
-    client.expectOr[AdTagsResponseDto](makeUri(f"ads/$ad/tag"))(onError)
+    client.expectOr[AdTagsResponseDto](makeUri(s"ads/$ad/tag"))(onError)

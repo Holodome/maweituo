@@ -74,7 +74,7 @@ class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   AdSortOrder.allBasic.foreach { order =>
     val orderName = order.show
-    searchTest(f"$orderName sort order") { search =>
+    searchTest(s"$orderName sort order") { search =>
       search.search(AdSearchRequest(pagination, order)).map(_ => success)
     }
   }

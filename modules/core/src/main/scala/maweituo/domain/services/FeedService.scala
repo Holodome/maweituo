@@ -1,13 +1,13 @@
 package maweituo.domain.services
 
-import cats.syntax.all.*
-import maweituo.domain.PaginatedCollection
-import maweituo.domain.ads.{AdId, AdSearchRequest}
 import cats.MonadThrow
-import maweituo.logic.search.{validateAuthorized, validateUnathorized}
 import cats.data.Validated
-import maweituo.domain.errors.DomainError
-import maweituo.domain.Identity
+import cats.syntax.all.*
+
+import maweituo.domain.ads.{AdId, AdSearchRequest}
+import maweituo.domain.{Identity, PaginatedCollection}
+import maweituo.logic.errors.DomainError
+import maweituo.logic.search.{validateAuthorized, validateUnathorized}
 
 final case class AdSearchForm(
     page: Option[Int],

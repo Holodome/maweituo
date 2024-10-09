@@ -8,10 +8,10 @@ import cats.syntax.all.*
 
 import maweituo.domain.Identity
 import maweituo.domain.ads.services.*
-import maweituo.domain.errors.*
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
 import maweituo.infrastructure.effects.TimeSource
+import maweituo.logic.errors.*
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
 

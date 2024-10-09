@@ -1,8 +1,9 @@
-package maweituo.domain.errors
+package maweituo.logic.errors
 
 import scala.util.control.NoStackTrace
 
 import cats.Show
+import cats.data.NonEmptyList
 import cats.derived.derived
 import cats.syntax.all.*
 
@@ -11,7 +12,6 @@ import maweituo.domain.ads.images.*
 import maweituo.domain.ads.messages.*
 import maweituo.domain.users.*
 import maweituo.logic.search.SearchValidationError
-import cats.data.NonEmptyList
 
 enum DomainError extends NoStackTrace derives Show:
 

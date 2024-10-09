@@ -3,7 +3,7 @@ package maweituo.infrastructure
 import cats.Functor
 import cats.syntax.all.*
 
-import maweituo.effects.GenUUID
+import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.OBSId
 
 trait GenObjectStorageId[F[_]]:

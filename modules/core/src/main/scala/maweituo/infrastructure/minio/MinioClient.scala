@@ -8,7 +8,7 @@ import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all.*
 
-import maweituo.ext.catsExt.liftCompletableFuture
+import maweituo.infrastructure.ext.catsExt.liftCompletableFuture
 import maweituo.infrastructure.{OBSId, OBSUrl}
 
 import io.minio.*

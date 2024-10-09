@@ -9,7 +9,7 @@ import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
 import maweituo.domain.errors.DomainError
 import maweituo.domain.services.{AdImageService, IAMService}
 import maweituo.domain.{Id, Identity}
-import maweituo.effects.GenUUID
+import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.{GenObjectStorageId, ObjectStorage}
 
 import org.typelevel.log4cats.Logger

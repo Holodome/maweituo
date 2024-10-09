@@ -1,4 +1,4 @@
-package maweituo.effects
+package maweituo.infrastructure.effects
 
 import java.time.Clock
 

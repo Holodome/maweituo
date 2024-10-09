@@ -4,7 +4,7 @@ import cats.MonadThrow
 import cats.data.OptionT
 import cats.syntax.all.*
 
-import maweituo.auth.{JwtTokens, PasswordHashing}
+import maweituo.logic.auth.{JwtTokens, PasswordHashing}
 import maweituo.domain.Identity
 import maweituo.domain.errors.DomainError
 import maweituo.domain.users.*

@@ -7,7 +7,7 @@ import maweituo.domain.ads.AdId
 import maweituo.domain.repos.TelemetryRepo
 import maweituo.domain.services.TelemetryService
 import maweituo.domain.users.UserId
-import maweituo.effects.TimeSource
+import maweituo.infrastructure.effects.TimeSource
 
 object TelemetryServiceInterp:
   def make[F[_]: TimeSource: Monad](tel: TelemetryRepo[F]): TelemetryService[F] = new:

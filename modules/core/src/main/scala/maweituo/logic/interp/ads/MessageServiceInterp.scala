@@ -8,7 +8,7 @@ import maweituo.domain.ads.messages.*
 import maweituo.domain.ads.repos.MessageRepo
 import maweituo.domain.ads.services.MessageService
 import maweituo.domain.services.IAMService
-import maweituo.effects.TimeSource
+import maweituo.infrastructure.effects.TimeSource
 
 object MessageServiceInterp:
   def make[F[_]: MonadThrow](

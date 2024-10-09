@@ -4,7 +4,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 
-import maweituo.auth.PasswordHashing
+import maweituo.logic.auth.PasswordHashing
 import maweituo.domain.ads.images.{Image, ImageContentsStream, ImageId, ImageUrl, MediaType}
 import maweituo.domain.ads.messages.{ChatId, MessageText, SendMessageRequest}
 import maweituo.domain.ads.{AdId, AdTag, AdTitle, Advertisement, CreateAdRequest}

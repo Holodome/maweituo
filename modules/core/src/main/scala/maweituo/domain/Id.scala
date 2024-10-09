@@ -3,7 +3,7 @@ package maweituo.domain
 import cats.Functor
 import cats.syntax.all.*
 
-import maweituo.effects.GenUUID
+import maweituo.infrastructure.effects.GenUUID
 import maweituo.utils.IsUUID
 
 object Id:

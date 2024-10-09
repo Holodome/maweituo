@@ -5,7 +5,7 @@ import maweituo.domain.PaginatedCollection
 import maweituo.domain.ads.repos.AdSearchRepo
 import maweituo.domain.ads.{AdId, AdSearchRequest}
 import maweituo.domain.services.{FeedService, IAMService}
-import maweituo.effects.TimeSource
+import maweituo.infrastructure.effects.TimeSource
 
 import org.typelevel.log4cats.Logger
 

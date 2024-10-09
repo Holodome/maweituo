@@ -2,7 +2,7 @@ package maweituo.tests.services
 
 import cats.effect.IO
 
-import maweituo.auth.JwtTokens
+import maweituo.logic.auth.JwtTokens
 import maweituo.domain.services.*
 import maweituo.domain.users.UserId
 import maweituo.infrastructure.EphemeralDict

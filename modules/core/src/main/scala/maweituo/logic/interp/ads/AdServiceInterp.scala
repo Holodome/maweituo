@@ -9,7 +9,7 @@ import maweituo.domain.ads.services.AdService
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.domain.{Id, Identity}
-import maweituo.effects.{GenUUID, TimeSource}
+import maweituo.infrastructure.effects.{GenUUID, TimeSource}
 
 import org.typelevel.log4cats.Logger
 

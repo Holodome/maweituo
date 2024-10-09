@@ -4,11 +4,11 @@ import cats.effect.Async
 import cats.syntax.all.*
 import cats.{Functor, Monad, MonadThrow}
 
-import maweituo.auth.{JwtExpire, JwtTokens}
+import maweituo.logic.auth.{JwtExpire, JwtTokens}
 import maweituo.config.*
 import maweituo.domain.Id
 import maweituo.domain.users.UserId
-import maweituo.effects.GenUUID
+import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.infrastructure.{EphemeralDict, ObjectStorage}

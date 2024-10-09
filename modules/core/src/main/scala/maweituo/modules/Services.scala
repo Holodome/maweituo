@@ -5,7 +5,7 @@ import cats.MonadThrow
 import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, MessageService}
 import maweituo.domain.services.*
 import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
-import maweituo.effects.{Background, GenUUID, TimeSource}
+import maweituo.infrastructure.effects.{Background, GenUUID, TimeSource}
 import maweituo.logic.interp.ads.{
   AdImageServiceInterp,
   AdServiceInterp,

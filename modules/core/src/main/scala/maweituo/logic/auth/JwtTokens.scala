@@ -1,4 +1,4 @@
-package maweituo.auth
+package maweituo.logic.auth
 
 import cats.Monad
 import cats.syntax.all.*

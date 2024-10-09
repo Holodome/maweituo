@@ -1,4 +1,4 @@
-package maweituo.ext
+package maweituo.infrastructure.ext
 
 import cats.MonadThrow
 import cats.syntax.all.*

@@ -1,4 +1,4 @@
-package maweituo.ext
+package maweituo.infrastructure.ext
 
 import java.util.concurrent.CompletableFuture
 

@@ -2,7 +2,7 @@ package maweituo.tests.auth
 
 import cats.effect.IO
 
-import maweituo.auth.PasswordHashing.{ genSalt, hashSaltPassword }
+import maweituo.logic.auth.PasswordHashing.{ genSalt, hashSaltPassword }
 import maweituo.tests.generators.passwordGen
 
 import weaver.SimpleIOSuite

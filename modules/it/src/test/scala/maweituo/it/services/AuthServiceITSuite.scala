@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.effect.kernel.Resource
 import cats.syntax.all.*
 
-import maweituo.auth.JwtTokens
+import maweituo.logic.auth.JwtTokens
 import maweituo.domain.services.IAMService
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.logic.interp.AuthServiceInterp

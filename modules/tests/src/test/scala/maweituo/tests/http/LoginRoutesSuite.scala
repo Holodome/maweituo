@@ -3,7 +3,7 @@ package maweituo.tests.http
 import cats.effect.IO
 import cats.syntax.all.*
 
-import maweituo.auth.JwtTokens
+import maweituo.logic.auth.JwtTokens
 import maweituo.domain.services.*
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.{AuthService, UserService}

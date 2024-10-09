@@ -1,4 +1,4 @@
-package maweituo.auth
+package maweituo.logic.auth
 
 import java.time.Clock
 
@@ -6,7 +6,7 @@ import cats.effect.Sync
 import cats.syntax.all.*
 
 import maweituo.config.*
-import maweituo.effects.JwtClock
+import maweituo.infrastructure.effects.JwtClock
 
 import pdi.jwt.JwtClaim
 

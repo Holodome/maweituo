@@ -1,4 +1,4 @@
-package maweituo.effects
+package maweituo.infrastructure.effects
 
 import cats.effect.Temporal
 import cats.effect.std.Supervisor

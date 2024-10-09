@@ -12,7 +12,7 @@ import maweituo.domain.errors.DomainError
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.domain.{Id, Identity}
-import maweituo.effects.GenUUID
+import maweituo.infrastructure.effects.GenUUID
 
 import org.typelevel.log4cats.Logger
 

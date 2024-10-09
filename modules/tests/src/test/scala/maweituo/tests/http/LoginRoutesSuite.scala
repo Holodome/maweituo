@@ -50,7 +50,7 @@ object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
   private def loginTest(name: String)(fn: (UserService[IO], AuthService[IO], Logger[IO]) => IO[Expectations]) =
     loggedTest(name) { logger =>
       val (users, auth) = makeTestUsersAuth(TestJwtTokens(testToken))
-      fn(users, auth, new WeaverLogAdapter[IO](logger))
+      fn(users, auth, WeaverLogAdapter(logger))
     }
 
   // FIXME: This does not work because we don't have error handling in routes

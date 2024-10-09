@@ -22,7 +22,7 @@ class S3Suite(global: GlobalRead) extends ResourceSuite:
 
   private def minioTest(name: String)(fn: ObjectStorage[IO] => F[Expectations]) =
     itTest(name) { (minio, log) =>
-      given Logger[IO] = new WeaverLogAdapter[IO](log)
+      given Logger[IO] = WeaverLogAdapter(log)
       MinioObjectStorage.make[IO](minio, "maweituo").flatMap(fn)
     }
 

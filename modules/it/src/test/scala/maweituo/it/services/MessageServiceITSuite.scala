@@ -42,7 +42,7 @@ class MessageServiceITSuite(global: GlobalRead) extends ResourceSuite with Messa
   properties.foreach {
     case Property(name, exp) =>
       itTest(name) { (postgres, log) =>
-        given Logger[IO] = new WeaverLogAdapter[IO](log)
+        given Logger[IO] = WeaverLogAdapter(log)
         exp.tupled(makeTestServices(postgres))
       }
   }

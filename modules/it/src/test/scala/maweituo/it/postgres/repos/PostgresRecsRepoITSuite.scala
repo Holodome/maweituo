@@ -19,6 +19,8 @@ import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
+import maweituo.postgres.repos.ads.PostgresAdTagRepo
+import maweituo.domain.ads.repos.AdTagRepo
 
 class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
@@ -31,27 +33,29 @@ class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
   override def sharedResource: Resource[IO, Res] =
     global.postgres
 
-  private def recsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], RecsRepo[IO]) => F[Expectations]) =
+  private def recsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO], RecsRepo[IO]) => F[Expectations]) =
     itTest(name) { (postgres, log) =>
       given Logger[IO] = WeaverLogAdapter(log)
       val users        = PostgresUserRepo.make(postgres)
       val ads          = PostgresAdRepo.make(postgres)
+      val tags         = PostgresAdTagRepo.make(postgres)
       val recs         = PostgresRecsRepo.make(postgres)
-      fn(users, ads, recs)
+      fn(users, ads, tags, recs)
     }
 
-  private val userAdGen =
-    for
-      u   <- userGen
-      ad0 <- adGen
-      ad = ad0.copy(authorId = u.id)
-    yield u -> ad
-
-  recsTest("learn and get closest") { (users, ads, recs) =>
-    forall(userAdGen) { (user, ad) =>
+  recsTest("learn and get closest") { (users, ads, tags, recs) =>
+    val gen =
+      for
+        u   <- userGen
+        ad0 <- adGen
+        ad = ad0.copy(authorId = u.id)
+        tag <- adTagGen
+      yield (u, ad, tag)
+    forall(gen) { (user, ad, tag) =>
       for
         _ <- users.create(user)
         _ <- ads.create(ad)
+        _ <- tags.addTagToAd(ad.id, tag)
         _ <- recs.learn
         x <- recs.getClosestAds(user.id, Pagination(1, 0))
       yield expect(x.items.length === 1)

@@ -57,6 +57,7 @@ object Validation:
 
   enum SearchValidation:
     case InvalidPage
+    case NoPage
     case InvalidPageSize
     case UnauthorizedForRecs
     case InvalidSearch
@@ -68,13 +69,13 @@ object Validation:
     page match
       case Some(value) if value < 1 => SearchValidation.InvalidPage.invalidNel
       case Some(value)              => value.valid
-      case None                     => 1.valid
+      case None                     => SearchValidation.NoPage.invalidNel
 
   private def validatePageSize(pageSize: Option[Int]): ValidationResult[Int] =
     pageSize match
       case Some(value) if value < 1 => SearchValidation.InvalidPageSize.invalidNel
       case Some(value)              => value.valid
-      case None                     => 10.valid
+      case None                     => Pagination.defaultPageSize.valid
 
   private def validatePagination(page: Option[Int], pageSize: Option[Int]): ValidationResult[Pagination] =
     (validatePage(page), validatePageSize(pageSize)).mapN(Pagination.apply)
@@ -101,7 +102,7 @@ object Validation:
   private def validateSortOrderUnauthorized(order: Option[String]): ValidationResult[AdSortOrder] =
     order match
       case Some(value) => validateSortOrderUnauthorizedStr(value)
-      case None        => AdSortOrder.UpdatedAtAsc.valid
+      case None        => AdSortOrder.default.valid
 
   private def validateSortOrderAuthorizedStr(order: String)(using id: Identity): ValidationResult[AdSortOrder] =
     order match
@@ -115,7 +116,7 @@ object Validation:
   private def validateSortOrderAuthorized(order: Option[String])(using Identity): ValidationResult[AdSortOrder] =
     order match
       case Some(value) => validateSortOrderAuthorizedStr(value)
-      case None        => AdSortOrder.UpdatedAtAsc.valid
+      case None        => AdSortOrder.default.valid
 
   private def validateTitle(title: Option[String]): ValidationResult[Option[String]] =
     title.valid

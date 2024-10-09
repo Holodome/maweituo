@@ -27,7 +27,7 @@ object PostgresAdSearchRepo:
         case AdSortOrder.Author       => fr"order by (select name from users where id = author_id) asc"
         case AdSortOrder.Recs(user) => fr"""
           order by (select aw.embedding <=> (select embedding from user_weights where us = $user::uuid)
-                    from ad_weights aw where aw.ad_id = id)
+                    from ad_weights aw where aw.ad = id)
         """
 
     private def doFind(base: Fragment, pag: Pagination, order: AdSortOrder): F[PaginatedCollection[AdId]] =
@@ -44,19 +44,17 @@ object PostgresAdSearchRepo:
       (filterTags, nameLike) match
         case (Some(t), Some(n)) =>
           fr"""
-      select distinct a.id 
-      from advertisements a
-      join tag_ads ta on ta.ad_id = a.id""" ++ Fragments.whereAnd(
-            Fragments.in(fr"tag", t),
-            fr"title ilike $n"
+      select a.id 
+      from advertisements a""" ++ Fragments.whereAnd(
+            Fragments.in(fr"(select tag from tag_ads where ad_id = id)", t),
+            fr"title ilike '%' || $n || '%'"
           )
         case (Some(t), None) =>
           fr"""
-      select distinct a.id 
+      select a.id 
       from advertisements a
-      join tag_ads ta on ta.ad_id = a.id 
-      where """ ++ Fragments.in(fr"tag", t)
-        case (None, Some(n)) => fr"select id from advertisements where title ilike $n"
+      where """ ++ Fragments.in(fr"(select tag from tag_ads where ad_id = id)", t)
+        case (None, Some(n)) => fr"select id from advertisements where title ilike '%' || $n || '%'"
         case (None, None)    => fr"select id from advertisements"
 
     def search(req: AdSearchRequest): F[PaginatedCollection[AdId]] =

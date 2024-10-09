@@ -45,11 +45,20 @@ enum AdSortOrder derives Show:
   case CreatedAtAsc, UpdatedAtAsc, Alphabetic, Author
   case Recs(user: UserId)
 
+object AdSortOrder:
+  def default: AdSortOrder = AdSortOrder.UpdatedAtAsc
+  def allBasic: List[AdSortOrder] = List(
+    AdSortOrder.CreatedAtAsc,
+    AdSortOrder.UpdatedAtAsc,
+    AdSortOrder.Alphabetic,
+    AdSortOrder.Author
+  )
+
 final case class AdSearchRequest(
     pag: Pagination,
-    order: AdSortOrder,
-    filterTags: Option[NonEmptyList[AdTag]],
-    nameLike: Option[String]
+    order: AdSortOrder = AdSortOrder.default,
+    filterTags: Option[NonEmptyList[AdTag]] = None,
+    nameLike: Option[String] = None
 )
 
 final case class PaginatedAdsResponse(

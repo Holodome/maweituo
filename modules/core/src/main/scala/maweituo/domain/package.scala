@@ -11,6 +11,9 @@ final case class Pagination(pageSize: Int, page: Int) derives Show:
   inline def limit      = pageSize
   inline def offset     = lower
 
+object Pagination:
+  val defaultPageSize: Int = 10
+
 final case class PaginatedCollection[+A](
     items: List[A],
     pag: Pagination,

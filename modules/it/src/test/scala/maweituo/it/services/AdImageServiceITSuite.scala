@@ -42,7 +42,7 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
   properties.foreach {
     case Property(name, fn) =>
       itTest(name) { (res, log) =>
-        given Logger[IO] = new WeaverLogAdapter[IO](log)
+        given Logger[IO] = WeaverLogAdapter(log)
         testServices.tupled(res).flatMap(fn.tupled)
       }
   }

@@ -8,7 +8,7 @@ import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.ImageId
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
-import maweituo.domain.errors.{AdModificationForbidden, ChatAccessForbidden, UserModificationForbidden}
+import maweituo.domain.errors.DomainError
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.UserId
 
@@ -24,7 +24,7 @@ object IAMServiceInterp:
         .flatMap {
           case chat if userHasAccessToChat(chat, userId) =>
             Applicative[F].unit
-          case _ => ChatAccessForbidden(chatId).raiseError[F, Unit]
+          case _ => DomainError.ChatAccessForbidden(chatId).raiseError[F, Unit]
         }
 
     def authAdModification(adId: AdId)(using userId: Identity): F[Unit] =
@@ -32,13 +32,13 @@ object IAMServiceInterp:
         .get(adId)
         .flatMap {
           case ad if ad.authorId === userId => Applicative[F].unit
-          case _                            => AdModificationForbidden(adId, userId).raiseError[F, Unit]
+          case _                            => DomainError.AdModificationForbidden(adId, userId).raiseError[F, Unit]
         }
 
     def authUserModification(target: UserId)(using userId: Identity): F[Unit] =
       (target === userId)
         .guard[Option]
-        .fold(UserModificationForbidden(userId).raiseError[F, Unit])(Applicative[F].pure)
+        .fold(DomainError.UserModificationForbidden(userId).raiseError[F, Unit])(Applicative[F].pure)
 
     private def userHasAccessToChat(chat: Chat, user: UserId): Boolean =
       user === chat.adAuthor || user === chat.client

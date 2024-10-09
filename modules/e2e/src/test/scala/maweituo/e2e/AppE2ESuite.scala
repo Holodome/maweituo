@@ -8,10 +8,13 @@ import maweituo.http.dto.{AddTagRequestDto, CreateAdRequestDto, LoginRequestDto,
 import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.*
 import maweituo.tests.utils.given
-
+import org.http4s.circe.CirceEntityCodec.given
 import dev.profunktor.auth.jwt.JwtToken
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
+import maweituo.http.dto.ErrorResponseDto
+import org.http4s.Request
+import org.http4s.Method
 
 class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
@@ -40,5 +43,20 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
         ad   <- client.getAd(adId)
         tags <- client.getAdTags(adId).map(_.tags)
       yield expect.same(ad.title, adTitle) and expect.same(List(tag), tags)
+    }
+  }
+
+  e2eTest("domain errors") { (client, log) =>
+    forall(registerGen) { reg =>
+      val r = RegisterRequestDto(reg.name, reg.email, reg.password)
+      for
+        _ <- client.register(r)
+        x <- client.client.fetchAs[ErrorResponseDto](
+          Request[IO](
+            method = Method.POST,
+            uri = client.makeUri("register")
+          ).withEntity(r)
+        )
+      yield expect.same(ErrorResponseDto(List(f"email ${reg.email} is already taken")), x)
     }
   }

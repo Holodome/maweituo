@@ -42,7 +42,7 @@ trait AuthServiceProperties:
         forall(gen) { case (name, password) =>
           for
             x <- auth.login(LoginRequest(name, password)).attempt
-          yield expect.same(Left(NoUserWithName(name)), x)
+          yield expect.same(Left(DomainError.NoUserWithName(name)), x)
         }
     ),
     Property(
@@ -85,7 +85,7 @@ trait AuthServiceProperties:
           for
             _ <- users.create(reg)
             x <- auth.login(LoginRequest(reg.name, pass)).attempt
-          yield expect.same(Left(InvalidPassword(reg.name)), x)
+          yield expect.same(Left(DomainError.InvalidPassword(reg.name)), x)
         }
     ),
     Property(

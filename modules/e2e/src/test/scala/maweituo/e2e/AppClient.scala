@@ -13,32 +13,35 @@ import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.client.*
 import org.http4s.headers.{Accept, Authorization}
 
-final class AppClient(base: String, client: Client[IO]):
-  private def onError(resp: Response[IO]) =
+final class AppClient(base: String, val client: Client[IO]):
+  def onError(resp: Response[IO]) =
     resp.body.compile.toList.map { body =>
       new RuntimeException(f"got unexpected response ${resp.toString} with body '${body.map(_.toChar).mkString}'")
     }
 
   def makeUri(subpath: String): Uri = Uri.unsafeFromString(f"$base/$subpath")
+  
+  def query[A](req: Request[IO])(using EntityDecoder[IO, A]): IO[A] = 
+    client.expectOr[A](req)(onError)
 
   def login(body: LoginRequestDto): IO[LoginResponseDto] =
-    client.expectOr[LoginResponseDto](
+    query[LoginResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("login")
       ).withEntity(body)
-    )(onError)
+    )
 
   def register(body: RegisterRequestDto): IO[Unit] =
-    client.expectOr[RegisterResponseDto](
+    query[RegisterResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("register")
       ).withEntity(body)
-    )(onError).void
+    ).void
 
   def createAd(body: CreateAdRequestDto)(using jwt: JwtToken): IO[CreateAdResponseDto] =
-    client.expectOr[CreateAdResponseDto](
+    query[CreateAdResponseDto](
       Request[IO](
         method = Method.POST,
         uri = makeUri("ads"),
@@ -47,7 +50,7 @@ final class AppClient(base: String, client: Client[IO]):
           Accept(MediaType.application.json)
         )
       ).withEntity(body)
-    )(onError)
+    )
 
   def addTag(ad: AdId, tag: AddTagRequestDto)(using jwt: JwtToken): IO[Unit] =
     client.successful(
@@ -64,8 +67,8 @@ final class AppClient(base: String, client: Client[IO]):
       case false => IO.raiseError(new RuntimeException("no success"))
     }
 
-  def getAd(ad: AdId): IO[AdDto] =
-    client.expectOr[AdDto](makeUri(f"ads/$ad"))(onError)
+  def getAd(ad: AdId): IO[AdResponseDto] =
+    client.expectOr[AdResponseDto](makeUri(f"ads/$ad"))(onError)
 
   def getAdTags(ad: AdId): IO[AdTagsResponseDto] =
     client.expectOr[AdTagsResponseDto](makeUri(f"ads/$ad/tag"))(onError)

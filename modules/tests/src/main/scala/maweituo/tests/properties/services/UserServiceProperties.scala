@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.all.*
 
 import maweituo.domain.Identity
-import maweituo.domain.errors.{InvalidUserId, UserEmailInUse, UserModificationForbidden, UserNameInUse}
+import maweituo.domain.errors.DomainError
 import maweituo.domain.users.UserId
 import maweituo.domain.users.services.UserService
 import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
@@ -44,7 +44,7 @@ trait UserServiceProperties:
           for
             _ <- users.create(r1)
             x <- users.create(r2).attempt
-          yield expect.same(Left(UserEmailInUse(r1.email)), x)
+          yield expect.same(Left(DomainError.UserEmailInUse(r1.email)), x)
         }
     ),
     Property(
@@ -59,7 +59,7 @@ trait UserServiceProperties:
           for
             _ <- users.create(r1)
             x <- users.create(r2).attempt
-          yield expect.same(Left(UserNameInUse(r1.name)), x)
+          yield expect.same(Left(DomainError.UserNameInUse(r1.name)), x)
         }
     ),
     Property(
@@ -100,7 +100,7 @@ trait UserServiceProperties:
             id    <- users.create(register)
             _     <- users.delete(id)(using Identity(id))
             found <- users.get(id).attempt
-          yield expect.same(Left(InvalidUserId(id)), found)
+          yield expect.same(Left(DomainError.InvalidUserId(id)), found)
         }
     ),
     Property(
@@ -119,7 +119,7 @@ trait UserServiceProperties:
             u       <- users.get(newId)
           yield NonEmptyList
             .of(
-              expect.same(Left(UserModificationForbidden(otherId)), x),
+              expect.same(Left(DomainError.UserModificationForbidden(otherId)), x),
               expect.same(newId, u.id),
               expect.same(register.name, u.name),
               expect.same(register.email, u.email)
@@ -167,7 +167,7 @@ trait UserServiceProperties:
             x     <- users.update(newUpd)(using Identity(id)).attempt
             got   <- users.get(newId)
           yield NonEmptyList.of(
-            expect.same(Left(UserModificationForbidden(id)), x),
+            expect.same(Left(DomainError.UserModificationForbidden(id)), x),
             expect.same(prior.hashedPassword, got.hashedPassword),
             expect.same(prior.name, got.name),
             expect.same(prior.email, got.email)

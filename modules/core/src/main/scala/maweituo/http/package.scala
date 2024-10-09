@@ -7,6 +7,8 @@ import maweituo.domain.users.AuthedUser
 
 import org.http4s.server.AuthMiddleware
 import org.http4s.{AuthedRoutes, HttpRoutes}
+import maweituo.http.errors.HttpDomainErrorHandler
+import org.typelevel.log4cats.Logger
 
 sealed trait Routes[F[_]]:
   def publicRoutesOpt: Option[HttpRoutes[F]]             = None
@@ -29,7 +31,7 @@ trait BothRoutes[F[_]] extends Routes[F]:
   def publicRoutes: HttpRoutes[F]
   def authRoutes: AuthedRoutes[AuthedUser, F]
 
-def buildRoutes[F[_]: Async](routes: List[Routes[F]], auth: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
+def buildRoutes[F[_]: Async: Logger](routes: List[Routes[F]], auth: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
   val publicRoutes = routes.map(_.publicRoutesOpt).flatten.reduce(_ <+> _)
   val authRoutes   = routes.map(x => x.authRoutesOpt.map(auth)).flatten.reduce(_ <+> _)
-  publicRoutes <+> authRoutes
+  HttpDomainErrorHandler(publicRoutes <+> authRoutes)

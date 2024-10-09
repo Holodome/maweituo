@@ -6,7 +6,7 @@ import cats.syntax.all.*
 
 import maweituo.auth.{JwtTokens, PasswordHashing}
 import maweituo.domain.Identity
-import maweituo.domain.errors.InvalidPassword
+import maweituo.domain.errors.DomainError
 import maweituo.domain.users.*
 import maweituo.domain.users.repos.UserRepo
 import maweituo.domain.users.services.AuthService
@@ -41,7 +41,7 @@ object AuthServiceInterp:
               .map(t => LoginResponse(user.id, t))
           else
             Logger[F].warn(s"Invalid login attempt for user $name") *>
-              InvalidPassword(name).raiseError[F, LoginResponse]
+              DomainError.InvalidPassword(name).raiseError[F, LoginResponse]
         }
         .onError { case e =>
           Logger[F].warn(e)(s"Attempt to login invalid used")

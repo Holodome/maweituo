@@ -5,7 +5,7 @@ import cats.data.OptionT
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
-import maweituo.domain.errors.InvalidImageId
+import maweituo.domain.errors.DomainError
 
 trait AdImageRepo[F[_]]:
   def create(image: Image): F[Unit]
@@ -16,4 +16,4 @@ trait AdImageRepo[F[_]]:
 object AdImageRepo:
   extension [F[_]: MonadThrow](repo: AdImageRepo[F])
     def get(imageId: ImageId): F[Image] =
-      repo.find(imageId).getOrRaise(InvalidImageId(imageId))
+      repo.find(imageId).getOrRaise(DomainError.InvalidImageId(imageId))

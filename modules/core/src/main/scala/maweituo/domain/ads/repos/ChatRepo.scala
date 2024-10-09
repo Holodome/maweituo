@@ -5,7 +5,7 @@ import cats.data.OptionT
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.*
-import maweituo.domain.errors.InvalidChatId
+import maweituo.domain.errors.DomainError
 import maweituo.domain.users.UserId
 
 trait ChatRepo[F[_]]:
@@ -16,4 +16,4 @@ trait ChatRepo[F[_]]:
 object ChatRepo:
   extension [F[_]: MonadThrow](repo: ChatRepo[F])
     def get(chatId: ChatId): F[Chat] =
-      repo.find(chatId).getOrRaise(InvalidChatId(chatId))
+      repo.find(chatId).getOrRaise(DomainError.InvalidChatId(chatId))

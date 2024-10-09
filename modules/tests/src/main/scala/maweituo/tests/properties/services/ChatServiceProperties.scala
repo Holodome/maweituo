@@ -35,7 +35,7 @@ trait ChatServiceProperties:
             user <- users.create(reg)
             given Identity = Identity(user)
             x <- chats.get(chat).attempt
-          yield expect.same(Left(InvalidChatId(chat)), x)
+          yield expect.same(Left(DomainError.InvalidChatId(chat)), x)
         }
     ),
     Property(
@@ -71,7 +71,7 @@ trait ChatServiceProperties:
             given Identity = Identity(u1)
             ad <- ads.create(createAd)
             x  <- chats.create(ad).attempt
-          yield expect.same(Left(CannotCreateChatWithMyself(ad, u1)), x)
+          yield expect.same(Left(DomainError.CannotCreateChatWithMyself(ad, u1)), x)
         }
     ),
     Property(
@@ -91,7 +91,7 @@ trait ChatServiceProperties:
             given Identity = Identity(u2)
             _ <- chats.create(ad)
             x <- chats.create(ad).attempt
-          yield expect.same(Left(ChatAlreadyExists(ad, u2)), x)
+          yield expect.same(Left(DomainError.ChatAlreadyExists(ad, u2)), x)
         }
     )
   )

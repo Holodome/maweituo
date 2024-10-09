@@ -6,7 +6,7 @@ import cats.syntax.all.*
 import maweituo.domain.ads.AdId
 import maweituo.domain.ads.images.*
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
-import maweituo.domain.errors.InternalImageUnsync
+import maweituo.domain.errors.DomainError
 import maweituo.domain.services.{AdImageService, IAMService}
 import maweituo.domain.{Id, Identity}
 import maweituo.effects.GenUUID
@@ -57,5 +57,5 @@ object AdImageServiceInterp:
         stream <- objectStorage
           .get(image.url)
           .map(ImageContentsStream(_, image.mediaType, image.size))
-          .getOrRaise(InternalImageUnsync("Image object not found"))
+          .getOrRaise(DomainError.InternalImageUnsync("Image object not found"))
       yield stream

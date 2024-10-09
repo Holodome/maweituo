@@ -52,7 +52,7 @@ trait AdServiceProperties:
         forall(adIdGen) { id =>
           for
             x <- ads.get(id).attempt
-          yield expect.same(Left(InvalidAdId(id)), x)
+          yield expect.same(Left(DomainError.InvalidAdId(id)), x)
         }
     ),
     Property(
@@ -66,7 +66,7 @@ trait AdServiceProperties:
             _    <- ads.get(adId)
             _    <- ads.delete(adId)
             x    <- ads.get(adId).attempt
-          yield expect.same(Left(InvalidAdId(adId)), x)
+          yield expect.same(Left(DomainError.InvalidAdId(adId)), x)
         }
     ),
     Property(
@@ -87,7 +87,7 @@ trait AdServiceProperties:
             _    <- ads.get(adId)
             x    <- ads.delete(adId)(using Identity(otherId)).attempt
             a    <- ads.get(adId)
-          yield expect.same(Left(AdModificationForbidden(adId, otherId)), x) and expect.same(a.title, createAd.title)
+          yield expect.same(Left(DomainError.AdModificationForbidden(adId, otherId)), x) and expect.same(a.title, createAd.title)
         }
     )
   )

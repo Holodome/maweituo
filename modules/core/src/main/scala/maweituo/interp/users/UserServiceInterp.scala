@@ -5,7 +5,7 @@ import cats.data.OptionT
 import cats.syntax.all.*
 
 import maweituo.auth.PasswordHashing
-import maweituo.domain.errors.{UserEmailInUse, UserNameInUse}
+import maweituo.domain.errors.DomainError
 import maweituo.domain.services.IAMService
 import maweituo.domain.users.*
 import maweituo.domain.users.UpdateUserRepoRequest.fromReq
@@ -51,11 +51,11 @@ object UserServiceInterp:
       for
         _ <- users
           .findByEmail(body.email)
-          .flatMap(_ => OptionT liftF UserEmailInUse(body.email).raiseError[F, Unit])
+          .flatMap(_ => OptionT liftF DomainError.UserEmailInUse(body.email).raiseError[F, Unit])
           .value
         _ <- users
           .findByName(body.name)
-          .flatMap(_ => OptionT liftF UserNameInUse(body.name).raiseError[F, Unit])
+          .flatMap(_ => OptionT liftF DomainError.UserNameInUse(body.name).raiseError[F, Unit])
           .value
         salt <- PasswordHashing.genSalt[F]
         id   <- Id.make[F, UserId]

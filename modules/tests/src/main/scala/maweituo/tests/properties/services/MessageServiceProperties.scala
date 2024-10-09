@@ -99,7 +99,7 @@ trait MessageServiceProperties:
             ad   <- ads.create(createAd)(using Identity(u1))
             chat <- chats.create(ad)(using Identity(u2))
             x    <- msgs.send(chat, msg)(using Identity(u3)).attempt
-          yield expect.same(Left(ChatAccessForbidden(chat)), x)
+          yield expect.same(Left(DomainError.ChatAccessForbidden(chat)), x)
         }
     ),
     Property(
@@ -122,7 +122,7 @@ trait MessageServiceProperties:
             chat <- chats.create(ad)(using Identity(u2))
             _    <- msgs.send(chat, msg)(using Identity(u2))
             x    <- msgs.history(chat)(using Identity(u3)).attempt
-          yield expect.same(Left(ChatAccessForbidden(chat)), x)
+          yield expect.same(Left(DomainError.ChatAccessForbidden(chat)), x)
         }
     )
   )

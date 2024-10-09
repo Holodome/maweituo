@@ -19,6 +19,12 @@ import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
+final case class ErrorResponseDto(errors: List[String]) derives Codec.AsObject
+
+object ErrorResponseDto:
+  def make(e: String): ErrorResponseDto      = ErrorResponseDto(List(e))
+  def make(e: Seq[String]): ErrorResponseDto = ErrorResponseDto(e.toList)
+
 final case class FeedResponseDto(
     items: List[AdId],
     pag: Pagination,
@@ -45,7 +51,7 @@ final case class RegisterRequestDto(
 ) derives Codec.AsObject:
   def toDomain: RegisterRequest = RegisterRequest(name, email, password)
 
-final case class RegisterResponseDto(user: UserId) derives Codec.AsObject
+final case class RegisterResponseDto(userId: UserId) derives Codec.AsObject
 
 final case class UpdateUserRequestDto(
     id: UserId,
@@ -65,9 +71,9 @@ object UserPublicInfoDto:
   def fromUser(user: User): UserPublicInfoDto =
     UserPublicInfoDto(user.id, user.name, user.email)
 
-final case class UserAdsResponseDto(ads: List[AdId]) derives Codec.AsObject
+final case class UserAdsResponseDto(userId: UserId, ads: List[AdId]) derives Codec.AsObject
 
-final case class AdTagsResponseDto(tags: List[AdTag]) derives Codec.AsObject
+final case class AdTagsResponseDto(adId: AdId, tags: List[AdTag]) derives Codec.AsObject
 
 final case class AddTagRequestDto(
     tag: AdTag
@@ -77,7 +83,7 @@ final case class DeleteTagRequestDto(
     tag: AdTag
 ) derives Codec.AsObject
 
-final case class AdDto(
+final case class AdResponseDto(
     id: AdId,
     authorId: UserId,
     title: AdTitle,
@@ -85,8 +91,8 @@ final case class AdDto(
 ) derives Codec.AsObject
 
 object AdResponseDto:
-  def fromDomain(ad: Advertisement): AdDto =
-    AdDto(ad.id, ad.authorId, ad.title, ad.resolved)
+  def fromDomain(ad: Advertisement): AdResponseDto =
+    AdResponseDto(ad.id, ad.authorId, ad.title, ad.resolved)
 
 final case class CreateAdRequestDto(
     title: AdTitle
@@ -100,8 +106,8 @@ final case class CreateAdResponseDto(
 final case class MarkAdResolvedRequestDto(withWhom: UserId) derives Codec.AsObject
 
 final case class MessageDto(
-    sender: UserId,
-    chat: ChatId,
+    senderId: UserId,
+    chatId: ChatId,
     text: MessageText,
     at: Instant
 ) derives Codec.AsObject, Show
@@ -110,11 +116,14 @@ object MessageDto:
   def fromDomain(domain: Message): MessageDto =
     MessageDto(domain.sender, domain.chat, domain.text, domain.at)
 
-final case class HistoryResponseDto(messages: List[MessageDto]) derives Codec.AsObject
+final case class HistoryResponseDto(
+    chatId: ChatId,
+    messages: List[MessageDto]
+) derives Codec.AsObject
 
 object HistoryResponseDto:
-  def fromDomain(resp: HistoryResponse): HistoryResponseDto =
-    HistoryResponseDto(resp.messages.map(MessageDto.fromDomain))
+  def fromDomain(chatId: ChatId, resp: HistoryResponse): HistoryResponseDto =
+    HistoryResponseDto(chatId, resp.messages.map(MessageDto.fromDomain))
 
 final case class SendMessageRequestDto(text: MessageText) derives Codec.AsObject:
   def toDomain: SendMessageRequest = SendMessageRequest(text)
@@ -123,7 +132,7 @@ final case class ChatDto(
     id: ChatId,
     adId: AdId,
     adAuthor: UserId,
-    client: UserId
+    clientId: UserId
 ) derives Codec.AsObject
 
 object ChatDto:

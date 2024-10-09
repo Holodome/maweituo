@@ -64,7 +64,7 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
     ResponseLogger.httpApp(logHeaders = true, logBody = true)(http)
   }
 
-  private def errorHandler(t: Throwable, msg: => String): OptionT[F, Unit] =
+  private def httpDomainErrorHandler(t: Throwable, msg: => String): OptionT[F, Unit] =
     OptionT.liftF(
       org.typelevel.log4cats.Logger[F].error(t)(msg)
     )
@@ -72,8 +72,8 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
   def withErrorLogging(routes: HttpRoutes[F]) = ErrorHandling.Recover.total(
     ErrorAction.log(
       routes,
-      messageFailureLogAction = errorHandler,
-      serviceErrorLogAction = errorHandler
+      messageFailureLogAction = httpDomainErrorHandler,
+      serviceErrorLogAction = httpDomainErrorHandler
     )
   )
 

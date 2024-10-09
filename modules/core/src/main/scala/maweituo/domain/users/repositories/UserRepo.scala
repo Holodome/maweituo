@@ -18,10 +18,10 @@ trait UserRepo[F[_]]:
 object UserRepo:
   extension [F[_]: MonadThrow](repo: UserRepo[F])
     def get(userId: UserId): F[User] =
-      repo.find(userId).getOrRaise(InvalidUserId(userId))
+      repo.find(userId).getOrRaise(DomainError.InvalidUserId(userId))
 
     def getByName(name: Username): F[User] =
-      repo.findByName(name).getOrRaise(NoUserWithName(name))
+      repo.findByName(name).getOrRaise(DomainError.NoUserWithName(name))
 
     def getByEmail(email: Email): F[User] =
-      repo.findByEmail(email).getOrRaise(NoUserWithEmail(email))
+      repo.findByEmail(email).getOrRaise(DomainError.NoUserWithEmail(email))

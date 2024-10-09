@@ -23,6 +23,6 @@ final case class UserAdRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     case GET -> Root / "users" / UserIdVar(userId) / "ads" =>
       userAdsService
         .getAds(userId)
-        .map(UserAdsResponseDto.apply)
+        .map(UserAdsResponseDto(userId, _))
         .flatMap(Ok(_))
   }

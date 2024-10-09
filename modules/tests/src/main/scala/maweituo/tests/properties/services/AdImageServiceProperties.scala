@@ -50,7 +50,7 @@ trait AdImageServiceProperties:
         forall(imageIdGen) { id =>
           for
             x <- images.get(id).attempt
-          yield expect.same(Left(InvalidImageId(id)), x)
+          yield expect.same(Left(DomainError.InvalidImageId(id)), x)
         }
     ),
     Property(
@@ -70,7 +70,7 @@ trait AdImageServiceProperties:
             i <- images.upload(a, imgCont)
             _ <- images.delete(i)
             x <- images.get(i).attempt
-          yield expect.same(Left(InvalidImageId(i)), x)
+          yield expect.same(Left(DomainError.InvalidImageId(i)), x)
         }
     ),
     Property(
@@ -91,7 +91,7 @@ trait AdImageServiceProperties:
             a <- ads.create(createAd)
             i <- images.upload(a, imgCont)
             x <- images.delete(i)(using Identity(u1)).attempt
-          yield expect.same(Left(AdModificationForbidden(a, u1)), x)
+          yield expect.same(Left(DomainError.AdModificationForbidden(a, u1)), x)
         }
     )
   )

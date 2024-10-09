@@ -8,7 +8,7 @@ import maweituo.domain.ads.AdId
 import maweituo.domain.ads.messages.{Chat, ChatId}
 import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
 import maweituo.domain.ads.services.ChatService
-import maweituo.domain.errors.{CannotCreateChatWithMyself, ChatAlreadyExists}
+import maweituo.domain.errors.DomainError
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.domain.users.UserId
 import maweituo.domain.{Id, Identity}
@@ -31,7 +31,7 @@ object ChatServiceInterp:
           .semiflatTap(_ =>
             Logger[F].warn(
               s"Chat for ad $adId with client $clientId already exists"
-            ) *> ChatAlreadyExists(adId, clientId).raiseError[F, Unit]
+            ) *> DomainError.ChatAlreadyExists(adId, clientId).raiseError[F, Unit]
           )
           .value
           .void
@@ -42,7 +42,7 @@ object ChatServiceInterp:
             case author if author === clientId =>
               Logger[F].warn(
                 s"User $author tried to creat chat with himself"
-              ) *> CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
+              ) *> DomainError.CannotCreateChatWithMyself(adId, author).raiseError[F, Unit]
             case _ => Applicative[F].unit
           }
         id <- Id.make[F, ChatId]

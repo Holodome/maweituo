@@ -22,7 +22,7 @@ final case class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F
     HttpRoutes.of[F] { case GET -> Root / "ads" / AdIdVar(adId) / "tag" =>
       tags
         .adTags(adId)
-        .map(AdTagsResponseDto.apply)
+        .map(AdTagsResponseDto(adId, _))
         .flatMap(Ok(_))
     }
 

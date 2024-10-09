@@ -25,7 +25,7 @@ final case class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](msgServi
       given Identity = Identity(user.id)
       msgService
         .history(chatId)
-        .map(HistoryResponseDto.fromDomain)
+        .map(HistoryResponseDto.fromDomain(chatId, _))
         .flatMap(Ok(_))
 
     case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>

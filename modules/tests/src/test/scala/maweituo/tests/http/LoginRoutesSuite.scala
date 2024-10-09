@@ -31,7 +31,7 @@ import org.typelevel.log4cats.noop.NoOpLogger
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, SimpleIOSuite}
 
-object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
+object LoginRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
 
   private val testToken = JwtToken("test")
 
@@ -53,23 +53,7 @@ object AuthRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
       fn(users, auth, WeaverLogAdapter(logger))
     }
 
-  // FIXME: This does not work because we don't have error handling in routes
-  // loginTest("/login on invalid user fails") { (users, auth, log) =>
-  //   given Logger[IO] = log
-  //   forall(loginRequestGen) { login =>
-  //     val req =
-  //       Request[IO](
-  //         method = Method.POST,
-  //         uri = uri"/login"
-  //       ).withEntity(login)
-  //     val routes = LoginRoutes[IO](auth).routes.collapse
-  //     for
-  //       r <- expectHttpStatusLogged(routes, req)(Status.Forbidden)
-  //     yield r
-  //   }
-  // }
-
-  loginTest("/register and login work as expected") { (users, auth, log) =>
+  loginTest("/register and /login work as expected") { (users, auth, log) =>
     given Logger[IO] = log
     forall(registerRequestGen) { reg =>
       val regReq =

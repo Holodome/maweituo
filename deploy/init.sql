@@ -81,7 +81,11 @@ create table if not exists user_weights (
   embedding vector(16) not null
 );
 
+create index user_weights_idx on user_weights(us);
+
 create table if not exists ad_weights (
   ad uuid /* references advertisements(id) */ not null, 
   embedding vector(16) not null
 );
+
+create index ad_weights_idx on ad_weights(ad);

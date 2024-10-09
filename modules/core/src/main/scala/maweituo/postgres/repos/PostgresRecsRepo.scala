@@ -18,24 +18,9 @@ import cats.NonEmptyParallel
 import cats.data.NonEmptyList
 import maweituo.domain.ads.AdTag
 import org.typelevel.log4cats.Logger
-import maweituo.domain.Pagination
-import maweituo.domain.PaginatedCollection
 
 object PostgresRecsRepo:
   def make[F[_]: Async: NonEmptyParallel: Logger](xa: Transactor[F]): RecsRepo[F] = new:
-
-    private def adCount: F[Int] =
-      sql"select count(*) from ad_weights".query[Int].unique.transact(xa)
-
-    def getClosestAds(user: UserId, pag: Pagination): F[PaginatedCollection[AdId]] =
-      val query = sql"""
-        select aw.ad from ad_weights aw
-        order by aw.embedding <=> (select embedding from user_weights where us = $user::uuid)
-        limit ${pag.limit} offset ${pag.offset}
-      """.query[AdId].to[List].transact(xa)
-      (query, adCount).parMapN { (ads, count) =>
-        PaginatedCollection(ads, pag, count)
-      }
 
     type Weights     = Vector[Float]
     type UserWeights = Map[UserId, Vector[Float]]

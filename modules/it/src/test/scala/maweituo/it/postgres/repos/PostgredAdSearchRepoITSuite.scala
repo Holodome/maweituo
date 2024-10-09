@@ -1,32 +1,26 @@
 package maweituo.it.postgres.repos
 
+import cats.data.NonEmptyList
 import cats.effect.*
 import cats.syntax.all.*
 
-import maweituo.domain.ads.repos.{AdRepo, AdTagRepo}
+import maweituo.domain.Pagination
+import maweituo.domain.ads.repos.{AdRepo, AdSearchRepo, AdTagRepo}
+import maweituo.domain.ads.{AdSearchRequest, AdSortOrder, AdTag}
+import maweituo.domain.repos.RecsRepo
 import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresAdTagRepo}
+import maweituo.postgres.repos.PostgresRecsRepo
+import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresAdSearchRepo, PostgresAdTagRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.ResourceSuite
 import maweituo.tests.generators.{adGen, adTagGen, userGen}
 import maweituo.tests.resources.*
 import maweituo.tests.utils.given
+import maweituo.tests.{ResourceSuite, WeaverLogAdapter}
 
 import doobie.util.transactor.Transactor
-import weaver.*
-import weaver.scalacheck.Checkers
-import maweituo.domain.ads.repos.AdSearchRepo
-import maweituo.postgres.repos.ads.PostgresAdSearchRepo
-import weaver.scalacheck.CheckConfig
-import maweituo.domain.Pagination
-import maweituo.domain.ads.AdSearchRequest
-import maweituo.domain.ads.AdSortOrder
-import cats.data.NonEmptyList
-import maweituo.domain.ads.AdTag
-import maweituo.postgres.repos.PostgresRecsRepo
-import maweituo.tests.WeaverLogAdapter
 import org.typelevel.log4cats.Logger
-import maweituo.domain.repos.RecsRepo
+import weaver.*
+import weaver.scalacheck.{CheckConfig, Checkers}
 
 class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
@@ -99,7 +93,7 @@ class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
       .map(_ => success)
   }
 
-  baseTest(name) { (users, ads, tags, recs, search) =>
+  baseTest("get recs") { (users, ads, tags, recs, search) =>
     forall(gen) { (user, ad, tag) =>
       for
         _ <- users.create(user)

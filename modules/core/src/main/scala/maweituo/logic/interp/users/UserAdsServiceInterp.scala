@@ -1,4 +1,4 @@
-package maweituo.interp.users
+package maweituo.logic.interp.users
 
 import cats.MonadThrow
 

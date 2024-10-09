@@ -1,4 +1,4 @@
-package maweituo.interp
+package maweituo.logic.interp
 
 import cats.syntax.all.*
 import cats.{Applicative, MonadThrow}

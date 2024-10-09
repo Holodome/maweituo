@@ -14,6 +14,7 @@ import org.http4s.*
 import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
+import cats.data.NonEmptyList
 
 object httpDomainErrorHandlerSuite extends SimpleIOSuite with Checkers with HttpSuite:
 
@@ -25,7 +26,7 @@ object httpDomainErrorHandlerSuite extends SimpleIOSuite with Checkers with Http
       )
     }
     expectHttpBodyAndStatus(HttpDomainErrorHandler(errorRoutes), Request())(
-      ErrorResponseDto(List("no user with name test found")),
+      ErrorResponseDto(NonEmptyList.one("no user with name test found")),
       Status.BadRequest
     )
   }

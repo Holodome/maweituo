@@ -2,9 +2,8 @@ package maweituo.tests.ads
 import cats.effect.IO
 
 import maweituo.domain.services.*
-import maweituo.interp.*
-import maweituo.interp.ads.AdServiceInterp
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.AdServiceInterp
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.AdServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*

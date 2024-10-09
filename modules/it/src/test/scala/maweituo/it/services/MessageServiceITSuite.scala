@@ -5,9 +5,8 @@ import cats.effect.IO
 import cats.effect.kernel.Resource
 
 import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.interp.*
-import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresChatRepo, PostgresMessageRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.MessageServiceProperties

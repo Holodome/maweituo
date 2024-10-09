@@ -3,9 +3,8 @@ import cats.effect.IO
 
 import maweituo.domain.services.*
 import maweituo.infrastructure.inmemory.InMemoryObjectStorage
-import maweituo.interp.*
-import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.{AdImageServiceInterp, AdServiceInterp}
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.AdImageServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*

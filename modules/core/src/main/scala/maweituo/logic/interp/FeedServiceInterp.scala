@@ -1,4 +1,4 @@
-package maweituo.interp
+package maweituo.logic.interp
 import cats.MonadThrow
 
 import maweituo.domain.PaginatedCollection

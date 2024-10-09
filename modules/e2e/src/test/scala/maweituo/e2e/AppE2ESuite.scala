@@ -14,6 +14,7 @@ import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.{Method, Request}
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
+import cats.data.NonEmptyList
 
 class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
@@ -56,6 +57,6 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
             uri = client.makeUri("register")
           ).withEntity(r)
         )
-      yield expect.same(ErrorResponseDto(List(f"email ${reg.email} is already taken")), x)
+      yield expect.same(ErrorResponseDto(NonEmptyList.one(f"email ${reg.email} is already taken")), x)
     }
   }

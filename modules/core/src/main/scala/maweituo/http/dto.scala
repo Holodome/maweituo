@@ -2,7 +2,7 @@ package maweituo.http.dto
 
 import java.time.Instant
 
-import cats.data.{EitherT, OptionT}
+import cats.data.{EitherT, NonEmptyList, OptionT}
 import cats.derived.derived
 import cats.effect.Concurrent
 import cats.syntax.all.*
@@ -19,11 +19,10 @@ import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
-final case class ErrorResponseDto(errors: List[String]) derives Codec.AsObject
+final case class ErrorResponseDto(errors: NonEmptyList[String]) derives Codec.AsObject
 
 object ErrorResponseDto:
-  def make(e: String): ErrorResponseDto      = ErrorResponseDto(List(e))
-  def make(e: Seq[String]): ErrorResponseDto = ErrorResponseDto(e.toList)
+  def make(e: String): ErrorResponseDto = ErrorResponseDto(NonEmptyList.of(e))
 
 final case class FeedResponseDto(
     items: List[AdId],

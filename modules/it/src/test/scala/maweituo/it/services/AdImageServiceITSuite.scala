@@ -6,8 +6,8 @@ import cats.syntax.all.*
 
 import maweituo.domain.services.{IAMService, TelemetryService}
 import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
-import maweituo.interp.ads.{AdImageServiceInterp, AdServiceInterp}
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.{AdImageServiceInterp, AdServiceInterp}
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.postgres.repos.ads.{PostgresAdImageRepo, PostgresAdRepo}
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AdImageServiceProperties

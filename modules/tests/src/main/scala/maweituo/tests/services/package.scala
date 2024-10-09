@@ -4,7 +4,7 @@ import cats.effect.IO
 
 import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
 import maweituo.domain.services.IAMService
-import maweituo.interp.IAMServiceInterp
+import maweituo.logic.interp.IAMServiceInterp
 import maweituo.tests.repos.*
 
 def makeIAMService: IAMService[IO] =

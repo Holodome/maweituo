@@ -3,9 +3,8 @@ package maweituo.tests.servicesimport
 import cats.effect.IO
 
 import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.interp.*
-import maweituo.interp.ads.AdServiceInterp
-import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
+import maweituo.logic.interp.ads.AdServiceInterp
+import maweituo.logic.interp.users.{UserAdsServiceInterp, UserServiceInterp}
 import maweituo.tests.properties.services.UserAdsServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory

@@ -10,6 +10,8 @@ import maweituo.domain.ads.*
 import maweituo.domain.ads.images.*
 import maweituo.domain.ads.messages.*
 import maweituo.domain.users.*
+import maweituo.logic.search.SearchValidationError
+import cats.data.NonEmptyList
 
 enum DomainError extends NoStackTrace derives Show:
 
@@ -34,3 +36,5 @@ enum DomainError extends NoStackTrace derives Show:
   case CannotCreateChatWithMyself(adId: AdId, user: UserId)
   case ChatAlreadyExists(adId: AdId, clientId: UserId)
   case AdModificationForbidden(adId: AdId, userId: UserId)
+
+  case InvalidSearchParams(errors: NonEmptyList[SearchValidationError])

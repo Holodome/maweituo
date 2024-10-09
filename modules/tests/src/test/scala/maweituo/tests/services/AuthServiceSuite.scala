@@ -7,8 +7,8 @@ import maweituo.domain.services.*
 import maweituo.domain.users.UserId
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
-import maweituo.interp.*
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.AuthServiceInterp
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.AuthServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory

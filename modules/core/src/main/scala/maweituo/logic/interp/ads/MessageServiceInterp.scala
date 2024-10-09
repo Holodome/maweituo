@@ -1,4 +1,4 @@
-package maweituo.interp.ads
+package maweituo.logic.interp.ads
 
 import cats.MonadThrow
 import cats.syntax.all.*

@@ -3,9 +3,8 @@ package maweituo.tests.services
 import cats.effect.IO
 
 import maweituo.domain.services.*
-import maweituo.interp.*
-import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp}
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.{AdServiceInterp, ChatServiceInterp}
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.ChatServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*

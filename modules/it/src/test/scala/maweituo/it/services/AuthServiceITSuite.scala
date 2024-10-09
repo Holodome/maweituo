@@ -9,8 +9,8 @@ import cats.syntax.all.*
 import maweituo.auth.JwtTokens
 import maweituo.domain.services.IAMService
 import maweituo.infrastructure.redis.RedisEphemeralDict
-import maweituo.interp.AuthServiceInterp
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.AuthServiceInterp
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.modules.Infrastructure
 import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.properties.services.AuthServiceProperties

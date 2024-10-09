@@ -3,9 +3,8 @@ import cats.MonadThrow
 import cats.effect.IO
 
 import maweituo.domain.services.*
-import maweituo.interp.*
-import maweituo.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.ads.{AdServiceInterp, ChatServiceInterp, MessageServiceInterp}
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.MessageServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory

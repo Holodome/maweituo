@@ -6,15 +6,15 @@ import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, Messa
 import maweituo.domain.services.*
 import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
 import maweituo.effects.{Background, GenUUID, TimeSource}
-import maweituo.interp.ads.{
+import maweituo.logic.interp.ads.{
   AdImageServiceInterp,
   AdServiceInterp,
   AdTagServiceInterp,
   ChatServiceInterp,
   MessageServiceInterp
 }
-import maweituo.interp.users.{UserAdsServiceInterp, UserServiceInterp}
-import maweituo.interp.{
+import maweituo.logic.interp.users.{UserAdsServiceInterp, UserServiceInterp}
+import maweituo.logic.interp.{
   AuthServiceInterp,
   FeedServiceInterp,
   IAMServiceInterp,

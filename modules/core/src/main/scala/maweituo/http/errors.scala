@@ -39,6 +39,7 @@ private final case class ErrorHandler[F[_]: Concurrent: Logger]() extends Http4s
         conflict(f"chat for ad $adId with user $clientId already exists")
       case DomainError.AdModificationForbidden(adId, userId) =>
         forbidden(f"ad $adId modification by user $userId forbidden")
+      case DomainError.InvalidSearchParams(errors) => BadRequest(ErrorResponseDto(errors.map(_.show)))
 
   def httpDomainErrorHandler(routes: HttpRoutes[F]): HttpRoutes[F] =
     Kleisli { (req: Request[F]) =>

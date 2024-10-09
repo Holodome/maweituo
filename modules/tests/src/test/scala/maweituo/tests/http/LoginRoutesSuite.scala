@@ -11,8 +11,8 @@ import maweituo.http.dto.{LoginRequestDto, LoginResponseDto, RegisterRequestDto}
 import maweituo.http.routes.{LoginRoutes, RegisterRoutes}
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
-import maweituo.interp.*
-import maweituo.interp.users.UserServiceInterp
+import maweituo.logic.interp.AuthServiceInterp
+import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.generators.registerRequestGen
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory

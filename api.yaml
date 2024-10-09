@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: maweituo
+  version: 1.0.0
+
+tags:
+  - name: auth
+    description: Authorization
+  - name: users
+    description: Actions with users
+  - name: ads
+    description: Actions with advertisements
+  - name: feed
+    description: Actions with feed
+
+paths:
+  /login:
+    post:
+      tags:
+        - auth
+      summary: Login
+      description: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        '200': 
+          description: OK 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        pageSize:
+          type: number
+        page:
+          type: number
+
+    FeedResponse:
+      type: object
+      properties:
+        items:
+          items:
+            type: string
+          type: array
+        pag:
+          $ref: "#/components/schemas/Pagination"
+        totalPages:
+          type: number
+        totalItems:
+          type: number
+
+    LoginRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        jwt:
+          type: string
+
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    RegisterResponse:
+      type: object
+      properties:
+        user:
+          type: string
+
+    UpdateUserRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    UserPublicInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+
+    UserAdsResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        ads:
+          items:
+            type: string
+          type: array
+
+    AdTagsResponse:
+      type: object
+      properties:
+        adId:
+          type: string
+        tags:
+          items:
+            type: string
+          type: array
+
+    AddTagRequest:
+      type: object
+      properties:
+        tag:
+          type: string
+
+    DeleteTagRequest:
+      type: object
+      properties:
+        tag:
+          type: string
+
+    AdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        authorId:
+          type: string
+        title:
+          type: string
+        resolved:
+          type: string
+
+    CreateAdRequest:
+      type: object
+      properties:
+        title:
+          type: string
+
+    CreateAdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+
+    MarkAdResolvedRequest:
+      type: object
+      properties:
+        withWhom:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        senderId:
+          type: string
+        chatId:
+          type: string
+        text:
+          type: string
+        at:
+          type: string
+
+    HistoryResponse:
+      type: object
+      properties:
+        chatId:
+          type: string
+        messages:
+          items:
+            $ref: "#/components/schemas/Message"
+          type: array
+
+    SendMessageRequest:
+      type: object
+      properties:
+        text:
+          type: string
+
+    Chat:
+      type: object
+      properties:
+        id:
+          type: string
+        adId:
+          type: string
+        adAuthor:
+          type: string
+        clientId:
+          type: string

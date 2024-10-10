@@ -41,7 +41,7 @@ final case class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F]
       given Identity = Identity(user.id)
       adService.delete(adId) *> NoContent()
 
-    case ar @ POST -> Root / "ads" / AdIdVar(adId) / "resolved" as user =>
+    case ar @ PUT -> Root / "ads" / AdIdVar(adId) / "resolved" as user =>
       given Identity = Identity(user.id)
       ar.req.decode[MarkAdResolvedRequestDto] { req =>
         adService.markAsResolved(adId, req.withWhom) *> NoContent()

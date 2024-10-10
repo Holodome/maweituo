@@ -166,3 +166,7 @@ object UploadImageRequestDto:
           }
       )
     }
+
+final case class AllTagsResponse(tags: List[AdTag]) derives Codec.AsObject
+
+final case class TagAdsResponse(tag: AdTag, adIds: List[AdId]) derives Codec.AsObject

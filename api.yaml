@@ -27,15 +27,329 @@ paths:
             schema:
               $ref: "#/components/schemas/LoginRequest"
       responses:
-        '200': 
-          description: OK 
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponse'
-        '400':
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
           description: Bad request
-        '500':
+        "403":
+          description: Wrong password
+        "500":
+          description: Internal server error
+
+  /register:
+    post:
+      tags:
+        - auth
+      summary: Register
+      description: Register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        "400":
+          description: Bad request
+        "409":
+          description: Name/email taken
+        "500":
+          description: Internal server error
+
+  /logout:
+    post:
+      tags:
+        - auth
+      summary: Logout
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: OK
+        "500":
+          description: Internal server error
+
+  /tags:
+    get:
+      tags:
+        - ads
+      summary: get all tags
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AllTagsResponse"
+        "500":
+          description: Internal server error
+
+  /tags/{tag}/ads:
+    get:
+      tags:
+        - ads
+      summary: get ads with tag
+      parameters:
+        - description: tag
+          in: path
+          name: tag
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TagAdsResponse"
+        "500":
+          description: Internal server error
+
+  /feed:
+    get:
+      tags:
+        - feed
+      summary: get public feed
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+        "400":
+          description: Bad request 
+        "500":
+          description: Internal server error
+          
+  /feed/{user}:
+    get:
+      tags:
+        - feed
+      summary: get user feed
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user 
+          description: user id
+          in: path 
+          required: true 
+          schema:
+            type: string 
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: order
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedResponse"
+        "400":
+          description: Bad request 
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal server error
+  
+  /users/{user}:
+    get:
+      tags: 
+        - users
+      summary: get user information
+      parameters:
+        - name: user 
+          description: user id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPublicInfo"
+        "500":
+          description: Internal server error      
+    delete:
+      tags: 
+        - users
+      summary: delete user 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user 
+          description: user id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK 
+        "500":
+          description: Internal server error      
+          
+    put:
+      tags: 
+        - users
+      summary: update user 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user 
+          description: user id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "204":
+          description: OK 
+        "500":
+          description: Internal server error      
+          
+  /users/{user}/ads:
+    get:
+      tags: 
+        - users
+      summary: get user ads
+      parameters:
+        - name: user 
+          description: user id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserAdsResponse"
+        "500":
+          description: Internal server error
+          
+  /ads:
+    post:
+      tags:
+        - ads 
+      summary: creat ad
+      parameters:
+        - name: ad 
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAdRequest"
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAdResponse"
+        "500":
+          description: Internal server error
+      
+        
+  /ads/{ad}:
+    get: 
+      tags:
+        - ads 
+      summary: get ad info 
+      parameters:
+        - name: ad 
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdResponse"
+        "500":
           description: Internal server error
 
 components:
@@ -216,4 +530,22 @@ components:
         adAuthor:
           type: string
         clientId:
+          type: string
+
+    AllTagsResponse:
+      type: object
+      properties:
+        tags:
+          items:
+            type: string
+          type: array
+
+    TagAdsResponse:
+      type: object
+      properties:
+        tag:
+          type: string
+        adIds:
+          items:
+            type: string
           type: string

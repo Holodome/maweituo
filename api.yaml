@@ -351,6 +351,261 @@ paths:
                 $ref: "#/components/schemas/AdResponse"
         "500":
           description: Internal server error
+    put: 
+      tags:
+        - ads 
+      summary: update ad info 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ad 
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdResponse"
+        "403": 
+          description: Forbidden
+        "500":
+          description: Internal server error
+    delete: 
+      tags:
+        - ads 
+      summary: delete ad
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: ad 
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+        "403": 
+          description: Forbidden
+        "500":
+          description: Internal server error
+          
+  /ads/{adId}/img:
+    post: 
+      tags:
+        - ads 
+      summary: upload image
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: OK
+        "500":
+          description: Internal server error
+          
+  /ads/{adId}/img/{imgId}:
+    get: 
+      tags:
+        - ads 
+      summary: get image
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: imgId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal server error
+    delete: 
+      tags:
+        - ads 
+      summary: delete image
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: imgId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+          
+  /ads/{adId}/tag:
+    get:
+      tags:
+        - ads 
+      summary: get tags
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdTagsResponse"
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+    post:
+      tags:
+        - ads 
+      summary: add tag 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTagRequest"
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+    
+    delete:
+      tags:
+        - ads 
+      summary: delete tag 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteTagRequest"
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+  
+  /ads/{adId}/msg/{chatId}: 
+    get:
+      tags:
+        - ads 
+      summary: get tags
+      parameters:
+        - name: chatId
+          description: chat id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HistoryResponse"
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+    post:
+      tags:
+        - ads 
+      summary: send message 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chatId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageRequest"
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+  
+        
 
 components:
   schemas:

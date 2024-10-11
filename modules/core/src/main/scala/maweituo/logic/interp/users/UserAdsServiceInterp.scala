@@ -1,11 +1,9 @@
-package maweituo.logic.interp.users
+package maweituo
+package logic
+package interp
+package users
 
-import cats.MonadThrow
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.repos.AdRepo
-import maweituo.domain.users.UserId
-import maweituo.domain.users.services.UserAdsService
+import maweituo.domain.all.*
 
 object UserAdsServiceInterp:
   def make[F[_]: MonadThrow](ads: AdRepo[F]): UserAdsService[F] = new:

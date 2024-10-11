@@ -1,11 +1,8 @@
-package maweituo.infrastructure.inmemory
+package maweituo
+package infrastructure
+package inmemory
 
 import scala.collection.concurrent.TrieMap
-
-import cats.data.OptionT
-import cats.effect.Sync
-
-import maweituo.infrastructure.EphemeralDict
 
 object InMemoryEphemeralDict:
   def make[F[_]: Sync, K, V]: EphemeralDict[F, K, V] = new:

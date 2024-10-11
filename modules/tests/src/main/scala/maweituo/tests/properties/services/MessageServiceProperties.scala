@@ -1,22 +1,14 @@
-package maweituo.tests.properties.services
+package maweituo
+package tests
+package properties
+package services
 
 import java.time.Instant
 
-import cats.data.NonEmptyList
-import cats.effect.IO
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.ads.services.*
-import maweituo.domain.users.UserId
-import maweituo.domain.users.services.UserService
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.TimeSource
-import maweituo.logic.errors.*
-import maweituo.tests.generators.*
-import maweituo.tests.utils.given
 
-import weaver.scalacheck.Checkers
-import weaver.{Expectations, MutableIOSuite}
+import weaver.MutableIOSuite
 
 trait MessageServiceProperties:
   this: MutableIOSuite & Checkers =>

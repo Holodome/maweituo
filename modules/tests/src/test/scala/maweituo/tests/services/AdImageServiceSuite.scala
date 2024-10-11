@@ -1,10 +1,8 @@
-package maweituo.tests.services
-import cats.effect.IO
+package maweituo
+package tests
+package services
 
-import maweituo.domain.services.*
 import maweituo.infrastructure.inmemory.InMemoryObjectStorage
-import maweituo.logic.interp.ads.{AdImageServiceInterp, AdServiceInterp}
-import maweituo.logic.interp.users.UserServiceInterp
 import maweituo.tests.properties.services.AdImageServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*

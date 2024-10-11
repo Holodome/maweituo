@@ -1,20 +1,12 @@
-package maweituo.tests.properties.services
+package maweituo
+package tests
+package properties
+package services
 
-import cats.effect.IO
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.users.services.{AuthService, UserService}
-import maweituo.domain.users.{AuthedUser, LoginRequest, UserId}
 import maweituo.logic.auth.JwtTokens
-import maweituo.logic.errors.*
-import maweituo.tests.generators.*
-import maweituo.tests.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
-import org.scalacheck.Gen
-import weaver.scalacheck.Checkers
-import weaver.{Expectations, MutableIOSuite}
+import weaver.MutableIOSuite
 
 trait AuthServiceProperties:
   this: MutableIOSuite & Checkers =>

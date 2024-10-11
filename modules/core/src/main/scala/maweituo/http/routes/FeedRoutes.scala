@@ -1,21 +1,17 @@
-package maweituo.http.routes
+package maweituo
+package http
+package routes
 
-import cats.syntax.all.*
-import cats.{MonadThrow, Parallel}
+import cats.Parallel
 
-import maweituo.domain.Identity
-import maweituo.domain.services.{AdSearchForm, FeedService, feedAuthorized, feedUnauthorized}
-import maweituo.domain.users.AuthedUser
-import maweituo.http.BothRoutes
-import maweituo.http.dto.FeedResponseDto
-import maweituo.http.vars.UserIdVar
+import maweituo.domain.all.*
 
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes, QueryParamDecoder}
 
-final case class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F])
+final class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F])
     extends Http4sDsl[F] with BothRoutes[F]:
 
   private object PageMatcher     extends OptionalQueryParamDecoderMatcher[Int]("page")

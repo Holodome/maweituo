@@ -1,18 +1,15 @@
-package maweituo.tests
+package maweituo
+package tests
 
 import java.nio.charset.StandardCharsets
-
-import cats.Applicative
-import cats.effect.IO
-import cats.syntax.all.*
 
 import io.circe.*
 import io.circe.syntax.*
 import org.http4s.*
 import org.http4s.circe.*
 import org.typelevel.log4cats.Logger
+import weaver.SourceLocation
 import weaver.scalacheck.Checkers
-import weaver.{Expectations, SimpleIOSuite, SourceLocation}
 
 trait HttpSuite extends SimpleIOSuite with Checkers:
 

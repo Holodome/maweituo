@@ -1,6 +1,7 @@
-package maweituo.infrastructure.effects
+package maweituo
+package infrastructure
+package effects
 
-import cats.effect.Sync
 import cats.effect.std.Random
 
 trait MkRandom[F[_]]:

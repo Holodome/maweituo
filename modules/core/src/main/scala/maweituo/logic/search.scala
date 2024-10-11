@@ -1,14 +1,12 @@
-package maweituo.logic.search
+package maweituo
+package logic
+package search
 
 import scala.util.control.NoStackTrace
 
-import cats.Show
-import cats.data.{NonEmptyList, Validated, ValidatedNel}
-import cats.derived.derived
-import cats.syntax.all.*
+import cats.data.{Validated, ValidatedNel}
 
-import maweituo.domain.ads.{AdSearchRequest, AdSortOrder, AdTag}
-import maweituo.domain.{Identity, Pagination}
+import maweituo.domain.all.*
 
 enum SearchValidationError extends NoStackTrace derives Show:
   case InvalidPage

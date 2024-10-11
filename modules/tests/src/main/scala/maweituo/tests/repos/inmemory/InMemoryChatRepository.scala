@@ -1,16 +1,11 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
 import scala.collection.concurrent.TrieMap
 
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all.*
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.messages.{Chat, ChatId}
-import maweituo.domain.ads.repos.ChatRepo
-import maweituo.domain.users.UserId
-import maweituo.domain.{ads, users}
+import maweituo.domain.all.*
 
 class InMemoryChatRepo[F[_]: Sync] extends ChatRepo[F]:
   private val map = new TrieMap[ChatId, Chat]

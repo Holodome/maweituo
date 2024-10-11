@@ -1,15 +1,9 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
-import cats.effect.IO
-import cats.syntax.all.*
-
-import maweituo.domain.users.UpdateUserRepoRequest
-import maweituo.tests.generators.{updateUserGen, userGen}
-import maweituo.tests.repos.*
-import maweituo.tests.utils.given
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
+import maweituo.domain.all.*
 
 object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
 

@@ -1,8 +1,9 @@
-package maweituo.utils
+package maweituo
+package utils
 
 import java.util.UUID
 
-import cats.{Eq, Order, Show}
+import cats.{Eq, Order}
 
 import io.circe.{Decoder, Encoder}
 import monocle.Iso

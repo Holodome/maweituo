@@ -1,19 +1,15 @@
-package maweituo.http.routes
+package maweituo
+package http
+package routes
 
-import cats.MonadThrow
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.users.AuthedUser
-import maweituo.domain.users.services.AuthService
-import maweituo.http.UserAuthRoutes
+import maweituo.domain.all.*
 
 import dev.profunktor.auth.AuthHeaders
 import org.http4s.AuthedRoutes
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthService[F])
+final class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthService[F])
     extends Http4sDsl[F] with UserAuthRoutes[F]:
 
   override val routes: AuthedRoutes[AuthedUser, F] =

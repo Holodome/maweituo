@@ -1,7 +1,6 @@
-package maweituo.infrastructure.ext
-
-import cats.MonadThrow
-import cats.syntax.all.*
+package maweituo
+package infrastructure
+package ext
 
 import org.typelevel.log4cats.Logger
 

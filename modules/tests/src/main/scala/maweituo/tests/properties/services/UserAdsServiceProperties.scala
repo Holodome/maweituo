@@ -1,16 +1,11 @@
-package maweituo.tests.properties.services
-import cats.effect.IO
-import cats.syntax.all.*
+package maweituo
+package tests
+package properties
+package services
 
-import maweituo.domain.Identity
-import maweituo.domain.ads.services.AdService
-import maweituo.domain.users.UserId
-import maweituo.domain.users.services.{UserAdsService, UserService}
-import maweituo.tests.generators.*
-import maweituo.tests.utils.given
+import maweituo.domain.all.*
 
-import weaver.scalacheck.Checkers
-import weaver.{Expectations, MutableIOSuite}
+import weaver.MutableIOSuite
 
 trait UserAdsServiceProperties:
   this: MutableIOSuite & Checkers =>

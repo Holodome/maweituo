@@ -1,20 +1,16 @@
-package maweituo.tests.http
+package maweituo
+package tests
+package http
 
-import cats.data.{Kleisli, OptionT}
-import cats.effect.IO
-import cats.syntax.all.*
+import cats.data.Kleisli
 
-import maweituo.logic.errors.DomainError
-import maweituo.domain.users.Username
-import maweituo.http.dto.ErrorResponseDto
-import maweituo.http.errors.HttpDomainErrorHandler
-import maweituo.tests.{HttpSuite, WeaverLogAdapter}
+import maweituo.domain.all.*
+import maweituo.http.*
 
 import org.http4s.*
 import org.typelevel.log4cats.Logger
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
-import cats.data.NonEmptyList
 
 object httpDomainErrorHandlerSuite extends SimpleIOSuite with Checkers with HttpSuite:
 

@@ -1,18 +1,14 @@
-package maweituo.postgres.repos
+package maweituo
+package postgres
+package repos
 
-import cats.effect.Async
-import cats.syntax.all.*
-
-import maweituo.domain.repos.TelemetryRepo
-import maweituo.domain.users.*
-import maweituo.postgres.sql.codecs.given
+import maweituo.domain.all.*
 
 import doobie.*
 import doobie.implicits.*
 export doobie.implicits.given
 import doobie.Transactor
 import doobie.postgres.implicits.given
-import maweituo.domain.ads.AdId
 import java.time.Instant
 
 object PostgresTelemetryRepo:

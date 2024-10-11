@@ -1,24 +1,18 @@
-package maweituo.tests.http
+package maweituo
+package tests
+package http
 
-import cats.effect.IO
-import cats.syntax.all.*
-
-import maweituo.logic.auth.JwtTokens
-import maweituo.domain.services.*
-import maweituo.domain.users.UserId
-import maweituo.domain.users.services.{AuthService, UserService}
-import maweituo.http.dto.{LoginRequestDto, LoginResponseDto, RegisterRequestDto}
-import maweituo.http.routes.{LoginRoutes, RegisterRoutes}
+import maweituo.domain.all.*
+import maweituo.http.dto.*
+import maweituo.http.routes.all.*
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
-import maweituo.logic.interp.AuthServiceInterp
-import maweituo.logic.interp.users.UserServiceInterp
+import maweituo.logic.auth.JwtTokens
+import maweituo.logic.interp.all.*
 import maweituo.tests.generators.registerRequestGen
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
-import maweituo.tests.utils.given
-import maweituo.tests.{HttpSuite, WeaverLogAdapter}
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.*

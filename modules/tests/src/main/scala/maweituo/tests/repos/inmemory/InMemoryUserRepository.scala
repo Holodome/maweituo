@@ -1,13 +1,9 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
 import scala.collection.concurrent.TrieMap
-
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all.*
-
-import maweituo.domain.users.*
-import maweituo.domain.users.repos.UserRepo
 
 class InMemoryUserRepo[F[_]: Sync] extends UserRepo[F]:
 

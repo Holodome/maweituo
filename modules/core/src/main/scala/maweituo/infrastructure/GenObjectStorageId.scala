@@ -1,7 +1,5 @@
-package maweituo.infrastructure
-
-import cats.Functor
-import cats.syntax.all.*
+package maweituo
+package infrastructure
 
 import maweituo.infrastructure.OBSId
 import maweituo.infrastructure.effects.GenUUID

@@ -1,12 +1,8 @@
-package maweituo.postgres.repos
+package maweituo
+package postgres
+package repos
 
-import cats.effect.kernel.Async
-import cats.syntax.all.*
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.repos.RecsRepo
-import maweituo.domain.users.*
-import maweituo.postgres.sql.codecs.given
+import maweituo.domain.all.*
 
 import doobie.*
 import doobie.implicits.*
@@ -15,8 +11,6 @@ import org.typelevel.log4cats.syntax.*
 export doobie.implicits.given
 import doobie.postgres.implicits.given
 import cats.NonEmptyParallel
-import cats.data.NonEmptyList
-import maweituo.domain.ads.AdTag
 import org.typelevel.log4cats.Logger
 
 object PostgresRecsRepo:

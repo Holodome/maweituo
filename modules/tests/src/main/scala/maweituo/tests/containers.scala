@@ -1,10 +1,8 @@
-package maweituo.tests.containers
+package maweituo
+package tests
+package containers
 
 import scala.io.Source
-
-import cats.Applicative
-import cats.effect.kernel.{Async, Resource, Sync}
-import cats.syntax.all.*
 
 import maweituo.infrastructure.minio.MinioConnection
 

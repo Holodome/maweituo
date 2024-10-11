@@ -1,7 +1,9 @@
-package maweituo.tests.misc
+package maweituo
+package tests
+package misc
 
-import maweituo.logic.errors.DomainError
-import maweituo.domain.users.Username
+import maweituo.domain.all.*
+import maweituo.logic.DomainError
 
 import io.circe.testing.ArbitraryInstances
 import weaver.*

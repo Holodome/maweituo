@@ -1,14 +1,15 @@
-package maweituo.http
-
-import cats.effect.Async
-import cats.syntax.all.*
+package maweituo
+package http
 
 import maweituo.domain.users.AuthedUser
-import maweituo.http.errors.HttpDomainErrorHandler
 
 import org.http4s.server.AuthMiddleware
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
+
+export maweituo.http.dto.{*, given}
+export maweituo.http.vars.*
+export maweituo.http.errors.*
 
 sealed trait Routes[F[_]]:
   def publicRoutesOpt: Option[HttpRoutes[F]]             = None

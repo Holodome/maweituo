@@ -1,18 +1,11 @@
-package maweituo.logic.interp.ads
+package maweituo
+package logic
+package interp
+package ads
 
-import cats.data.OptionT
-import cats.syntax.all.*
-import cats.{Applicative, MonadThrow}
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.messages.{Chat, ChatId}
-import maweituo.domain.ads.repos.{AdRepo, ChatRepo}
-import maweituo.domain.ads.services.ChatService
-import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.domain.users.UserId
-import maweituo.domain.{Id, Identity}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.GenUUID
-import maweituo.logic.errors.DomainError
+import maweituo.utils.Id
 
 import org.typelevel.log4cats.Logger
 

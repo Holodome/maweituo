@@ -1,16 +1,8 @@
-package maweituo.tests.repos
+package maweituo
+package tests
+package repos
 
 import java.time.Instant
-
-import cats.data.OptionT
-import cats.effect.IO
-
-import maweituo.domain.ads.images.{Image, ImageId}
-import maweituo.domain.ads.messages.{Chat, ChatId, Message}
-import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo, MessageRepo}
-import maweituo.domain.ads.{AdId, Advertisement}
-import maweituo.domain.users.repos.UserRepo
-import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))

@@ -1,10 +1,8 @@
-package maweituo.logic.interp
-import cats.MonadThrow
+package maweituo
+package logic
+package interp
 
-import maweituo.domain.PaginatedCollection
-import maweituo.domain.ads.repos.AdSearchRepo
-import maweituo.domain.ads.{AdId, AdSearchRequest}
-import maweituo.domain.services.{FeedService, IAMService}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.TimeSource
 
 import org.typelevel.log4cats.Logger

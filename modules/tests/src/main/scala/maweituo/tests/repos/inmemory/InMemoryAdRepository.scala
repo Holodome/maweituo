@@ -1,16 +1,11 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
 import java.time.Instant
 
 import scala.collection.concurrent.TrieMap
-
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all.*
-
-import maweituo.domain.ads.repos.AdRepo
-import maweituo.domain.ads.{AdId, Advertisement}
-import maweituo.domain.users.UserId
 
 class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
 

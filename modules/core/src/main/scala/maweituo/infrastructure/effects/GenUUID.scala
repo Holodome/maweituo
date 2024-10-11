@@ -1,9 +1,8 @@
-package maweituo.infrastructure.effects
+package maweituo
+package infrastructure
+package effects
 
 import java.util.UUID
-
-import cats.ApplicativeThrow
-import cats.effect.Sync
 
 trait GenUUID[F[_]]:
   def gen: F[UUID]

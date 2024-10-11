@@ -1,11 +1,9 @@
-package maweituo.config
+package maweituo
+package config
 
 import java.nio.file.Paths
 
 import scala.io.Source
-
-import cats.effect.Async
-import cats.syntax.all.*
 
 import maweituo.config.*
 import maweituo.config.given

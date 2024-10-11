@@ -1,14 +1,12 @@
-package maweituo.tests.services
+package maweituo
+package tests
+package services
 
-import cats.effect.IO
-
-import maweituo.logic.auth.JwtTokens
-import maweituo.domain.services.*
-import maweituo.domain.users.UserId
+import maweituo.domain.all.*
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.inmemory.InMemoryEphemeralDict
-import maweituo.logic.interp.AuthServiceInterp
-import maweituo.logic.interp.users.UserServiceInterp
+import maweituo.logic.auth.JwtTokens
+import maweituo.logic.interp.all.*
 import maweituo.tests.properties.services.AuthServiceProperties
 import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
@@ -16,8 +14,6 @@ import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
 
 object AuthServiceSuite extends SimpleIOSuite with Checkers with AuthServiceProperties:
 

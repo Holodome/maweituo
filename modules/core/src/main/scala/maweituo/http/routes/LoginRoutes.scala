@@ -1,18 +1,17 @@
-package maweituo.http.routes
+package maweituo
+package http
+package routes
 
 import cats.effect.Concurrent
-import cats.syntax.all.*
 
-import maweituo.domain.users.services.AuthService
-import maweituo.http.PublicRoutes
-import maweituo.http.dto.{LoginRequestDto, LoginResponseDto}
+import maweituo.domain.all.*
 
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 
-final case class LoginRoutes[F[_]: JsonDecoder: Concurrent](
+final class LoginRoutes[F[_]: JsonDecoder: Concurrent](
     authService: AuthService[F]
 ) extends Http4sDsl[F] with PublicRoutes[F]:
 

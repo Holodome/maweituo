@@ -1,11 +1,10 @@
-package maweituo.logic.auth
+package maweituo
+package logic
+package auth
 
 import java.security.MessageDigest
 
-import cats.Functor
-import cats.syntax.all.*
-
-import maweituo.domain.users.*
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.GenUUID
 
 object PasswordHashing:

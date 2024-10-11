@@ -1,9 +1,9 @@
-package maweituo.infrastructure.effects
+package maweituo
+package infrastructure
+package effects
 
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-
-import cats.effect.Sync
 
 trait TimeSource[F[_]]:
   def instant: F[Instant]

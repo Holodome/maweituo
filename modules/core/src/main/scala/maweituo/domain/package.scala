@@ -1,40 +1,51 @@
-package maweituo.domain
+package maweituo
+package domain
 
-import cats.Show
-import cats.derived.*
+export exports.*
 
-import maweituo.domain.users.UserId
+object all:
+  export exports.*
+  export users.*
+  export ads.*
+  export messages.*
+  export images.*
+  export repos.all.*
+  export services.all.*
+end all
 
-final case class Pagination(pageSize: Int, page: Int) derives Show:
-  inline def lower: Int = page * pageSize
-  inline def upper: Int = lower + pageSize
-  inline def limit      = pageSize
-  inline def offset     = lower
+object exports:
+  import maweituo.domain.users.UserId
 
-object Pagination:
-  val defaultPageSize: Int = 10
+  final case class Pagination(pageSize: Int, page: Int) derives Show:
+    inline def lower: Int = page * pageSize
+    inline def upper: Int = lower + pageSize
+    inline def limit      = pageSize
+    inline def offset     = lower
 
-final case class PaginatedCollection[+A](
-    items: List[A],
-    pag: Pagination,
-    totalPages: Int,
-    totalItems: Int
-) derives Show
+  object Pagination:
+    val defaultPageSize: Int = 10
 
-object PaginatedCollection:
-  def empty[A]: PaginatedCollection[A] =
-    PaginatedCollection(List(), Pagination(0, 0), 0, 0)
+  final case class PaginatedCollection[+A](
+      items: List[A],
+      pag: Pagination,
+      totalPages: Int,
+      totalItems: Int
+  ) derives Show
 
-  def apply[A](ids: List[A], pag: Pagination, totalCount: Int): PaginatedCollection[A] =
-    val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize
-    PaginatedCollection(
-      ids,
-      pag,
-      totalPages,
-      totalCount
-    )
+  object PaginatedCollection:
+    def empty[A]: PaginatedCollection[A] =
+      PaginatedCollection(List(), Pagination(0, 0), 0, 0)
 
-final case class Identity(id: UserId) derives Show
+    def apply[A](ids: List[A], pag: Pagination, totalCount: Int): PaginatedCollection[A] =
+      val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize
+      PaginatedCollection(
+        ids,
+        pag,
+        totalPages,
+        totalCount
+      )
 
-object Identity:
-  given Conversion[Identity, UserId] = x => x.id
+  final case class Identity(id: UserId) derives Show
+
+  object Identity:
+    given Conversion[Identity, UserId] = x => x.id

@@ -1,6 +1,6 @@
-package maweituo.tests.resources
-
-import cats.effect.{IO, Resource}
+package maweituo
+package tests
+package resources
 
 import maweituo.tests.containers.makeRedisResource
 

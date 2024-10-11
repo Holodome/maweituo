@@ -1,13 +1,9 @@
-package maweituo.logic.interp.ads
+package maweituo
+package logic
+package interp
+package ads
 
-import cats.Monad
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.ads.repos.AdTagRepo
-import maweituo.domain.ads.services.AdTagService
-import maweituo.domain.ads.{AdId, AdTag}
-import maweituo.domain.services.IAMService
+import maweituo.domain.all.*
 
 import org.typelevel.log4cats.Logger
 

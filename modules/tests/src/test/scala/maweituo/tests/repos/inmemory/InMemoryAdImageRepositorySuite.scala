@@ -1,13 +1,10 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
-import cats.effect.IO
-
-import maweituo.domain.ads.images.Image
-import maweituo.tests.generators.{adIdGen, imageGen as imageGen0}
-import maweituo.tests.repos.*
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
+import maweituo.domain.all.*
+import maweituo.tests.generators.imageGen as imageGen0
 
 object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
 

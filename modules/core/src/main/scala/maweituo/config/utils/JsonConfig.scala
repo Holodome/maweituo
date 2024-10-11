@@ -1,9 +1,8 @@
-package maweituo.config.utils
+package maweituo
+package config
+package utils
 
 import java.nio.file.{Files, Path}
-
-import cats.effect.Sync
-import cats.syntax.all.*
 
 import ciris.{ConfigError, ConfigKey, ConfigValue}
 import io.circe.{ACursor, Json}

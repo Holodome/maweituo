@@ -1,13 +1,9 @@
-package maweituo.postgres.repos.ads
+package maweituo
+package postgres
+package repos
+package ads
 
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.given
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.images.{Image, ImageId, ImageUrl, MediaType}
-import maweituo.domain.ads.repos.AdImageRepo
-import maweituo.postgres.sql.codecs.given
+import maweituo.domain.all.*
 
 import doobie.Transactor
 import doobie.implicits.given

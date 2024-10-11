@@ -1,14 +1,10 @@
-package maweituo.modules
+package maweituo
+package modules
 
 import cats.NonEmptyParallel
-import cats.effect.kernel.Async
 
-import maweituo.domain.ads.repos.*
-import maweituo.domain.repos.*
-import maweituo.domain.users.repos.UserRepo
-import maweituo.postgres.repos.*
-import maweituo.postgres.repos.ads.*
-import maweituo.postgres.repos.users.*
+import maweituo.domain.all.*
+import maweituo.postgres.repos.all.*
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.Logger

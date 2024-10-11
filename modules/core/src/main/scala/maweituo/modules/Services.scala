@@ -1,26 +1,9 @@
-package maweituo.modules
+package maweituo
+package modules
 
-import cats.MonadThrow
-
-import maweituo.domain.ads.services.{AdService, AdTagService, ChatService, MessageService}
-import maweituo.domain.services.*
-import maweituo.domain.users.services.{AuthService, UserAdsService, UserService}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{Background, GenUUID, TimeSource}
-import maweituo.logic.interp.ads.{
-  AdImageServiceInterp,
-  AdServiceInterp,
-  AdTagServiceInterp,
-  ChatServiceInterp,
-  MessageServiceInterp
-}
-import maweituo.logic.interp.users.{UserAdsServiceInterp, UserServiceInterp}
-import maweituo.logic.interp.{
-  AuthServiceInterp,
-  FeedServiceInterp,
-  IAMServiceInterp,
-  TelemetryServiceBackgroundInterp,
-  TelemetryServiceInterp
-}
+import maweituo.logic.interp.all.*
 
 import org.typelevel.log4cats.Logger
 

@@ -1,8 +1,7 @@
-package maweituo.tests
+package maweituo
+package tests
 
-import cats.effect.*
 import cats.effect.std.Env
-import cats.syntax.all.*
 
 import weaver.scalacheck.{CheckConfig, Checkers}
 import weaver.{Expectations, IOSuite, Log, TestName}

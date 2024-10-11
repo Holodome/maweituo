@@ -1,4 +1,6 @@
-package maweituo.domain.repos
+package maweituo
+package domain
+package repos
 
 import java.time.Instant
 

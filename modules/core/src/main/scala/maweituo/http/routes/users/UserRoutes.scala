@@ -1,14 +1,11 @@
-package maweituo.http.routes.users
+package maweituo
+package http
+package routes
+package users
 
 import cats.effect.Concurrent
-import cats.syntax.all.*
 
-import maweituo.domain.Identity
-import maweituo.domain.users.*
-import maweituo.domain.users.services.UserService
-import maweituo.http.BothRoutes
-import maweituo.http.dto.{UpdateUserRequestDto, UserPublicInfoDto}
-import maweituo.http.vars.UserIdVar
+import maweituo.domain.all.*
 
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
@@ -17,7 +14,7 @@ import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes}
 import org.typelevel.log4cats.Logger
 
-final case class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
+final class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
     userService: UserService[F]
 ) extends Http4sDsl[F] with BothRoutes[F]:
 

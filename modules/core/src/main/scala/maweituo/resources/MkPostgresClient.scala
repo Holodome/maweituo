@@ -1,6 +1,7 @@
-package maweituo.resources
+package maweituo
+package resources
 
-import cats.effect.{Async, Resource}
+import cats.effect.Resource
 
 import maweituo.config.PostgresConfig
 

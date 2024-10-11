@@ -1,6 +1,6 @@
-package maweituo.tests.resources
-
-import cats.effect.{IO, Resource}
+package maweituo
+package tests
+package resources
 
 import maweituo.infrastructure.minio.MinioConnection
 import maweituo.tests.containers.makeMinioResource

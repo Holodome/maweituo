@@ -1,14 +1,9 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
-import cats.effect.IO
-
-import maweituo.domain.ads.messages.Chat
-import maweituo.tests.generators.*
-import maweituo.tests.repos.*
-
-import org.scalacheck.Gen
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
+import maweituo.domain.all.*
 
 object InMemoryChatRepoSuite extends SimpleIOSuite with Checkers:
 

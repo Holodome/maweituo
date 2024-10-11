@@ -1,15 +1,11 @@
-package maweituo.postgres.repos.ads
+package maweituo
+package postgres
+package repos
+package ads
 
 import cats.NonEmptyParallel
-import cats.data.NonEmptyList
-import cats.effect.Async
-import cats.syntax.all.*
 
-import maweituo.domain.ads.repos.AdSearchRepo
-import maweituo.domain.ads.{AdId, AdSearchRequest, AdSortOrder, AdTag}
-import maweituo.domain.users.UserId
-import maweituo.domain.{PaginatedCollection, Pagination}
-import maweituo.postgres.sql.codecs.given
+import maweituo.domain.all.*
 
 import doobie.*
 import doobie.implicits.*

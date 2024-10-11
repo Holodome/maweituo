@@ -1,4 +1,6 @@
-package maweituo.domain.services
+package maweituo
+package domain
+package services
 
 import maweituo.domain.ads.AdId
 import maweituo.domain.users.UserId

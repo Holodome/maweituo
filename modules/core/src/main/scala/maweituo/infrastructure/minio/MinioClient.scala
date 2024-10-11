@@ -1,12 +1,10 @@
-package maweituo.infrastructure.minio
+package maweituo
+package infrastructure
+package minio
 
 import java.io.InputStream
 
 import scala.util.control.NonFatal
-
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.*
 
 import maweituo.infrastructure.ext.catsExt.liftCompletableFuture
 import maweituo.infrastructure.{OBSId, OBSUrl}

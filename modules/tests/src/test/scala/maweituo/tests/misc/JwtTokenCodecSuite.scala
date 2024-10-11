@@ -1,4 +1,6 @@
-package maweituo.tests.misc
+package maweituo
+package tests
+package misc
 
 import maweituo.utils.given
 

@@ -1,13 +1,9 @@
-package maweituo.logic.interp.ads
+package maweituo
+package logic
+package interp
+package ads
 
-import cats.MonadThrow
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.ads.messages.*
-import maweituo.domain.ads.repos.MessageRepo
-import maweituo.domain.ads.services.MessageService
-import maweituo.domain.services.IAMService
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.TimeSource
 
 object MessageServiceInterp:

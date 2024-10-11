@@ -1,10 +1,9 @@
-package maweituo.tests.services
+package maweituo
+package tests
+package services
 
-import cats.effect.IO
-
-import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
-import maweituo.domain.services.IAMService
-import maweituo.logic.interp.IAMServiceInterp
+import maweituo.domain.all.*
+import maweituo.logic.interp.all.*
 import maweituo.tests.repos.*
 
 def makeIAMService: IAMService[IO] =

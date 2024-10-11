@@ -1,14 +1,9 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
 import scala.collection.concurrent.TrieMap
-
-import cats.data.OptionT
-import cats.effect.Sync
-import cats.syntax.all.*
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.images.{Image, ImageId}
-import maweituo.domain.ads.repos.AdImageRepo
 
 class InMemoryAdImageRepo[F[_]: Sync] extends AdImageRepo[F]:
 

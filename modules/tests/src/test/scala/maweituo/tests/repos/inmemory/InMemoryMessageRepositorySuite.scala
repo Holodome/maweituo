@@ -1,13 +1,9 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
-import cats.effect.IO
-
-import maweituo.domain.ads.messages.Message
-import maweituo.tests.generators.*
-import maweituo.tests.repos.*
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
+import maweituo.domain.all.*
 
 object InMemoryMessageRepoSuite extends SimpleIOSuite with Checkers:
 

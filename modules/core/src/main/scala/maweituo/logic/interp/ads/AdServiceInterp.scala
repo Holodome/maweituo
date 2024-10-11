@@ -1,15 +1,11 @@
-package maweituo.logic.interp.ads
+package maweituo
+package logic
+package interp
+package ads
 
-import cats.MonadThrow
-import cats.syntax.all.*
-
-import maweituo.domain.ads.*
-import maweituo.domain.ads.repos.AdRepo
-import maweituo.domain.ads.services.AdService
-import maweituo.domain.services.{IAMService, TelemetryService}
-import maweituo.domain.users.UserId
-import maweituo.domain.{Id, Identity}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{GenUUID, TimeSource}
+import maweituo.utils.Id
 
 import org.typelevel.log4cats.Logger
 

@@ -1,18 +1,12 @@
-package maweituo.logic.interp.users
+package maweituo
+package logic
+package interp
+package users
 
-import cats.MonadThrow
-import cats.data.OptionT
-import cats.syntax.all.*
-
-import maweituo.domain.services.IAMService
-import maweituo.domain.users.*
-import maweituo.domain.users.UpdateUserRepoRequest.fromReq
-import maweituo.domain.users.repos.UserRepo
-import maweituo.domain.users.services.UserService
-import maweituo.domain.{Id, Identity}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{GenUUID, TimeSource}
 import maweituo.logic.auth.PasswordHashing
-import maweituo.logic.errors.DomainError
+import maweituo.utils.Id
 
 import org.typelevel.log4cats.Logger
 

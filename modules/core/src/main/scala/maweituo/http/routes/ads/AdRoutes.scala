@@ -1,22 +1,18 @@
-package maweituo.http.routes.ads
+package maweituo
+package http
+package routes
+package ads
 
 import cats.effect.Concurrent
-import cats.syntax.all.*
 
-import maweituo.domain.Identity
-import maweituo.domain.ads.*
-import maweituo.domain.ads.services.AdService
-import maweituo.domain.users.AuthedUser
-import maweituo.http.BothRoutes
-import maweituo.http.dto.{AdResponseDto, CreateAdRequestDto, CreateAdResponseDto, MarkAdResolvedRequestDto}
-import maweituo.http.vars.AdIdVar
+import maweituo.domain.all.*
 
 import org.http4s.circe.CirceEntityCodec.given
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{AuthedRoutes, HttpRoutes}
 
-final case class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F])
+final class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F])
     extends Http4sDsl[F] with BothRoutes[F]:
 
   override val publicRoutes: HttpRoutes[F] =

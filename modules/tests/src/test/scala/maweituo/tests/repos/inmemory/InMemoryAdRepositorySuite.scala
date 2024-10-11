@@ -1,15 +1,11 @@
-package maweituo.tests.repos.inmemory
+package maweituo
+package tests
+package repos
+package inmemory
 
 import java.time.Instant
 
-import cats.effect.IO
-
-import maweituo.tests.generators.*
-import maweituo.tests.repos.*
 import maweituo.utils.given
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
 
 object InMemoryAdRepoSuite extends SimpleIOSuite with Checkers:
 

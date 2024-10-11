@@ -1,11 +1,11 @@
-package maweituo.utils
+package maweituo
+package utils
 
 import java.time.Instant
 
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
-import cats.*
-import cats.syntax.all.*
+import cats.Eq
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Decoder, Encoder}

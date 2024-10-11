@@ -1,18 +1,11 @@
-package maweituo.tests.properties.services
+package maweituo
+package tests
+package properties
+package services
 
-import cats.data.NonEmptyList
-import cats.effect.IO
-import cats.syntax.all.*
+import maweituo.domain.all.*
 
-import maweituo.domain.Identity
-import maweituo.domain.users.UserId
-import maweituo.domain.users.services.UserService
-import maweituo.logic.errors.DomainError
-import maweituo.tests.generators.{registerGen, updateUserGen, userIdGen}
-import maweituo.tests.utils.given
-
-import weaver.scalacheck.Checkers
-import weaver.{Expectations, MutableIOSuite}
+import weaver.MutableIOSuite
 
 trait UserServiceProperties:
   this: MutableIOSuite & Checkers =>

@@ -1,16 +1,8 @@
-package maweituo.logic.interp
+package maweituo
+package logic
+package interp
 
-import cats.syntax.all.*
-import cats.{Applicative, MonadThrow}
-
-import maweituo.domain.Identity
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.images.ImageId
-import maweituo.domain.ads.messages.{Chat, ChatId}
-import maweituo.domain.ads.repos.{AdImageRepo, AdRepo, ChatRepo}
-import maweituo.domain.services.IAMService
-import maweituo.domain.users.UserId
-import maweituo.logic.errors.DomainError
+import maweituo.domain.all.*
 
 object IAMServiceInterp:
   def make[F[_]: MonadThrow](

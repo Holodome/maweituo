@@ -1,7 +1,6 @@
-package maweituo.logic.auth
-
-import cats.Monad
-import cats.syntax.all.*
+package maweituo
+package logic
+package auth
 
 import maweituo.config.*
 import maweituo.domain.users.UserId

@@ -1,17 +1,14 @@
-package maweituo.modules
-
-import cats.effect.Async
-import cats.syntax.all.*
-import cats.{Functor, Monad, MonadThrow}
+package maweituo
+package modules
 
 import maweituo.config.*
-import maweituo.domain.Id
 import maweituo.domain.users.UserId
 import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.infrastructure.redis.RedisEphemeralDict
 import maweituo.infrastructure.{EphemeralDict, ObjectStorage}
 import maweituo.logic.auth.{JwtExpire, JwtTokens}
+import maweituo.utils.Id
 
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands

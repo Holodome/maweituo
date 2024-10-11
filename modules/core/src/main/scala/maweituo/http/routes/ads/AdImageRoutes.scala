@@ -1,22 +1,17 @@
-package maweituo.http.routes.ads
+package maweituo
+package http
+package routes
+package ads
 
-import cats.Monad
 import cats.effect.Concurrent
-import cats.syntax.all.*
 
-import maweituo.domain.Identity
-import maweituo.domain.ads.images.*
-import maweituo.domain.services.AdImageService
-import maweituo.domain.users.*
-import maweituo.http.BothRoutes
-import maweituo.http.dto.UploadImageRequestDto
-import maweituo.http.vars.{AdIdVar, ImageIdVar}
+import maweituo.domain.all.*
 
 import org.http4s.dsl.Http4sDsl
 import org.http4s.headers.`Content-Type`
 import org.http4s.{AuthedRoutes, HttpRoutes, MediaType}
 
-final case class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[F])
+final class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[F])
     extends Http4sDsl[F] with BothRoutes[F]:
 
   override val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {

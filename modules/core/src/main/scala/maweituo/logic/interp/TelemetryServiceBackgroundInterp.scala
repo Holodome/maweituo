@@ -1,10 +1,8 @@
-package maweituo.logic.interp
+package maweituo
+package logic
+package interp
 
-import cats.Functor
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.services.TelemetryService
-import maweituo.domain.users.UserId
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.Background
 
 object TelemetryServiceBackgroundInterp:

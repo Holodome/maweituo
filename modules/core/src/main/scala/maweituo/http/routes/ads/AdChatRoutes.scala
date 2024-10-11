@@ -1,14 +1,9 @@
-package maweituo.http.routes.ads
+package maweituo
+package http
+package routes
+package ads
 
-import cats.Monad
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.ads.services.ChatService
-import maweituo.domain.users.AuthedUser
-import maweituo.http.UserAuthRoutes
-import maweituo.http.dto.ChatDto
-import maweituo.http.vars.{AdIdVar, ChatIdVar}
+import maweituo.domain.all.*
 
 import io.circe.Json
 import io.circe.syntax.EncoderOps
@@ -16,7 +11,7 @@ import org.http4s.AuthedRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.dsl.Http4sDsl
 
-final case class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
+final class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
     extends Http4sDsl[F] with UserAuthRoutes[F]:
 
   override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {

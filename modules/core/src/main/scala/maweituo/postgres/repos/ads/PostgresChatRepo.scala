@@ -1,17 +1,14 @@
-package maweituo.postgres.repos.ads
+package maweituo
+package postgres
+package repos
+package ads
 
-import cats.data.OptionT
-import cats.effect.Async
-import cats.syntax.all.given
+import maweituo.domain.all.*
 
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.messages.{Chat, ChatId}
-import maweituo.domain.ads.repos.ChatRepo
-import maweituo.domain.users.UserId
-import maweituo.postgres.sql.codecs.given
-
+import doobie.*
+import doobie.implicits.*
+export doobie.implicits.given
 import doobie.Transactor
-import doobie.implicits.given
 
 object PostgresChatRepo:
   def make[F[_]: Async](xa: Transactor[F]): ChatRepo[F] = new:

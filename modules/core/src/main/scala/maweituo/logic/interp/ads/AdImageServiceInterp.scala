@@ -1,16 +1,12 @@
-package maweituo.logic.interp.ads
+package maweituo
+package logic
+package interp
+package ads
 
-import cats.MonadThrow
-import cats.syntax.all.*
-
-import maweituo.domain.ads.AdId
-import maweituo.domain.ads.images.*
-import maweituo.domain.ads.repos.{AdImageRepo, AdRepo}
-import maweituo.domain.services.{AdImageService, IAMService}
-import maweituo.domain.{Id, Identity}
+import maweituo.domain.all.*
 import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.{GenObjectStorageId, ObjectStorage}
-import maweituo.logic.errors.DomainError
+import maweituo.utils.Id
 
 import org.typelevel.log4cats.Logger
 

@@ -1,12 +1,8 @@
-package maweituo.tests.auth
-
-import cats.effect.IO
+package maweituo
+package tests
+package auth
 
 import maweituo.logic.auth.PasswordHashing.{ genSalt, hashSaltPassword }
-import maweituo.tests.generators.passwordGen
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
 
 object PasswordHashingSuite extends SimpleIOSuite with Checkers:
 

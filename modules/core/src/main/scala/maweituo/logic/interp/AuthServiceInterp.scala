@@ -1,16 +1,10 @@
-package maweituo.logic.interp
+package maweituo
+package logic
+package interp
 
-import cats.MonadThrow
-import cats.data.OptionT
-import cats.syntax.all.*
-
-import maweituo.domain.Identity
-import maweituo.domain.users.*
-import maweituo.domain.users.repos.UserRepo
-import maweituo.domain.users.services.AuthService
+import maweituo.domain.all.*
 import maweituo.infrastructure.EphemeralDict
 import maweituo.logic.auth.{JwtTokens, PasswordHashing}
-import maweituo.logic.errors.DomainError
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.typelevel.log4cats.Logger

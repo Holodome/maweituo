@@ -1,11 +1,11 @@
-package maweituo.modules
+package maweituo
+package modules
 
-import cats.effect.{Async, Resource}
-import cats.syntax.all.*
+import cats.effect.Resource
 
 import maweituo.config.AppConfig
 import maweituo.infrastructure.minio.MinioConnection
-import maweituo.resources.{MkHttpClient, MkMinioClient, MkPostgresClient, MkRedisClient}
+import maweituo.resources.*
 
 import dev.profunktor.redis4cats.RedisCommands
 import doobie.Transactor

@@ -1,7 +1,7 @@
-package maweituo.resources
+package maweituo
+package resources
 
-import cats.Applicative
-import cats.effect.{Resource, Sync}
+import cats.effect.Resource
 
 import maweituo.config.MinioConfig
 import maweituo.infrastructure.minio.MinioConnection

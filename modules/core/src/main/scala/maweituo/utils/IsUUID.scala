@@ -1,4 +1,5 @@
-package maweituo.utils
+package maweituo
+package utils
 
 import java.util.UUID
 

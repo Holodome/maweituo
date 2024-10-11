@@ -1,19 +1,16 @@
-package maweituo.tests.ads
-import cats.effect.IO
+package maweituo
+package tests
+package ads
 
-import maweituo.domain.services.*
-import maweituo.logic.interp.ads.AdServiceInterp
-import maweituo.logic.interp.users.UserServiceInterp
+import maweituo.domain.all.*
+import maweituo.logic.interp.all.*
 import maweituo.tests.properties.services.AdServiceProperties
-import maweituo.tests.repos.*
 import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.noop.NoOpLogger
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
 
 object AdServiceSuite extends SimpleIOSuite with Checkers with AdServiceProperties:
 

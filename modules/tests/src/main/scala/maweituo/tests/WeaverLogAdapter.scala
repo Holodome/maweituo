@@ -1,4 +1,5 @@
-package maweituo.tests
+package maweituo
+package tests
 
 final case class WeaverLogAdapter[F[_]](log: weaver.Log[F]) extends org.typelevel.log4cats.Logger[F]:
 

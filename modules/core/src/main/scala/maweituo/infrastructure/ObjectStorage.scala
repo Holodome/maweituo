@@ -1,8 +1,7 @@
-package maweituo.infrastructure
+package maweituo
+package infrastructure
 
-import cats.data.OptionT
-
-import maweituo.domain.ads.images.ImageUrl
+import maweituo.domain.all.*
 import maweituo.utils.Newtype
 
 trait ObjectStorage[F[_]]:

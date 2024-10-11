@@ -1,12 +1,7 @@
-package maweituo.tests.repos.inmemory
-
-import cats.effect.IO
-
-import maweituo.tests.generators.*
-import maweituo.tests.repos.*
-
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
+package maweituo
+package tests
+package repos
+package inmemory
 
 object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
 

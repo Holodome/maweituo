@@ -27,7 +27,7 @@ final class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F])
     case ar @ POST -> Root / "ads" / AdIdVar(adId) / "tags" as user =>
       given Identity = Identity(user.id)
       ar.req.decode[AddTagRequestDto] { tag =>
-        tags.addTag(adId, tag.tag) *> NoContent()
+        tags.addTag(adId, tag.tag) *> Created()
       }
 
     case ar @ DELETE -> Root / "ads" / AdIdVar(adId) / "tags" as user =>

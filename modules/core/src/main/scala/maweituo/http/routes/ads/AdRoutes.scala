@@ -30,7 +30,7 @@ final class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F])
         adService
           .create(create.toDomain)
           .map(CreateAdResponseDto.apply)
-          .flatMap(Ok(_))
+          .flatMap(Created(_))
       }
 
     case DELETE -> Root / "ads" / AdIdVar(adId) as user =>

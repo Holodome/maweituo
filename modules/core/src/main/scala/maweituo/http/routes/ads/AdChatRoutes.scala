@@ -34,5 +34,5 @@ final class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
 
     case POST -> Root / "ads" / AdIdVar(adId) / "chats" as user =>
       given Identity = Identity(user.id)
-      chatService.create(adId) *> NoContent()
+      chatService.create(adId) *> Created()
   }

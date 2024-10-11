@@ -15,7 +15,7 @@ final class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[
     extends Http4sDsl[F] with BothRoutes[F]:
 
   override val publicRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
-    case GET -> Root / "ads" / AdIdVar(_) / "img" / ImageIdVar(imageId) =>
+    case GET -> Root / "ads" / AdIdVar(_) / "imgs" / ImageIdVar(imageId) =>
       imageService
         .get(imageId)
         .flatMap { img =>
@@ -29,13 +29,13 @@ final class AdImageRoutes[F[_]: Monad: Concurrent](imageService: AdImageService[
   }
 
   override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case ar @ POST -> Root / "ads" / AdIdVar(adIdVar) / "img" as user =>
+    case ar @ POST -> Root / "ads" / AdIdVar(adIdVar) / "imgs" as user =>
       given Identity = Identity(user.id)
       ar.req.as[UploadImageRequestDto[F]].flatMap { contents =>
-        imageService.upload(adIdVar, contents.toDomain) *> NoContent()
+        imageService.upload(adIdVar, contents.toDomain) *> Created()
       }
 
-    case DELETE -> Root / "ads" / AdIdVar(_) / "img" / ImageIdVar(img) as user =>
+    case DELETE -> Root / "ads" / AdIdVar(_) / "imgs" / ImageIdVar(img) as user =>
       given Identity = Identity(user.id)
       imageService.delete(img) *> NoContent()
 

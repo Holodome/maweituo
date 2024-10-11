@@ -28,6 +28,6 @@ final class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](msgService: M
       ar.req.decode[SendMessageRequestDto] { msg =>
         msgService
           .send(chatId, msg.toDomain)
-          .flatMap(Ok(_))
+          .flatMap(Created(_))
       }
   }

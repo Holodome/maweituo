@@ -605,6 +605,33 @@ paths:
         "500":
           description: Internal server error
   
+  /ads/{adId}/chat:
+    post:
+      tags:
+        - ads 
+      summary: create chat 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageRequest"
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
         
 
 components:

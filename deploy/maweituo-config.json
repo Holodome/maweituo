@@ -1,7 +1,7 @@
 {
   "http": {
     "port": "8080",
-    "host": "localhost"
+    "host": "core"
   },
   "jwt": {
     "expire": "1 hour"

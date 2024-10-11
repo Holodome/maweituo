@@ -15,7 +15,7 @@ final class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
     extends Http4sDsl[F] with UserAuthRoutes[F]:
 
   override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case GET -> Root / "ads" / AdIdVar(_) / "chat" / ChatIdVar(chatId) as user =>
+    case GET -> Root / "ads" / AdIdVar(_) / "chats" / ChatIdVar(chatId) as user =>
       given Identity = Identity(user.id)
       chatService
         .get(chatId)
@@ -32,7 +32,7 @@ final class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
           case None       => Ok(Json.obj(("errors", "chat not found".asJson)))
         }
 
-    case POST -> Root / "ads" / AdIdVar(adId) / "chat" as user =>
+    case POST -> Root / "ads" / AdIdVar(adId) / "chats" as user =>
       given Identity = Identity(user.id)
       chatService.create(adId) *> NoContent()
   }

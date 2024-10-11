@@ -15,25 +15,26 @@ import org.typelevel.log4cats.Logger
 
 object errors:
   private final case class ErrorHandler[F[_]: Concurrent: Logger]() extends Http4sDsl[F]:
-    private def forbidden(error: String)  = Forbidden(ErrorResponseDto.make(error))
-    private def conflict(error: String)   = Conflict(ErrorResponseDto.make(error))
-    private def badRequest(error: String) = BadRequest(ErrorResponseDto.make(error))
+    private def notFound(error: String)  = NotFound(ErrorResponseDto.make(error))
+    private def forbidden(error: String) = Forbidden(ErrorResponseDto.make(error))
+    private def conflict(error: String)  = Conflict(ErrorResponseDto.make(error))
+    // private def badRequest(error: String) = BadRequest(ErrorResponseDto.make(error))
 
     private def errorToResponse(error: DomainError): F[Response[F]] =
       error match
         case DomainError.UserModificationForbidden(violator) =>
           forbidden(s"user modification forbidden by user $violator")
-        case DomainError.InvalidUserId(userId)       => badRequest(s"invalid user id $userId")
-        case DomainError.NoUserWithName(username)    => badRequest(s"no user with name $username found")
-        case DomainError.NoUserWithEmail(email)      => badRequest(s"no user with email $email found")
+        case DomainError.InvalidUserId(userId)       => notFound(s"invalid user id $userId")
+        case DomainError.NoUserWithName(username)    => notFound(s"no user with name $username found")
+        case DomainError.NoUserWithEmail(email)      => notFound(s"no user with email $email found")
         case DomainError.UserNameInUse(username)     => conflict(s"name $username is aleady taken")
         case DomainError.UserEmailInUse(email)       => conflict(s"email $email is already taken")
         case DomainError.InvalidPassword(username)   => forbidden(s"invalid password for user $username")
-        case DomainError.InvalidChatId(chatId)       => badRequest(s"invalid chat id $chatId")
+        case DomainError.InvalidChatId(chatId)       => notFound(s"invalid chat id $chatId")
         case DomainError.ChatAccessForbidden(chatId) => forbidden(s"access to chat $chatId forbidden")
-        case DomainError.InvalidImageId(imageId)     => badRequest(s"invalid image id $imageId")
+        case DomainError.InvalidImageId(imageId)     => notFound(s"invalid image id $imageId")
         case DomainError.InternalImageUnsync(reason) => InternalServerError()
-        case DomainError.InvalidAdId(id)             => badRequest(s"invalid ad id $id")
+        case DomainError.InvalidAdId(id)             => notFound(s"invalid ad id $id")
         case DomainError.CannotCreateChatWithMyself(adId, user) =>
           conflict(s"can't create chat with yourself for user $user ad $adId")
         case DomainError.ChatAlreadyExists(adId, clientId) =>

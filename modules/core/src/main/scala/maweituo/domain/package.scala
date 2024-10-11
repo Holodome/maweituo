@@ -16,7 +16,7 @@ end all
 object exports:
   import maweituo.domain.users.UserId
 
-  final case class Pagination(pageSize: Int, page: Int) derives Show:
+  final case class Pagination(page: Int, pageSize: Int) derives Show:
     inline def lower: Int = page * pageSize
     inline def upper: Int = lower + pageSize
     inline def limit      = pageSize

@@ -7,9 +7,9 @@ import cats.Parallel
 
 import maweituo.domain.all.*
 import maweituo.http.*
+import maweituo.http.auth.JwtAuthMiddleware
 import maweituo.http.routes.all.*
 
-import dev.profunktor.auth.JwtAuthMiddleware
 import org.http4s.implicits.*
 import org.http4s.server.middleware.*
 import org.http4s.{HttpApp, HttpRoutes}

@@ -16,7 +16,7 @@ final class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F])
     extends Http4sDsl[F] with BothRoutes[F]:
 
   override val publicRoutes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case GET -> Root / "ads" / AdIdVar(adId) / "tag" =>
+    HttpRoutes.of[F] { case GET -> Root / "ads" / AdIdVar(adId) / "tags" =>
       tags
         .adTags(adId)
         .map(AdTagsResponseDto(adId, _))
@@ -24,13 +24,13 @@ final class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F])
     }
 
   override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case ar @ POST -> Root / "ads" / AdIdVar(adId) / "tag" as user =>
+    case ar @ POST -> Root / "ads" / AdIdVar(adId) / "tags" as user =>
       given Identity = Identity(user.id)
       ar.req.decode[AddTagRequestDto] { tag =>
         tags.addTag(adId, tag.tag) *> NoContent()
       }
 
-    case ar @ DELETE -> Root / "ads" / AdIdVar(adId) / "tag" as user =>
+    case ar @ DELETE -> Root / "ads" / AdIdVar(adId) / "tags" as user =>
       given Identity = Identity(user.id)
       ar.req.decode[DeleteTagRequestDto] { tag =>
         tags.removeTag(adId, tag.tag) *> NoContent()

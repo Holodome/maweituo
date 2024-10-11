@@ -56,7 +56,7 @@ final class AppClient(base: String, val client: Client[IO]):
     client.successful(
       Request[IO](
         method = Method.POST,
-        uri = makeUri(s"ads/$ad/tag"),
+        uri = makeUri(s"ads/$ad/tags"),
         headers = Headers(
           Authorization(Credentials.Token(AuthScheme.Bearer, jwt.value)),
           Accept(MediaType.application.json)
@@ -71,4 +71,4 @@ final class AppClient(base: String, val client: Client[IO]):
     client.expectOr[AdResponseDto](makeUri(s"ads/$ad"))(onError)
 
   def getAdTags(ad: AdId): IO[AdTagsResponseDto] =
-    client.expectOr[AdTagsResponseDto](makeUri(s"ads/$ad/tag"))(onError)
+    client.expectOr[AdTagsResponseDto](makeUri(s"ads/$ad/tags"))(onError)

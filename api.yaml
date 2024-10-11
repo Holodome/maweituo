@@ -364,6 +364,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAdRequest"
       responses:
         "204":
           description: OK
@@ -396,7 +402,7 @@ paths:
         "500":
           description: Internal server error
           
-  /ads/{adId}/img:
+  /ads/{adId}/imgs:
     post: 
       tags:
         - ads 
@@ -416,7 +422,7 @@ paths:
         "500":
           description: Internal server error
           
-  /ads/{adId}/img/{imgId}:
+  /ads/{adId}/imgs/{imgId}:
     get: 
       tags:
         - ads 
@@ -466,7 +472,7 @@ paths:
         "500":
           description: Internal server error
           
-  /ads/{adId}/tag:
+  /ads/{adId}/tags:
     get:
       tags:
         - ads 
@@ -547,7 +553,7 @@ paths:
     get:
       tags:
         - ads 
-      summary: get tags
+      summary: get chat history
       parameters:
         - name: chatId
           description: chat id
@@ -605,7 +611,40 @@ paths:
         "500":
           description: Internal server error
   
-  /ads/{adId}/chat:
+  
+  /ads/{adId}/chats/{chatId}:
+    post:
+      tags:
+        - ads 
+      summary: get chat 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: chatId
+          description: chat id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: adId
+          description: ad id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Chat"
+        "403":
+          description: Unauthorized
+        "500":
+          description: Internal server error
+  
+  /ads/{adId}/chats:
     post:
       tags:
         - ads 
@@ -700,6 +739,18 @@ components:
         email:
           type: string
         password:
+          type: string
+          
+    UpdateAdRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        resolved: 
+          type: boolean
+        title:  
           type: string
 
     UserPublicInfo:

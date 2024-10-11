@@ -15,7 +15,7 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
   override def maxParallelism: Int = 1
   override def checkConfig: CheckConfig =
-    CheckConfig.default.copy(minimumSuccessful = 1, maximumGeneratorSize = 1, perPropertyParallelism = 1)
+    CheckConfig.default.copy(minimumSuccessful = 1, perPropertyParallelism = 1)
 
   type Res = AppClient
 
@@ -53,5 +53,18 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
           ).withEntity(r)
         )
       yield expect.same(ErrorResponseDto(NonEmptyList.one(s"email ${reg.email} is already taken")), x)
+    }
+  }
+
+  e2eTest("unauthorized routes") { (client, log) =>
+    forall(adTitleGen) { (title) =>
+      for
+        x <- client.client.status(
+          Request[IO](
+            method = Method.POST,
+            uri = client.makeUri("ads")
+          ).withEntity(CreateAdRequestDto(title))
+        )
+      yield expect.same(org.http4s.Status.Unauthorized, x)
     }
   }

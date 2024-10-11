@@ -10,7 +10,6 @@ import maweituo.domain.all.*
 
 enum SearchValidationError extends NoStackTrace derives Show:
   case InvalidPage
-  case NoPage
   case InvalidPageSize
   case UnauthorizedForRecs
   case InvalidSearch
@@ -18,11 +17,8 @@ enum SearchValidationError extends NoStackTrace derives Show:
 
 type ValidationResult[A] = ValidatedNel[SearchValidationError, A]
 
-private def validatePage(page: Option[Int]): ValidationResult[Int] =
-  page match
-    case Some(value) if value < 1 => SearchValidationError.InvalidPage.invalidNel
-    case Some(value)              => value.valid
-    case None                     => SearchValidationError.NoPage.invalidNel
+private def validatePage(page: Int): ValidationResult[Int] =
+  if page < 1 then SearchValidationError.InvalidPage.invalidNel else page.valid
 
 private def validatePageSize(pageSize: Option[Int]): ValidationResult[Int] =
   pageSize match
@@ -30,7 +26,7 @@ private def validatePageSize(pageSize: Option[Int]): ValidationResult[Int] =
     case Some(value)              => value.valid
     case None                     => Pagination.defaultPageSize.valid
 
-private def validatePagination(page: Option[Int], pageSize: Option[Int]): ValidationResult[Pagination] =
+private def validatePagination(page: Int, pageSize: Option[Int]): ValidationResult[Pagination] =
   (validatePage(page), validatePageSize(pageSize)).mapN(Pagination.apply)
 
 private def validateFilterTagsStr(tags: String): ValidationResult[NonEmptyList[AdTag]] =
@@ -75,7 +71,7 @@ private def validateTitle(title: Option[String]): ValidationResult[Option[String
   title.valid
 
 def validateUnathorized(
-    page: Option[Int],
+    page: Int,
     pageSize: Option[Int],
     order: Option[String],
     tags: Option[String],
@@ -89,7 +85,7 @@ def validateUnathorized(
   ).mapN(AdSearchRequest.apply)
 
 def validateAuthorized(
-    page: Option[Int],
+    page: Int,
     pageSize: Option[Int],
     order: Option[String],
     tags: Option[String],

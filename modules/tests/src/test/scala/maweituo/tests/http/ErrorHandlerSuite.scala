@@ -23,6 +23,6 @@ object httpDomainErrorHandlerSuite extends SimpleIOSuite with Checkers with Http
     }
     expectHttpBodyAndStatus(HttpDomainErrorHandler(errorRoutes), Request())(
       ErrorResponseDto(NonEmptyList.one("no user with name test found")),
-      Status.BadRequest
+      Status.NotFound
     )
   }

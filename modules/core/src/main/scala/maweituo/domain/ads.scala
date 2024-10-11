@@ -67,7 +67,7 @@ object ads:
       PaginatedAdsResponse(PaginatedCollection.empty, AdSortOrder.CreatedAtAsc)
 
   final case class AdSearchForm(
-      page: Option[Int],
+      page: Int,
       pageSize: Option[Int],
       order: Option[String],
       tags: Option[String],

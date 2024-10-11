@@ -34,5 +34,5 @@ trait BothRoutes[F[_]] extends Routes[F]:
 
 def buildRoutes[F[_]: Async: Logger](routes: List[Routes[F]], auth: AuthMiddleware[F, AuthedUser]): HttpRoutes[F] =
   val publicRoutes = routes.map(_.publicRoutesOpt).flatten.reduce(_ <+> _)
-  val authRoutes   = routes.map(x => x.authRoutesOpt.map(auth)).flatten.reduce(_ <+> _)
-  HttpDomainErrorHandler(publicRoutes <+> authRoutes)
+  val authRoutes   = routes.map(x => x.authRoutesOpt).flatten.reduce(_ <+> _)
+  HttpDomainErrorHandler(publicRoutes <+> auth(authRoutes))

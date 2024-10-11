@@ -14,7 +14,7 @@ import org.http4s.{AuthedRoutes, HttpRoutes, QueryParamDecoder}
 final class FeedRoutes[F[_]: MonadThrow: JsonDecoder: Parallel](feed: FeedService[F])
     extends Http4sDsl[F] with BothRoutes[F]:
 
-  private object PageMatcher     extends OptionalQueryParamDecoderMatcher[Int]("page")
+  private object PageMatcher     extends QueryParamDecoderMatcher[Int]("page")
   private object PageSizeMatcher extends OptionalQueryParamDecoderMatcher[Int]("pageSize")
   private object OrderMatcher    extends OptionalQueryParamDecoderMatcher[String]("order")
   private object TitleMatcher    extends OptionalQueryParamDecoderMatcher[String]("string")

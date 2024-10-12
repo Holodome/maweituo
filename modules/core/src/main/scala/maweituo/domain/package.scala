@@ -16,7 +16,7 @@ end all
 object exports:
   import maweituo.domain.users.UserId
 
-  final case class Pagination(page: Int, pageSize: Int) derives Show:
+  final case class Pagination(page: Int, pageSize: Int = defaultPageSize) derives Show:
     inline def lower: Int = page * pageSize
     inline def upper: Int = lower + pageSize
     inline def limit      = pageSize
@@ -34,7 +34,7 @@ object exports:
 
   object PaginatedCollection:
     def empty[A]: PaginatedCollection[A] =
-      PaginatedCollection(List(), Pagination(0, 0), 0, 0)
+      PaginatedCollection(List(), Pagination(0), 0, 0)
 
     def apply[A](ids: List[A], pag: Pagination, totalCount: Int): PaginatedCollection[A] =
       val totalPages = (totalCount + pag.pageSize - 1) / pag.pageSize

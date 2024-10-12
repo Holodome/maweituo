@@ -4,15 +4,12 @@ import cats.effect.std.Supervisor
 import cats.effect.{IO, IOApp}
 
 import maweituo.config.Config
-import maweituo.domain.users.UserJwtAuth
 import maweituo.modules.*
 import maweituo.resources.MkHttpServer
 
-import dev.profunktor.auth.jwt.JwtAuth
 import dev.profunktor.redis4cats.log4cats.*
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
-import pdi.jwt.JwtAlgorithm
 
 object Main extends IOApp.Simple:
 
@@ -30,8 +27,7 @@ object Main extends IOApp.Simple:
               infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
               services = Services.make[IO](repositories, infrastructure)
               api = HttpApi.make[IO](
-                services,
-                UserJwtAuth(JwtAuth.hmac(cfg.jwt.accessSecret.value.value, JwtAlgorithm.HS256))
+                services
               )
             yield cfg.httpServer -> api.httpApp
           }

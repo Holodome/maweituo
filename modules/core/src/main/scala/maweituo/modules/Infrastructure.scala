@@ -39,9 +39,9 @@ object Infrastructure:
       new Infrastructure[F]:
         override val jwtTokens: JwtTokens[F] = tokens
         override val jwtDict: EphemeralDict[F, UserId, JwtToken] =
-          ephemeralDictToJwt(RedisEphemeralDict.make[F](redis, cfg.jwt.tokenExpiration.value))
+          ephemeralDictToJwt(RedisEphemeralDict.make[F](redis, cfg.jwt.tokenExpiration))
         override val usersDict: EphemeralDict[F, JwtToken, UserId] =
-          ephemeralDictToUsers(RedisEphemeralDict.make[F](redis, cfg.jwt.tokenExpiration.value))
+          ephemeralDictToUsers(RedisEphemeralDict.make[F](redis, cfg.jwt.tokenExpiration))
         override val adImageStorage: ObjectStorage[F] = images
     }
 

@@ -1,27 +1,29 @@
 package maweituo
 package http
 package routes
-
-import cats.effect.Concurrent
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class RegisterRoutes[F[_]: Concurrent: JsonDecoder](userService: UserService[F])
-    extends Http4sDsl[F] with PublicRoutes[F]:
+final class RegisterRoutes[F[_]: MonadThrow](userService: UserService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val routes: HttpRoutes[F] =
-    HttpRoutes.of {
-      case req @ POST -> Root / "register" =>
-        req.decode[RegisterRequestDto] { register =>
-          userService
-            .create(register.toDomain)
-            .map(RegisterResponseDto.apply)
-            .flatMap(Ok(_))
-        }
-    }
+  override val endpoints = List(
+    builder.public
+      .post
+      .in("register")
+      .in(jsonBody[RegisterRequestDto])
+      .out(jsonBody[RegisterResponseDto])
+      .serverLogic { register =>
+        userService
+          .create(register.toDomain)
+          .map(RegisterResponseDto.apply)
+          .toOut
+      }
+  )

@@ -3,37 +3,46 @@ package http
 package routes
 package ads
 
-import cats.effect.Concurrent
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class AdTagRoutes[F[_]: Concurrent: JsonDecoder](tags: AdTagService[F])
-    extends Http4sDsl[F] with BothRoutes[F]:
+final class AdTagRoutes[F[_]: MonadThrow](tags: AdTagService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val publicRoutes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case GET -> Root / "ads" / AdIdVar(adId) / "tags" =>
-      tags
-        .adTags(adId)
-        .map(AdTagsResponseDto(adId, _))
-        .flatMap(Ok(_))
-    }
-
-  override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case ar @ POST -> Root / "ads" / AdIdVar(adId) / "tags" as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[AddTagRequestDto] { tag =>
-        tags.addTag(adId, tag.tag) *> Created()
+  override val endpoints = List(
+    builder.public
+      .get
+      .in("ads" / path[AdId]("ad_id") / "tags")
+      .out(jsonBody[AdTagsResponseDto])
+      .serverLogic { adId =>
+        tags
+          .adTags(adId)
+          .map(AdTagsResponseDto(adId, _))
+          .toOut
+      },
+    builder.authed
+      .post
+      .in("ads" / path[AdId]("ad_id") / "tags")
+      .in(jsonBody[AddTagRequestDto])
+      .out(statusCode(StatusCode.Created))
+      .serverLogic { authed => (adId, req) =>
+        given Identity = Identity(authed.id)
+        tags.addTag(adId, req.tag).toOut
+      },
+    builder.authed
+      .delete
+      .in("ads" / path[AdId]("ad_id") / "tags")
+      .in(jsonBody[AddTagRequestDto])
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => (adId, req) =>
+        given Identity = Identity(authed.id)
+        tags.removeTag(adId, req.tag).toOut
       }
-
-    case ar @ DELETE -> Root / "ads" / AdIdVar(adId) / "tags" as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[DeleteTagRequestDto] { tag =>
-        tags.removeTag(adId, tag.tag) *> NoContent()
-      }
-  }
+  )

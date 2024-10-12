@@ -3,38 +3,48 @@ package http
 package routes
 package users
 
-import cats.effect.Concurrent
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
-import org.http4s.circe.CirceSensitiveDataEntityDecoder.circeEntityDecoder
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
-import org.http4s.{AuthedRoutes, HttpRoutes}
-import org.typelevel.log4cats.Logger
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
+import sttp.tapir.server.ServerEndpoint
 
-final class UserRoutes[F[_]: JsonDecoder: Logger: Concurrent](
-    userService: UserService[F]
-) extends Http4sDsl[F] with BothRoutes[F]:
+final class UserRoutes[F[_]: MonadThrow](
+    userService: UserService[F],
+    builder: RoutesBuilder[F]
+) extends Endpoints[F]:
 
-  override val publicRoutes = HttpRoutes.of {
-    case GET -> Root / "users" / UserIdVar(userId) =>
-      userService
-        .get(userId)
-        .map(UserPublicInfoDto.fromUser)
-        .flatMap(Ok(_))
-  }
-
-  override val authRoutes = AuthedRoutes.of {
-    case DELETE -> Root / "users" / UserIdVar(userId) as user =>
-      given Identity = Identity(user.id)
-      userService.delete(userId) *> NoContent()
-
-    case ar @ PUT -> Root / "users" / UserIdVar(userId) as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[UpdateUserRequestDto] { update =>
-        userService.update(update.toDomain) *> NoContent()
+  override val endpoints = List(
+    builder.public
+      .get
+      .in("users" / path[UserId]("user_id"))
+      .out(jsonBody[UserPublicInfoDto])
+      .serverLogic { userId =>
+        userService
+          .get(userId)
+          .map(UserPublicInfoDto.fromUser)
+          .toOut
+      },
+    builder.authed
+      .delete
+      .in("users" / path[UserId]("user_id"))
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => userId =>
+        given Identity = Identity(authed.id)
+        userService.delete(userId).toOut
+      },
+    builder.authed
+      .put
+      .in("users" / path[UserId]("user_id"))
+      .in(jsonBody[UpdateUserRequestDto])
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => (userId, req) =>
+        given Identity = Identity(authed.id)
+        userService.update(req.toDomain(userId)).toOut
       }
-  }
+  )

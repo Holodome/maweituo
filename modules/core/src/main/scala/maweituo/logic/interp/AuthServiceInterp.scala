@@ -51,7 +51,7 @@ object AuthServiceInterp:
     def authed(token: JwtToken): OptionT[F, AuthedUser] =
       authedUserDict
         .get(token)
-        .map(AuthedUser.apply)
+        .map(AuthedUser(_, token))
         .onError { case e =>
           OptionT.liftF(Logger[F].warn(e)("Invalid authentication attempt"))
         }

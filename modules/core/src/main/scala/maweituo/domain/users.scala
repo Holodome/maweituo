@@ -53,7 +53,7 @@ object users:
       updatedAt: Instant
   )
 
-  final case class AuthedUser(id: UserId)
+  final case class AuthedUser(id: UserId, jwt: JwtToken)
   final case class UserJwtAuth(value: JwtSymmetricAuth)
 
   final case class UpdateUserRequest(

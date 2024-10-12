@@ -9,6 +9,7 @@ import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{MonadThrow, Show}
 
+import maweituo.domain.all.*
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
@@ -16,7 +17,6 @@ import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
 object dto:
-  import maweituo.domain.all.*
 
   final case class ErrorResponseDto(errors: NonEmptyList[String]) derives Codec.AsObject
 
@@ -25,17 +25,24 @@ object dto:
 
   final case class FeedResponseDto(
       items: List[AdId],
-      pag: Pagination,
+      page: Int,
+      pageSize: Int,
       totalPages: Int,
       totalItems: Int
   ) derives Codec.AsObject
 
   object FeedResponseDto:
     def fromDomain(domain: PaginatedCollection[AdId]): FeedResponseDto =
-      FeedResponseDto(domain.items, domain.pag, domain.totalPages, domain.totalItems)
+      FeedResponseDto(domain.items, domain.pag.page, domain.pag.pageSize, domain.totalPages, domain.totalItems)
 
     def fromDomain(domain: PaginatedAdsResponse): FeedResponseDto =
-      FeedResponseDto(domain.col.items, domain.col.pag, domain.col.totalPages, domain.col.totalItems)
+      FeedResponseDto(
+        domain.col.items,
+        domain.col.pag.page,
+        domain.col.pag.pageSize,
+        domain.col.totalPages,
+        domain.col.totalItems
+      )
 
   final case class LoginRequestDto(name: Username, password: Password) derives Codec.AsObject:
     def toDomain: LoginRequest = LoginRequest(name, password)
@@ -52,12 +59,11 @@ object dto:
   final case class RegisterResponseDto(userId: UserId) derives Codec.AsObject
 
   final case class UpdateUserRequestDto(
-      id: UserId,
       name: Option[Username],
       email: Option[Email],
       password: Option[Password]
   ) derives Codec.AsObject:
-    def toDomain: UpdateUserRequest = UpdateUserRequest(id, name, email, password)
+    def toDomain(userId: UserId): UpdateUserRequest = UpdateUserRequest(userId, name, email, password)
 
   final case class UserPublicInfoDto(
       id: UserId,

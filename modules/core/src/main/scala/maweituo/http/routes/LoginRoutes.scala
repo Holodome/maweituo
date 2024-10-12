@@ -2,27 +2,29 @@ package maweituo
 package http
 package routes
 
-import cats.effect.Concurrent
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.HttpRoutes
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class LoginRoutes[F[_]: JsonDecoder: Concurrent](
-    authService: AuthService[F]
-) extends Http4sDsl[F] with PublicRoutes[F]:
+final class LoginRoutes[F[_]: MonadThrow](authService: AuthService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override def routes: HttpRoutes[F] =
-    HttpRoutes.of[F] {
-      case req @ POST -> Root / "login" =>
-        req.decode[LoginRequestDto] { login =>
-          authService
-            .login(login.toDomain)
-            .map { x => LoginResponseDto(x.jwt) }
-            .flatMap(Ok(_))
-        }
-    }
+  override val endpoints = List(
+    builder.public
+      .post
+      .in("login")
+      .in(jsonBody[LoginRequestDto])
+      .out(jsonBody[LoginResponseDto])
+      .serverLogic { login =>
+        authService
+          .login(login.toDomain)
+          .map { x => LoginResponseDto(x.jwt) }
+          .toOut
+      }
+  )

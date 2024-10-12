@@ -44,6 +44,7 @@ val IronVersion            = "2.6.0"
 val KittensVersion         = "3.3.0"
 val H2Version              = "2.3.230"
 val TestcontainersVersion  = "0.41.4"
+val SttpVersion            = "1.11.7"
 
 lazy val root = (project in file("."))
   .settings(
@@ -62,31 +63,35 @@ lazy val core = (project in file("modules/core"))
     dockerExposedPorts ++= Seq(8080),
     dockerBaseImage := "openjdk:11-jre-slim-buster",
     libraryDependencies ++= Seq(
-      "com.h2database"      % "h2"                  % H2Version,
-      "ch.qos.logback"      % "logback-classic"     % LogbackVersion,
-      "org.typelevel"      %% "cats-core"           % CatsVersion,
-      "org.typelevel"      %% "cats-effect"         % CatsEffectVersion,
-      "org.typelevel"      %% "log4cats-slf4j"      % Log4CatsVersion,
-      "dev.optics"         %% "monocle-core"        % MonocleVersion,
-      "dev.optics"         %% "monocle-macro"       % MonocleVersion,
-      "is.cir"             %% "ciris"               % CirisVersion,
-      "is.cir"             %% "ciris-http4s"        % CirisVersion,
-      "io.circe"           %% "circe-parser"        % CirceVersion,
-      "dev.profunktor"     %% "http4s-jwt-auth"     % Http4sJwtAuthVersion,
-      "org.http4s"         %% "http4s-ember-server" % Http4sVersion,
-      "org.http4s"         %% "http4s-ember-client" % Http4sVersion,
-      "org.http4s"         %% "http4s-circe"        % Http4sVersion,
-      "org.http4s"         %% "http4s-dsl"          % Http4sVersion,
-      "com.zaxxer"          % "HikariCP"            % HikariCPVersion,
-      "org.lz4"             % "lz4-java"            % LZ4Version,
-      "org.tpolecat"       %% "doobie-core"         % DoobieVersion,
-      "org.tpolecat"       %% "doobie-hikari"       % DoobieVersion,
-      "org.tpolecat"       %% "doobie-postgres"     % DoobieVersion,
-      "dev.profunktor"     %% "redis4cats-effects"  % Redis4CatsVersion,
-      "dev.profunktor"     %% "redis4cats-log4cats" % Redis4CatsVersion,
-      "io.minio"            % "minio"               % MinioVersion,
-      "io.github.iltotore" %% "iron"                % IronVersion,
-      "org.typelevel"      %% "kittens"             % KittensVersion
+      "com.h2database"               % "h2"                      % H2Version,
+      "ch.qos.logback"               % "logback-classic"         % LogbackVersion,
+      "org.typelevel"               %% "cats-core"               % CatsVersion,
+      "org.typelevel"               %% "cats-effect"             % CatsEffectVersion,
+      "org.typelevel"               %% "log4cats-slf4j"          % Log4CatsVersion,
+      "dev.optics"                  %% "monocle-core"            % MonocleVersion,
+      "dev.optics"                  %% "monocle-macro"           % MonocleVersion,
+      "is.cir"                      %% "ciris"                   % CirisVersion,
+      "is.cir"                      %% "ciris-http4s"            % CirisVersion,
+      "io.circe"                    %% "circe-parser"            % CirceVersion,
+      "dev.profunktor"              %% "http4s-jwt-auth"         % Http4sJwtAuthVersion,
+      "org.http4s"                  %% "http4s-ember-server"     % Http4sVersion,
+      "org.http4s"                  %% "http4s-ember-client"     % Http4sVersion,
+      "org.http4s"                  %% "http4s-circe"            % Http4sVersion,
+      "org.http4s"                  %% "http4s-dsl"              % Http4sVersion,
+      "com.zaxxer"                   % "HikariCP"                % HikariCPVersion,
+      "org.lz4"                      % "lz4-java"                % LZ4Version,
+      "org.tpolecat"                %% "doobie-core"             % DoobieVersion,
+      "org.tpolecat"                %% "doobie-hikari"           % DoobieVersion,
+      "org.tpolecat"                %% "doobie-postgres"         % DoobieVersion,
+      "dev.profunktor"              %% "redis4cats-effects"      % Redis4CatsVersion,
+      "dev.profunktor"              %% "redis4cats-log4cats"     % Redis4CatsVersion,
+      "io.minio"                     % "minio"                   % MinioVersion,
+      "io.github.iltotore"          %% "iron"                    % IronVersion,
+      "org.typelevel"               %% "kittens"                 % KittensVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-cats"              % SttpVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-json-circe"        % SttpVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-server"     % SttpVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % SttpVersion
     )
   )
 

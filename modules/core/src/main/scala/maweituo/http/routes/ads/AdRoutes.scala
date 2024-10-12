@@ -3,44 +3,51 @@ package http
 package routes
 package ads
 
-import cats.effect.Concurrent
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class AdRoutes[F[_]: Concurrent: JsonDecoder](adService: AdService[F])
-    extends Http4sDsl[F] with BothRoutes[F]:
+final class AdRoutes[F[_]: MonadThrow](adService: AdService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val publicRoutes: HttpRoutes[F] =
-    HttpRoutes.of[F] { case GET -> Root / "ads" / AdIdVar(adId) =>
-      adService
-        .get(adId)
-        .map(AdResponseDto.fromDomain)
-        .flatMap(Ok(_))
-    }
-
-  override val authRoutes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case ar @ POST -> Root / "ads" as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[CreateAdRequestDto] { create =>
+  override val endpoints = List(
+    builder.public
+      .get
+      .in("ads" / path[AdId]("ad_id"))
+      .out(jsonBody[AdResponseDto])
+      .serverLogic { adId =>
+        adService
+          .get(adId)
+          .map(AdResponseDto.fromDomain)
+          .toOut
+      },
+    builder.authed
+      .post
+      .in("ads")
+      .in(jsonBody[CreateAdRequestDto])
+      .out(jsonBody[CreateAdResponseDto])
+      .out(statusCode(StatusCode.Created))
+      .serverLogic { authed => create =>
+        given Identity = Identity(authed.id)
         adService
           .create(create.toDomain)
           .map(CreateAdResponseDto.apply)
-          .flatMap(Created(_))
+          .toOut
+      },
+    builder.authed
+      .delete
+      .in("ads" / path[AdId]("ad_id"))
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => adId =>
+        given Identity = Identity(authed.id)
+        adService
+          .delete(adId)
+          .toOut
       }
-
-    case DELETE -> Root / "ads" / AdIdVar(adId) as user =>
-      given Identity = Identity(user.id)
-      adService.delete(adId) *> NoContent()
-
-    case ar @ PUT -> Root / "ads" / AdIdVar(adId) / "resolved" as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[MarkAdResolvedRequestDto] { req =>
-        adService.markAsResolved(adId, req.withWhom) *> NoContent()
-      }
-  }
+  )

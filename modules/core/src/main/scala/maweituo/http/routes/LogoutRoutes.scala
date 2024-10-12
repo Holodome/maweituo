@@ -3,21 +3,21 @@ package http
 package routes
 
 import cats.MonadThrow
-import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import dev.profunktor.auth.AuthHeaders
-import org.http4s.AuthedRoutes
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
+import sttp.model.StatusCode
+import sttp.tapir.*
 
-final class LogoutRoutes[F[_]: JsonDecoder: MonadThrow](authService: AuthService[F])
-    extends Http4sDsl[F] with UserAuthRoutes[F]:
+final class LogoutRoutes[F[_]: MonadThrow](authService: AuthService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val routes: AuthedRoutes[AuthedUser, F] =
-    AuthedRoutes.of {
-      case ar @ POST -> Root / "logout" as user =>
-        given Identity = Identity(user.id)
-        AuthHeaders.getBearerToken(ar.req).traverse_(authService.logout(_)) *> NoContent()
-    }
+  override val endpoints = List(
+    builder.authed
+      .post
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => _ =>
+        given Identity = Identity(authed.id)
+        authService.logout(authed.jwt).toOut
+      }
+  )

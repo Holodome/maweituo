@@ -7,6 +7,7 @@ import cats.{Eq, Order, Show}
 
 import io.circe.{Decoder, Encoder}
 import monocle.Iso
+import sttp.tapir.Schema
 
 // this can be used for simple newtypes without pre-defined typeclass derivations
 abstract class Newt[A]:
@@ -21,7 +22,8 @@ abstract class Newtype[A](using
     ord: Order[A],
     shw: Show[A],
     enc: Encoder[A],
-    dec: Decoder[A]
+    dec: Decoder[A],
+    schema: Schema[A]
 ):
   opaque type Type = A
 
@@ -41,12 +43,13 @@ abstract class Newtype[A](using
   given Encoder[Type]  = enc
   given Decoder[Type]  = dec
   given Ordering[Type] = ord.toOrdering
+  given Schema[Type]   = schema
 
 abstract class IdNewtype extends Newtype[UUID]:
   given IsUUID[Type]                = derive[IsUUID]
   def unsafeFrom(str: String): Type = apply(UUID.fromString(str))
 
-abstract class NumNewtype[A: Decoder: Encoder: Eq: Order: Show](using
+abstract class NumNewtype[A: Decoder: Encoder: Eq: Order: Show: Schema](using
     num: Numeric[A]
 ) extends Newtype[A]:
 

@@ -4,32 +4,41 @@ package routes
 package ads
 
 import cats.MonadThrow
-import cats.effect.Concurrent
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.AuthedRoutes
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.circe.JsonDecoder
-import org.http4s.dsl.Http4sDsl
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class AdMsgRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](msgService: MessageService[F])
-    extends Http4sDsl[F] with UserAuthRoutes[F]:
+final class AdMsgRoutes[F[_]: MonadThrow](
+    msgService: MessageService[F],
+    builder: RoutesBuilder[F]
+) extends Endpoints[F]:
 
-  override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case GET -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
-      given Identity = Identity(user.id)
-      msgService
-        .history(chatId)
-        .map(HistoryResponseDto.fromDomain(chatId, _))
-        .flatMap(Ok(_))
-
-    case ar @ POST -> Root / AdIdVar(_) / "msg" / ChatIdVar(chatId) as user =>
-      given Identity = Identity(user.id)
-      ar.req.decode[SendMessageRequestDto] { msg =>
+  override val endpoints = List(
+    builder.authed
+      .get
+      .in("ads" / path[AdId]("ad_id") / "msgs" / path[ChatId]("chat_id"))
+      .out(jsonBody[HistoryResponseDto])
+      .serverLogic { authed => (_, chatId) =>
+        given Identity = Identity(authed.id)
+        msgService
+          .history(chatId)
+          .map(HistoryResponseDto.fromDomain(chatId, _))
+          .toOut
+      },
+    builder.authed
+      .post
+      .in("ads" / path[AdId]("ad_id") / "msgs" / path[ChatId]("chat_id"))
+      .in(jsonBody[SendMessageRequestDto])
+      .out(statusCode(StatusCode.Created))
+      .serverLogic { authed => (_, chatId, msg) =>
+        given Identity = Identity(authed.id)
         msgService
           .send(chatId, msg.toDomain)
-          .flatMap(Created(_))
+          .toOut
       }
-  }
+  )

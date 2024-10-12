@@ -6,46 +6,47 @@ import scala.concurrent.duration.DurationInt
 import cats.Parallel
 import cats.data.OptionT
 import cats.effect.Async
+import cats.syntax.all.*
 
-import maweituo.domain.all.*
 import maweituo.http.*
-import maweituo.http.auth.JwtAuthMiddleware
 import maweituo.http.routes.all.*
 
 import org.http4s.implicits.*
 import org.http4s.server.middleware.*
 import org.http4s.{HttpApp, HttpRoutes}
 import org.typelevel.log4cats.Logger
-import pdi.jwt.JwtClaim
+import sttp.tapir.server.http4s.Http4sServerInterpreter
+import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 object HttpApi:
-  def make[F[_]: Async: Logger: Parallel](services: Services[F], userJwtAuth: UserJwtAuth): HttpApi[F] =
-    new HttpApi[F](services, userJwtAuth)
+  def make[F[_]: Async: Logger: Parallel](services: Services[F]): HttpApi[F] =
+    new HttpApi[F](services)
 
 sealed class HttpApi[F[_]: Async: Logger: Parallel](
-    services: Services[F],
-    userJwtAuth: UserJwtAuth
+    services: Services[F]
 ):
 
-  private val routeList = List(
-    LoginRoutes[F](services.auth),
-    LogoutRoutes[F](services.auth),
-    RegisterRoutes[F](services.users),
-    AdRoutes[F](services.ads),
-    AdChatRoutes[F](services.chats),
-    AdImageRoutes[F](services.images),
-    AdMsgRoutes[F](services.messages),
-    AdTagRoutes[F](services.tags),
-    UserRoutes[F](services.users),
-    UserAdRoutes[F](services.userAds),
-    TagRoutes[F](services.tags),
-    FeedRoutes[F](services.feed)
-  )
+  private val endpoints =
+    val routesBuilder = new RoutesBuilder[F](services.auth)
+    List(
+      LoginRoutes[F](services.auth, routesBuilder),
+      LogoutRoutes[F](services.auth, routesBuilder),
+      RegisterRoutes[F](services.users, routesBuilder),
+      AdRoutes[F](services.ads, routesBuilder),
+      AdChatRoutes[F](services.chats, routesBuilder),
+      AdImageRoutes[F](services.images, routesBuilder),
+      AdMsgRoutes[F](services.messages, routesBuilder),
+      AdTagRoutes[F](services.tags, routesBuilder),
+      UserRoutes[F](services.users, routesBuilder),
+      UserAdRoutes[F](services.userAds, routesBuilder),
+      TagRoutes[F](services.tags, routesBuilder),
+      FeedRoutes[F](services.feed, routesBuilder)
+    ).map(_.endpoints).flatten
 
-  private val usersMiddleware =
-    JwtAuthMiddleware[F, AuthedUser](userJwtAuth.value, t => (c: JwtClaim) => services.auth.authed(t).value)
+  private val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints[F](endpoints, "maweituo", "0.1")
 
-  private val routes = buildRoutes(routeList, usersMiddleware)
+  private val routes =
+    Http4sServerInterpreter[F]().toRoutes(endpoints) <+> Http4sServerInterpreter[F]().toRoutes(swaggerEndpoints)
 
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = { (http: HttpRoutes[F]) =>
     AutoSlash(http)

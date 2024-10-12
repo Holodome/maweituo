@@ -2,6 +2,8 @@ package maweituo
 package logic
 package auth
 
+import scala.concurrent.duration.FiniteDuration
+
 import cats.Monad
 import cats.syntax.all.*
 
@@ -20,7 +22,7 @@ object JwtTokens:
   def make[F[_]: Monad](
       jwtExpire: JwtExpire[F],
       secret: JwtAccessSecret,
-      exp: JwtTokenExpiration
+      exp: FiniteDuration
   ): JwtTokens[F] =
     given Encoder[UserId] = Encoder.forProduct1("user_id")(_.value)
     (userId: UserId) =>

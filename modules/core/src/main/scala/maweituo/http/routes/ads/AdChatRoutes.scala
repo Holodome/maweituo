@@ -2,28 +2,38 @@ package maweituo
 package http
 package routes
 package ads
-
-import cats.Monad
+import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.http4s.AuthedRoutes
-import org.http4s.circe.CirceEntityEncoder.*
-import org.http4s.dsl.Http4sDsl
+import sttp.model.StatusCode
+import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
-final class AdChatRoutes[F[_]: Monad](chatService: ChatService[F])
-    extends Http4sDsl[F] with UserAuthRoutes[F]:
+final class AdChatRoutes[F[_]: MonadThrow](chatService: ChatService[F], builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val routes: AuthedRoutes[AuthedUser, F] = AuthedRoutes.of {
-    case GET -> Root / "ads" / AdIdVar(_) / "chats" / ChatIdVar(chatId) as user =>
-      given Identity = Identity(user.id)
-      chatService
-        .get(chatId)
-        .map(ChatDto.fromDomain)
-        .flatMap(Ok(_))
-
-    case POST -> Root / "ads" / AdIdVar(adId) / "chats" as user =>
-      given Identity = Identity(user.id)
-      chatService.create(adId) *> Created()
-  }
+  override val endpoints = List(
+    builder.authed
+      .get
+      .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id"))
+      .out(jsonBody[ChatDto])
+      .serverLogic { authed => (_, chatId) =>
+        given Identity = Identity(authed.id)
+        chatService
+          .get(chatId)
+          .map(ChatDto.fromDomain)
+          .toOut
+      },
+    builder.authed
+      .post
+      .in("ads" / path[AdId]("ad_id") / "chats")
+      .out(statusCode(StatusCode.Created))
+      .serverLogic { authed => adId =>
+        given Identity = Identity(authed.id)
+        chatService.create(adId).void
+          .toOut
+      }
+  )

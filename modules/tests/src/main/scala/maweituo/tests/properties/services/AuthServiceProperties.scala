@@ -61,7 +61,7 @@ trait AuthServiceProperties:
             id <- users.create(reg)
             t  <- auth.login(LoginRequest(reg.name, reg.password)).map(_.jwt)
             x  <- auth.authed(t).value
-          yield expect.same(t, jwt) and expect.same(Some(AuthedUser(id)), x)
+          yield expect.same(t, jwt) and expect.same(Some(AuthedUser(id, jwt)), x)
         }
     ),
     Property(

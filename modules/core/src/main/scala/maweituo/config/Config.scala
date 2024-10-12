@@ -3,6 +3,7 @@ package config
 
 import java.nio.file.Paths
 
+import scala.concurrent.duration.FiniteDuration
 import scala.io.Source
 
 import cats.Show
@@ -70,7 +71,7 @@ object Config:
 
   private def jwtConfig[F[_]](using file: JsonConfig): ConfigValue[F, JwtConfig] =
     (
-      file.stringField("jwt.expire").as[JwtTokenExpiration].covary[F],
+      file.stringField("jwt.expire").as[FiniteDuration].covary[F],
       env("MW_JWT_SECRET_KEY").default("123").as[JwtAccessSecret].secret
     ).parMapN(JwtConfig.apply)
 

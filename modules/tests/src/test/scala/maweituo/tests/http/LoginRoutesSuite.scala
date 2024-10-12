@@ -3,6 +3,7 @@ package tests
 package http
 
 import maweituo.domain.all.*
+import maweituo.http.RoutesBuilder
 import maweituo.http.dto.*
 import maweituo.http.routes.all.*
 import maweituo.infrastructure.EphemeralDict
@@ -60,8 +61,9 @@ object LoginRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
           method = Method.POST,
           uri = uri"/login"
         ).withEntity(LoginRequestDto(reg.name, reg.password))
-      val login    = LoginRoutes[IO](auth).routes
-      val register = RegisterRoutes[IO](users).routes
+      val builder  = new RoutesBuilder[IO](auth)
+      val login    = new LoginRoutes[IO](auth, builder).routes
+      val register = new RegisterRoutes[IO](users, builder).routes
       for
         x  <- expectHttpStatusLogged(register, regReq)(Status.Ok)
         x1 <- expectHttpBodyAndStatus(login, loginReq)(LoginResponseDto(testToken), Status.Ok)

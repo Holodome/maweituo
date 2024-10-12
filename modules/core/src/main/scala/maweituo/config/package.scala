@@ -8,7 +8,6 @@ import scala.concurrent.duration.FiniteDuration
 
 import cats.syntax.all.*
 
-import maweituo.utils.given
 import maweituo.utils.{Newtype, Wrapper}
 
 import ciris.{ConfigDecoder, Secret}
@@ -17,11 +16,8 @@ import com.comcast.ip4s.{Host, Port}
 type JwtAccessSecret = JwtAccessSecret.Type
 object JwtAccessSecret extends Newtype[String]
 
-type JwtTokenExpiration = JwtTokenExpiration.Type
-object JwtTokenExpiration extends Newtype[FiniteDuration]
-
 final case class JwtConfig(
-    tokenExpiration: JwtTokenExpiration,
+    tokenExpiration: FiniteDuration,
     accessSecret: Secret[JwtAccessSecret]
 )
 

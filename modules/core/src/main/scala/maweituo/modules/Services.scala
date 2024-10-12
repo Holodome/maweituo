@@ -1,12 +1,13 @@
 package maweituo
 package modules
 
+import cats.MonadThrow
+
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{Background, GenUUID, TimeSource}
 import maweituo.logic.interp.all.*
 
 import org.typelevel.log4cats.Logger
-
 sealed abstract class Services[F[_]]:
   val users: UserService[F]
   val userAds: UserAdsService[F]

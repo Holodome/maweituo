@@ -4,6 +4,9 @@ package repos
 package ads
 
 import cats.NonEmptyParallel
+import cats.data.NonEmptyList
+import cats.effect.Async
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 

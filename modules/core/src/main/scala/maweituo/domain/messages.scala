@@ -3,6 +3,9 @@ package domain
 
 import java.time.Instant
 
+import cats.Show
+import cats.derived.derived
+
 import maweituo.utils.{IdNewtype, Newtype, given}
 
 object messages:

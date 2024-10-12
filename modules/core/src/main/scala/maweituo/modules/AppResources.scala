@@ -1,7 +1,8 @@
 package maweituo
 package modules
 
-import cats.effect.Resource
+import cats.effect.{Async, Resource}
+import cats.syntax.all.*
 
 import maweituo.config.AppConfig
 import maweituo.infrastructure.minio.MinioConnection

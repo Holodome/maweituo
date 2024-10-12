@@ -4,6 +4,8 @@ package domain
 import java.time.Instant
 
 import cats.kernel.Eq
+import cats.syntax.all.*
+import cats.{Functor, Show}
 
 import maweituo.infrastructure.effects.TimeSource
 import maweituo.logic.auth.PasswordHashing

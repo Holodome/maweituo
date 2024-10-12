@@ -3,6 +3,11 @@ package logic
 
 import scala.util.control.NoStackTrace
 
+import cats.Show
+import cats.data.NonEmptyList
+import cats.derived.derived
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 import maweituo.logic.search.SearchValidationError
 

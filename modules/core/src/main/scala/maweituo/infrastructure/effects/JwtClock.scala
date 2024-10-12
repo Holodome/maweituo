@@ -4,6 +4,7 @@ package effects
 
 import java.time.Clock
 
+import cats.effect.Sync
 trait JwtClock[F[_]]:
   def utc: F[Clock]
 

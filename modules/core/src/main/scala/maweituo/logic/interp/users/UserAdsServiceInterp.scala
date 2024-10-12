@@ -2,6 +2,7 @@ package maweituo
 package logic
 package interp
 package users
+import cats.MonadThrow
 
 import maweituo.domain.all.*
 

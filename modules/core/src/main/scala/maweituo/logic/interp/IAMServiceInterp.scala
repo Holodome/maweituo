@@ -2,8 +2,10 @@ package maweituo
 package logic
 package interp
 
-import maweituo.domain.all.*
+import cats.syntax.all.*
+import cats.{Applicative, MonadThrow}
 
+import maweituo.domain.all.*
 object IAMServiceInterp:
   def make[F[_]: MonadThrow](
       adRepo: AdRepo[F],

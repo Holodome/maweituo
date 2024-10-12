@@ -3,6 +3,9 @@ package logic
 package interp
 package ads
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{GenUUID, TimeSource}
 import maweituo.utils.Id

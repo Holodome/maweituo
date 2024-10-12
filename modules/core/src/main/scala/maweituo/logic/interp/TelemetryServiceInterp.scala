@@ -1,6 +1,8 @@
 package maweituo
 package logic
 package interp
+import cats.Monad
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.TimeSource

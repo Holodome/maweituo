@@ -3,7 +3,9 @@ package http
 package routes
 package ads
 
+import cats.MonadThrow
 import cats.effect.Concurrent
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 

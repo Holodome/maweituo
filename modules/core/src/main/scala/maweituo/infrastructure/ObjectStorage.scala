@@ -1,6 +1,9 @@
 package maweituo
 package infrastructure
 
+import cats.Show
+import cats.data.OptionT
+
 import maweituo.domain.all.*
 import maweituo.utils.Newtype
 

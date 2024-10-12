@@ -2,7 +2,9 @@ package maweituo
 package http
 package auth
 
-import cats.data.Kleisli
+import cats.MonadThrow
+import cats.data.{Kleisli, OptionT}
+import cats.syntax.all.*
 
 import dev.profunktor.auth.AuthHeaders
 import dev.profunktor.auth.jwt.{JwtAuth, JwtToken, jwtDecode}

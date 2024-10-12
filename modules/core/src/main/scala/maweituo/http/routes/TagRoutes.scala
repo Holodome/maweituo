@@ -2,13 +2,15 @@ package maweituo
 package http
 package routes
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import org.http4s.HttpRoutes
 import org.http4s.circe.CirceEntityEncoder.*
 import org.http4s.circe.JsonDecoder
 import org.http4s.dsl.Http4sDsl
-
 final class TagRoutes[F[_]: MonadThrow: JsonDecoder](tags: AdTagService[F])
     extends Http4sDsl[F] with PublicRoutes[F]:
 

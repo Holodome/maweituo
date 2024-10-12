@@ -3,6 +3,11 @@ package domain
 
 export exports.*
 
+import cats.Show
+import cats.derived.derived
+
+import cats.syntax.all.*
+
 object all:
   export exports.*
   export users.*

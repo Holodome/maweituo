@@ -5,6 +5,10 @@ import java.nio.file.Paths
 
 import scala.io.Source
 
+import cats.Show
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.config.*
 import maweituo.config.given
 import maweituo.config.utils.JsonConfig

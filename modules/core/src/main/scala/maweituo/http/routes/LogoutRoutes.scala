@@ -2,6 +2,9 @@ package maweituo
 package http
 package routes
 
+import cats.MonadThrow
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import dev.profunktor.auth.AuthHeaders

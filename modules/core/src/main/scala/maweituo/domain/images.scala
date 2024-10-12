@@ -1,6 +1,10 @@
 package maweituo
 package domain
 
+import cats.Show
+import cats.derived.derived
+import cats.syntax.all.*
+
 import maweituo.infrastructure.OBSId
 import maweituo.utils.{IdNewtype, Newtype}
 

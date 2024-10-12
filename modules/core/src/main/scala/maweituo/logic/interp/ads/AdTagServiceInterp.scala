@@ -3,6 +3,9 @@ package logic
 package interp
 package ads
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import org.typelevel.log4cats.Logger

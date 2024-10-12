@@ -3,6 +3,8 @@ package domain
 package services
 package users
 
+import cats.data.OptionT
+
 import maweituo.domain.users.*
 
 import dev.profunktor.auth.jwt.JwtToken

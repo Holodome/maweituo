@@ -1,6 +1,10 @@
 package maweituo
 package modules
 
+import cats.effect.Async
+import cats.syntax.all.*
+import cats.{Functor, Monad, MonadThrow}
+
 import maweituo.config.*
 import maweituo.domain.users.UserId
 import maweituo.infrastructure.effects.GenUUID

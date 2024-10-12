@@ -6,6 +6,10 @@ import java.util.UUID
 
 import scala.util.Try
 
+import cats.Show
+import cats.data.NonEmptyList
+import cats.derived.derived
+
 import maweituo.utils.{IdNewtype, Newtype, given}
 
 object ads:

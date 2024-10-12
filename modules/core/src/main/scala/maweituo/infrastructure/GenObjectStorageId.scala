@@ -1,6 +1,9 @@
 package maweituo
 package infrastructure
 
+import cats.Functor
+import cats.syntax.all.*
+
 import maweituo.infrastructure.OBSId
 import maweituo.infrastructure.effects.GenUUID
 

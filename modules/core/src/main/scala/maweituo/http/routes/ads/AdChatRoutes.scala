@@ -3,6 +3,9 @@ package http
 package routes
 package ads
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import org.http4s.AuthedRoutes

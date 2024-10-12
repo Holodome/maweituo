@@ -2,6 +2,7 @@ package maweituo
 package modules
 
 import cats.NonEmptyParallel
+import cats.effect.Async
 
 import maweituo.domain.all.*
 import maweituo.postgres.repos.all.*

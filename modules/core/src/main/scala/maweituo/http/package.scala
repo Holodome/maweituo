@@ -1,6 +1,10 @@
 package maweituo
 package http
 
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.domain.users.AuthedUser
 
 import org.http4s.server.AuthMiddleware

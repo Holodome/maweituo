@@ -5,7 +5,8 @@ import java.time.Instant
 
 import scala.concurrent.duration.{Duration, FiniteDuration}
 
-import cats.Eq
+import cats.syntax.all.*
+import cats.{Eq, Show}
 
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Decoder, Encoder}

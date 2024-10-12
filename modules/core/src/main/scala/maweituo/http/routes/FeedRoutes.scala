@@ -2,7 +2,8 @@ package maweituo
 package http
 package routes
 
-import cats.Parallel
+import cats.syntax.all.*
+import cats.{MonadThrow, Parallel}
 
 import maweituo.domain.all.*
 

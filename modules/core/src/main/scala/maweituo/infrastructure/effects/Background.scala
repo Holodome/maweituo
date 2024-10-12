@@ -4,7 +4,7 @@ package effects
 
 import cats.effect.Temporal
 import cats.effect.std.Supervisor
-
+import cats.syntax.all.*
 trait Background[F[_]]:
   def schedule[A](fa: F[A]): F[Unit]
 

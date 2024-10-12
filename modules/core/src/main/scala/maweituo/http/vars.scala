@@ -5,8 +5,9 @@ import java.util.UUID
 
 import scala.util.Try
 
-import maweituo.domain.all.*
+import cats.syntax.all.*
 
+import maweituo.domain.all.*
 object vars:
 
   sealed class UUIDVar[A](f: UUID => A):

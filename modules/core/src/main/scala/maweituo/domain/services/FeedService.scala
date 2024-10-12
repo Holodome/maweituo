@@ -2,7 +2,9 @@ package maweituo
 package domain
 package services
 
-import cats.data.Validated
+import cats.MonadThrow
+import cats.data.{NonEmptyList, Validated}
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 import maweituo.logic.DomainError

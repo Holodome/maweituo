@@ -4,6 +4,9 @@ package effects
 
 import java.util.UUID
 
+import cats.ApplicativeThrow
+import cats.effect.Sync
+
 trait GenUUID[F[_]]:
   def gen: F[UUID]
   def read(str: String): F[UUID]

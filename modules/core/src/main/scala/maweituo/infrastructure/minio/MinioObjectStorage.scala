@@ -2,6 +2,10 @@ package maweituo
 package infrastructure
 package minio
 
+import cats.data.OptionT
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.infrastructure.{OBSId, OBSUrl}
 
 import _root_.org.typelevel.log4cats.Logger

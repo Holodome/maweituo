@@ -4,6 +4,10 @@ package redis
 
 import scala.concurrent.duration.FiniteDuration
 
+import cats.Monad
+import cats.data.OptionT
+import cats.syntax.all.*
+
 import dev.profunktor.redis4cats.RedisCommands
 
 object RedisEphemeralDict:

@@ -2,6 +2,8 @@ package maweituo
 package domain
 package repos
 package ads
+import cats.MonadThrow
+import cats.data.OptionT
 
 import maweituo.domain.ads.*
 import maweituo.domain.messages.*

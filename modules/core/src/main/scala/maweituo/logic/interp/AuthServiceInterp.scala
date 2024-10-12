@@ -2,6 +2,10 @@ package maweituo
 package logic
 package interp
 
+import cats.MonadThrow
+import cats.data.OptionT
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 import maweituo.infrastructure.EphemeralDict
 import maweituo.logic.auth.{JwtTokens, PasswordHashing}

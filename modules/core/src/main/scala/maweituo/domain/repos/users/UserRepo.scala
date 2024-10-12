@@ -2,6 +2,8 @@ package maweituo
 package domain
 package repos
 package users
+import cats.MonadThrow
+import cats.data.OptionT
 
 import maweituo.domain.users.{Email, UpdateUserRepoRequest, User, UserId, Username}
 

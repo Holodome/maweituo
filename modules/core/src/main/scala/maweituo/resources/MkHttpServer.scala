@@ -1,7 +1,7 @@
 package maweituo
 package resources
 
-import cats.effect.Resource
+import cats.effect.{Async, Resource}
 
 import maweituo.config.HttpServerConfig
 

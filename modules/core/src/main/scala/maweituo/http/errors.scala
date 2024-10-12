@@ -1,8 +1,9 @@
 package maweituo
 package http
 
-import cats.data.Kleisli
+import cats.data.{Kleisli, NonEmptyList, OptionT}
 import cats.effect.Concurrent
+import cats.syntax.all.*
 
 import maweituo.domain.users.UserId
 import maweituo.http.dto.ErrorResponseDto

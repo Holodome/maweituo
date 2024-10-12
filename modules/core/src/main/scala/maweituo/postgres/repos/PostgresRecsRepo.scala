@@ -2,6 +2,10 @@ package maweituo
 package postgres
 package repos
 
+import cats.data.NonEmptyList
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import doobie.*

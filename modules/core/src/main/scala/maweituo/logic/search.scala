@@ -4,7 +4,10 @@ package search
 
 import scala.util.control.NoStackTrace
 
-import cats.data.{Validated, ValidatedNel}
+import cats.Show
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import cats.derived.derived
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 

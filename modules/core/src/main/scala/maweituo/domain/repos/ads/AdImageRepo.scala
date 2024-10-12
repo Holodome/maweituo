@@ -3,6 +3,9 @@ package domain
 package repos
 package ads
 
+import cats.MonadThrow
+import cats.data.OptionT
+
 import maweituo.domain.ads.AdId
 import maweituo.domain.images.*
 

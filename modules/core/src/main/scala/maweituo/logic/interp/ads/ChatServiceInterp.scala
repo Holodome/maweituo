@@ -3,6 +3,10 @@ package logic
 package interp
 package ads
 
+import cats.data.OptionT
+import cats.syntax.all.*
+import cats.{Applicative, MonadThrow}
+
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.GenUUID
 import maweituo.utils.Id

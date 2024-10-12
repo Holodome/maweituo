@@ -3,6 +3,11 @@ package postgres
 package repos
 package users
 
+import cats.Applicative
+import cats.data.{NonEmptyList, OptionT}
+import cats.effect.Async
+import cats.syntax.all.*
+
 import maweituo.domain.all.*
 
 import doobie.*

@@ -1,7 +1,9 @@
 package maweituo
 package resources
 
+import cats.MonadThrow
 import cats.effect.Resource
+import cats.syntax.all.*
 
 import maweituo.config.RedisConfig
 

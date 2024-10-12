@@ -2,6 +2,8 @@ package maweituo
 package logic
 package interp
 
+import cats.Functor
+
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.Background
 

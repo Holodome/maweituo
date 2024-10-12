@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture
 
 import scala.concurrent.Future
 
+import cats.effect.{Async, Sync}
+
 object catsExt:
   def liftFuture[F[_]: Async, R](r: => Future[R]): F[R] =
     Async[F].fromFuture(Sync[F].delay(r))

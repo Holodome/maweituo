@@ -3,7 +3,7 @@ package utils
 
 import java.util.UUID
 
-import cats.{Eq, Order}
+import cats.{Eq, Order, Show}
 
 import io.circe.{Decoder, Encoder}
 import monocle.Iso

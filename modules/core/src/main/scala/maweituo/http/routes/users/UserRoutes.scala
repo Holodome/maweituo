@@ -4,6 +4,7 @@ package routes
 package users
 
 import cats.effect.Concurrent
+import cats.syntax.all.*
 
 import maweituo.domain.all.*
 

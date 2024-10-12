@@ -3,6 +3,8 @@ package domain
 package services
 package ads
 
+import cats.data.OptionT
+
 import maweituo.domain.ads.*
 import maweituo.domain.messages.{Chat, ChatId}
 

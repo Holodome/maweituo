@@ -2,6 +2,9 @@ package maweituo
 package logic
 package auth
 
+import cats.Monad
+import cats.syntax.all.*
+
 import maweituo.config.*
 import maweituo.domain.users.UserId
 

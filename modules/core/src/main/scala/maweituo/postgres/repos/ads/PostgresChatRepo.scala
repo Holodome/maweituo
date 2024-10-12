@@ -10,6 +10,9 @@ import doobie.implicits.*
 export doobie.implicits.given
 import doobie.Transactor
 
+import cats.syntax.all.*
+import cats.data.OptionT
+import cats.effect.Async
 object PostgresChatRepo:
   def make[F[_]: Async](xa: Transactor[F]): ChatRepo[F] = new:
     def create(chat: Chat): F[Unit] =

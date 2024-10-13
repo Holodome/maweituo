@@ -12,26 +12,29 @@ import maweituo.infrastructure.effects.{GenUUID, TimeSource}
 import maweituo.logic.auth.PasswordHashing
 import maweituo.utils.Id
 
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.syntax.*
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 object UserServiceInterp:
-  def make[F[_]: MonadThrow: GenUUID: Logger: TimeSource](
+  def make[F[_]: MonadThrow: GenUUID: LoggerFactory: TimeSource](
       users: UserRepo[F]
   )(using iam: IAMService[F]): UserService[F] = new:
+    private given Logger[F] = LoggerFactory[F].getLogger
+
     def update(update: UpdateUserRequest)(using Identity): F[Unit] =
       for
         _       <- iam.authUserModification(update.id)
         old     <- users.get(update.id)
         updRepo <- UpdateUserRepoRequest.fromReq(update, old.salt)
         _       <- users.update(updRepo)
-        _       <- Logger[F].info(s"Updated user ${update.id} by user ${summon[Identity]}")
+        _       <- info"Updated user ${update.id} by user ${summon[Identity]}"
       yield ()
 
     def delete(subject: UserId)(using Identity): F[Unit] =
       for
         _ <- iam.authUserModification(subject)
         _ <- users.delete(subject)
-        _ <- Logger[F].info(s"Deleted user $subject by ${summon[Identity]}")
+        _ <- info"Deleted user $subject by ${summon[Identity]}"
       yield ()
 
     def get(id: UserId): F[User] =
@@ -68,5 +71,5 @@ object UserServiceInterp:
           at
         )
         _ <- users.create(user)
-        _ <- Logger[F].info(s"Created user $id")
+        _ <- info"Created user $id"
       yield user.id

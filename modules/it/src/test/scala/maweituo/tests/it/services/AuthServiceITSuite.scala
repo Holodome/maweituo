@@ -17,7 +17,6 @@ import maweituo.tests.services.makeIAMService
 
 import dev.profunktor.redis4cats.RedisCommands
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.GlobalRead
 
 class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServiceProperties:
@@ -28,7 +27,7 @@ class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServ
 
   private val expire = 30.seconds
 
-  private def makeTestServices(xa: Transactor[IO], redis: RedisCommands[IO, String, String])(using Logger[IO]) =
+  private def makeTestServices(xa: Transactor[IO], redis: RedisCommands[IO, String, String])(using LoggerFactory[IO]) =
     (jwt: JwtTokens[IO]) =>
       given IAMService[IO] = makeIAMService
       val repo             = PostgresUserRepo.make[IO](xa)
@@ -39,7 +38,7 @@ class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServ
   properties.foreach {
     case Property(name, fn) =>
       itTest(name) { (res, log) =>
-        given Logger[IO] = WeaverLogAdapter(log)
+        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
         fn(makeTestServices.tupled(res))
       }
   }

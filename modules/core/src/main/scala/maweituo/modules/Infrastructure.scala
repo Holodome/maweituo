@@ -16,7 +16,7 @@ import maweituo.utils.Id
 
 import dev.profunktor.auth.jwt.JwtToken
 import dev.profunktor.redis4cats.RedisCommands
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 
 sealed abstract class Infrastructure[F[_]]:
   val jwtTokens: JwtTokens[F]
@@ -25,7 +25,7 @@ sealed abstract class Infrastructure[F[_]]:
   val adImageStorage: ObjectStorage[F]
 
 object Infrastructure:
-  def make[F[_]: Async: MonadThrow: Logger](
+  def make[F[_]: Async: MonadThrow: LoggerFactory](
       cfg: AppConfig,
       redis: RedisCommands[F, String, String],
       minio: MinioConnection

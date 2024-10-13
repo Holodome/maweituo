@@ -13,7 +13,6 @@ import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.GlobalRead
 
 class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdImageServiceProperties:
@@ -22,7 +21,7 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
 
   override def sharedResource: Resource[IO, Res] = (global.postgres, global.minio).tupled
 
-  private def testServices(xa: Transactor[IO], minio: MinioConnection)(using Logger[IO]) =
+  private def testServices(xa: Transactor[IO], minio: MinioConnection)(using LoggerFactory[IO]) =
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val imageRepo              = PostgresAdImageRepo.make(xa)
     val adRepo                 = PostgresAdRepo.make(xa)
@@ -38,7 +37,7 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
   properties.foreach {
     case Property(name, fn) =>
       itTest(name) { (res, log) =>
-        given Logger[IO] = WeaverLogAdapter(log)
+        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
         testServices.tupled(res).flatMap(fn.tupled)
       }
   }

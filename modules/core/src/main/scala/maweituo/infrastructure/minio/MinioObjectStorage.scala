@@ -9,15 +9,18 @@ import cats.syntax.all.*
 import maweituo.infrastructure.{OBSId, OBSUrl}
 
 import _root_.org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.syntax.*
 
 final case class MinioConnection(baseUrl: String, client: io.minio.MinioAsyncClient)
 
 object MinioObjectStorage:
-  def make[F[_]: Async: Logger](
+  def make[F[_]: Async: LoggerFactory](
       conn: MinioConnection,
       bucket: String
   ): F[ObjectStorage[F]] =
-    val client = new MinioClient[F](conn)
+    given Logger[F] = LoggerFactory[F].getLogger
+    val client      = new MinioClient[F](conn)
     ensureBucketIsCreated(client, bucket).as(new MinioObjectStorage(client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Logger](
@@ -25,12 +28,12 @@ object MinioObjectStorage:
       bucket: String
   ): F[Unit] =
     minio.bucketExists(bucket).flatMap {
-      case true => Logger[F].info(s"Bucket $bucket already exists")
+      case true => info"Bucket $bucket already exists"
       case false =>
         for
-          _ <- Logger[F].info(s"Bucket $bucket does not exist, creating")
+          _ <- info"Bucket $bucket does not exist, creating"
           _ <- minio.createBucket(bucket)
-          _ <- Logger[F].info(s"Bucket $bucket created")
+          _ <- info"Bucket $bucket created"
         yield ()
     }.recoverWith {
       case e => Logger[F].warn(e)("Error when creating bucket")
@@ -43,9 +46,9 @@ private final class MinioObjectStorage[F[_]: Async: Logger](
 
   override def putStream(id: OBSId, blob: fs2.Stream[F, Byte], dataSize: Long): F[Unit] =
     for
-      _ <- Logger[F].info(s"Putting blob $id of size $dataSize")
+      _ <- info"Putting blob $id of size $dataSize"
       x <- client.putStream(bucket, id, blob, dataSize)
-      _ <- Logger[F].info(s"Finished putting blob $id")
+      _ <- info"Finished putting blob $id"
     yield x
 
   override def get(id: OBSId): OptionT[F, fs2.Stream[F, Byte]] =
@@ -53,9 +56,9 @@ private final class MinioObjectStorage[F[_]: Async: Logger](
 
   override def delete(id: OBSId): F[Unit] =
     for
-      _ <- Logger[F].info(s"Deleting blob $id")
+      _ <- info"Deleting blob $id"
       _ <- client.delete(bucket, id)
-      _ <- Logger[F].info(s"Deleted blob $id")
+      _ <- info"Deleted blob $id"
     yield ()
 
   override def makeUrl(id: OBSId): OBSUrl =

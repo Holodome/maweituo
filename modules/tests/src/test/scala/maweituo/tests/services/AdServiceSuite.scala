@@ -9,13 +9,13 @@ import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.noop.NoOpFactory
 
 object AdServiceSuite extends SimpleIOSuite with Checkers with AdServiceProperties:
 
   private def makeTestUserAds =
-    given Logger[IO]           = NoOpLogger[IO]
+    given LoggerFactory[IO]    = NoOpFactory[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val adRepo                 = InMemoryRepoFactory.ads
     val userRepo               = InMemoryRepoFactory.users

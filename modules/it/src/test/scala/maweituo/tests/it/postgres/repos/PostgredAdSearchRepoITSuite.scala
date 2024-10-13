@@ -11,7 +11,7 @@ import maweituo.postgres.repos.users.PostgresUserRepo
 import maweituo.tests.resources.postgres
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
 
@@ -36,7 +36,7 @@ class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
       AdSearchRepo[IO]
   ) => F[Expectations]) =
     itTest(name) { (postgres, log) =>
-      given Logger[IO] = WeaverLogAdapter(log)
+      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
       val users        = PostgresUserRepo.make(postgres)
       val ads          = PostgresAdRepo.make(postgres)
       val tags         = PostgresAdTagRepo.make(postgres)

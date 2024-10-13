@@ -1,15 +1,15 @@
 package maweituo
 package resources
-
-import cats.MonadThrow
 import cats.effect.Resource
+import cats.effect.kernel.Async
 import cats.syntax.all.*
 
 import maweituo.config.RedisConfig
 
 import dev.profunktor.redis4cats.effect.MkRedis
 import dev.profunktor.redis4cats.{Redis, RedisCommands}
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.syntax.*
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 trait MkRedisClient[F[_]]:
   def newClient(c: RedisConfig): Resource[F, RedisCommands[F, String, String]]
@@ -17,11 +17,14 @@ trait MkRedisClient[F[_]]:
 object MkRedisClient:
   def apply[F[_]: MkRedisClient]: MkRedisClient[F] = summon
 
-  given [F[_]: MkRedis: MonadThrow: Logger]: MkRedisClient[F] = new:
+  given [F[_]: Async: LoggerFactory]: MkRedisClient[F] = new:
+    private given Logger[F] = LoggerFactory[F].getLogger
+    given MkRedis[F]        = MkRedis.forAsync[F](using Async[F], dev.profunktor.redis4cats.log4cats.log4CatsInstance[F])
+
     private def checkRedisConnection(redis: RedisCommands[F, String, String]): F[Unit] =
       redis.info flatMap {
         _.get("redis_version").traverse_ { v =>
-          Logger[F].info(s"Connected to redis $v")
+          info"Connected to redis $v"
         }
       }
 

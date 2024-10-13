@@ -21,8 +21,8 @@ import org.http4s.Method.*
 import org.http4s.circe.*
 import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 import org.http4s.implicits.*
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.noop.NoOpFactory
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 import weaver.scalacheck.Checkers
 import weaver.{Expectations, SimpleIOSuite}
 
@@ -34,22 +34,22 @@ object LoginRoutesSuite extends SimpleIOSuite with Checkers with HttpSuite:
   private def authedUsersDict: EphemeralDict[IO, UserId, JwtToken] = InMemoryEphemeralDict.make
 
   private def makeTestUsersAuth(tokens: JwtTokens[IO]) =
-    given Logger[IO]     = NoOpLogger[IO]
-    val userRepo         = InMemoryRepoFactory.users
-    val adRepo           = InMemoryRepoFactory.ads
-    given IAMService[IO] = makeIAMService(adRepo)
-    val users            = UserServiceInterp.make(userRepo)
-    val auth             = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
+    given LoggerFactory[IO] = NoOpFactory[IO]
+    val userRepo            = InMemoryRepoFactory.users
+    val adRepo              = InMemoryRepoFactory.ads
+    given IAMService[IO]    = makeIAMService(adRepo)
+    val users               = UserServiceInterp.make(userRepo)
+    val auth                = AuthServiceInterp.make(userRepo, authedUsersDict, jwtDict, tokens)
     (users, auth)
 
-  private def loginTest(name: String)(fn: (UserService[IO], AuthService[IO], Logger[IO]) => IO[Expectations]) =
+  private def loginTest(name: String)(fn: (UserService[IO], AuthService[IO], LoggerFactory[IO]) => IO[Expectations]) =
     loggedTest(name) { logger =>
       val (users, auth) = makeTestUsersAuth(TestJwtTokens(testToken))
-      fn(users, auth, WeaverLogAdapter(logger))
+      fn(users, auth, WeaverLogAdapterFactory(logger))
     }
 
   loginTest("/register and /login work as expected") { (users, auth, log) =>
-    given Logger[IO] = log
+    given Logger[IO] = log.getLogger
     forall(registerRequestGen) { reg =>
       val regReq =
         Request[IO](

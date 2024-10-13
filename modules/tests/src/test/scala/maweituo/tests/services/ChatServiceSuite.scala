@@ -8,13 +8,12 @@ import maweituo.tests.properties.services.ChatServiceProperties
 import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.stubs.*
 
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.noop.NoOpFactory
 
 object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProperties:
 
   private def makeTestServices =
-    given Logger[IO]           = NoOpLogger[IO]
+    given LoggerFactory[IO] = NoOpFactory[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val chatRepo               = InMemoryRepoFactory.chats
     val userRepo               = InMemoryRepoFactory.users

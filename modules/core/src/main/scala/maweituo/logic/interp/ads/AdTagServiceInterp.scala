@@ -8,10 +8,13 @@ import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.syntax.*
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 object AdTagServiceInterp:
-  def make[F[_]: Monad: Logger](tags: AdTagRepo[F])(using iam: IAMService[F]): AdTagService[F] = new:
+  def make[F[_]: Monad: LoggerFactory](tags: AdTagRepo[F])(using iam: IAMService[F]): AdTagService[F] = new:
+    private given Logger[F] = LoggerFactory[F].getLogger
+
     def all: F[List[AdTag]] =
       tags.getAllTags
 
@@ -22,14 +25,14 @@ object AdTagServiceInterp:
       for
         _ <- iam.authAdModification(id)
         _ <- tags.addTagToAd(id, tag)
-        _ <- Logger[F].info(s"Added tag $tag to ad $id by user ${summon[Identity]}")
+        _ <- info"Added tag $tag to ad $id by user ${summon[Identity]}"
       yield ()
 
     def removeTag(id: AdId, tag: AdTag)(using Identity): F[Unit] =
       for
         _ <- iam.authAdModification(id)
         _ <- tags.removeTagFromAd(id, tag)
-        _ <- Logger[F].info(s"Removed tag $tag from ad $id by user ${summon[Identity]}")
+        _ <- info"Removed tag $tag from ad $id by user ${summon[Identity]}"
       yield ()
 
     def adTags(adId: AdId): F[List[AdTag]] =

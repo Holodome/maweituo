@@ -16,9 +16,12 @@ export doobie.implicits.given
 import doobie.postgres.implicits.given
 import cats.NonEmptyParallel
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 
 object PostgresRecsRepo:
-  def make[F[_]: Async: NonEmptyParallel: Logger](xa: Transactor[F]): RecsRepo[F] = new:
+  def make[F[_]: Async: NonEmptyParallel: LoggerFactory](xa: Transactor[F]): RecsRepo[F] = new:
+
+    given Logger[F] = LoggerFactory[F].getLogger
 
     type Weights     = Vector[Float]
     type UserWeights = Map[UserId, Vector[Float]]

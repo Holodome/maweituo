@@ -8,7 +8,7 @@ import maweituo.domain.all.*
 import maweituo.postgres.repos.all.*
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 
 sealed abstract class Repos[F[_]]:
   val users: UserRepo[F]
@@ -22,7 +22,7 @@ sealed abstract class Repos[F[_]]:
   val adSearch: AdSearchRepo[F]
 
 object Repositories:
-  def makePostgres[F[_]: Async: NonEmptyParallel: Logger](xa: Transactor[F]): Repos[F] = new:
+  def makePostgres[F[_]: Async: LoggerFactory: NonEmptyParallel](xa: Transactor[F]): Repos[F] = new:
     val users     = PostgresUserRepo.make[F](xa)
     val ads       = PostgresAdRepo.make[F](xa)
     val tags      = PostgresAdTagRepo.make[F](xa)

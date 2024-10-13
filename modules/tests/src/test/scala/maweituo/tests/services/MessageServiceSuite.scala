@@ -8,13 +8,12 @@ import maweituo.tests.properties.services.MessageServiceProperties
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.noop.NoOpLogger
+import org.typelevel.log4cats.noop.NoOpFactory
 
 object MessageServiceSuite extends SimpleIOSuite with Checkers with MessageServiceProperties:
 
   private def makeTestServices =
-    given Logger[IO]           = NoOpLogger[IO]
+    given LoggerFactory[IO]           = NoOpFactory[IO]
     given TelemetryService[IO] = new TelemetryServiceStub[IO]
     val msgRepo                = InMemoryRepoFactory.msgs
     val userRepo               = InMemoryRepoFactory.users

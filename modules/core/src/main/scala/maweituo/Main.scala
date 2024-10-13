@@ -7,17 +7,17 @@ import maweituo.config.Config
 import maweituo.modules.*
 import maweituo.resources.MkHttpServer
 
-import dev.profunktor.redis4cats.log4cats.*
-import org.typelevel.log4cats.Logger
-import org.typelevel.log4cats.slf4j.Slf4jLogger
+import org.typelevel.log4cats.LoggerFactory
+import org.typelevel.log4cats.slf4j.Slf4jFactory
 
 object Main extends IOApp.Simple:
 
-  given Logger[IO] = Slf4jLogger.getLogger[IO]
+  given LoggerFactory[IO] = Slf4jFactory.create[IO]
+  private lazy val logger = LoggerFactory[IO].getLogger
 
   override def run: IO[Unit] =
     Config.loadAppConfig[IO] flatMap { cfg =>
-      Logger[IO].info(s"Loaded config $cfg") >> Supervisor[IO](await = false).use { sp =>
+      logger.info(s"Loaded config $cfg") >> Supervisor[IO](await = false).use { sp =>
         given Supervisor[IO] = sp
         AppResources
           .make[IO](cfg)

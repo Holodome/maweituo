@@ -3,6 +3,7 @@ package infrastructure
 package minio
 
 import java.io.InputStream
+import java.util.concurrent.CompletableFuture
 
 import scala.util.control.NonFatal
 
@@ -10,13 +11,15 @@ import cats.data.OptionT
 import cats.effect.Async
 import cats.syntax.all.*
 
-import maweituo.infrastructure.ext.catsExt.liftCompletableFuture
 import maweituo.infrastructure.{OBSId, OBSUrl}
 
 import io.minio.*
 import io.minio.errors.ErrorResponseException
 
 class MinioClient[F[_]: Async](connection: MinioConnection):
+
+  private inline def liftCompletableFuture[F[_]: Async, R](r: => CompletableFuture[R]): F[R] =
+    Async[F].fromCompletableFuture(Async[F].delay(r))
 
   def baseUrl: String          = connection.baseUrl
   def client: MinioAsyncClient = connection.client

@@ -9,7 +9,6 @@ import maweituo.postgres.repos.all.*
 import maweituo.tests.resources.*
 
 import doobie.util.transactor.Transactor
-import org.typelevel.log4cats.Logger
 import weaver.GlobalRead
 import weaver.scalacheck.CheckConfig
 
@@ -26,7 +25,7 @@ class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
 
   private def recsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO], RecsRepo[IO]) => F[Expectations]) =
     itTest(name) { (postgres, log) =>
-      given Logger[IO] = WeaverLogAdapter(log)
+      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
       val users        = PostgresUserRepo.make(postgres)
       val ads          = PostgresAdRepo.make(postgres)
       val tags         = PostgresAdTagRepo.make(postgres)

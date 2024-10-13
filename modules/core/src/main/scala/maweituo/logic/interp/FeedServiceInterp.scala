@@ -7,10 +7,8 @@ import cats.MonadThrow
 import maweituo.domain.all.*
 import maweituo.infrastructure.effects.TimeSource
 
-import org.typelevel.log4cats.Logger
-
 object FeedServiceInterp:
-  def make[F[_]: MonadThrow: Logger: TimeSource](
+  def make[F[_]: MonadThrow: TimeSource](
       adSearch: AdSearchRepo[F]
   )(using iam: IAMService[F]): FeedService[F] = new:
     def feed(req: AdSearchRequest): F[PaginatedCollection[AdId]] =

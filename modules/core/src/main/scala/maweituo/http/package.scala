@@ -2,7 +2,6 @@ package maweituo
 package http
 
 import cats.Monad
-import cats.data.NonEmptyList
 import cats.effect.kernel.Async
 import cats.syntax.all.*
 

@@ -18,6 +18,7 @@ import doobie.util.log.{LogEvent, LogHandler}
 import io.minio.MinioAsyncClient
 import org.testcontainers.utility.DockerImageName
 import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.syntax.*
 
 private def makeContainerResource[F[_], C <: Container](container: F[C])(using F: Sync[F]): Resource[F, C] =
   Resource.make(container.flatTap {
@@ -81,7 +82,7 @@ def makePostgres[F[_]: Async: Logger](cont: PostgreSQLContainer): Resource[F, Tr
   val logHandler = Some(new LogHandler[F]:
     def run(logEvent: LogEvent): F[Unit] =
       if logEvent.sql.contains("create table if not exists users") && false then Applicative[F].unit
-      else Logger[F].info(s"${logEvent.sql}")
+      else info"${logEvent.sql}"
   )
   for
     hikariConfig <- Resource.pure {

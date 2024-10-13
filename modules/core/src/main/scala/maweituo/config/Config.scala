@@ -17,7 +17,7 @@ import maweituo.config.utils.JsonConfig
 import ciris.*
 import ciris.http4s.*
 import com.comcast.ip4s.*
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 object Config:
   enum ConfigSource:
@@ -25,7 +25,8 @@ object Config:
     case ConfigTest
     case ConfigDefault
 
-  def loadAppConfig[F[_]: Async: Logger]: F[AppConfig] =
+  def loadAppConfig[F[_]: Async: LoggerFactory]: F[AppConfig] =
+    given Logger[F] = LoggerFactory[F].getLogger
     env("MW_CONFIG_PATH").map(ConfigSource.ConfigEnv.apply)
       .or(env("MW_TEST_CONFIG").map(_ => ConfigSource.ConfigTest))
       .default(ConfigSource.ConfigDefault)

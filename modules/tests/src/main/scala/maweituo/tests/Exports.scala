@@ -8,6 +8,7 @@ export org.scalacheck.Gen
 export generators.*
 export cats.effect.IO
 export cats.effect.Resource
+export org.typelevel.log4cats.LoggerFactory
 export weaver.scalacheck.Checkers
 export weaver.{Expectations, SimpleIOSuite, SourceLocation}
 export resources.MinioContainerResource

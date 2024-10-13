@@ -4,7 +4,7 @@ package repos
 package ads
 
 import cats.data.OptionT
-import cats.effect.Async
+import cats.effect.MonadCancelThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
@@ -15,10 +15,9 @@ export doobie.implicits.given
 import doobie.Transactor
 import doobie.postgres.implicits.given
 import java.time.Instant
-import cats.NonEmptyParallel
 
 object PostgresAdRepo:
-  def make[F[_]: Async: NonEmptyParallel](xa: Transactor[F]): AdRepo[F] = new:
+  def make[F[_]: MonadCancelThrow](xa: Transactor[F]): AdRepo[F] = new:
 
     def delete(id: AdId): F[Unit] =
       sql"delete from advertisements where id = $id::uuid".update.run.transact(xa).void

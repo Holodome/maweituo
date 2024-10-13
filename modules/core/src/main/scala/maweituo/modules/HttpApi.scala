@@ -1,6 +1,6 @@
 package maweituo
 package modules
-import cats.Parallel
+
 import cats.effect.Async
 
 import maweituo.http.*
@@ -8,7 +8,7 @@ import maweituo.http.routes.all.*
 
 import org.http4s.HttpApp
 import org.http4s.implicits.*
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
@@ -18,10 +18,10 @@ import sttp.tapir.server.model.ValuedEndpointOutput
 import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 object HttpApi:
-  def make[F[_]: Async: Logger: Parallel](services: Services[F]): HttpApi[F] =
+  def make[F[_]: Async: LoggerFactory](services: Services[F]): HttpApi[F] =
     new HttpApi[F](services)
 
-sealed class HttpApi[F[_]: Async: Logger: Parallel](
+sealed class HttpApi[F[_]: Async: LoggerFactory](
     services: Services[F]
 ):
 
@@ -53,7 +53,7 @@ sealed class HttpApi[F[_]: Async: Logger: Parallel](
       notFoundWhenRejected = true
     )
     .serverLog {
-      val l = Logger[F]
+      val l = LoggerFactory[F].getLogger
       Http4sServerOptions
         .defaultServerLog[F]
         .doLogWhenHandled((msg, e) => e.fold(l.info(msg))(l.info(_)(msg)))

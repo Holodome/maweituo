@@ -7,7 +7,7 @@ import maweituo.domain.all.*
 import maweituo.infrastructure.effects.{Background, GenUUID, TimeSource}
 import maweituo.logic.interp.all.*
 
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 sealed abstract class Services[F[_]]:
   val users: UserService[F]
   val userAds: UserAdsService[F]
@@ -20,7 +20,7 @@ sealed abstract class Services[F[_]]:
   val feed: FeedService[F]
 
 object Services:
-  def make[F[_]: MonadThrow: GenUUID: TimeSource: Background: Logger](
+  def make[F[_]: MonadThrow: GenUUID: TimeSource: Background: LoggerFactory](
       repos: Repos[F],
       infra: Infrastructure[F]
   ): Services[F] =

@@ -8,7 +8,7 @@ import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.infrastructure.{OBSId, ObjectStorage}
 import maweituo.tests.resources.*
 
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.LoggerFactory
 import weaver.*
 
 class S3Suite(global: GlobalRead) extends ResourceSuite:
@@ -19,7 +19,7 @@ class S3Suite(global: GlobalRead) extends ResourceSuite:
 
   private def minioTest(name: String)(fn: ObjectStorage[IO] => F[Expectations]) =
     itTest(name) { (minio, log) =>
-      given Logger[IO] = WeaverLogAdapter(log)
+      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
       MinioObjectStorage.make[IO](minio, "maweituo").flatMap(fn)
     }
 

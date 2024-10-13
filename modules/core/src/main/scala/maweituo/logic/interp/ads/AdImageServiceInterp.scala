@@ -11,14 +11,16 @@ import maweituo.infrastructure.effects.GenUUID
 import maweituo.infrastructure.{GenObjectStorageId, ObjectStorage}
 import maweituo.utils.Id
 
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 object AdImageServiceInterp:
-  def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID: Logger](
+  def make[F[_]: MonadThrow: GenObjectStorageId: GenUUID: LoggerFactory](
       imageRepo: AdImageRepo[F],
       adRepo: AdRepo[F],
       objectStorage: ObjectStorage[F]
   )(using iam: IAMService[F]): AdImageService[F] = new:
+    private given Logger[F] = LoggerFactory[F].getLogger
+
     def upload(
         adId: AdId,
         contents: ImageContentsStream[F]

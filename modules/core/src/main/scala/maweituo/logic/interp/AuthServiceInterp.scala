@@ -11,15 +11,17 @@ import maweituo.infrastructure.EphemeralDict
 import maweituo.logic.auth.{JwtTokens, PasswordHashing}
 
 import dev.profunktor.auth.jwt.JwtToken
-import org.typelevel.log4cats.Logger
+import org.typelevel.log4cats.{Logger, LoggerFactory}
 
 object AuthServiceInterp:
-  def make[F[_]: MonadThrow: Logger](
+  def make[F[_]: MonadThrow: LoggerFactory](
       userRepo: UserRepo[F],
       jwtDict: EphemeralDict[F, UserId, JwtToken],
       authedUserDict: EphemeralDict[F, JwtToken, UserId],
       tokens: JwtTokens[F]
   ): AuthService[F] = new:
+    private given Logger[F] = LoggerFactory[F].getLogger
+
     def login(req: LoginRequest): F[LoginResponse] =
       val name     = req.name
       val password = req.password

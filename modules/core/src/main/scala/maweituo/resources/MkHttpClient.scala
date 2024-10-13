@@ -12,25 +12,16 @@ import org.typelevel.log4cats.Logger
 
 trait MkHttpClient[F[_]]:
   def newClient(c: HttpClientConfig): Resource[F, Client[F]]
-  def newClientWithLog(c: HttpClientConfig, logger: Logger[F]): Resource[F, Client[F]]
 
 object MkHttpClient:
   def apply[F[_]: MkHttpClient]: MkHttpClient[F] = summon
 
   given [F[_]: Async: Network]: MkHttpClient[F] = new:
 
-    private def builder(c: HttpClientConfig) =
+    def newClient(c: HttpClientConfig): Resource[F, Client[F]] =
       EmberClientBuilder
         .default[F]
         .withTimeout(c.timeout)
         .withIdleTimeInPool(c.idleTimeInPool)
-
-    def newClientWithLog(c: HttpClientConfig, logger: Logger[F]): Resource[F, Client[F]] =
-      builder(c).withLogger(logger)
-        .withHttp2
-        .build
-
-    def newClient(c: HttpClientConfig): Resource[F, Client[F]] =
-      builder(c)
         .withHttp2
         .build

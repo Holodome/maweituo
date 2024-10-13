@@ -15,36 +15,46 @@ import org.http4s.client.*
 import sttp.model.StatusCode
 import sttp.tapir.client.http4s.Http4sClientInterpreter
 import sttp.tapir.{Endpoint, PublicEndpoint}
+import org.typelevel.log4cats.Logger
 
-object MaweituoApiClient:
-  extension [O](r: IO[Either[ErrorResponseData, O]])
-    def unwrap = r.flatMap {
-      case Left(e)      => IO.raiseError(new RuntimeException(s"got unexpected response ${e}"))
-      case Right(value) => IO.pure(value)
-    }
-
-final class MaweituoApiClient(base: String, client: Client[IO]):
+final class MaweituoApiClient(base: String, client: Client[IO])(using LoggerFactory[IO]):
   given EndpointBuilderDefs = new EndpointBuilderDefs {}
+  given Logger[IO]          = LoggerFactory[IO].getLogger
 
   trait AllEndpoints extends AuthEndpointDefs with RegisterEndpointDefs with FeedEndpointDefs with TagEndpointDefs
       with UserAdEndpointDefs with UserChatEndpointDefs with UserEndpointDefs with AdChatEndpointDefs
       with AdEndpointDefs with AdImageEndpointDefs[IO] with AdMsgEndpointDefs with AdTagEndpointDefs
   private val endpoints = new AllEndpoints {}
 
-  private def publicMethod[I, O, R](endpoint: PublicEndpoint[I, ErrorResponseData, O, R])
-      : I => IO[Either[ErrorResponseData, O]] = dto =>
-    lazy val fn = Http4sClientInterpreter[IO]().toRequestThrowDecodeFailures(
-      endpoint,
-      baseUri = Some(Uri.unsafeFromString(base))
-    )
-    val (req, respFn) = fn(dto)
-    client.run(req).use(respFn)
+  private def unwrap[O](r: IO[Either[ErrorResponseData, O]]): IO[O] = r.flatMap {
+    case Left(e)      => IO.raiseError(new RuntimeException(s"got unexpected response ${e}"))
+    case Right(value) => IO.pure(value)
+  }
 
-  final class PartiallyAppliedAuthedMethod[I, O, R](fn: JwtToken => I => IO[Either[ErrorResponseData, O]]):
-    def apply(using a: JwtToken) = fn(a)
+  final class PartiallyAppliedMethod[I, O](fn: I => IO[Either[ErrorResponseData, O]]):
+    def attempt(i: I): IO[Either[ErrorResponseData, O]] = fn(i)
+    def apply(i: I): IO[O]                              = unwrap(attempt(i))
+
+  final class PartiallyAppliedAuthedMethod[I, O](fn: JwtToken => I => IO[Either[ErrorResponseData, O]]):
+    def apply(i: I)(using a: JwtToken): IO[O]                              = unwrap(attempt(i))
+    def attempt(i: I)(using a: JwtToken): IO[Either[ErrorResponseData, O]] = fn(a)(i)
+
+  private def publicMethod[I, O, R](endpoint: PublicEndpoint[I, ErrorResponseData, O, R])
+      : PartiallyAppliedMethod[I, O] =
+    val internal =
+      (dto: I) =>
+        lazy val fn = Http4sClientInterpreter[IO]().toRequestThrowDecodeFailures(
+          endpoint,
+          baseUri = Some(Uri.unsafeFromString(base))
+        )
+        val (req, respFn) = fn(dto)
+        Logger[IO].info(s"sending request $req") *> client.run(req).use { resp =>
+          Logger[IO].info(s"got response $resp") *> respFn(resp)
+        }
+    PartiallyAppliedMethod(internal)
 
   private def authedMethod[I, O, R](endpoint: Endpoint[JwtToken, I, ErrorResponseData, O, R])
-      : PartiallyAppliedAuthedMethod[I, O, R] =
+      : PartiallyAppliedAuthedMethod[I, O] =
     val internal = (jwt: JwtToken) =>
       (dto: I) =>
         lazy val fn = Http4sClientInterpreter[IO]().toSecureRequestThrowDecodeFailures(
@@ -52,7 +62,9 @@ final class MaweituoApiClient(base: String, client: Client[IO]):
           baseUri = Some(Uri.unsafeFromString(base))
         )
         val (req, respFn) = fn(jwt)(dto)
-        client.run(req).use(respFn)
+        Logger[IO].info(s"sending request $req") *> client.run(req).use { resp =>
+          Logger[IO].info(s"got response $resp") *> respFn(resp)
+        }
     PartiallyAppliedAuthedMethod(internal)
 
   val `post /login`                        = publicMethod(endpoints.`post /login`)

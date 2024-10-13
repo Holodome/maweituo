@@ -45,6 +45,10 @@ object dto:
   ) derives Codec.AsObject:
     def toDomain: RegisterRequest = RegisterRequest(name, email, password)
 
+  object RegisterRequestDto:
+    def fromDomain(domain: RegisterRequest): RegisterRequestDto =
+      RegisterRequestDto(domain.name, domain.email, domain.password)
+
   final case class RegisterResponseDto(userId: UserId) derives Codec.AsObject
 
   final case class UpdateUserRequestDto(
@@ -99,6 +103,9 @@ object dto:
   ) derives Codec.AsObject:
     def toDomain: CreateAdRequest = CreateAdRequest(title)
 
+  object CreateAdRequestDto:
+    def fromDomain(domain: CreateAdRequest): CreateAdRequestDto = CreateAdRequestDto(domain.title)
+
   final case class CreateAdResponseDto(
       id: AdId
   ) derives Codec.AsObject
@@ -144,6 +151,8 @@ object dto:
   object ChatDto:
     def fromDomain(domain: Chat): ChatDto =
       ChatDto(domain.id, domain.adId, domain.adAuthor, domain.client)
+
+  final case class CreateChatResponseDto(chatId: ChatId) derives Codec.AsObject
 
   final case class AdChatsResponseDto(
       adId: AdId,

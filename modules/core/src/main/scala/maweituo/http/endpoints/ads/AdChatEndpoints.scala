@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.ads
+package endpoints
+package ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -30,6 +31,7 @@ trait AdChatEndpointDefs(using builder: EndpointBuilderDefs):
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "chats")
+      .out(jsonBody[CreateChatResponseDto])
       .out(statusCode(StatusCode.Created))
 
 final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F])(using EndpointsBuilder[F])
@@ -52,7 +54,6 @@ final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F])(using
     },
     `post /ads/$adId/chats`.secure.serverLogic { authed => adId =>
       given Identity = Identity(authed.id)
-      chatService.create(adId).void
-        .toOut
+      chatService.create(adId).map(CreateChatResponseDto(_)).toOut
     }
   ).map(_.tag("ads"))

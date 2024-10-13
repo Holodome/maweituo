@@ -29,4 +29,4 @@ final class RegisterEndpoints[F[_]: MonadThrow](userService: UserService[F])(usi
         .map(RegisterResponseDto.apply)
         .toOut
     }
-  ).map(_.tag("users"))
+  ).map(_.tag("auth"))

@@ -3,9 +3,9 @@ package tests
 package repos
 package inmemory
 
-import java.time.Instant
-
 import scala.collection.concurrent.TrieMap
+
+import maweituo.domain.ads.Advertisement
 
 class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
 
@@ -20,10 +20,17 @@ class InMemoryAdRepo[F[_]: Sync] extends AdRepo[F]:
   override def delete(id: AdId): F[Unit] =
     Sync[F] delay map.remove(id)
 
-  override def markAsResolved(id: AdId, at: Instant): F[Unit] =
-    Sync[F] delay map.updateWith(id) {
-      case Some(ad) => Some(ad.copy(resolved = true, updatedAt = at))
-      case None     => None
+  override def update(update: UpdateAdRepoRequest): F[Unit] =
+    Sync[F] delay map.get(update.id).map { value =>
+      val newAd = Advertisement(
+        update.id,
+        value.authorId,
+        update.title.getOrElse(value.title),
+        update.resolved.getOrElse(value.resolved),
+        value.createdAt,
+        update.at
+      )
+      map.addOne(value.id -> newAd)
     }
 
   override def findIdsByAuthor(userId: UserId): F[List[AdId]] =

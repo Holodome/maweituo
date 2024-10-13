@@ -15,6 +15,8 @@ export doobie.implicits.given
 import doobie.Transactor
 import doobie.postgres.implicits.given
 import java.time.Instant
+import cats.Applicative
+import cats.data.NonEmptyList
 
 object PostgresAdRepo:
   def make[F[_]: MonadCancelThrow](xa: Transactor[F]): AdRepo[F] = new:
@@ -42,7 +44,19 @@ object PostgresAdRepo:
         .to[List]
         .transact(xa)
 
-    def markAsResolved(id: AdId, at: Instant): F[Unit] =
-      sql"""update advertisements 
-            set is_resolved = true, updated_at = $at 
-            where id = $id::uuid""".update.run.transact(xa).void
+    def update(update: UpdateAdRepoRequest): F[Unit] =
+      if update.resolved.isEmpty && update.title.isEmpty then
+        Applicative[F].unit
+      else
+        updateQuery(update).update.run.transact(xa).void
+
+    private def updateQuery(update: UpdateAdRepoRequest) =
+      val sets = NonEmptyList(
+        fr"updated_at = ${update.at}",
+        List(
+          update.resolved.map(resolved => fr" is_resolved = $resolved "),
+          update.title.map(_.value).map(title => fr" title = $title ")
+        ).flatten
+      )
+      val id = update.id
+      (fr"update users set " ++ sets.reduce(_ ++ fr"," ++ _) ++ fr" where id = $id::uuid")

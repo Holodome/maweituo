@@ -39,10 +39,10 @@ object AdServiceInterp:
         _ <- info"Deleted ad $id by user ${summon[Identity]}"
       yield ()
 
-    def markAsResolved(id: AdId, withWhom: UserId)(using Identity): F[Unit] =
+    def update(req: UpdateAdRequest)(using Identity): F[Unit] =
       for
-        at <- TimeSource[F].instant
-        _  <- iam.authAdModification(id)
-        _  <- ads.markAsResolved(id, at)
-        _  <- telemetry.userBought(withWhom, id)
+        _ <- iam.authAdModification(req.id)
+        r <- UpdateAdRepoRequest.fromReq(req)
+        _ <- ads.update(r)
+        _ <- info"update ad ${req.id} by user ${summon[Identity]}"
       yield ()

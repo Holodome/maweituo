@@ -3,8 +3,6 @@ package domain
 package repos
 package ads
 
-import java.time.Instant
-
 import cats.MonadThrow
 import cats.data.OptionT
 
@@ -15,7 +13,7 @@ trait AdRepo[F[_]]:
   def create(ad: Advertisement): F[Unit]
   def find(id: AdId): OptionT[F, Advertisement]
   def findIdsByAuthor(userId: UserId): F[List[AdId]]
-  def markAsResolved(id: AdId, at: Instant): F[Unit]
+  def update(req: UpdateAdRepoRequest): F[Unit]
   def delete(id: AdId): F[Unit]
 
 object AdRepo:

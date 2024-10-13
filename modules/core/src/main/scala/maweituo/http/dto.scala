@@ -105,6 +105,12 @@ object dto:
       id: AdId
   ) derives Codec.AsObject
 
+  final case class UpdateAdRequestDto(
+      resolved: Option[Boolean],
+      title: Option[AdTitle]
+  ) derives Codec.AsObject:
+    def toDomain(adId: AdId): UpdateAdRequest = UpdateAdRequest(adId, resolved, title)
+
   final case class MarkAdResolvedRequestDto(withWhom: UserId) derives Codec.AsObject
 
   final case class MessageDto(

@@ -6,10 +6,12 @@ import java.util.UUID
 
 import scala.util.Try
 
-import cats.Show
 import cats.data.NonEmptyList
 import cats.derived.derived
+import cats.syntax.all.*
+import cats.{Functor, Show}
 
+import maweituo.infrastructure.effects.TimeSource
 import maweituo.utils.{IdNewtype, Newtype, given}
 
 object ads:
@@ -76,4 +78,28 @@ object ads:
       order: Option[String],
       tags: Option[String],
       title: Option[String]
+  ) derives Show
+
+  final case class UpdateAdRequest(
+      id: AdId,
+      resolved: Option[Boolean],
+      title: Option[AdTitle]
   )
+
+  final case class UpdateAdRepoRequest(
+      id: AdId,
+      resolved: Option[Boolean],
+      title: Option[AdTitle],
+      at: Instant
+  )
+
+  object UpdateAdRepoRequest:
+    def fromReq[F[_]: TimeSource: Functor](req: UpdateAdRequest): F[UpdateAdRepoRequest] =
+      TimeSource[F].instant.map { at =>
+        UpdateAdRepoRequest(
+          req.id,
+          req.resolved,
+          req.title,
+          at
+        )
+      }

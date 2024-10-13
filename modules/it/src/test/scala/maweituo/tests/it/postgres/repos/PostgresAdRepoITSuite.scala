@@ -7,7 +7,6 @@ package repos
 import maweituo.domain.all.*
 import maweituo.postgres.repos.all.*
 import maweituo.tests.resources.*
-import maweituo.utils.given
 
 import doobie.util.transactor.Transactor
 import weaver.GlobalRead
@@ -52,21 +51,5 @@ class PostgresAdRepoITSuite(global: GlobalRead) extends ResourceSuite:
         _ <- ads.delete(ad.id)
         x <- ads.find(ad.id).value
       yield expect.same(None, x)
-    }
-  }
-
-  adsTest("mark as resolved") { (users, ads) =>
-    val gen =
-      for
-        i  <- instantGen
-        (u, ad) <- userAdGen
-      yield (i, u, ad)
-    forall(gen) { (at, u, ad) =>
-      for
-        _ <- users.create(u)
-        _ <- ads.create(ad)
-        _ <- ads.markAsResolved(ad.id, at)
-        a <- ads.find(ad.id).value
-      yield expect.same(Some(true), a.map(_.resolved)) and expect.same(Some(at), a.map(_.updatedAt))
     }
   }

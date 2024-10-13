@@ -49,5 +49,16 @@ final class AdRoutes[F[_]: MonadThrow](adService: AdService[F], builder: RoutesB
         adService
           .delete(adId)
           .toOut
+      },
+    builder.authed
+      .put
+      .in("ads" / path[AdId]("ad_id"))
+      .in(jsonBody[UpdateAdRequestDto])
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => (adId, req) =>
+        given Identity = Identity(authed.id)
+        adService
+          .update(req.toDomain(adId))
+          .toOut
       }
   )

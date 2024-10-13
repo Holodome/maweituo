@@ -2,7 +2,6 @@ package maweituo
 package tests
 package repos
 
-import java.time.Instant
 
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
@@ -21,7 +20,7 @@ class TestAdRepo extends AdRepo[IO]:
   override def findIdsByAuthor(userId: UserId): IO[List[AdId]] = makeError("TestAdRepo.findIdsByAuthor")
   override def create(ad: Advertisement): IO[Unit]             = makeError("TestAdRepo.create")
   override def find(id: AdId): OptionT[IO, Advertisement]      = OptionT(makeError("TestAdRepo.find"))
-  override def markAsResolved(id: AdId, at: Instant): IO[Unit] = makeError("TestAdRepo.markAsResolved")
+  def update(req: UpdateAdRepoRequest): IO[Unit]               = makeError("TestAdRepo.update")
 
 class TestChatRepo extends ChatRepo[IO]:
   override def create(chat: Chat): IO[Unit]            = makeError("TestChatRepo.create")

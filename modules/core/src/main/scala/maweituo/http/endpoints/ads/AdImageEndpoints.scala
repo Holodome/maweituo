@@ -11,9 +11,9 @@ import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 import sttp.tapir.*
 
-class AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
+trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
 
-  val getImageEndpoint =
+  val `get /ads/$adId/imgs/$imgId` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -21,7 +21,7 @@ class AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .out(header[String](HeaderNames.ContentType))
       .out(header[Long](HeaderNames.ContentLength))
 
-  val createImageEndpoint =
+  val `post /ads/$adId/imgs` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "imgs")
@@ -30,7 +30,7 @@ class AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .in(header[Long](HeaderNames.ContentLength))
       .out(statusCode(StatusCode.Created))
 
-  val deleteImageEndpoint =
+  val `delete /ads/$adId/imgs/$imgId` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -40,19 +40,19 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
     extends AdImageEndpointDefs[F] with Endpoints[F]:
 
   override val endpoints = List(
-    getImageEndpoint.serverLogic { (_, imageId) =>
+    `get /ads/$adId/imgs/$imgId`.serverLogic { (_, imageId) =>
       imageService
         .get(imageId)
         .map(x => (x.data, x.contentType.toRaw, x.dataSize))
         .toOut
     },
-    createImageEndpoint.secure.serverLogic { authed => (adId, data, contentType, contentLength) =>
+    `post /ads/$adId/imgs`.secure.serverLogic { authed => (adId, data, contentType, contentLength) =>
       given Identity = Identity(authed.id)
       val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
       val contents   = ImageContentsStream(data, mediaType, contentLength)
       imageService.upload(adId, contents).void.toOut
     },
-    deleteImageEndpoint.secure.serverLogic { authed => (_, imageId) =>
+    `delete /ads/$adId/imgs/$imgId`.secure.serverLogic { authed => (_, imageId) =>
       given Identity = Identity(authed.id)
       imageService.delete(imageId).toOut
     }

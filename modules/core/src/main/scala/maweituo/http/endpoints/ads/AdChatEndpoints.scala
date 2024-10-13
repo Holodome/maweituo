@@ -13,20 +13,20 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class AdChatEndpointDefs(using builder: EndpointBuilderDefs):
-  val getChatEndpoint =
+trait AdChatEndpointDefs(using builder: EndpointBuilderDefs):
+  val `get /ads/$adId/chats/$chatId` =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id"))
       .out(jsonBody[ChatDto])
 
-  val getChatsEndpoint =
+  val `get /ads/$adId/chats` =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats")
       .out(jsonBody[AdChatsResponseDto])
 
-  val createChatEndpoint =
+  val `post /ads/$adId/chats` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "chats")
@@ -36,21 +36,21 @@ final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F])(using
     extends AdChatEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getChatEndpoint.secure.serverLogic { authed => (_, chatId) =>
+    `get /ads/$adId/chats/$chatId`.secure.serverLogic { authed => (_, chatId) =>
       given Identity = Identity(authed.id)
       chatService
         .get(chatId)
         .map(ChatDto.fromDomain)
         .toOut
     },
-    getChatsEndpoint.secure.serverLogic { authed => adId =>
+    `get /ads/$adId/chats`.secure.serverLogic { authed => adId =>
       given Identity = Identity(authed.id)
       chatService
         .findForAd(adId)
         .map(x => AdChatsResponseDto(adId, x.map(ChatDto.fromDomain)))
         .toOut
     },
-    createChatEndpoint.secure.serverLogic { authed => adId =>
+    `post /ads/$adId/chats`.secure.serverLogic { authed => adId =>
       given Identity = Identity(authed.id)
       chatService.create(adId).void
         .toOut

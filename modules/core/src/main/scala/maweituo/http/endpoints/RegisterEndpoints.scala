@@ -11,8 +11,8 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class RegisterEndpointDefs(using builder: EndpointBuilderDefs):
-  val registerEndpoint =
+trait RegisterEndpointDefs(using builder: EndpointBuilderDefs):
+  val `post /register` =
     builder.public
       .post
       .in("register")
@@ -23,7 +23,7 @@ final class RegisterEndpoints[F[_]: MonadThrow](userService: UserService[F])(usi
     extends RegisterEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    registerEndpoint.serverLogic { register =>
+    `post /register`.serverLogic { register =>
       userService
         .create(register.toDomain)
         .map(RegisterResponseDto.apply)

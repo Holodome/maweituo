@@ -10,7 +10,7 @@ import scala.io.Source
 
 import maweituo.config.{HttpClientConfig, PostgresConfig}
 import maweituo.resources.{MkHttpClient, MkPostgresClient}
-import maweituo.tests.e2e.AppClient
+import maweituo.tests.e2e.MaweituoApiClient
 
 import com.comcast.ip4s.*
 import com.dimafeng.testcontainers.{DockerComposeContainer, ExposedService}
@@ -29,7 +29,7 @@ object AppResource extends GlobalResource:
     )
   )
 
-  def appResource: Resource[IO, AppClient] =
+  def appResource: Resource[IO, MaweituoApiClient] =
     Resource.eval(IO.delay(appComposeDef.start()))
       .evalTap { container =>
         val pgHost = Host.fromString(container.getServiceHost("postgres", 5432)).get
@@ -46,7 +46,7 @@ object AppResource extends GlobalResource:
         MkHttpClient[IO].newClient(HttpClientConfig(5.seconds, 5.seconds))
           .map(x => (x, s"http://$host:$port"))
       }.map { (client, uri) =>
-        new AppClient(uri, client)
+        new MaweituoApiClient(uri, client)
       }
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
@@ -56,8 +56,8 @@ object AppResource extends GlobalResource:
     yield ()
 
 extension (global: GlobalRead)
-  def app: Resource[IO, AppClient] =
-    global.getR[AppClient]().flatMap {
+  def app: Resource[IO, MaweituoApiClient] =
+    global.getR[MaweituoApiClient]().flatMap {
       case Some(value) => Resource.pure(value)
       case None        => AppResource.appResource
     }

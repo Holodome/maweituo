@@ -13,16 +13,16 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class AdMsgEndpointDefs(using builder: EndpointBuilderDefs):
+trait AdMsgEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getMessagesEndpoint =
+  val `get /ads/$adId/chats/$chatId/msgs` =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
       .in(query[Int]("page") and query[Option[Int]]("page_size"))
       .out(jsonBody[HistoryResponseDto])
 
-  val sendMessageEndpoint =
+  val `post /ads/$adId/chats/$chatId/msgs` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
@@ -33,7 +33,7 @@ final class AdMsgEndpoints[F[_]: MonadThrow](msgService: MessageService[F])(usin
     extends AdMsgEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getMessagesEndpoint.secure.serverLogic { authed => (_, chatId, page, pageSize) =>
+    `get /ads/$adId/chats/$chatId/msgs`.secure.serverLogic { authed => (_, chatId, page, pageSize) =>
       given Identity = Identity(authed.id)
       parsePagination(page, pageSize).flatMap { pag =>
         msgService
@@ -42,7 +42,7 @@ final class AdMsgEndpoints[F[_]: MonadThrow](msgService: MessageService[F])(usin
           .toOut
       }
     },
-    sendMessageEndpoint.secure.serverLogic { authed => (_, chatId, msg) =>
+    `post /ads/$adId/chats/$chatId/msgs`.secure.serverLogic { authed => (_, chatId, msg) =>
       given Identity = Identity(authed.id)
       msgService
         .send(chatId, msg.toDomain)

@@ -12,9 +12,9 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class UserAdEndpointDefs(using builder: EndpointBuilderDefs):
+trait UserAdEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getUserAdsEndpoint =
+  val `get /users/$userId/ads` =
     builder.public
       .get
       .in("users" / path[UserId]("user_id") / "ads")
@@ -24,7 +24,7 @@ final class UserAdEndpoints[F[_]: MonadThrow](userAdsService: UserAdsService[F])
     extends UserAdEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getUserAdsEndpoint.serverLogic { userId =>
+    `get /users/$userId/ads`.serverLogic { userId =>
       userAdsService
         .getAds(userId)
         .map(UserAdsResponseDto(userId, _))

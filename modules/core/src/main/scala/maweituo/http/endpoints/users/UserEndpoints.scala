@@ -13,21 +13,21 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-class UserEndpointDefs(using builder: EndpointBuilderDefs):
+trait UserEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getUserEndpoint =
+  val `get /users/$userId` =
     builder.public
       .get
       .in("users" / path[UserId]("user_id"))
       .out(jsonBody[UserPublicInfoDto])
 
-  val deleteUserEndpoint =
+  val `delete /users/$userId` =
     builder.authed
       .delete
       .in("users" / path[UserId]("user_id"))
       .out(statusCode(StatusCode.NoContent))
 
-  val updateUserEndpoint =
+  val `put /users/$userId` =
     builder.authed
       .put
       .in("users" / path[UserId]("user_id"))
@@ -38,17 +38,17 @@ final class UserEndpoints[F[_]: MonadThrow](userService: UserService[F])(using E
     extends UserEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getUserEndpoint.serverLogic { userId =>
+    `get /users/$userId`.serverLogic { userId =>
       userService
         .get(userId)
         .map(UserPublicInfoDto.fromUser)
         .toOut
     },
-    deleteUserEndpoint.secure.serverLogic { authed => userId =>
+    `delete /users/$userId`.secure.serverLogic { authed => userId =>
       given Identity = Identity(authed.id)
       userService.delete(userId).toOut
     },
-    updateUserEndpoint.secure.serverLogic { authed => (userId, req) =>
+    `put /users/$userId`.secure.serverLogic { authed => (userId, req) =>
       given Identity = Identity(authed.id)
       userService.update(req.toDomain(userId)).toOut
     }

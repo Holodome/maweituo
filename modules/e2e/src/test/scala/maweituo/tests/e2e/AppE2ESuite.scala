@@ -3,7 +3,7 @@ package tests
 package e2e
 
 import maweituo.http.dto.*
-import maweituo.tests.e2e.AppClient.unwrap
+import maweituo.tests.e2e.MaweituoApiClient.unwrap
 import maweituo.tests.e2e.resources.app
 
 import dev.profunktor.auth.jwt.JwtToken
@@ -17,7 +17,7 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
   override def checkConfig: CheckConfig =
     CheckConfig.default.copy(minimumSuccessful = 1, perPropertyParallelism = 1)
 
-  type Res = AppClient
+  type Res = MaweituoApiClient
 
   override def sharedResource: Resource[IO, Res] = global.app
 

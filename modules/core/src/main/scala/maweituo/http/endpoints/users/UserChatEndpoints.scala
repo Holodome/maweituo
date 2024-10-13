@@ -12,9 +12,9 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class UserChatEndpointDefs(using builder: EndpointBuilderDefs):
+trait UserChatEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getUserChatsEndpoint =
+  val `get /users/$userId/chats` =
     builder.authed
       .get
       .in("users" / path[UserId]("user_id") / "chats")
@@ -25,7 +25,7 @@ final class UserChatEndpoints[F[_]: MonadThrow](userChatsService: UserChatsServi
 ) extends UserChatEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getUserChatsEndpoint.secure.serverLogic { authed => userId =>
+    `get /users/$userId/chats`.secure.serverLogic { authed => userId =>
       given Identity = Identity(authed.id)
       userChatsService
         .getChats(userId)

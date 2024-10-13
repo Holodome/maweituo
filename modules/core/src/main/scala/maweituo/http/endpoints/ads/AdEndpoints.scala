@@ -12,15 +12,15 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class AdEndpointDefs(using builder: EndpointBuilderDefs):
+trait AdEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getAdEndpoint =
+  val `get /ads/$adId` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id"))
       .out(jsonBody[AdResponseDto])
 
-  val createAdEndpoint =
+  val `post /ads` =
     builder.authed
       .post
       .in("ads")
@@ -28,13 +28,13 @@ class AdEndpointDefs(using builder: EndpointBuilderDefs):
       .out(jsonBody[CreateAdResponseDto])
       .out(statusCode(StatusCode.Created))
 
-  val deleteAdEndpoint =
+  val `delete /ads/$adId` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id"))
       .out(statusCode(StatusCode.NoContent))
 
-  val updateAdEndpoint =
+  val `put /ads/$adId` =
     builder.authed
       .put
       .in("ads" / path[AdId]("ad_id"))
@@ -45,26 +45,26 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using Endpoin
     extends AdEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getAdEndpoint.serverLogic { adId =>
+    `get /ads/$adId`.serverLogic { adId =>
       adService
         .get(adId)
         .map(AdResponseDto.fromDomain)
         .toOut
     },
-    createAdEndpoint.secure.serverLogic { authed => create =>
+    `post /ads`.secure.serverLogic { authed => create =>
       given Identity = Identity(authed.id)
       adService
         .create(create.toDomain)
         .map(CreateAdResponseDto.apply)
         .toOut
     },
-    deleteAdEndpoint.secure.serverLogic { authed => adId =>
+    `delete /ads/$adId`.secure.serverLogic { authed => adId =>
       given Identity = Identity(authed.id)
       adService
         .delete(adId)
         .toOut
     },
-    updateAdEndpoint.secure.serverLogic { authed => (adId, req) =>
+    `put /ads/$adId`.secure.serverLogic { authed => (adId, req) =>
       given Identity = Identity(authed.id)
       adService
         .update(req.toDomain(adId))

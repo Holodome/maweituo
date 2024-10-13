@@ -13,20 +13,20 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-class FeedEndpointDefs(using builder: EndpointBuilderDefs):
+trait FeedEndpointDefs(using builder: EndpointBuilderDefs):
 
   private val queryParams =
     query[Int]("page") and query[Option[Int]]("page_size") and query[Option[String]]("order") and
       query[Option[String]]("title") and query[Option[String]]("tags")
 
-  val publicFeedEndpoint =
+  val `get /feed` =
     builder.public
       .get
       .in("feed")
       .in(queryParams)
       .out(jsonBody[FeedResponseDto])
 
-  val userFeedEndpoint =
+  val `get /feed/$userId` =
     builder.authed
       .get
       .in("feed" / path[UserId]("user_id"))
@@ -37,12 +37,12 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F])(using Endpoint
     extends FeedEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    publicFeedEndpoint.serverLogic { t =>
+    `get /feed`.serverLogic { t =>
       parseUnauthorizedAdSearch.tupled(t).flatMap { req =>
         feed.feed(req).map(FeedResponseDto.apply).toOut
       }
     },
-    userFeedEndpoint.secure.serverLogic { authed => (_, page, pageSize, order, title, tags) =>
+    `get /feed/$userId`.secure.serverLogic { authed => (_, page, pageSize, order, title, tags) =>
       given Identity = Identity(authed.id)
       parseAuthorizedAdSearch(page, pageSize, order, title, tags).flatMap { req =>
         feed.feed(req).map(FeedResponseDto.apply).toOut

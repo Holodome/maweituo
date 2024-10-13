@@ -12,15 +12,15 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-class TagEndpointDefs(using builder: EndpointBuilderDefs):
+trait TagEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getAllTagsEndpoint =
+  val `get /tags` =
     builder.public
       .get
       .in("tags")
       .out(jsonBody[AllTagsResponse])
 
-  val getTagAdsEndpoint =
+  val `get /tags/$tag/ads` =
     builder.public
       .get
       .in("tags" / path[AdTag]("tag") / "ads")
@@ -30,10 +30,10 @@ final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using Endpoint
     extends TagEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getAllTagsEndpoint.serverLogic { _ =>
+    `get /tags`.serverLogic { _ =>
       tags.all.map(AllTagsResponse.apply).toOut
     }.tag("ads"),
-    getTagAdsEndpoint.serverLogic { tag =>
+    `get /tags/$tag/ads`.serverLogic { tag =>
       tags.find(tag).map(TagAdsResponse(tag, _)).toOut
     }.tag("ads")
   )

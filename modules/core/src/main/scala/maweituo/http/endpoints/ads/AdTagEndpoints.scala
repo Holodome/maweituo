@@ -12,22 +12,22 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-class AdTagEndpointDefs(using builder: EndpointBuilderDefs):
+trait AdTagEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val getAdTagsEndpoint =
+  val `get /ads/$adId/tags` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "tags")
       .out(jsonBody[AdTagsResponseDto])
 
-  val addAdTagEndpoint =
+  val `post /ads/$adId/tags` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "tags")
       .in(jsonBody[AddTagRequestDto])
       .out(statusCode(StatusCode.Created))
 
-  val deleteAdTagEndpoint =
+  val `delete /ads/$adId/tags` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "tags")
@@ -38,17 +38,17 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using Endpoi
     extends AdTagEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getAdTagsEndpoint.serverLogic { adId =>
+    `get /ads/$adId/tags`.serverLogic { adId =>
       tags
         .adTags(adId)
         .map(AdTagsResponseDto(adId, _))
         .toOut
     },
-    addAdTagEndpoint.secure.serverLogic { authed => (adId, req) =>
+    `post /ads/$adId/tags`.secure.serverLogic { authed => (adId, req) =>
       given Identity = Identity(authed.id)
       tags.addTag(adId, req.tag).toOut
     },
-    deleteAdTagEndpoint.secure.serverLogic { authed => (adId, req) =>
+    `delete /ads/$adId/tags`.secure.serverLogic { authed => (adId, req) =>
       given Identity = Identity(authed.id)
       tags.removeTag(adId, req.tag).toOut
     }

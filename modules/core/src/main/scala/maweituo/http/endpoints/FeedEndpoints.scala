@@ -6,6 +6,7 @@ import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
+import maweituo.logic.search.{parseAuthorizedAdSearch, parseUnauthorizedAdSearch}
 
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
@@ -26,10 +27,9 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: Route
       .in(queryParams)
       .out(jsonBody[FeedResponseDto])
       .serverLogic { t =>
-        val form = AdSearchForm.apply.tupled(t)
-        feed.feedUnauthorized(form)
-          .map(FeedResponseDto.fromDomain)
-          .toOut
+        parseUnauthorizedAdSearch.tupled(t).flatMap { req =>
+          feed.feed(req).map(FeedResponseDto.apply).toOut
+        }
       },
     builder.authed
       .get
@@ -38,9 +38,8 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: Route
       .out(jsonBody[FeedResponseDto])
       .serverLogic { authed => (_, page, pageSize, order, title, tags) =>
         given Identity = Identity(authed.id)
-        val form       = AdSearchForm(page, pageSize, order, title, tags)
-        feed.feedAuthorized(form)
-          .map(FeedResponseDto.fromDomain)
-          .toOut
+        parseAuthorizedAdSearch(page, pageSize, order, title, tags).flatMap { req =>
+          feed.feed(req).map(FeedResponseDto.apply).toOut
+        }
       }
   )

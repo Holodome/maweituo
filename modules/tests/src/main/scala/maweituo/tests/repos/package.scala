@@ -2,6 +2,8 @@ package maweituo
 package tests
 package repos
 
+import maweituo.domain.exports.PaginatedCollection
+
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
 
@@ -29,8 +31,9 @@ class TestChatRepo extends ChatRepo[IO]:
   override def findForAd(ad: AdId): IO[List[Chat]] = makeError("TestChatRepo.findForAd")
 
 class TestMessageRepo extends MessageRepo[IO]:
-  override def chatHistory(chatId: ChatId): IO[List[Message]] = makeError("TestMessageRepo.chatHistory")
-  override def send(message: Message): IO[Unit]               = makeError("TestMessageRepo.send")
+  override def chatHistory(chatId: ChatId, pag: Pagination): IO[PaginatedCollection[Message]] =
+    makeError("TestMessageRepo.chatHistory")
+  override def send(message: Message): IO[Unit] = makeError("TestMessageRepo.send")
 
 class TestAdImageRepo extends AdImageRepo[IO]:
   override def create(image: Image): IO[Unit]             = makeError("TestAdImageRepo.create")

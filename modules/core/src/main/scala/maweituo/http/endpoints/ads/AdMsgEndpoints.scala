@@ -6,6 +6,9 @@ import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
+import maweituo.logic.DomainError
+import cats.data.{NonEmptyList, Validated, ValidatedNel}
+import maweituo.logic.search.parsePagination
 
 import sttp.model.StatusCode
 import sttp.tapir.*
@@ -21,13 +24,16 @@ final class AdMsgEndpoints[F[_]: MonadThrow](
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
+      .in(query[Int]("page") and query[Option[Int]]("page_size"))
       .out(jsonBody[HistoryResponseDto])
-      .serverLogic { authed => (_, chatId) =>
+      .serverLogic { authed => (_, chatId, page, pageSize) =>
         given Identity = Identity(authed.id)
-        msgService
-          .history(chatId)
-          .map(HistoryResponseDto.fromDomain(chatId, _))
-          .toOut
+        parsePagination(page, pageSize).flatMap { pag =>
+          msgService
+            .history(chatId, pag)
+            .map(HistoryResponseDto.fromDomain(chatId, _))
+            .toOut
+        }
       },
     builder.authed
       .post

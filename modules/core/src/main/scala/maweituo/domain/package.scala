@@ -4,6 +4,7 @@ package domain
 export exports.*
 
 import cats.Show
+import cats.Functor
 import cats.derived.derived
 
 import cats.syntax.all.*
@@ -38,6 +39,10 @@ object exports:
   ) derives Show
 
   object PaginatedCollection:
+    given Functor[PaginatedCollection] = new:
+      def map[A, B](fa: PaginatedCollection[A])(f: A => B): PaginatedCollection[B] =
+        fa.copy(items = fa.items.map(f))
+
     def empty[A]: PaginatedCollection[A] =
       PaginatedCollection(List(), Pagination(0), 0, 0)
 

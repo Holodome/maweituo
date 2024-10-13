@@ -1,6 +1,7 @@
 package maweituo
 package http
 package endpoints.ads
+
 import cats.MonadThrow
 import cats.syntax.all.*
 

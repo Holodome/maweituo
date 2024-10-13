@@ -10,6 +10,8 @@ import cats.derived.derived
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
+import cats.ApplicativeThrow
+import cats.Applicative
 
 enum SearchValidationError extends NoStackTrace derives Show:
   case InvalidPage
@@ -73,7 +75,7 @@ private def validateSortOrderAuthorized(order: Option[String])(using Identity): 
 private def validateTitle(title: Option[String]): ValidationResult[Option[String]] =
   title.valid
 
-def validateUnathorized(
+private def validateUnathorized(
     page: Int,
     pageSize: Option[Int],
     order: Option[String],
@@ -87,7 +89,7 @@ def validateUnathorized(
     validateTitle(title)
   ).mapN(AdSearchRequest.apply)
 
-def validateAuthorized(
+private def validateAuthorized(
     page: Int,
     pageSize: Option[Int],
     order: Option[String],
@@ -100,3 +102,29 @@ def validateAuthorized(
     validateFilterTags(tags),
     validateTitle(title)
   ).mapN(AdSearchRequest.apply)
+
+private def raiseToEffect[F[_]: ApplicativeThrow, A](result: ValidationResult[A]) =
+  result match
+    case Validated.Valid(a)   => Applicative[F].pure(a)
+    case Validated.Invalid(e) => DomainError.InvalidSearchParams(e).raiseError[F, A]
+
+def parsePagination[F[_]: ApplicativeThrow](page: Int, pageSize: Option[Int]): F[Pagination] =
+  raiseToEffect(validatePagination(page, pageSize))
+
+def parseUnauthorizedAdSearch[F[_]: ApplicativeThrow](
+    page: Int,
+    pageSize: Option[Int],
+    order: Option[String],
+    tags: Option[String],
+    title: Option[String]
+): F[AdSearchRequest] =
+  raiseToEffect(validateUnathorized(page, pageSize, order, tags, title))
+
+def parseAuthorizedAdSearch[F[_]: ApplicativeThrow](
+    page: Int,
+    pageSize: Option[Int],
+    order: Option[String],
+    tags: Option[String],
+    title: Option[String]
+)(using Identity): F[AdSearchRequest] =
+  raiseToEffect(validateAuthorized(page, pageSize, order, tags, title))

@@ -9,6 +9,7 @@ import maweituo.postgres.repos.all.*
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.LoggerFactory
+import cats.Parallel
 
 sealed abstract class Repos[F[_]]:
   val users: UserRepo[F]
@@ -22,7 +23,7 @@ sealed abstract class Repos[F[_]]:
   val adSearch: AdSearchRepo[F]
 
 object Repositories:
-  def makePostgres[F[_]: Async: LoggerFactory: NonEmptyParallel](xa: Transactor[F]): Repos[F] = new:
+  def makePostgres[F[_]: Async: LoggerFactory: Parallel](xa: Transactor[F]): Repos[F] = new:
     val users     = PostgresUserRepo.make[F](xa)
     val ads       = PostgresAdRepo.make[F](xa)
     val tags      = PostgresAdTagRepo.make[F](xa)

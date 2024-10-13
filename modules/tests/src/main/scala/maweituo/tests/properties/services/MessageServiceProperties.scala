@@ -39,8 +39,8 @@ trait MessageServiceProperties:
             ad <- ads.create(createAd)(using Identity(u1))
             given Identity = Identity(u2)
             chat    <- chats.create(ad)
-            history <- msgs.history(chat)
-          yield expect.all(history.messages.isEmpty)
+            history <- msgs.history(chat, Pagination(0))
+          yield expect.all(history.items.isEmpty)
         }
     ),
     Property(
@@ -61,8 +61,8 @@ trait MessageServiceProperties:
             given Identity = Identity(u2)
             chat    <- chats.create(ad)
             _       <- msgs.send(chat, msg)
-            history <- msgs.history(chat)
-          yield matches(history.messages) { case List(m) =>
+            history <- msgs.history(chat, Pagination(0))
+          yield matches(history.items) { case List(m) =>
             NonEmptyList.of(
               expect.same(m.text, msg.text),
               expect.same(m.chat, chat),
@@ -113,7 +113,7 @@ trait MessageServiceProperties:
             ad   <- ads.create(createAd)(using Identity(u1))
             chat <- chats.create(ad)(using Identity(u2))
             _    <- msgs.send(chat, msg)(using Identity(u2))
-            x    <- msgs.history(chat)(using Identity(u3)).attempt
+            x    <- msgs.history(chat, Pagination(0))(using Identity(u3)).attempt
           yield expect.same(Left(DomainError.ChatAccessForbidden(chat)), x)
         }
     )

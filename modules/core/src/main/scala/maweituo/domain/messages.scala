@@ -32,6 +32,4 @@ object messages:
       at: Instant
   ) derives Show
 
-  final case class HistoryResponse(messages: List[Message]) derives Show
-
   final case class SendMessageRequest(text: MessageText) derives Show

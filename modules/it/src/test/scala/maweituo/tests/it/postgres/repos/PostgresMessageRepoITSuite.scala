@@ -52,7 +52,7 @@ class PostgresMessageRepoITSuite(global: GlobalRead) extends ResourceSuite:
         _ <- ads.create(ad)
         _ <- chats.create(chat)
         _ <- msgs.send(msg)
-        x <- msgs.chatHistory(chat.id)
+        x <- msgs.chatHistory(chat.id, Pagination(0)).map(_.items)
       yield expect.same(List(msg), x.map(_.copy(at = msg.at)))
     }
   }

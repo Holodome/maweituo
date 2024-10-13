@@ -8,6 +8,8 @@ import cats.derived.derived
 import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{MonadThrow, Show}
+import io.circe.Encoder
+import io.circe.Decoder
 
 import maweituo.domain.all.*
 import maweituo.utils.given
@@ -23,26 +25,15 @@ object dto:
   object ErrorResponseDto:
     def make(e: String): ErrorResponseDto = ErrorResponseDto(List(e))
 
+  given Encoder[Pagination] = Encoder.derived
+  given Decoder[Pagination] = Decoder.derived
+
+  given [A: Encoder]: Encoder[PaginatedCollection[A]] = Encoder.derived
+  given [A: Decoder]: Decoder[PaginatedCollection[A]] = Decoder.derived
+
   final case class FeedResponseDto(
-      items: List[AdId],
-      page: Int,
-      pageSize: Int,
-      totalPages: Int,
-      totalItems: Int
+      feed: PaginatedCollection[AdId]
   ) derives Codec.AsObject
-
-  object FeedResponseDto:
-    def fromDomain(domain: PaginatedCollection[AdId]): FeedResponseDto =
-      FeedResponseDto(domain.items, domain.pag.page, domain.pag.pageSize, domain.totalPages, domain.totalItems)
-
-    def fromDomain(domain: PaginatedAdsResponse): FeedResponseDto =
-      FeedResponseDto(
-        domain.col.items,
-        domain.col.pag.page,
-        domain.col.pag.pageSize,
-        domain.col.totalPages,
-        domain.col.totalItems
-      )
 
   final case class LoginRequestDto(name: Username, password: Password) derives Codec.AsObject:
     def toDomain: LoginRequest = LoginRequest(name, password)
@@ -122,7 +113,7 @@ object dto:
       chatId: ChatId,
       text: MessageText,
       at: java.time.Instant
-  ) derives Codec.AsObject, Show
+  ) derives Codec.AsObject
 
   object MessageDto:
     def fromDomain(domain: Message): MessageDto =
@@ -130,12 +121,12 @@ object dto:
 
   final case class HistoryResponseDto(
       chatId: ChatId,
-      messages: List[MessageDto]
+      messages: PaginatedCollection[MessageDto]
   ) derives Codec.AsObject
 
   object HistoryResponseDto:
-    def fromDomain(chatId: ChatId, resp: HistoryResponse): HistoryResponseDto =
-      HistoryResponseDto(chatId, resp.messages.map(MessageDto.fromDomain))
+    def fromDomain(chatId: ChatId, messages: PaginatedCollection[Message]): HistoryResponseDto =
+      HistoryResponseDto(chatId, messages.map(MessageDto.fromDomain))
 
   final case class SendMessageRequestDto(text: MessageText) derives Codec.AsObject:
     def toDomain: SendMessageRequest = SendMessageRequest(text)

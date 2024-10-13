@@ -26,7 +26,5 @@ object MessageServiceInterp:
         _ <- msgRepo.send(msg)
       yield ()
 
-    def history(chatId: ChatId)(using Identity): F[HistoryResponse] =
-      iam.authChatAccess(chatId) *> msgRepo
-        .chatHistory(chatId)
-        .map(HistoryResponse.apply)
+    def history(chatId: ChatId, pag: Pagination)(using Identity): F[PaginatedCollection[Message]] =
+      iam.authChatAccess(chatId) *> msgRepo.chatHistory(chatId, pag)

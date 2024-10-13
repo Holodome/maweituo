@@ -1,6 +1,6 @@
 package maweituo
 package http
-package routes
+package endpoints
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -12,7 +12,7 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-final class FeedRoutes[F[_]: MonadThrow](feed: FeedService[F], builder: RoutesBuilder[F])
+final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   private val queryParams =

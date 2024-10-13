@@ -1,7 +1,6 @@
 package maweituo
 package http
-package routes
-package users
+package endpoints.users
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -14,7 +13,7 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-final class UserRoutes[F[_]: MonadThrow](
+final class UserEndpoints[F[_]: MonadThrow](
     userService: UserService[F],
     builder: RoutesBuilder[F]
 ) extends Endpoints[F]:

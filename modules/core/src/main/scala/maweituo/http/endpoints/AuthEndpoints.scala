@@ -1,6 +1,6 @@
 package maweituo
 package http
-package routes
+package endpoints
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -12,7 +12,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class LoginRoutes[F[_]: MonadThrow](authService: AuthService[F], builder: RoutesBuilder[F])
+final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   override val endpoints = List(
@@ -26,5 +26,13 @@ final class LoginRoutes[F[_]: MonadThrow](authService: AuthService[F], builder: 
           .login(login.toDomain)
           .map { x => LoginResponseDto(x.jwt) }
           .toOut
+      },
+    builder.authed
+      .post
+      .in("logout")
+      .out(statusCode(StatusCode.NoContent))
+      .serverLogic { authed => _ =>
+        given Identity = Identity(authed.id)
+        authService.logout(authed.jwt).toOut
       }
   )

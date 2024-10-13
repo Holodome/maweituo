@@ -4,7 +4,7 @@ package modules
 import cats.effect.Async
 
 import maweituo.http.*
-import maweituo.http.routes.all.*
+import maweituo.http.endpoints.all.*
 
 import org.http4s.HttpApp
 import org.http4s.implicits.*
@@ -28,18 +28,17 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
   private lazy val endpoints =
     val routesBuilder = new RoutesBuilder[F](services.auth)
     List(
-      LoginRoutes[F](services.auth, routesBuilder),
-      RegisterRoutes[F](services.users, routesBuilder),
-      LogoutRoutes[F](services.auth, routesBuilder),
-      AdRoutes[F](services.ads, routesBuilder),
-      AdChatRoutes[F](services.chats, routesBuilder),
-      AdImageRoutes[F](services.images, routesBuilder),
-      AdMsgRoutes[F](services.messages, routesBuilder),
-      AdTagRoutes[F](services.tags, routesBuilder),
-      UserRoutes[F](services.users, routesBuilder),
-      UserAdRoutes[F](services.userAds, routesBuilder),
-      TagRoutes[F](services.tags, routesBuilder),
-      FeedRoutes[F](services.feed, routesBuilder)
+      AuthEndpoints[F](services.auth, routesBuilder),
+      RegisterEndpoints[F](services.users, routesBuilder),
+      AdEndpoints[F](services.ads, routesBuilder),
+      AdChatEndpoints[F](services.chats, routesBuilder),
+      AdImageEndpoints[F](services.images, routesBuilder),
+      AdMsgEndpoints[F](services.messages, routesBuilder),
+      AdTagEndpoints[F](services.tags, routesBuilder),
+      UserEndpoints[F](services.users, routesBuilder),
+      UserAdEndpoints[F](services.userAds, routesBuilder),
+      TagEndpoints[F](services.tags, routesBuilder),
+      FeedEndpoints[F](services.feed, routesBuilder)
     ).map(_.endpoints).flatten
 
   private lazy val allEndpoints =

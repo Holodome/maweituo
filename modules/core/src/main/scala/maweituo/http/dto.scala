@@ -1,6 +1,8 @@
 package maweituo
 package http
 
+import java.time.Instant
+
 import cats.data.{EitherT, OptionT}
 import cats.derived.derived
 import cats.effect.Concurrent
@@ -13,7 +15,6 @@ import maweituo.utils.given
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
-import java.time.Instant
 
 object dto:
 

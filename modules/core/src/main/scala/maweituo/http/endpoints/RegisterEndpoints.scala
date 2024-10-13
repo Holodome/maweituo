@@ -1,6 +1,6 @@
 package maweituo
 package http
-package routes
+package endpoints
 import cats.MonadThrow
 import cats.syntax.all.*
 
@@ -11,7 +11,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class RegisterRoutes[F[_]: MonadThrow](userService: UserService[F], builder: RoutesBuilder[F])
+final class RegisterEndpoints[F[_]: MonadThrow](userService: UserService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   override val endpoints = List(

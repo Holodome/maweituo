@@ -1,7 +1,6 @@
 package maweituo
 package http
-package routes
-package ads
+package endpoints.ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -13,7 +12,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdMsgRoutes[F[_]: MonadThrow](
+final class AdMsgEndpoints[F[_]: MonadThrow](
     msgService: MessageService[F],
     builder: RoutesBuilder[F]
 ) extends Endpoints[F]:

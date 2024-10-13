@@ -1,7 +1,6 @@
 package maweituo
 package http
-package routes
-package ads
+package endpoints.ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -12,7 +11,7 @@ import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 import sttp.tapir.*
 
-final class AdImageRoutes[F[_]: MonadThrow](imageService: AdImageService[F], builder: RoutesBuilder[F])
+final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   override val endpoints = List(

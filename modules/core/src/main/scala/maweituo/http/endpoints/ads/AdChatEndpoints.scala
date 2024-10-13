@@ -1,7 +1,6 @@
 package maweituo
 package http
-package routes
-package ads
+package endpoints.ads
 import cats.MonadThrow
 import cats.syntax.all.*
 
@@ -12,7 +11,7 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdChatRoutes[F[_]: MonadThrow](chatService: ChatService[F], builder: RoutesBuilder[F])
+final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   override val endpoints = List(

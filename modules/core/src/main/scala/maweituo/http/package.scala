@@ -6,10 +6,9 @@ import cats.effect.kernel.Async
 import cats.syntax.all.*
 
 import maweituo.domain.services.users.AuthService
-import maweituo.domain.users.AuthedUser
 
 import dev.profunktor.auth.jwt.JwtToken
-import org.http4s.{AuthedRoutes, HttpRoutes}
+import org.http4s.HttpRoutes
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.StatusCode
 import sttp.model.headers.WWWAuthenticateChallenge
@@ -45,24 +44,3 @@ trait Endpoints[F[_]]:
 object Endpoints:
   extension [F[_]: Async](e: Endpoints[F])
     def routes: HttpRoutes[F] = Http4sServerInterpreter[F]().toRoutes(e.endpoints)
-
-sealed trait Routes[F[_]]:
-  def publicRoutesOpt: Option[HttpRoutes[F]]             = None
-  def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = None
-
-trait PublicRoutes[F[_]] extends Routes[F]:
-  override final def publicRoutesOpt: Option[HttpRoutes[F]] = Some(routes)
-
-  def routes: HttpRoutes[F]
-
-trait UserAuthRoutes[F[_]] extends Routes[F]:
-  override final def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(routes)
-
-  def routes: AuthedRoutes[AuthedUser, F]
-
-trait BothRoutes[F[_]] extends Routes[F]:
-  override final def publicRoutesOpt: Option[HttpRoutes[F]]             = Some(publicRoutes)
-  override final def authRoutesOpt: Option[AuthedRoutes[AuthedUser, F]] = Some(authRoutes)
-
-  def publicRoutes: HttpRoutes[F]
-  def authRoutes: AuthedRoutes[AuthedUser, F]

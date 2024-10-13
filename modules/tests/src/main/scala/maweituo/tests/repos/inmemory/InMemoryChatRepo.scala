@@ -25,3 +25,6 @@ class InMemoryChatRepo[F[_]: Sync] extends ChatRepo[F]:
 
   override def findForAd(ad: AdId): F[List[Chat]] =
     Sync[F] delay map.values.filter(chat => chat.adId === ad).toList
+
+  override def findForUser(userId: UserId): F[List[Chat]] =
+    Sync[F] delay map.values.filter(chat => chat.adAuthor === userId || chat.client === userId).toList

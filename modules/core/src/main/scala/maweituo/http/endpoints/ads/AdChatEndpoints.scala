@@ -6,12 +6,12 @@ import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
+import maweituo.http.dto.AdChatsResponseDto
 
 import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
-import maweituo.http.dto.AdChatsResponseDto
 
 final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F], builder: RoutesBuilder[F])
     extends Endpoints[F]:

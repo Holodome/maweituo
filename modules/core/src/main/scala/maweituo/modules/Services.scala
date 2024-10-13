@@ -11,6 +11,7 @@ import org.typelevel.log4cats.LoggerFactory
 sealed abstract class Services[F[_]]:
   val users: UserService[F]
   val userAds: UserAdsService[F]
+  val userChats: UserChatsService[F]
   val auth: AuthService[F]
   val ads: AdService[F]
   val chats: ChatService[F]
@@ -29,8 +30,9 @@ object Services:
         IAMServiceInterp.make[F](repos.ads, repos.chats, repos.images)
       given telemetry: TelemetryService[F] =
         TelemetryServiceBackgroundInterp.make(TelemetryServiceInterp.make(repos.telemetry))
-      override val users: UserService[F]      = UserServiceInterp.make(repos.users)
-      override val userAds: UserAdsService[F] = UserAdsServiceInterp.make(repos.ads)
+      override val users: UserService[F]          = UserServiceInterp.make(repos.users)
+      override val userAds: UserAdsService[F]     = UserAdsServiceInterp.make(repos.ads)
+      override val userChats: UserChatsService[F] = UserChatsServiceInterp.make(repos.chats)
       override val auth: AuthService[F] =
         AuthServiceInterp.make(repos.users, infra.jwtDict, infra.usersDict, infra.jwtTokens)
       override val ads: AdService[F]           = AdServiceInterp.make[F](repos.ads)

@@ -41,3 +41,9 @@ object PostgresChatRepo:
         select id, ad_id, ad_author_id, client_id from chats 
         where ad_id = $ad::uuid
       """.query[Chat].to[List].transact(xa)
+
+    def findForUser(user: UserId): F[List[Chat]] =
+      sql"""
+        select id, ad_id, ad_author_id, client_id from chats 
+        where ad_author_id = $user::uuid or client_id = $user::uuid
+      """.query[Chat].to[List].transact(xa)

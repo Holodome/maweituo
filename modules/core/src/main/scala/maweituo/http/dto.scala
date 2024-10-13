@@ -8,14 +8,12 @@ import cats.derived.derived
 import cats.effect.Concurrent
 import cats.syntax.all.*
 import cats.{MonadThrow, Show}
-import io.circe.Encoder
-import io.circe.Decoder
 
 import maweituo.domain.all.*
 import maweituo.utils.given
 
 import dev.profunktor.auth.jwt.JwtToken
-import io.circe.{Codec, Encoder}
+import io.circe.{Codec, Decoder, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
 
 object dto:
@@ -67,6 +65,11 @@ object dto:
       UserPublicInfoDto(user.id, user.name, user.email)
 
   final case class UserAdsResponseDto(userId: UserId, ads: List[AdId]) derives Codec.AsObject
+  final case class UserChatsResponseDto(userId: UserId, chats: List[ChatDto]) derives Codec.AsObject
+
+  object UserChatsResponseDto:
+    def fromDomain(userId: UserId, chats: List[Chat]): UserChatsResponseDto =
+      UserChatsResponseDto(userId, chats.map(ChatDto.fromDomain))
 
   final case class AdTagsResponseDto(adId: AdId, tags: List[AdTag]) derives Codec.AsObject
 

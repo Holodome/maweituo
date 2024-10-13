@@ -6,8 +6,6 @@ import cats.MonadThrow
 import cats.syntax.all.*
 
 import maweituo.domain.all.*
-import maweituo.logic.DomainError
-import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import maweituo.logic.search.parsePagination
 
 import sttp.model.StatusCode

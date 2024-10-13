@@ -1,7 +1,7 @@
 package maweituo
 package modules
 
-import cats.NonEmptyParallel
+import cats.Parallel
 import cats.effect.Async
 
 import maweituo.domain.all.*
@@ -9,7 +9,6 @@ import maweituo.postgres.repos.all.*
 
 import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.LoggerFactory
-import cats.Parallel
 
 sealed abstract class Repos[F[_]]:
   val users: UserRepo[F]

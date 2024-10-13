@@ -14,6 +14,7 @@ trait ChatRepo[F[_]]:
   def find(chatId: ChatId): OptionT[F, Chat]
   def findByAdAndClient(adId: AdId, client: UserId): OptionT[F, Chat]
   def findForAd(ad: AdId): F[List[Chat]]
+  def findForUser(userId: UserId): F[List[Chat]]
 
 object ChatRepo:
   import maweituo.logic.errors.DomainError

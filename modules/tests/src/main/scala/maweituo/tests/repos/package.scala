@@ -29,6 +29,7 @@ class TestChatRepo extends ChatRepo[IO]:
   override def findByAdAndClient(adId: AdId, client: UserId): OptionT[IO, Chat] =
     OptionT(makeError("TestChatRepo.findByAdAndClient"))
   override def findForAd(ad: AdId): IO[List[Chat]] = makeError("TestChatRepo.findForAd")
+  override def findForUser(userId: UserId): IO[List[Chat]] = makeError("TestChatRepo.findForUser")
 
 class TestMessageRepo extends MessageRepo[IO]:
   override def chatHistory(chatId: ChatId, pag: Pagination): IO[PaginatedCollection[Message]] =

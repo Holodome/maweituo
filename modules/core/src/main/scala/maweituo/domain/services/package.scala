@@ -3,20 +3,21 @@ package domain
 package services
 
 trait UserServices:
-  type AuthService[F[_]]    = maweituo.domain.services.users.AuthService[F]
-  type UserAdsService[F[_]] = maweituo.domain.services.users.UserAdsService[F]
-  type UserService[F[_]]    = maweituo.domain.services.users.UserService[F]
+  export maweituo.domain.services.users.AuthService
+  export maweituo.domain.services.users.UserAdsService
+  export maweituo.domain.services.users.UserService
+  export maweituo.domain.services.users.UserChatsService
 
 trait AdServices:
-  type AdImageService[F[_]] = maweituo.domain.services.ads.AdImageService[F]
-  type AdService[F[_]]      = maweituo.domain.services.ads.AdService[F]
-  type AdTagService[F[_]]   = maweituo.domain.services.ads.AdTagService[F]
-  type ChatService[F[_]]    = maweituo.domain.services.ads.ChatService[F]
-  type MessageService[F[_]] = maweituo.domain.services.ads.MessageService[F]
+  export maweituo.domain.services.ads.AdImageService
+  export maweituo.domain.services.ads.AdService
+  export maweituo.domain.services.ads.AdTagService
+  export maweituo.domain.services.ads.ChatService
+  export maweituo.domain.services.ads.MessageService
 
 trait Services extends UserServices with AdServices:
-  type FeedService[F[_]]      = maweituo.domain.services.FeedService[F]
-  type IAMService[F[_]]       = maweituo.domain.services.IAMService[F]
-  type TelemetryService[F[_]] = maweituo.domain.services.TelemetryService[F]
+  export maweituo.domain.services.FeedService
+  export maweituo.domain.services.IAMService
+  export maweituo.domain.services.TelemetryService
 
 object all extends Services

@@ -13,6 +13,7 @@ import maweituo.utils.given
 import dev.profunktor.auth.jwt.JwtToken
 import io.circe.{Codec, Encoder}
 import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange}
+import java.time.Instant
 
 object dto:
 
@@ -89,12 +90,14 @@ object dto:
       id: AdId,
       authorId: UserId,
       title: AdTitle,
-      resolved: Boolean
+      resolved: Boolean,
+      createdAt: Instant,
+      updatedAt: Instant
   ) derives Codec.AsObject
 
   object AdResponseDto:
     def fromDomain(ad: Advertisement): AdResponseDto =
-      AdResponseDto(ad.id, ad.authorId, ad.title, ad.resolved)
+      AdResponseDto(ad.id, ad.authorId, ad.title, ad.resolved, ad.createdAt, ad.updatedAt)
 
   final case class CreateAdRequestDto(
       title: AdTitle

@@ -21,7 +21,7 @@ enum SearchValidationError extends NoStackTrace derives Show:
 type ValidationResult[A] = ValidatedNel[SearchValidationError, A]
 
 private def validatePage(page: Int): ValidationResult[Int] =
-  if page < 1 then SearchValidationError.InvalidPage.invalidNel else page.valid
+  if page < 0 then SearchValidationError.InvalidPage.invalidNel else page.valid
 
 private def validatePageSize(pageSize: Option[Int]): ValidationResult[Int] =
   pageSize match

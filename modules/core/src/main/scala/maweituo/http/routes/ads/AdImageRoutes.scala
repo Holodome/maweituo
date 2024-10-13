@@ -43,7 +43,7 @@ final class AdImageRoutes[F[_]: MonadThrow](imageService: AdImageService[F], bui
       },
     builder.authed
       .delete
-      .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId])
+      .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
       .out(statusCode(StatusCode.NoContent))
       .serverLogic { authed => (_, imageId) =>
         given Identity = Identity(authed.id)

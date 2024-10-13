@@ -59,4 +59,4 @@ object PostgresAdRepo:
         ).flatten
       )
       val id = update.id
-      (fr"update users set " ++ sets.reduce(_ ++ fr"," ++ _) ++ fr" where id = $id::uuid")
+      (fr"update advertisements set " ++ sets.reduce(_ ++ fr"," ++ _) ++ fr" where id = $id::uuid")

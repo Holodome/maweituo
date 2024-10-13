@@ -13,14 +13,14 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: RoutesBuilder[F])
+final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
   private val queryParams =
     query[Int]("page") and query[Option[Int]]("page_size") and query[Option[String]]("order") and
       query[Option[String]]("title") and query[Option[String]]("tags")
 
-  override val endpoints = List(
+  private val publicFeedEndpoint =
     builder.public
       .get
       .in("feed")
@@ -30,7 +30,9 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: Route
         parseUnauthorizedAdSearch.tupled(t).flatMap { req =>
           feed.feed(req).map(FeedResponseDto.apply).toOut
         }
-      },
+      }
+
+  private val userFeedEndpoint =
     builder.authed
       .get
       .in("feed" / path[UserId]("user_id"))
@@ -42,4 +44,8 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F], builder: Route
           feed.feed(req).map(FeedResponseDto.apply).toOut
         }
       }
-  )
+
+  override val endpoints = List(
+    publicFeedEndpoint,
+    userFeedEndpoint
+  ).map(_.tag("feed"))

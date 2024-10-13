@@ -12,12 +12,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class UserChatEndpoints[F[_]: MonadThrow](
-    userChatsService: UserChatsService[F],
-    builder: RoutesBuilder[F]
-) extends Endpoints[F]:
+final class UserChatEndpoints[F[_]: MonadThrow](userChatsService: UserChatsService[F])(using builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getUserChatsEndpoint =
     builder.authed
       .get
       .in("users" / path[UserId]("user_id") / "chats")
@@ -29,4 +27,7 @@ final class UserChatEndpoints[F[_]: MonadThrow](
           .map(UserChatsResponseDto.fromDomain(userId, _))
           .toOut
       }
-  )
+
+  override val endpoints = List(
+    getUserChatsEndpoint
+  ).map(_.tag("users"))

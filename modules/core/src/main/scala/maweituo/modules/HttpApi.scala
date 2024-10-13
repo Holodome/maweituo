@@ -26,19 +26,20 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
 ):
 
   private lazy val endpoints =
-    val routesBuilder = new RoutesBuilder[F](services.auth)
+    given RoutesBuilder[F] = new RoutesBuilder[F](services.auth)
     List(
-      AuthEndpoints[F](services.auth, routesBuilder),
-      RegisterEndpoints[F](services.users, routesBuilder),
-      AdEndpoints[F](services.ads, routesBuilder),
-      AdChatEndpoints[F](services.chats, routesBuilder),
-      AdImageEndpoints[F](services.images, routesBuilder),
-      AdMsgEndpoints[F](services.messages, routesBuilder),
-      AdTagEndpoints[F](services.tags, routesBuilder),
-      UserEndpoints[F](services.users, routesBuilder),
-      UserAdEndpoints[F](services.userAds, routesBuilder),
-      TagEndpoints[F](services.tags, routesBuilder),
-      FeedEndpoints[F](services.feed, routesBuilder)
+      AuthEndpoints[F](services.auth),
+      RegisterEndpoints[F](services.users),
+      AdEndpoints[F](services.ads),
+      AdChatEndpoints[F](services.chats),
+      AdImageEndpoints[F](services.images),
+      AdMsgEndpoints[F](services.messages),
+      AdTagEndpoints[F](services.tags),
+      UserEndpoints[F](services.users),
+      UserAdEndpoints[F](services.userAds),
+      UserChatEndpoints[F](services.userChats),
+      TagEndpoints[F](services.tags),
+      FeedEndpoints[F](services.feed)
     ).map(_.endpoints).flatten
 
   private lazy val allEndpoints =

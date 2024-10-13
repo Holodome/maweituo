@@ -11,6 +11,7 @@ private trait AdEndpoints:
 
 private trait UserEndpoints:
   export maweituo.http.endpoints.users.UserAdEndpoints
+  export maweituo.http.endpoints.users.UserChatEndpoints
   export maweituo.http.endpoints.users.UserEndpoints
 
 object all extends AdEndpoints with UserEndpoints:

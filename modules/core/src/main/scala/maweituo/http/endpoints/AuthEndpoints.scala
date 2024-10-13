@@ -12,10 +12,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F], builder: RoutesBuilder[F])
+final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
-  override val endpoints = List(
+  val loginEndpoint =
     builder.public
       .post
       .in("login")
@@ -26,7 +26,9 @@ final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F], builder
           .login(login.toDomain)
           .map { x => LoginResponseDto(x.jwt) }
           .toOut
-      },
+      }
+
+  val logoutEndpoint =
     builder.authed
       .post
       .in("logout")
@@ -35,4 +37,8 @@ final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F], builder
         given Identity = Identity(authed.id)
         authService.logout(authed.jwt).toOut
       }
-  )
+
+  override val endpoints = List(
+    loginEndpoint,
+    logoutEndpoint
+  ).map(_.tag("auth"))

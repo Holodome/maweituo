@@ -12,10 +12,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: RoutesBuilder[F])
+final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getAdTagsEndpoint =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "tags")
@@ -25,7 +25,9 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: Rou
           .adTags(adId)
           .map(AdTagsResponseDto(adId, _))
           .toOut
-      },
+      }
+
+  val addAdTagEndpoint =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "tags")
@@ -34,7 +36,9 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: Rou
       .serverLogic { authed => (adId, req) =>
         given Identity = Identity(authed.id)
         tags.addTag(adId, req.tag).toOut
-      },
+      }
+
+  val deleteAdTagEndpoint =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "tags")
@@ -44,4 +48,9 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: Rou
         given Identity = Identity(authed.id)
         tags.removeTag(adId, req.tag).toOut
       }
-  )
+
+  override val endpoints = List(
+    getAdTagsEndpoint,
+    addAdTagEndpoint,
+    deleteAdTagEndpoint
+  ).map(_.tag("ads"))

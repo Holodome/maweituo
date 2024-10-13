@@ -12,10 +12,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F], builder: RoutesBuilder[F])
+final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getAdEndpoint =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id"))
@@ -25,7 +25,9 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F], builder: Rout
           .get(adId)
           .map(AdResponseDto.fromDomain)
           .toOut
-      },
+      }
+
+  val createAdEndpoint =
     builder.authed
       .post
       .in("ads")
@@ -38,7 +40,9 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F], builder: Rout
           .create(create.toDomain)
           .map(CreateAdResponseDto.apply)
           .toOut
-      },
+      }
+
+  val deleteAdEndpoint =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id"))
@@ -48,7 +52,9 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F], builder: Rout
         adService
           .delete(adId)
           .toOut
-      },
+      }
+
+  val updateAdEndpoint =
     builder.authed
       .put
       .in("ads" / path[AdId]("ad_id"))
@@ -60,4 +66,10 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F], builder: Rout
           .update(req.toDomain(adId))
           .toOut
       }
-  )
+
+  override val endpoints = List(
+    getAdEndpoint,
+    createAdEndpoint,
+    deleteAdEndpoint,
+    updateAdEndpoint
+  ).map(_.tag("ads"))

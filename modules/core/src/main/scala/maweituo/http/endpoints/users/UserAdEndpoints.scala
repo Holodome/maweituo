@@ -12,12 +12,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class UserAdEndpoints[F[_]: MonadThrow](
-    userAdsService: UserAdsService[F],
-    builder: RoutesBuilder[F]
-) extends Endpoints[F]:
+final class UserAdEndpoints[F[_]: MonadThrow](userAdsService: UserAdsService[F])(using builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getUserAdsEndpoint =
     builder.public
       .get
       .in("users" / path[UserId]("user_id") / "ads")
@@ -28,4 +26,7 @@ final class UserAdEndpoints[F[_]: MonadThrow](
           .map(UserAdsResponseDto(userId, _))
           .toOut
       }
-  )
+
+  override val endpoints = List(
+    getUserAdsEndpoint
+  ).map(_.tag("users"))

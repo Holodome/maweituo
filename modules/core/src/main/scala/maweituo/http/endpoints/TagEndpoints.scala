@@ -12,17 +12,19 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: RoutesBuilder[F])
+final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getAllTagsEndpoint =
     builder.public
       .get
       .in("tags")
       .out(jsonBody[AllTagsResponse])
       .serverLogic { _ =>
         tags.all.map(AllTagsResponse.apply).toOut
-      },
+      }
+
+  val getTagAdsEndpoint =
     builder.public
       .get
       .in("tags" / path[AdTag]("tag") / "ads")
@@ -30,4 +32,8 @@ final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F], builder: Route
       .serverLogic { tag =>
         tags.find(tag).map(TagAdsResponse(tag, _)).toOut
       }
-  )
+
+  override val endpoints = List(
+    getAllTagsEndpoint,
+    getTagAdsEndpoint
+  ).map(_.tag("ads"))

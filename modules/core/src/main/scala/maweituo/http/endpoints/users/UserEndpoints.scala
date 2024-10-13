@@ -13,12 +13,10 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.ServerEndpoint
 
-final class UserEndpoints[F[_]: MonadThrow](
-    userService: UserService[F],
-    builder: RoutesBuilder[F]
-) extends Endpoints[F]:
+final class UserEndpoints[F[_]: MonadThrow](userService: UserService[F])(using builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getUserEndpoint =
     builder.public
       .get
       .in("users" / path[UserId]("user_id"))
@@ -28,7 +26,9 @@ final class UserEndpoints[F[_]: MonadThrow](
           .get(userId)
           .map(UserPublicInfoDto.fromUser)
           .toOut
-      },
+      }
+
+  val deleteUserEndpoint =
     builder.authed
       .delete
       .in("users" / path[UserId]("user_id"))
@@ -36,7 +36,9 @@ final class UserEndpoints[F[_]: MonadThrow](
       .serverLogic { authed => userId =>
         given Identity = Identity(authed.id)
         userService.delete(userId).toOut
-      },
+      }
+
+  val updateUserEndpoint =
     builder.authed
       .put
       .in("users" / path[UserId]("user_id"))
@@ -46,4 +48,9 @@ final class UserEndpoints[F[_]: MonadThrow](
         given Identity = Identity(authed.id)
         userService.update(req.toDomain(userId)).toOut
       }
-  )
+
+  override val endpoints = List(
+    getUserEndpoint,
+    deleteUserEndpoint,
+    updateUserEndpoint
+  ).map(_.tag("users"))

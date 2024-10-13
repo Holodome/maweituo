@@ -13,12 +13,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdMsgEndpoints[F[_]: MonadThrow](
-    msgService: MessageService[F],
-    builder: RoutesBuilder[F]
-) extends Endpoints[F]:
+final class AdMsgEndpoints[F[_]: MonadThrow](msgService: MessageService[F])(using builder: RoutesBuilder[F])
+    extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getMessagesEndpoint =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
@@ -32,7 +30,9 @@ final class AdMsgEndpoints[F[_]: MonadThrow](
             .map(HistoryResponseDto.fromDomain(chatId, _))
             .toOut
         }
-      },
+      }
+
+  val sendMessageEndpoint =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
@@ -44,4 +44,8 @@ final class AdMsgEndpoints[F[_]: MonadThrow](
           .send(chatId, msg.toDomain)
           .toOut
       }
+
+  override val endpoints = List(
+    getMessagesEndpoint,
+    sendMessageEndpoint
   )

@@ -11,10 +11,10 @@ import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 import sttp.tapir.*
 
-final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F], builder: RoutesBuilder[F])
+final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(using builder: RoutesBuilder[F])
     extends Endpoints[F]:
 
-  override val endpoints = List(
+  val getImageEndpoint =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -26,7 +26,9 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F], 
           .get(imageId)
           .map(x => (x.data, x.contentType.toRaw, x.dataSize))
           .toOut
-      },
+      }
+
+  val createImageEndpoint =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "imgs")
@@ -39,7 +41,9 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F], 
         val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
         val contents   = ImageContentsStream(data, mediaType, contentLength)
         imageService.upload(adId, contents).void.toOut
-      },
+      }
+
+  val deleteImageEndpoint =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -48,4 +52,9 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F], 
         given Identity = Identity(authed.id)
         imageService.delete(imageId).toOut
       }
-  )
+
+  override val endpoints = List(
+    getImageEndpoint,
+    createImageEndpoint,
+    deleteImageEndpoint
+  ).map(_.tag("ads"))

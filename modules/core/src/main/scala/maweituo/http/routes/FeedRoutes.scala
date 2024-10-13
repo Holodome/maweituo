@@ -21,7 +21,7 @@ final class FeedRoutes[F[_]: MonadThrow](feed: FeedService[F], builder: RoutesBu
 
   override val endpoints = List(
     builder.public
-      .post
+      .get
       .in("feed")
       .in(queryParams)
       .out(jsonBody[FeedResponseDto])
@@ -32,7 +32,7 @@ final class FeedRoutes[F[_]: MonadThrow](feed: FeedService[F], builder: RoutesBu
           .toOut
       },
     builder.authed
-      .post
+      .get
       .in("feed" / path[UserId]("user_id"))
       .in(queryParams)
       .out(jsonBody[FeedResponseDto])

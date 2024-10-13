@@ -36,7 +36,7 @@ class RoutesBuilder[F[_]: Monad](authService: AuthService[F]):
         authService.authed(JwtToken(bearer)).value.map(Either.fromOption(
           _,
           // TODO: Move to DomainError
-          (StatusCode.Unauthorized, ErrorResponseDto(NonEmptyList.of("unauthorized")))
+          (StatusCode.Unauthorized, ErrorResponseDto(List("unauthorized")))
         ))
     }
 

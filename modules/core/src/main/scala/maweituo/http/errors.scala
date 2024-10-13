@@ -38,7 +38,8 @@ object errors:
         conflict(s"chat for ad $adId with user $clientId already exists")
       case DomainError.AdModificationForbidden(adId, userId) =>
         forbidden(s"ad $adId modification by user $userId forbidden")
-      case DomainError.InvalidSearchParams(errors) => StatusCode.BadRequest -> ErrorResponseDto(errors.map(_.show))
+      case DomainError.InvalidSearchParams(errors) =>
+        StatusCode.BadRequest -> ErrorResponseDto(errors.map(_.show).toList)
 
   extension [F[_]: MonadThrow, A](f: F[A])
     def toOut: F[Either[(StatusCode, ErrorResponseDto), A]] =

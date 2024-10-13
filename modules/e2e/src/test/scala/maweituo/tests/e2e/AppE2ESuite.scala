@@ -52,7 +52,7 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
             uri = client.makeUri("register")
           ).withEntity(r)
         )
-      yield expect.same(ErrorResponseDto(NonEmptyList.one(s"email ${reg.email} is already taken")), x)
+      yield expect.same(ErrorResponseDto(List(s"email ${reg.email} is already taken")), x)
     }
   }
 

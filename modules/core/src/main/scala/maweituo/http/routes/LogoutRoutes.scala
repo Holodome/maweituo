@@ -15,6 +15,7 @@ final class LogoutRoutes[F[_]: MonadThrow](authService: AuthService[F], builder:
   override val endpoints = List(
     builder.authed
       .post
+      .in("/logout")
       .out(statusCode(StatusCode.NoContent))
       .serverLogic { authed => _ =>
         given Identity = Identity(authed.id)

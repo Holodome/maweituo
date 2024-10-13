@@ -1,9 +1,7 @@
 package maweituo
 package http
 
-import java.time.Instant
-
-import cats.data.{EitherT, NonEmptyList, OptionT}
+import cats.data.{EitherT, OptionT}
 import cats.derived.derived
 import cats.effect.Concurrent
 import cats.syntax.all.*
@@ -18,10 +16,10 @@ import org.http4s.{EntityDecoder, MalformedMessageBodyFailure, Media, MediaRange
 
 object dto:
 
-  final case class ErrorResponseDto(errors: NonEmptyList[String]) derives Codec.AsObject
+  final case class ErrorResponseDto(errors: List[String]) derives Codec.AsObject
 
   object ErrorResponseDto:
-    def make(e: String): ErrorResponseDto = ErrorResponseDto(NonEmptyList.of(e))
+    def make(e: String): ErrorResponseDto = ErrorResponseDto(List(e))
 
   final case class FeedResponseDto(
       items: List[AdId],
@@ -113,7 +111,7 @@ object dto:
       senderId: UserId,
       chatId: ChatId,
       text: MessageText,
-      at: Instant
+      at: java.time.Instant
   ) derives Codec.AsObject, Show
 
   object MessageDto:

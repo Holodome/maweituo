@@ -13,8 +13,8 @@ import org.typelevel.log4cats.noop.NoOpFactory
 
 object UserAdServiceSuite extends SimpleIOSuite with Checkers with UserAdsServiceProperties:
 
-  given LoggerFactory[IO]           = NoOpFactory[IO]
-  given TelemetryService[IO] = new TelemetryServiceStub[IO]
+  given LoggerFactory[IO]    = NoOpFactory[IO]
+  given TelemetryService[IO] = TelemetryServiceStub[IO]
 
   private def makeTestServices =
     val ads              = InMemoryRepoFactory.ads

@@ -21,7 +21,7 @@ class UserAdsServiceITSuite(global: GlobalRead) extends ResourceSuite with UserA
   override def sharedResource: Resource[IO, Res] = global.postgres
 
   private def testServices(xa: Transactor[IO])(using LoggerFactory[IO]) =
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val adRepo                 = PostgresAdRepo.make[IO](xa)
     val userRepo               = PostgresUserRepo.make[IO](xa)
     given IAMService[IO]       = makeIAMService(adRepo)

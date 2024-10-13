@@ -16,8 +16,8 @@ trait AuthServiceProperties:
       exp: (JwtTokens[IO] => (UserService[IO], AuthService[IO])) => IO[Expectations]
   )
 
-  private def defaultJwt               = new TestJwtTokens(JwtToken("test"))
-  private def makeJwt(token: JwtToken) = new TestJwtTokens(token)
+  private def defaultJwt               = TestJwtTokens(JwtToken("test"))
+  private def makeJwt(token: JwtToken) = TestJwtTokens(token)
 
   private val jwtGen: Gen[JwtToken] = nesGen(JwtToken.apply)
 

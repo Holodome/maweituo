@@ -26,7 +26,7 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
 ):
 
   private lazy val endpoints =
-    given RoutesBuilder[F] = new RoutesBuilder[F](services.auth)
+    given EndpointsBuilder[F] = EndpointsBuilder[F](services.auth)
     List(
       AuthEndpoints[F](services.auth),
       RegisterEndpoints[F](services.users),

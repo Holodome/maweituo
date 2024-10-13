@@ -20,8 +20,8 @@ object MinioObjectStorage:
       bucket: String
   ): F[ObjectStorage[F]] =
     given Logger[F] = LoggerFactory[F].getLogger
-    val client      = new MinioClient[F](conn)
-    ensureBucketIsCreated(client, bucket).as(new MinioObjectStorage(client, bucket))
+    val client      = MinioClient[F](conn)
+    ensureBucketIsCreated(client, bucket).as(MinioObjectStorage(client, bucket))
 
   private def ensureBucketIsCreated[F[_]: Async: Logger](
       minio: MinioClient[F],

@@ -40,4 +40,4 @@ def const[F[_]](
   override def fromName(name: String): F[SelfAwareStructuredLogger[F]]       = F.pure(logger)
 
 object WeaverLogAdapterFactory:
-  def apply[F[_]: Applicative](log: weaver.Log[F]) = const(new WeaverLogAdapter(log))
+  def apply[F[_]: Applicative](log: weaver.Log[F]) = const(WeaverLogAdapter(log))

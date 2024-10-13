@@ -21,7 +21,7 @@ class ChatServiceITSuite(global: GlobalRead) extends ResourceSuite with ChatServ
   override def sharedResource: Resource[IO, Res] = global.postgres
 
   private def makeTestServices(xa: Transactor[IO])(using LoggerFactory[IO]) =
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val chatRepo               = PostgresChatRepo.make(xa)
     val userRepo               = PostgresUserRepo.make(xa)
     val adRepo                 = PostgresAdRepo.make(xa)

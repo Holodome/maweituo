@@ -3,11 +3,11 @@ package tests
 package e2e
 
 import maweituo.http.dto.*
+import maweituo.tests.e2e.AppClient.unwrap
 import maweituo.tests.e2e.resources.app
 
 import dev.profunktor.auth.jwt.JwtToken
-import org.http4s.circe.CirceEntityCodec.given
-import org.http4s.{Method, Request}
+import sttp.model.StatusCode
 import weaver.*
 import weaver.scalacheck.{CheckConfig, Checkers}
 
@@ -30,13 +30,13 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
       yield (r, ad, tag)
     forall(gen) { (reg, adTitle, tag) =>
       for
-        _   <- client.register(RegisterRequestDto(reg.name, reg.email, reg.password))
-        jwt <- client.login(LoginRequestDto(reg.name, reg.password)).map(_.jwt)
-        given JwtToken = jwt
-        adId <- client.createAd(CreateAdRequestDto(adTitle)).map(_.id)
-        _    <- client.addTag(adId, AddTagRequestDto(tag))
-        ad   <- client.getAd(adId)
-        tags <- client.getAdTags(adId).map(_.tags)
+        _   <- client.`post /register`(RegisterRequestDto(reg.name, reg.email, reg.password))
+        jwt <- client.`post /login`(LoginRequestDto(reg.name, reg.password)).unwrap
+        given JwtToken = jwt.jwt
+        adId <- client.`post /ads`(CreateAdRequestDto(adTitle)).unwrap.map(_.id)
+        _    <- client.`post /ads/$adId/tags`(adId, AddTagRequestDto(tag))
+        ad   <- client.`get /ads/$adId`(adId).unwrap
+        tags <- client.`get /ads/$adId/tags`(adId).unwrap.map(_.tags)
       yield expect.same(ad.title, adTitle) and expect.same(List(tag), tags)
     }
   }
@@ -45,26 +45,17 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
     forall(registerGen) { reg =>
       val r = RegisterRequestDto(reg.name, reg.email, reg.password)
       for
-        _ <- client.register(r)
-        x <- client.client.fetchAs[ErrorResponseDto](
-          Request[IO](
-            method = Method.POST,
-            uri = client.makeUri("register")
-          ).withEntity(r)
-        )
-      yield expect.same(ErrorResponseDto(List(s"email ${reg.email} is already taken")), x)
+        _ <- client.`post /register`(r)
+        x <- client.`post /register`(r)
+      yield expect.same(Left(ErrorResponseDto(List(s"email ${reg.email} is already taken"))), x.leftMap(_._2))
     }
   }
 
   e2eTest("unauthorized routes") { (client, log) =>
     forall(adTitleGen) { (title) =>
+      given JwtToken = JwtToken("aboba")
       for
-        x <- client.client.status(
-          Request[IO](
-            method = Method.POST,
-            uri = client.makeUri("ads")
-          ).withEntity(CreateAdRequestDto(title))
-        )
-      yield expect.same(org.http4s.Status.Unauthorized, x)
+        x <- client.`post /ads`(CreateAdRequestDto(title))
+      yield expect.same(Left(StatusCode.Unauthorized), x.leftMap(_._1))
     }
   }

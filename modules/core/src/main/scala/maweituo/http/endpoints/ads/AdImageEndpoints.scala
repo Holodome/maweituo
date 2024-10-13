@@ -11,8 +11,7 @@ import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 import sttp.tapir.*
 
-final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(using builder: RoutesBuilder[F])
-    extends Endpoints[F]:
+class AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
 
   val getImageEndpoint =
     builder.public
@@ -21,12 +20,6 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
       .out(streamBinaryBody(Fs2Streams[F])(CodecFormat.OctetStream()))
       .out(header[String](HeaderNames.ContentType))
       .out(header[Long](HeaderNames.ContentLength))
-      .serverLogic { (_, imageId) =>
-        imageService
-          .get(imageId)
-          .map(x => (x.data, x.contentType.toRaw, x.dataSize))
-          .toOut
-      }
 
   val createImageEndpoint =
     builder.authed
@@ -36,25 +29,31 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
       .in(header[MediaType](HeaderNames.ContentType))
       .in(header[Long](HeaderNames.ContentLength))
       .out(statusCode(StatusCode.Created))
-      .serverLogic { authed => (adId, data, contentType, contentLength) =>
-        given Identity = Identity(authed.id)
-        val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
-        val contents   = ImageContentsStream(data, mediaType, contentLength)
-        imageService.upload(adId, contents).void.toOut
-      }
 
   val deleteImageEndpoint =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
       .out(statusCode(StatusCode.NoContent))
-      .serverLogic { authed => (_, imageId) =>
-        given Identity = Identity(authed.id)
-        imageService.delete(imageId).toOut
-      }
+
+final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(using EndpointsBuilder[F])
+    extends AdImageEndpointDefs[F] with Endpoints[F]:
 
   override val endpoints = List(
-    getImageEndpoint,
-    createImageEndpoint,
-    deleteImageEndpoint
+    getImageEndpoint.serverLogic { (_, imageId) =>
+      imageService
+        .get(imageId)
+        .map(x => (x.data, x.contentType.toRaw, x.dataSize))
+        .toOut
+    },
+    createImageEndpoint.secure.serverLogic { authed => (adId, data, contentType, contentLength) =>
+      given Identity = Identity(authed.id)
+      val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
+      val contents   = ImageContentsStream(data, mediaType, contentLength)
+      imageService.upload(adId, contents).void.toOut
+    },
+    deleteImageEndpoint.secure.serverLogic { authed => (_, imageId) =>
+      given Identity = Identity(authed.id)
+      imageService.delete(imageId).toOut
+    }
   ).map(_.tag("ads"))

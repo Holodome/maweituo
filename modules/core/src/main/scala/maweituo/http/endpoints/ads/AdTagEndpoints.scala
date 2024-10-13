@@ -12,20 +12,13 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using builder: RoutesBuilder[F])
-    extends Endpoints[F]:
+class AdTagEndpointDefs(using builder: EndpointBuilderDefs):
 
   val getAdTagsEndpoint =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "tags")
       .out(jsonBody[AdTagsResponseDto])
-      .serverLogic { adId =>
-        tags
-          .adTags(adId)
-          .map(AdTagsResponseDto(adId, _))
-          .toOut
-      }
 
   val addAdTagEndpoint =
     builder.authed
@@ -33,10 +26,6 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using builde
       .in("ads" / path[AdId]("ad_id") / "tags")
       .in(jsonBody[AddTagRequestDto])
       .out(statusCode(StatusCode.Created))
-      .serverLogic { authed => (adId, req) =>
-        given Identity = Identity(authed.id)
-        tags.addTag(adId, req.tag).toOut
-      }
 
   val deleteAdTagEndpoint =
     builder.authed
@@ -44,13 +33,23 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using builde
       .in("ads" / path[AdId]("ad_id") / "tags")
       .in(jsonBody[AddTagRequestDto])
       .out(statusCode(StatusCode.NoContent))
-      .serverLogic { authed => (adId, req) =>
-        given Identity = Identity(authed.id)
-        tags.removeTag(adId, req.tag).toOut
-      }
+
+final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using EndpointsBuilder[F])
+    extends AdTagEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getAdTagsEndpoint,
-    addAdTagEndpoint,
-    deleteAdTagEndpoint
+    getAdTagsEndpoint.serverLogic { adId =>
+      tags
+        .adTags(adId)
+        .map(AdTagsResponseDto(adId, _))
+        .toOut
+    },
+    addAdTagEndpoint.secure.serverLogic { authed => (adId, req) =>
+      given Identity = Identity(authed.id)
+      tags.addTag(adId, req.tag).toOut
+    },
+    deleteAdTagEndpoint.secure.serverLogic { authed => (adId, req) =>
+      given Identity = Identity(authed.id)
+      tags.removeTag(adId, req.tag).toOut
+    }
   ).map(_.tag("ads"))

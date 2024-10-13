@@ -22,7 +22,7 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
   override def sharedResource: Resource[IO, Res] = (global.postgres, global.minio).tupled
 
   private def testServices(xa: Transactor[IO], minio: MinioConnection)(using LoggerFactory[IO]) =
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val imageRepo              = PostgresAdImageRepo.make(xa)
     val adRepo                 = PostgresAdRepo.make(xa)
     val userRepo               = PostgresUserRepo.make(xa)

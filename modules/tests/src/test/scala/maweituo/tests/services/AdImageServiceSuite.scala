@@ -17,7 +17,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with AdImageService
 
   private def makeTestServices =
     given LoggerFactory[IO]    = NoOpFactory[IO]
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val imageRepo              = InMemoryRepoFactory.images
     val userRepo               = InMemoryRepoFactory.users
     val adRepo                 = InMemoryRepoFactory.ads

@@ -16,7 +16,7 @@ object AdServiceSuite extends SimpleIOSuite with Checkers with AdServiceProperti
 
   private def makeTestUserAds =
     given LoggerFactory[IO]    = NoOpFactory[IO]
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val adRepo                 = InMemoryRepoFactory.ads
     val userRepo               = InMemoryRepoFactory.users
     given IAMService[IO]       = makeIAMService(adRepo)

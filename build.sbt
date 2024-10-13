@@ -103,16 +103,17 @@ lazy val tests = (project in file("modules/tests"))
     publish / skip := true,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     libraryDependencies ++= Seq(
-      "io.circe"            %% "circe-testing"                   % CirceVersion,
-      "com.disneystreaming" %% "weaver-cats"                     % WeaverVersion,
-      "com.disneystreaming" %% "weaver-discipline"               % WeaverVersion,
-      "com.disneystreaming" %% "weaver-scalacheck"               % WeaverVersion,
-      "org.typelevel"       %% "log4cats-noop"                   % Log4CatsVersion,
-      "org.typelevel"       %% "cats-laws"                       % CatsVersion,
-      "com.dimafeng"        %% "testcontainers-scala"            % TestcontainersVersion,
-      "com.dimafeng"        %% "testcontainers-scala-redis"      % TestcontainersVersion,
-      "com.dimafeng"        %% "testcontainers-scala-postgresql" % TestcontainersVersion,
-      "com.dimafeng"        %% "testcontainers-scala-minio"      % TestcontainersVersion
+      "io.circe"                    %% "circe-testing"                   % CirceVersion,
+      "com.disneystreaming"         %% "weaver-cats"                     % WeaverVersion,
+      "com.disneystreaming"         %% "weaver-discipline"               % WeaverVersion,
+      "com.disneystreaming"         %% "weaver-scalacheck"               % WeaverVersion,
+      "org.typelevel"               %% "log4cats-noop"                   % Log4CatsVersion,
+      "org.typelevel"               %% "cats-laws"                       % CatsVersion,
+      "com.dimafeng"                %% "testcontainers-scala"            % TestcontainersVersion,
+      "com.dimafeng"                %% "testcontainers-scala-redis"      % TestcontainersVersion,
+      "com.dimafeng"                %% "testcontainers-scala-postgresql" % TestcontainersVersion,
+      "com.dimafeng"                %% "testcontainers-scala-minio"      % TestcontainersVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-client"             % SttpVersion
     )
   )
 

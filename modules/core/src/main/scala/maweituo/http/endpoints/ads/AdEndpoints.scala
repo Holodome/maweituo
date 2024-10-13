@@ -12,20 +12,13 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using builder: RoutesBuilder[F])
-    extends Endpoints[F]:
+class AdEndpointDefs(using builder: EndpointBuilderDefs):
 
   val getAdEndpoint =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id"))
       .out(jsonBody[AdResponseDto])
-      .serverLogic { adId =>
-        adService
-          .get(adId)
-          .map(AdResponseDto.fromDomain)
-          .toOut
-      }
 
   val createAdEndpoint =
     builder.authed
@@ -34,25 +27,12 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using builder
       .in(jsonBody[CreateAdRequestDto])
       .out(jsonBody[CreateAdResponseDto])
       .out(statusCode(StatusCode.Created))
-      .serverLogic { authed => create =>
-        given Identity = Identity(authed.id)
-        adService
-          .create(create.toDomain)
-          .map(CreateAdResponseDto.apply)
-          .toOut
-      }
 
   val deleteAdEndpoint =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id"))
       .out(statusCode(StatusCode.NoContent))
-      .serverLogic { authed => adId =>
-        given Identity = Identity(authed.id)
-        adService
-          .delete(adId)
-          .toOut
-      }
 
   val updateAdEndpoint =
     builder.authed
@@ -60,16 +40,34 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using builder
       .in("ads" / path[AdId]("ad_id"))
       .in(jsonBody[UpdateAdRequestDto])
       .out(statusCode(StatusCode.NoContent))
-      .serverLogic { authed => (adId, req) =>
-        given Identity = Identity(authed.id)
-        adService
-          .update(req.toDomain(adId))
-          .toOut
-      }
+
+final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using EndpointsBuilder[F])
+    extends AdEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    getAdEndpoint,
-    createAdEndpoint,
-    deleteAdEndpoint,
-    updateAdEndpoint
+    getAdEndpoint.serverLogic { adId =>
+      adService
+        .get(adId)
+        .map(AdResponseDto.fromDomain)
+        .toOut
+    },
+    createAdEndpoint.secure.serverLogic { authed => create =>
+      given Identity = Identity(authed.id)
+      adService
+        .create(create.toDomain)
+        .map(CreateAdResponseDto.apply)
+        .toOut
+    },
+    deleteAdEndpoint.secure.serverLogic { authed => adId =>
+      given Identity = Identity(authed.id)
+      adService
+        .delete(adId)
+        .toOut
+    },
+    updateAdEndpoint.secure.serverLogic { authed => (adId, req) =>
+      given Identity = Identity(authed.id)
+      adService
+        .update(req.toDomain(adId))
+        .toOut
+    }
   ).map(_.tag("ads"))

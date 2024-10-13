@@ -15,7 +15,7 @@ object RedisEphemeralDict:
       redis: RedisCommands[F, String, String],
       expire: FiniteDuration
   ): EphemeralDict[F, String, String] =
-    new RedisEphemeralDict(redis, expire)
+    RedisEphemeralDict(redis, expire)
 
 private final class RedisEphemeralDict[F[_]: Monad] private (
     redis: RedisCommands[F, String, String],

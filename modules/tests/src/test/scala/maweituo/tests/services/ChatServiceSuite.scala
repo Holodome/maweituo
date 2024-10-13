@@ -13,8 +13,8 @@ import org.typelevel.log4cats.noop.NoOpFactory
 object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProperties:
 
   private def makeTestServices =
-    given LoggerFactory[IO] = NoOpFactory[IO]
-    given TelemetryService[IO] = new TelemetryServiceStub[IO]
+    given LoggerFactory[IO]    = NoOpFactory[IO]
+    given TelemetryService[IO] = TelemetryServiceStub[IO]
     val chatRepo               = InMemoryRepoFactory.chats
     val userRepo               = InMemoryRepoFactory.users
     val adRepo                 = InMemoryRepoFactory.ads

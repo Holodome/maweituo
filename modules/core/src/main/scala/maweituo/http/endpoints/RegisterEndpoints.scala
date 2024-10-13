@@ -11,22 +11,22 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
-final class RegisterEndpoints[F[_]: MonadThrow](userService: UserService[F])(using builder: RoutesBuilder[F])
-    extends Endpoints[F]:
-
+class RegisterEndpointDefs(using builder: EndpointBuilderDefs):
   val registerEndpoint =
     builder.public
       .post
       .in("register")
       .in(jsonBody[RegisterRequestDto])
       .out(jsonBody[RegisterResponseDto])
-      .serverLogic { register =>
-        userService
-          .create(register.toDomain)
-          .map(RegisterResponseDto.apply)
-          .toOut
-      }
+
+final class RegisterEndpoints[F[_]: MonadThrow](userService: UserService[F])(using EndpointsBuilder[F])
+    extends RegisterEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    registerEndpoint
+    registerEndpoint.serverLogic { register =>
+      userService
+        .create(register.toDomain)
+        .map(RegisterResponseDto.apply)
+        .toOut
+    }
   ).map(_.tag("users"))

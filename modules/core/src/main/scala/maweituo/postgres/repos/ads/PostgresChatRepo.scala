@@ -15,6 +15,7 @@ import cats.data.OptionT
 import cats.effect.Async
 object PostgresChatRepo:
   def make[F[_]: Async](xa: Transactor[F]): ChatRepo[F] = new:
+
     def create(chat: Chat): F[Unit] =
       sql"""
         insert into chats(id, ad_id, ad_author_id, client_id) 
@@ -34,3 +35,9 @@ object PostgresChatRepo:
           where ad_id = $adId::uuid and client_id = $client::uuid
         """.query[Chat].option.transact(xa)
       )
+
+    def findForAd(ad: AdId): F[List[Chat]] =
+      sql"""
+        select id, ad_id, ad_author_id, client_id from chats 
+        where ad_id = $ad::uuid
+      """.query[Chat].to[List].transact(xa)

@@ -2,7 +2,6 @@ package maweituo
 package tests
 package repos
 
-
 private inline def makeError(name: String) =
   IO.raiseError(new Exception("Unexpected call to " + name))
 
@@ -27,6 +26,7 @@ class TestChatRepo extends ChatRepo[IO]:
   override def find(chatId: ChatId): OptionT[IO, Chat] = OptionT(makeError("TestChatRepo.find"))
   override def findByAdAndClient(adId: AdId, client: UserId): OptionT[IO, Chat] =
     OptionT(makeError("TestChatRepo.findByAdAndClient"))
+  override def findForAd(ad: AdId): IO[List[Chat]] = makeError("TestChatRepo.findForAd")
 
 class TestMessageRepo extends MessageRepo[IO]:
   override def chatHistory(chatId: ChatId): IO[List[Message]] = makeError("TestMessageRepo.chatHistory")

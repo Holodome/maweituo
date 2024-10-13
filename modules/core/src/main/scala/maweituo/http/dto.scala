@@ -151,6 +151,11 @@ object dto:
     def fromDomain(domain: Chat): ChatDto =
       ChatDto(domain.id, domain.adId, domain.adAuthor, domain.client)
 
+  final case class AdChatsResponseDto(
+      adId: AdId,
+      chats: List[ChatDto]
+  ) derives Codec.AsObject
+
   final case class UploadImageRequestDto[+F[_]](
       data: fs2.Stream[F, Byte],
       contentType: MediaType,

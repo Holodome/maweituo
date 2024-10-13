@@ -12,3 +12,4 @@ trait ChatService[F[_]]:
   def get(id: ChatId)(using Identity): F[Chat]
   def create(adId: AdId)(using Identity): F[ChatId]
   def findForAdAndUser(ad: AdId)(using Identity): OptionT[F, Chat]
+  def findForAd(ad: AdId)(using Identity): F[List[Chat]]

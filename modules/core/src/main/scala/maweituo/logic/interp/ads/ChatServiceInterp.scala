@@ -61,3 +61,10 @@ object ChatServiceInterp:
         .flatTap { chat =>
           OptionT liftF iam.authChatAccess(chat.id)
         }
+
+    def findForAd(ad: AdId)(using maweituo.domain.Identity): F[List[Chat]] =
+      chatRepo
+        .findForAd(ad)
+        .flatTap { chats =>
+          chats.traverse_(chat => iam.authChatAccess(chat.id))
+        }

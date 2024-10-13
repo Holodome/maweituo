@@ -20,7 +20,7 @@ final class AdMsgEndpoints[F[_]: MonadThrow](
   override val endpoints = List(
     builder.authed
       .get
-      .in("ads" / path[AdId]("ad_id") / "msgs" / path[ChatId]("chat_id"))
+      .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
       .out(jsonBody[HistoryResponseDto])
       .serverLogic { authed => (_, chatId) =>
         given Identity = Identity(authed.id)
@@ -31,7 +31,7 @@ final class AdMsgEndpoints[F[_]: MonadThrow](
       },
     builder.authed
       .post
-      .in("ads" / path[AdId]("ad_id") / "msgs" / path[ChatId]("chat_id"))
+      .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id") / "msgs")
       .in(jsonBody[SendMessageRequestDto])
       .out(statusCode(StatusCode.Created))
       .serverLogic { authed => (_, chatId, msg) =>

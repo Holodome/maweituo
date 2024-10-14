@@ -33,8 +33,7 @@ class ChatServiceITSuite(global: GlobalRead) extends ResourceSuite with ChatServ
 
   properties.foreach {
     case Property(name, exp) =>
-      itTest(name) { (postgres, log) =>
-        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
+      itTest(name) { postgres =>
         exp.tupled(makeTestServices(postgres))
       }
   }

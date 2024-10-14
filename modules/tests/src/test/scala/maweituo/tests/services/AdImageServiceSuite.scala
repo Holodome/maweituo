@@ -13,10 +13,9 @@ import org.typelevel.log4cats.noop.NoOpFactory
 import weaver.SimpleIOSuite
 import weaver.scalacheck.Checkers
 
-object ImageServiceSuite extends SimpleIOSuite with Checkers with AdImageServiceProperties:
+object ImageServiceSuite extends MaweituoSimpleSuite with AdImageServiceProperties:
 
-  private def makeTestServices =
-    given LoggerFactory[IO]    = NoOpFactory[IO]
+  private def makeTestServices(using LoggerFactory[IO]) =
     given TelemetryService[IO] = TelemetryServiceStub[IO]
     val imageRepo              = InMemoryRepoFactory.images
     val userRepo               = InMemoryRepoFactory.users
@@ -30,7 +29,7 @@ object ImageServiceSuite extends SimpleIOSuite with Checkers with AdImageService
 
   properties.foreach {
     case Property(name, fn) =>
-      test(name) {
+      unitTest(name) {
         fn.tupled(makeTestServices)
       }
   }

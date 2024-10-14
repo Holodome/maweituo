@@ -4,9 +4,9 @@ package auth
 
 import maweituo.logic.auth.PasswordHashing.{ genSalt, hashSaltPassword }
 
-object PasswordHashingSuite extends SimpleIOSuite with Checkers:
+object PasswordHashingSuite extends MaweituoSimpleSuite:
 
-  test("basic usage") {
+  unitTest("basic usage") {
     forall(passwordGen) { password =>
       for
         salt <- genSalt[IO]

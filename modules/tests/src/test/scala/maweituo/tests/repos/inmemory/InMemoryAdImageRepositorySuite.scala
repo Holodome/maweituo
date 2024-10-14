@@ -6,7 +6,7 @@ package inmemory
 import maweituo.domain.all.*
 import maweituo.tests.generators.imageGen as imageGen0
 
-object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
+object InMemoryAdImageRepoSuite extends MaweituoSimpleSuite:
 
   private def repo = InMemoryRepoFactory.images[IO]
 
@@ -16,7 +16,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
       img <- imageGen0(id)
     yield img
 
-  test("create and find") {
+  unitTest("create and find") {
     val images = repo
     forall(imageGen) { img =>
       for
@@ -26,7 +26,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("delete") {
+  unitTest("delete") {
     val images = repo
     forall(imageGen) { img =>
       for
@@ -37,7 +37,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("find by ad") {
+  unitTest("find by ad") {
     val images = repo
     forall(imageGen) { img =>
       for
@@ -47,7 +47,7 @@ object InMemoryAdImageRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("find two by ad") {
+  unitTest("find two by ad") {
     val images = repo
     val gen =
       for

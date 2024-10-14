@@ -30,9 +30,9 @@ export maweituo.http.codecs.{*, given}
 type ErrorResponseData = (StatusCode, ErrorResponseDto)
 
 class EndpointBuilderDefs:
-  val base   = endpoint.errorOut(statusCode and jsonBody[ErrorResponseDto])
-  val public = base
-  val authed = base.securityIn(auth.bearer[JwtToken](WWWAuthenticateChallenge.bearer))
+  def base   = endpoint.errorOut(statusCode and jsonBody[ErrorResponseDto])
+  def public = base
+  def authed = base.securityIn(auth.bearer[JwtToken](WWWAuthenticateChallenge.bearer))
 
 class EndpointsBuilder[F[_]: Monad](authService: AuthService[F]) extends EndpointBuilderDefs:
   def secure[I, O, R](e: Endpoint[JwtToken, I, ErrorResponseData, O, R])

@@ -8,12 +8,9 @@ import maweituo.tests.properties.services.ChatServiceProperties
 import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.stubs.*
 
-import org.typelevel.log4cats.noop.NoOpFactory
+object ChatServiceSuite extends MaweituoSimpleSuite with ChatServiceProperties:
 
-object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProperties:
-
-  private def makeTestServices =
-    given LoggerFactory[IO]    = NoOpFactory[IO]
+  private def makeTestServices(using LoggerFactory[IO]) =
     given TelemetryService[IO] = TelemetryServiceStub[IO]
     val chatRepo               = InMemoryRepoFactory.chats
     val userRepo               = InMemoryRepoFactory.users
@@ -26,7 +23,7 @@ object ChatServiceSuite extends SimpleIOSuite with Checkers with ChatServiceProp
 
   properties.foreach {
     case Property(name, exp) =>
-      test(name) {
+      unitTest(name) {
         exp.tupled(makeTestServices)
       }
   }

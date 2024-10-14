@@ -24,12 +24,11 @@ class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
     global.postgres
 
   private def recsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO], RecsRepo[IO]) => F[Expectations]) =
-    itTest(name) { (postgres, log) =>
-      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
-      val users        = PostgresUserRepo.make(postgres)
-      val ads          = PostgresAdRepo.make(postgres)
-      val tags         = PostgresAdTagRepo.make(postgres)
-      val recs         = PostgresRecsRepo.make(postgres)
+    itTest(name) { postgres =>
+      val users = PostgresUserRepo.make(postgres)
+      val ads   = PostgresAdRepo.make(postgres)
+      val tags  = PostgresAdTagRepo.make(postgres)
+      val recs  = PostgresRecsRepo.make(postgres)
       fn(users, ads, tags, recs)
     }
 

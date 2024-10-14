@@ -10,7 +10,6 @@ import maweituo.tests.resources.*
 
 import doobie.util.transactor.Transactor
 import weaver.GlobalRead
-import weaver.scalacheck.Checkers
 
 class PostgresAdRepoITSuite(global: GlobalRead) extends ResourceSuite:
 

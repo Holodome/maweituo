@@ -3,7 +3,7 @@ package tests
 package repos
 package inmemory
 
-object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
+object InMemoryAdTagRepoSuite extends MaweituoSimpleSuite:
 
   private def repo = InMemoryRepoFactory.tags[IO]
 
@@ -13,7 +13,7 @@ object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
       ad  <- adIdGen
     yield tag -> ad
 
-  test("and tag and get") {
+  unitTest("and tag and get") {
     val tags = repo
     forall(tagAdGen) { (tag, ad) =>
       for
@@ -23,7 +23,7 @@ object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("and tag and get all tags") {
+  unitTest("and tag and get all tags") {
     forall(tagAdGen) { (tag, ad) =>
       val tags = repo
       for
@@ -33,7 +33,7 @@ object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("remove tag") {
+  unitTest("remove tag") {
     val tags = repo
     forall(tagAdGen) { (tag, ad) =>
       for
@@ -44,7 +44,7 @@ object InMemoryAdTagRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("get all ads by tag") {
+  unitTest("get all ads by tag") {
     val gen =
       for
         tag <- adTagGen

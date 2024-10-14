@@ -3,9 +3,7 @@ package tests
 package repos
 package inmemory
 
-import maweituo.domain.all.*
-
-object InMemoryChatRepoSuite extends SimpleIOSuite with Checkers:
+object InMemoryChatRepoSuite extends MaweituoSimpleSuite:
 
   private val chatGen: Gen[Chat] =
     for
@@ -17,7 +15,7 @@ object InMemoryChatRepoSuite extends SimpleIOSuite with Checkers:
 
   private def repo = InMemoryRepoFactory.chats[IO]
 
-  test("create and find") {
+  unitTest("create and find") {
     val chats = repo
     forall(chatGen) { chat =>
       for
@@ -27,7 +25,7 @@ object InMemoryChatRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("create and find by client") {
+  unitTest("create and find by client") {
     val chats = repo
     forall(chatGen) { chat =>
       for

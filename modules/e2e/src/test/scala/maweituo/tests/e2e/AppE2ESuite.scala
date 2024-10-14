@@ -22,10 +22,9 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
   override def sharedResource: Resource[IO, Res] = global.app
 
-  def clientTest(name: String)(fn: MaweituoApiClient => IO[Expectations]) =
-    e2eTest(name) { (con, log) =>
-      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
-      val client              = MaweituoApiClient(con.base, con.client)
+  def clientTest(n: String)(fn: MaweituoApiClient => IO[Expectations]) =
+    e2eTest(n) { con =>
+      val client = MaweituoApiClient(con.base, con.client)
       fn(client)
     }
 

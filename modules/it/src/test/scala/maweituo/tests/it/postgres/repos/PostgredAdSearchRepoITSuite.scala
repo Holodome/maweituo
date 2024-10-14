@@ -35,13 +35,12 @@ class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
       RecsRepo[IO],
       AdSearchRepo[IO]
   ) => F[Expectations]) =
-    itTest(name) { (postgres, log) =>
-      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
-      val users        = PostgresUserRepo.make(postgres)
-      val ads          = PostgresAdRepo.make(postgres)
-      val tags         = PostgresAdTagRepo.make(postgres)
-      val recs         = PostgresRecsRepo.make(postgres)
-      val search       = PostgresAdSearchRepo.make(postgres)
+    itTest(name) { postgres =>
+      val users  = PostgresUserRepo.make(postgres)
+      val ads    = PostgresAdRepo.make(postgres)
+      val tags   = PostgresAdTagRepo.make(postgres)
+      val recs   = PostgresRecsRepo.make(postgres)
+      val search = PostgresAdSearchRepo.make(postgres)
       fn(users, ads, tags, recs, search)
     }
 

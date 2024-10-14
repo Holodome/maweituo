@@ -5,11 +5,11 @@ package inmemory
 
 import maweituo.domain.all.*
 
-object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
+object InMemoryUserRepoSuite extends MaweituoSimpleSuite:
 
   private def repo = InMemoryRepoFactory.users[IO]
 
-  test("create and find") {
+  unitTest("create and find") {
     val users = repo
     forall(userGen) { user =>
       for
@@ -19,7 +19,7 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("create and find by name") {
+  unitTest("create and find by name") {
     val users = repo
     forall(userGen) { user =>
       for
@@ -29,7 +29,7 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("create and find by email") {
+  unitTest("create and find by email") {
     val users = repo
     forall(userGen) { user =>
       for
@@ -39,7 +39,7 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("delete") {
+  unitTest("delete") {
     val users = repo
     forall(userGen) { user =>
       for
@@ -50,7 +50,7 @@ object InMemoryUserRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("update") {
+  unitTest("update") {
     val users = repo
     val gen =
       for

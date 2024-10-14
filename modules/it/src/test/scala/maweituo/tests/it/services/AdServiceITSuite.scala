@@ -31,8 +31,7 @@ class AdServiceITSuite(global: GlobalRead) extends ResourceSuite with AdServiceP
 
   properties.foreach {
     case Property(name, fn) =>
-      itTest(name) { (postgres, log) =>
-        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
+      itTest(name) { postgres =>
         fn.tupled(testServices(postgres))
       }
   }

@@ -33,11 +33,10 @@ class AdImageServiceITSuite(global: GlobalRead) extends ResourceSuite with AdIma
       ads                  = AdServiceInterp.make(adRepo)
       images               = AdImageServiceInterp.make(imageRepo, adRepo, os)
     yield (users, ads, images)
-
+  
   properties.foreach {
     case Property(name, fn) =>
-      itTest(name) { (res, log) =>
-        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
+      itTest(name) { res =>
         testServices.tupled(res).flatMap(fn.tupled)
       }
   }

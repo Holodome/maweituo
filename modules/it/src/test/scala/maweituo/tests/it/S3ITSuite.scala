@@ -18,8 +18,7 @@ class S3Suite(global: GlobalRead) extends ResourceSuite:
   override def sharedResource: Resource[IO, Res] = global.minio
 
   private def minioTest(name: String)(fn: ObjectStorage[IO] => F[Expectations]) =
-    itTest(name) { (minio, log) =>
-      given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
+    itTest(name) { minio =>
       MinioObjectStorage.make[IO](minio, "maweituo").flatMap(fn)
     }
 

@@ -10,6 +10,7 @@ import weaver.*
 import weaver.discipline.*
 
 object DomainErrorsExceptions extends FunSuite with Discipline with ArbitraryInstances:
+  
   test("check message is meaningful") {
     val error = DomainError.NoUserWithName(Username(""))
     expect.same("NoUserWithName(username = )", error.getMessage())

@@ -2,8 +2,6 @@ package maweituo
 package tests
 package servicesimport
 
-import maweituo.domain.all.*
-import maweituo.logic.interp.all.*
 import maweituo.tests.properties.services.UserAdsServiceProperties
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
@@ -11,12 +9,11 @@ import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import org.typelevel.log4cats.noop.NoOpFactory
 
-object UserAdServiceSuite extends SimpleIOSuite with Checkers with UserAdsServiceProperties:
+object UserAdServiceSuite extends MaweituoSimpleSuite with UserAdsServiceProperties:
 
-  given LoggerFactory[IO]    = NoOpFactory[IO]
   given TelemetryService[IO] = TelemetryServiceStub[IO]
 
-  private def makeTestServices =
+  private def makeTestServices(using LoggerFactory[IO]) =
     val ads              = InMemoryRepoFactory.ads
     val users            = InMemoryRepoFactory.users
     given IAMService[IO] = makeIAMService(ads)
@@ -28,7 +25,7 @@ object UserAdServiceSuite extends SimpleIOSuite with Checkers with UserAdsServic
 
   properties.foreach {
     case Property(name, exp) =>
-      test(name) {
+      unitTest(name) {
         exp.tupled(makeTestServices)
       }
   }

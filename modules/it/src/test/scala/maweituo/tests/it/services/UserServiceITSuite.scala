@@ -26,8 +26,7 @@ class UserServiceITSuite(global: GlobalRead) extends ResourceSuite with UserServ
 
   properties.foreach {
     case Property(name, fn) =>
-      itTest(name) { (postgres, log) =>
-        given LoggerFactory[IO] = WeaverLogAdapterFactory[IO](log)
+      itTest(name) { postgres =>
         fn(makeTestUsers(postgres))
       }
   }

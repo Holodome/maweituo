@@ -3,12 +3,11 @@ package tests
 package repos
 package inmemory
 
-
-object InMemoryAdRepoSuite extends SimpleIOSuite with Checkers:
+object InMemoryAdRepoSuite extends MaweituoSimpleSuite:
 
   private def repo = InMemoryRepoFactory.ads[IO]
 
-  test("create and find") {
+  unitTest("create and find") {
     val ads = repo
     forall(adGen) { ad =>
       for
@@ -18,7 +17,7 @@ object InMemoryAdRepoSuite extends SimpleIOSuite with Checkers:
     }
   }
 
-  test("delete") {
+  unitTest("delete") {
     val ads = repo
     forall(adGen) { ad =>
       for

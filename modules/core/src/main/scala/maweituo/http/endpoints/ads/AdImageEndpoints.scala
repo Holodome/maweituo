@@ -10,6 +10,8 @@ import maweituo.domain.all.{MediaType as DomainMediaType, *}
 import sttp.capabilities.fs2.Fs2Streams
 import sttp.model.{HeaderNames, MediaType, StatusCode}
 import sttp.tapir.*
+import sttp.tapir.generic.auto.*
+import sttp.tapir.json.circe.*
 
 trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
 
@@ -28,6 +30,7 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .in(streamBinaryBody(Fs2Streams[F])(CodecFormat.OctetStream()))
       .in(header[MediaType](HeaderNames.ContentType))
       .in(header[Long](HeaderNames.ContentLength))
+      .out(jsonBody[CreateImageRequestDto])
       .out(statusCode(StatusCode.Created))
 
   val `delete /ads/$adId/imgs/$imgId` =
@@ -50,7 +53,7 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
       given Identity = Identity(authed.id)
       val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
       val contents   = ImageContentsStream(data, mediaType, contentLength)
-      imageService.upload(adId, contents).void.toOut
+      imageService.upload(adId, contents).map(CreateImageRequestDto.apply).toOut
     },
     `delete /ads/$adId/imgs/$imgId`.secure.serverLogic { authed => (_, imageId) =>
       given Identity = Identity(authed.id)

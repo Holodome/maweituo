@@ -64,6 +64,12 @@ object generators:
       password <- Gen.option(passwordGen)
     yield UpdateUserRequest(id, name, email, password)
 
+  def updateAdGen(id: AdId): Gen[UpdateAdRequest] =
+    for
+      title    <- Gen.option(adTitleGen)
+      resolved <- Gen.option(Gen.oneOf(false, true))
+    yield UpdateAdRequest(id, resolved, title)
+
   val adTitleGen: Gen[AdTitle] =
     nesGen(AdTitle.apply)
 

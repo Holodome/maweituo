@@ -4,6 +4,7 @@ package properties
 package services
 
 import weaver.MutableIOSuite
+import maweituo.tests.generators.updateAdGen
 
 trait AdServiceProperties:
   this: MutableIOSuite & Checkers =>
@@ -80,6 +81,30 @@ trait AdServiceProperties:
           yield expect.same(Left(DomainError.AdModificationForbidden(adId, otherId)), x) and expect.same(
             a.title,
             createAd.title
+          )
+        }
+    ),
+    Property(
+      "update",
+      (users, ads) =>
+        val gen =
+          for
+            reg <- registerGen
+            ad  <- createAdRequestGen
+            i   <- adIdGen
+            upd <- updateAdGen(i)
+          yield (reg, ad, upd)
+        forall(gen) { (reg, ad, upd) =>
+          for
+            uid <- users.create(reg)
+            given Identity = Identity(uid)
+            aid <- ads.create(ad)
+            newUpd = upd.copy(id = aid)
+            _       <- ads.update(newUpd)
+            updated <- ads.get(aid)
+          yield expect.all(
+            newUpd.title.fold(true)(_ === updated.title),
+            newUpd.resolved.fold(true)(_ === updated.resolved)
           )
         }
     )

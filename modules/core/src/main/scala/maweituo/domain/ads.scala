@@ -72,26 +72,18 @@ object ads:
     def empty: PaginatedAdsResponse =
       PaginatedAdsResponse(PaginatedCollection.empty, AdSortOrder.CreatedAtAsc)
 
-  final case class AdSearchForm(
-      page: Int,
-      pageSize: Option[Int],
-      order: Option[String],
-      tags: Option[String],
-      title: Option[String]
-  ) derives Show
-
   final case class UpdateAdRequest(
       id: AdId,
       resolved: Option[Boolean],
       title: Option[AdTitle]
-  )
+  ) derives Show
 
   final case class UpdateAdRepoRequest(
       id: AdId,
       resolved: Option[Boolean],
       title: Option[AdTitle],
       at: Instant
-  )
+  ) derives Show
 
   object UpdateAdRepoRequest:
     def fromReq[F[_]: TimeSource: Functor](req: UpdateAdRequest): F[UpdateAdRepoRequest] =

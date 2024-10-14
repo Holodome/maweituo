@@ -3,9 +3,9 @@ package tests
 package e2e
 
 import cats.syntax.all.*
+
 import maweituo.http.dto.*
-import maweituo.tests.e2e.resources.app
-import maweituo.tests.e2e.resources.AppCon
+import maweituo.tests.e2e.resources.{AppCon, app}
 
 import dev.profunktor.auth.jwt.JwtToken
 import sttp.model.StatusCode
@@ -46,7 +46,14 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
         _    <- `post /ads/$adId/tags`(adId, AddTagRequestDto(tag))
         ad   <- `get /ads/$adId`(adId)
         tags <- `get /ads/$adId/tags`(adId).map(_.tags)
-      yield expect.same(ad.title, adTitle) and expect.same(List(tag), tags)
+        ads  <- `get /tags/$tag/ads`(tag)
+        x    <- `get /feed`(0, Some(100000), None, None, None)
+      yield NonEmptyList.of(
+        expect.same(ad.title, adTitle),
+        expect.same(List(tag), tags),
+        expect(ads.adIds.contains(adId)),
+        expect(x.feed.items.contains(adId))
+      ).reduce
     }
   }
 
@@ -81,6 +88,33 @@ class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
           expect.same(m.senderId, u2)
         ).reduce
       }
+    }
+  }
+
+  clientTest("images") { client =>
+    import client.*
+    val gen =
+      for
+        reg <- registerGen
+        ad  <- createAdRequestGen
+        img <- imageContentsGen[IO]
+      yield (reg, ad, img)
+    forall(gen) { case (reg, createAd, imgCont) =>
+      for
+        _   <- `post /register`(RegisterRequestDto.fromDomain(reg))
+        jwt <- `post /login`(LoginRequestDto(reg.name, reg.password))
+        given JwtToken = jwt.jwt
+        adId  <- `post /ads`(CreateAdRequestDto.fromDomain(createAd)).map(_.id)
+        imgId <- `post /ads/$adId/imgs`(adId, imgCont.data, sttp.model.MediaType.ImagePng, imgCont.dataSize).map(_.id)
+        x     <- `get /ads/$adId/imgs/$imgId`(adId, imgId)
+        _     <- `delete /ads/$adId/imgs/$imgId`(adId, imgId)
+        y     <- `get /ads/$adId/imgs/$imgId`.attempt(adId, imgId)
+        di    <- imgCont.data.compile.toList
+        xi    <- imgCont.data.compile.toList
+      yield expect.same(
+        Left((StatusCode.NotFound, ErrorResponseDto(List(s"invalid image id ${imgId}")))),
+        y
+      ) and expect.same(di, xi)
     }
   }
 

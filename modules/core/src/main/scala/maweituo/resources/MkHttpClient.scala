@@ -8,7 +8,6 @@ import maweituo.config.HttpClientConfig
 import fs2.io.net.Network
 import org.http4s.client.Client
 import org.http4s.ember.client.EmberClientBuilder
-import org.typelevel.log4cats.Logger
 
 trait MkHttpClient[F[_]]:
   def newClient(c: HttpClientConfig): Resource[F, Client[F]]

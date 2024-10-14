@@ -188,6 +188,8 @@ object dto:
         )
       }
 
+  final case class CreateImageRequestDto(id: ImageId) derives Codec.AsObject
+
   final case class AllTagsResponse(tags: List[AdTag]) derives Codec.AsObject
 
   final case class TagAdsResponse(tag: AdTag, adIds: List[AdId]) derives Codec.AsObject

@@ -1,26 +1,22 @@
 package maweituo
 package tests
 package resources
-
-import maweituo.infrastructure.minio.MinioConnection
-import maweituo.tests.containers.makeMinioResource
+import maweituo.tests.containers.{PartiallyAppliedMinio, makeMinioResource}
 
 import weaver.{GlobalRead, GlobalResource, GlobalWrite}
-
-final case class MinioCon(value: MinioConnection)
 
 trait MinioContainerResource:
   this: GlobalResource =>
 
   override def sharedResources(global: GlobalWrite): Resource[IO, Unit] =
     for
-      minio <- makeMinioResource[IO].map(MinioCon.apply)
+      minio <- makeMinioResource
       _     <- global.putR(minio)
     yield ()
 
 extension (global: GlobalRead)
-  def minio: Resource[IO, MinioConnection] =
-    global.getR[MinioCon]().flatMap {
-      case Some(value) => Resource.pure(value.value)
-      case None        => makeMinioResource[IO]
+  def minio: Resource[IO, PartiallyAppliedMinio] =
+    global.getR[PartiallyAppliedMinio]().flatMap {
+      case Some(value) => Resource.pure(value)
+      case None        => makeMinioResource
     }

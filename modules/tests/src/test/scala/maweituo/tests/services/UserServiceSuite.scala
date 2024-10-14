@@ -6,8 +6,6 @@ import maweituo.tests.properties.services.UserServiceProperties
 import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 
-import org.typelevel.log4cats.noop.NoOpFactory
-
 object UserServiceSuite extends MaweituoSimpleSuite with UserServiceProperties:
 
   private def makeTestUsers(using LoggerFactory[IO]) =

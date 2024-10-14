@@ -7,8 +7,6 @@ import maweituo.tests.repos.inmemory.InMemoryRepoFactory
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
-import org.typelevel.log4cats.noop.NoOpFactory
-
 object UserAdServiceSuite extends MaweituoSimpleSuite with UserAdsServiceProperties:
 
   given TelemetryService[IO] = TelemetryServiceStub[IO]

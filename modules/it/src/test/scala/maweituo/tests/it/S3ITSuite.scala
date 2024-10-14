@@ -4,8 +4,8 @@ package it
 
 import scala.util.Random
 
-import maweituo.infrastructure.minio.{MinioConnection, MinioObjectStorage}
 import maweituo.infrastructure.{OBSId, ObjectStorage}
+import maweituo.tests.containers.PartiallyAppliedMinio
 import maweituo.tests.resources.*
 
 import org.typelevel.log4cats.LoggerFactory
@@ -13,13 +13,15 @@ import weaver.*
 
 class S3Suite(global: GlobalRead) extends ResourceSuite:
 
-  type Res = MinioConnection
+  type Res = PartiallyAppliedMinio
 
   override def sharedResource: Resource[IO, Res] = global.minio
 
   private def minioTest(name: String)(fn: ObjectStorage[IO] => F[Expectations]) =
-    itTest(name) { minio =>
-      MinioObjectStorage.make[IO](minio, "maweituo").flatMap(fn)
+    itTest(name) { minio0 =>
+      minio0().use { minio =>
+        fn(minio)
+      }
     }
 
   minioTest("get invalid") { storage =>

@@ -3,8 +3,9 @@ package tests
 package properties
 package services
 
-import weaver.MutableIOSuite
 import maweituo.tests.generators.updateAdGen
+
+import weaver.MutableIOSuite
 
 trait AdServiceProperties:
   this: MutableIOSuite & Checkers =>

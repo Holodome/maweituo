@@ -3,8 +3,7 @@ package tests
 
 import cats.effect.std.Env
 
-import weaver.{IOSuite, TestName}
-import weaver.BaseIOSuite
+import weaver.{BaseIOSuite, IOSuite, TestName}
 
 sealed trait Helpers:
   this: BaseIOSuite =>

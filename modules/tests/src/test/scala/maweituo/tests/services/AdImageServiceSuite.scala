@@ -9,9 +9,6 @@ import maweituo.tests.repos.inmemory.*
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import org.typelevel.log4cats.LoggerFactory
-import org.typelevel.log4cats.noop.NoOpFactory
-import weaver.SimpleIOSuite
-import weaver.scalacheck.Checkers
 
 object ImageServiceSuite extends MaweituoSimpleSuite with AdImageServiceProperties:
 

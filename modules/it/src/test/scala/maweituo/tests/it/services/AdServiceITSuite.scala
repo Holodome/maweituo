@@ -5,20 +5,14 @@ package services
 
 import maweituo.domain.all.*
 import maweituo.logic.interp.all.*
-import maweituo.postgres.repos.all.*
 import maweituo.tests.properties.services.AdServiceProperties
-import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.TelemetryServiceStub
 
 import doobie.util.transactor.Transactor
 import weaver.GlobalRead
 
-class AdServiceITSuite(global: GlobalRead) extends ResourceSuite with AdServiceProperties:
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] = global.postgres
+class AdServiceITSuite(global: GlobalRead) extends PostgresITSuite(global) with AdServiceProperties:
 
   private def testServices(xa: Transactor[IO])(using LoggerFactory[IO]) =
     given TelemetryService[IO] = TelemetryServiceStub[IO]
@@ -31,7 +25,7 @@ class AdServiceITSuite(global: GlobalRead) extends ResourceSuite with AdServiceP
 
   properties.foreach {
     case Property(name, fn) =>
-      itTest(name) { postgres =>
+      pgTest(name) { postgres =>
         fn.tupled(testServices(postgres))
       }
   }

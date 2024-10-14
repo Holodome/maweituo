@@ -3,23 +3,12 @@ package tests
 package it
 package postgres
 package repos
-
-import maweituo.domain.all.*
-import maweituo.postgres.repos.all.*
-import maweituo.tests.resources.*
-
-import doobie.util.transactor.Transactor
 import weaver.GlobalRead
 
-class PostgresUserRepoITSuite(global: GlobalRead) extends ResourceSuite:
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] =
-    global.postgres
+class PostgresUserRepoITSuite(global: GlobalRead) extends PostgresITSuite(global):
 
   private def usersTest(name: String)(fn: UserRepo[IO] => F[Expectations]) =
-    itTest(name) { postgres =>
+    pgTest(name) { postgres =>
       val ads = PostgresUserRepo.make(postgres)
       fn(ads)
     }

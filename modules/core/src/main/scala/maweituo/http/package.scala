@@ -1,11 +1,13 @@
 package maweituo
 package http
 
-import cats.Monad
 import cats.effect.kernel.Async
 import cats.syntax.all.*
+import cats.{Monad, MonadThrow}
 
+import maweituo.domain.exports.Identity
 import maweituo.domain.services.users.AuthService
+import maweituo.domain.users.AuthedUser
 
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.HttpRoutes
@@ -15,12 +17,8 @@ import sttp.model.headers.WWWAuthenticateChallenge
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
-import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.http4s.Http4sServerInterpreter
-import maweituo.domain.users.AuthedUser
-import sttp.tapir.server.PartialServerEndpoint
-import maweituo.domain.exports.Identity
-import cats.MonadThrow
+import sttp.tapir.server.{PartialServerEndpoint, ServerEndpoint}
 
 export maweituo.http.dto.{*, given}
 export maweituo.http.vars.*

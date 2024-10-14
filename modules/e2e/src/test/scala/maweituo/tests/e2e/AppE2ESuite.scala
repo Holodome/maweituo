@@ -14,7 +14,6 @@ import weaver.scalacheck.{CheckConfig, Checkers}
 
 class AppE2ESuite(global: GlobalRead) extends ResourceSuite:
 
-  override def maxParallelism: Int = 1
   override def checkConfig: CheckConfig =
     CheckConfig.default.copy(minimumSuccessful = 1, perPropertyParallelism = 1)
 

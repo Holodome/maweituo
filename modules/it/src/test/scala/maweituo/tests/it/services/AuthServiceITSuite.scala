@@ -11,6 +11,7 @@ import maweituo.logic.auth.JwtTokens
 import maweituo.logic.interp.all.*
 import maweituo.modules.Infrastructure
 import maweituo.postgres.repos.all.*
+import maweituo.tests.containers.{PartiallyAppliedPostgres, PartiallyAppliedRedis}
 import maweituo.tests.properties.services.AuthServiceProperties
 import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
@@ -21,7 +22,7 @@ import weaver.GlobalRead
 
 class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServiceProperties:
 
-  type Res = (Transactor[IO], RedisCommands[IO, String, String])
+  type Res = (PartiallyAppliedPostgres, PartiallyAppliedRedis)
 
   override def sharedResource: Resource[IO, Res] = (global.postgres, global.redis).tupled
 
@@ -37,7 +38,9 @@ class AuthServiceITSuite(global: GlobalRead) extends ResourceSuite with AuthServ
 
   properties.foreach {
     case Property(name, fn) =>
-      itTest(name) { res =>
-        fn(makeTestServices.tupled(res))
+      itTest(name) { (pg0, redis0) =>
+        Resource.both(pg0(), redis0()).use { (postgres, redis) =>
+          fn(makeTestServices(postgres, redis))
+        }
       }
   }

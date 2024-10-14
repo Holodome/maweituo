@@ -5,26 +5,13 @@ package postgres
 package repos
 
 import maweituo.domain.all.*
-import maweituo.postgres.repos.all.*
-import maweituo.tests.resources.*
 
-import doobie.util.transactor.Transactor
 import weaver.GlobalRead
-import weaver.scalacheck.CheckConfig
 
-class PostgresRecsRepoITSuite(global: GlobalRead) extends ResourceSuite:
-
-  override def maxParallelism: Int = 1
-  override def checkConfig: CheckConfig =
-    CheckConfig.default.copy(minimumSuccessful = 1, maximumGeneratorSize = 1, perPropertyParallelism = 1)
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] =
-    global.postgres
+class PostgresRecsRepoITSuite(global: GlobalRead) extends PostgresITSuite(global):
 
   private def recsTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdTagRepo[IO], RecsRepo[IO]) => F[Expectations]) =
-    itTest(name) { postgres =>
+    pgTest(name) { postgres =>
       val users = PostgresUserRepo.make(postgres)
       val ads   = PostgresAdRepo.make(postgres)
       val tags  = PostgresAdTagRepo.make(postgres)

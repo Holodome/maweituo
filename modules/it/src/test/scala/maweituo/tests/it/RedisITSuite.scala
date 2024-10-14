@@ -6,15 +6,15 @@ import scala.concurrent.duration.DurationInt
 
 import maweituo.infrastructure.EphemeralDict
 import maweituo.infrastructure.redis.RedisEphemeralDict
+import maweituo.tests.containers.PartiallyAppliedRedis
 import maweituo.tests.resources.*
 
-import dev.profunktor.redis4cats.RedisCommands
 import weaver.*
 import weaver.scalacheck.Checkers
 
 class RedisSuite(global: GlobalRead) extends ResourceSuite:
 
-  type Res = RedisCommands[IO, String, String]
+  type Res = PartiallyAppliedRedis
 
   override def sharedResource: Resource[IO, Res] = global.redis
 
@@ -27,8 +27,10 @@ class RedisSuite(global: GlobalRead) extends ResourceSuite:
   private val Expire = 30.seconds
 
   private def redisTest(name: String)(fn: EphemeralDict[IO, String, String] => F[Expectations]) =
-    itTest(name) { redis =>
-      fn(RedisEphemeralDict.make[IO](redis, Expire))
+    itTest(name) { redis0 =>
+      redis0().use { redis =>
+        fn(RedisEphemeralDict.make[IO](redis, Expire))
+      }
     }
 
   redisTest("get invalid") { dict =>

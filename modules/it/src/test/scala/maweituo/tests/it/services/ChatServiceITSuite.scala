@@ -5,20 +5,14 @@ package services
 
 import maweituo.domain.all.*
 import maweituo.logic.interp.all.*
-import maweituo.postgres.repos.all.*
 import maweituo.tests.properties.services.ChatServiceProperties
-import maweituo.tests.resources.*
 import maweituo.tests.services.makeIAMService
 import maweituo.tests.services.stubs.*
 
 import doobie.util.transactor.Transactor
 import weaver.GlobalRead
 
-class ChatServiceITSuite(global: GlobalRead) extends ResourceSuite with ChatServiceProperties:
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] = global.postgres
+class ChatServiceITSuite(global: GlobalRead) extends PostgresITSuite(global) with ChatServiceProperties:
 
   private def makeTestServices(xa: Transactor[IO])(using LoggerFactory[IO]) =
     given TelemetryService[IO] = TelemetryServiceStub[IO]
@@ -33,7 +27,7 @@ class ChatServiceITSuite(global: GlobalRead) extends ResourceSuite with ChatServ
 
   properties.foreach {
     case Property(name, exp) =>
-      itTest(name) { postgres =>
+      pgTest(name) { postgres =>
         exp.tupled(makeTestServices(postgres))
       }
   }

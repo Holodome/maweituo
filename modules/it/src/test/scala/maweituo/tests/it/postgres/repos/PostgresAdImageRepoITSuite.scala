@@ -5,21 +5,13 @@ package postgres
 package repos
 
 import maweituo.domain.all.*
-import maweituo.postgres.repos.all.*
-import maweituo.tests.resources.postgres
 
-import doobie.util.transactor.Transactor
 import weaver.GlobalRead
 
-class PostgresAdImageRepoITSuite(global: GlobalRead) extends ResourceSuite:
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] =
-    global.postgres
+class PostgresAdImageRepoITSuite(global: GlobalRead) extends PostgresITSuite(global):
 
   private def imgTest(name: String)(fn: (UserRepo[IO], AdRepo[IO], AdImageRepo[IO]) => F[Expectations]) =
-    itTest(name) { postgres =>
+    pgTest(name) { postgres =>
       val users  = PostgresUserRepo.make(postgres)
       val ads    = PostgresAdRepo.make(postgres)
       val images = PostgresAdImageRepo.make(postgres)

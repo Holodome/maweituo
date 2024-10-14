@@ -4,29 +4,15 @@ package it
 package postgres
 package repos
 
-import maweituo.domain.all.*
-import maweituo.postgres.repos.PostgresRecsRepo
-import maweituo.postgres.repos.ads.{PostgresAdRepo, PostgresAdSearchRepo, PostgresAdTagRepo}
-import maweituo.postgres.repos.users.PostgresUserRepo
-import maweituo.tests.resources.postgres
+import maweituo.postgres.repos.all.*
 
-import doobie.util.transactor.Transactor
 import org.typelevel.log4cats.LoggerFactory
 import weaver.*
-import weaver.scalacheck.{CheckConfig, Checkers}
+import weaver.scalacheck.Checkers
 
-class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
-
-  override def maxParallelism: Int = 1
-  override def checkConfig: CheckConfig =
-    CheckConfig.default.copy(minimumSuccessful = 1, maximumGeneratorSize = 1, perPropertyParallelism = 1)
+class PostgresAdSearchRepoITSuite(global: GlobalRead) extends PostgresITSuite(global):
 
   private val pagination = Pagination(10, 1)
-
-  type Res = Transactor[IO]
-
-  override def sharedResource: Resource[IO, Res] =
-    global.postgres
 
   private def baseTest(name: String)(fn: (
       UserRepo[IO],
@@ -35,7 +21,7 @@ class PostgresAdSearchRepoITSuite(global: GlobalRead) extends ResourceSuite:
       RecsRepo[IO],
       AdSearchRepo[IO]
   ) => F[Expectations]) =
-    itTest(name) { postgres =>
+    pgTest(name) { postgres =>
       val users  = PostgresUserRepo.make(postgres)
       val ads    = PostgresAdRepo.make(postgres)
       val tags   = PostgresAdTagRepo.make(postgres)

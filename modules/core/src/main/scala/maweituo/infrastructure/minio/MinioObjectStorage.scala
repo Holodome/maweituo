@@ -39,7 +39,7 @@ object MinioObjectStorage:
       case e => Logger[F].warn(e)("Error when creating bucket")
     }
 
-private final class MinioObjectStorage[F[_]: Async: Logger](
+final class MinioObjectStorage[F[_]: Async: Logger](
     client: MinioClient[F],
     bucket: String
 ) extends ObjectStorage[F]:

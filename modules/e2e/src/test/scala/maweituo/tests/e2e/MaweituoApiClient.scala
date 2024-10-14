@@ -12,10 +12,10 @@ import maweituo.http.{EndpointBuilderDefs, ErrorResponseData}
 import dev.profunktor.auth.jwt.JwtToken
 import org.http4s.*
 import org.http4s.client.*
+import org.typelevel.log4cats.Logger
 import sttp.model.StatusCode
 import sttp.tapir.client.http4s.Http4sClientInterpreter
 import sttp.tapir.{Endpoint, PublicEndpoint}
-import org.typelevel.log4cats.Logger
 
 final class MaweituoApiClient(base: String, client: Client[IO])(using LoggerFactory[IO]):
   given EndpointBuilderDefs = new EndpointBuilderDefs {}

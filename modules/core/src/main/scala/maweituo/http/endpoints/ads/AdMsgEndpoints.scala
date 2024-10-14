@@ -33,19 +33,14 @@ final class AdMsgEndpoints[F[_]: MonadThrow](msgService: MessageService[F])(usin
     extends AdMsgEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /ads/$adId/chats/$chatId/msgs`.secure.serverLogic { authed => (_, chatId, page, pageSize) =>
-      given Identity = Identity(authed.id)
+    `get /ads/$adId/chats/$chatId/msgs`.authedServerLogic { (_, chatId, page, pageSize) =>
       parsePagination(page, pageSize).flatMap { pag =>
         msgService
           .history(chatId, pag)
           .map(HistoryResponseDto.fromDomain(chatId, _))
-          .toOut
       }
     },
-    `post /ads/$adId/chats/$chatId/msgs`.secure.serverLogic { authed => (_, chatId, msg) =>
-      given Identity = Identity(authed.id)
-      msgService
-        .send(chatId, msg.toDomain)
-        .toOut
+    `post /ads/$adId/chats/$chatId/msgs`.authedServerLogic { (_, chatId, msg) =>
+      msgService.send(chatId, msg.toDomain)
     }
   )

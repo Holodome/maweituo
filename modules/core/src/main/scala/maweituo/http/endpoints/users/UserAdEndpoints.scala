@@ -7,7 +7,6 @@ import cats.syntax.all.*
 
 import maweituo.domain.all.*
 
-import sttp.model.StatusCode
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
@@ -24,10 +23,9 @@ final class UserAdEndpoints[F[_]: MonadThrow](userAdsService: UserAdsService[F])
     extends UserAdEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /users/$userId/ads`.serverLogic { userId =>
+    `get /users/$userId/ads`.serverLogicF { userId =>
       userAdsService
         .getAds(userId)
         .map(UserAdsResponseDto(userId, _))
-        .toOut
     }
   ).map(_.tag("users"))

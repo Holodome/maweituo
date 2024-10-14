@@ -38,22 +38,17 @@ final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F])(using
     extends AdChatEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /ads/$adId/chats/$chatId`.secure.serverLogic { authed => (_, chatId) =>
-      given Identity = Identity(authed.id)
+    `get /ads/$adId/chats/$chatId`.authedServerLogic { (_, chatId) =>
       chatService
         .get(chatId)
         .map(ChatDto.fromDomain)
-        .toOut
     },
-    `get /ads/$adId/chats`.secure.serverLogic { authed => adId =>
-      given Identity = Identity(authed.id)
+    `get /ads/$adId/chats`.authedServerLogic { adId =>
       chatService
         .findForAd(adId)
         .map(x => AdChatsResponseDto(adId, x.map(ChatDto.fromDomain)))
-        .toOut
     },
-    `post /ads/$adId/chats`.secure.serverLogic { authed => adId =>
-      given Identity = Identity(authed.id)
-      chatService.create(adId).map(CreateChatResponseDto(_)).toOut
+    `post /ads/$adId/chats`.authedServerLogic { adId =>
+      chatService.create(adId).map(CreateChatResponseDto(_))
     }
   ).map(_.tag("ads"))

@@ -38,18 +38,15 @@ final class UserEndpoints[F[_]: MonadThrow](userService: UserService[F])(using E
     extends UserEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /users/$userId`.serverLogic { userId =>
+    `get /users/$userId`.serverLogicF { userId =>
       userService
         .get(userId)
         .map(UserPublicInfoDto.fromUser)
-        .toOut
     },
-    `delete /users/$userId`.secure.serverLogic { authed => userId =>
-      given Identity = Identity(authed.id)
-      userService.delete(userId).toOut
+    `delete /users/$userId`.authedServerLogic { userId =>
+      userService.delete(userId)
     },
-    `put /users/$userId`.secure.serverLogic { authed => (userId, req) =>
-      given Identity = Identity(authed.id)
-      userService.update(req.toDomain(userId)).toOut
+    `put /users/$userId`.authedServerLogic { (userId, req) =>
+      userService.update(req.toDomain(userId))
     }
   ).map(_.tag("users"))

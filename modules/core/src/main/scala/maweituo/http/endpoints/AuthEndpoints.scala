@@ -30,14 +30,13 @@ final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F])(using E
     extends AuthEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `post /login`.serverLogic { login =>
+    `post /login`.serverLogicF { login =>
       authService
         .login(login.toDomain)
         .map { x => LoginResponseDto(x.jwt) }
-        .toOut
     },
-    `post /logout`.secure.serverLogic { authed => _ =>
+    `post /logout`.secureServerLogic { authed => _ =>
       given Identity = Identity(authed.id)
-      authService.logout(authed.jwt).toOut
+      authService.logout(authed.jwt)
     }
   ).map(_.tag("auth"))

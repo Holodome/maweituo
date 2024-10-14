@@ -19,6 +19,8 @@ import sttp.tapir.server.ServerEndpoint
 import sttp.tapir.server.http4s.Http4sServerInterpreter
 import maweituo.domain.users.AuthedUser
 import sttp.tapir.server.PartialServerEndpoint
+import maweituo.domain.exports.Identity
+import cats.MonadThrow
 
 export maweituo.http.dto.{*, given}
 export maweituo.http.vars.*
@@ -44,11 +46,24 @@ class EndpointsBuilder[F[_]: Monad](authService: AuthService[F]) extends Endpoin
         ))
     }
 
+extension [I, O, R](e: Endpoint[Unit, I, ErrorResponseData, O, R])
+  def serverLogicF[F[_]: MonadThrow](fn: I => F[O]) =
+    e.serverLogic { i => fn(i).toOut }
+
 extension [I, O, R](e: Endpoint[JwtToken, I, ErrorResponseData, O, R])
-  def secure[F[_]](using
-      builder: EndpointsBuilder[F]
-  ): PartialServerEndpoint[JwtToken, AuthedUser, I, (StatusCode, ErrorResponseDto), O, R, F] =
+  def secure[F[_]](using builder: EndpointsBuilder[F]) =
     builder.secure(e)
+
+  def authedServerLogic[F[_]: MonadThrow](fn: Identity ?=> I => F[O])(using builder: EndpointsBuilder[F]) =
+    e.secure.serverLogic { authed => i =>
+      given Identity = Identity(authed.id)
+      fn(i).toOut
+    }
+
+  def secureServerLogic[F[_]: MonadThrow](fn: AuthedUser => I => F[O])(using builder: EndpointsBuilder[F]) =
+    e.secure.serverLogic { authed => i =>
+      fn(authed)(i).toOut
+    }
 
 trait Endpoints[F[_]]:
   def endpoints: List[ServerEndpoint[Fs2Streams[F], F]]

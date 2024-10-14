@@ -45,29 +45,20 @@ final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using Endpoin
     extends AdEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /ads/$adId`.serverLogic { adId =>
+    `get /ads/$adId`.serverLogicF { adId =>
       adService
         .get(adId)
         .map(AdResponseDto.fromDomain)
-        .toOut
     },
-    `post /ads`.secure.serverLogic { authed => create =>
-      given Identity = Identity(authed.id)
+    `post /ads`.authedServerLogic { create =>
       adService
         .create(create.toDomain)
         .map(CreateAdResponseDto.apply)
-        .toOut
     },
-    `delete /ads/$adId`.secure.serverLogic { authed => adId =>
-      given Identity = Identity(authed.id)
-      adService
-        .delete(adId)
-        .toOut
+    `delete /ads/$adId`.authedServerLogic { adId =>
+      adService.delete(adId)
     },
-    `put /ads/$adId`.secure.serverLogic { authed => (adId, req) =>
-      given Identity = Identity(authed.id)
-      adService
-        .update(req.toDomain(adId))
-        .toOut
+    `put /ads/$adId`.authedServerLogic { (adId, req) =>
+      adService.update(req.toDomain(adId))
     }
   ).map(_.tag("ads"))

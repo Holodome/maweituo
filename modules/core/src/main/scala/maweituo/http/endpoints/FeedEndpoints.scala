@@ -37,15 +37,14 @@ final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F])(using Endpoint
     extends FeedEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /feed`.serverLogic { t =>
+    `get /feed`.serverLogicF { t =>
       parseUnauthorizedAdSearch.tupled(t).flatMap { req =>
-        feed.feed(req).map(FeedResponseDto.apply).toOut
+        feed.feed(req).map(FeedResponseDto.apply)
       }
     },
-    `get /feed/$userId`.secure.serverLogic { authed => (_, page, pageSize, order, title, tags) =>
-      given Identity = Identity(authed.id)
+    `get /feed/$userId`.authedServerLogic { (_, page, pageSize, order, title, tags) =>
       parseAuthorizedAdSearch(page, pageSize, order, title, tags).flatMap { req =>
-        feed.feed(req).map(FeedResponseDto.apply).toOut
+        feed.feed(req).map(FeedResponseDto.apply)
       }
     }
   ).map(_.tag("feed"))

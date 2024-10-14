@@ -30,10 +30,10 @@ final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using Endpoint
     extends TagEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /tags`.serverLogic { _ =>
-      tags.all.map(AllTagsResponse.apply).toOut
+    `get /tags`.serverLogicF { _ =>
+      tags.all.map(AllTagsResponse.apply)
     }.tag("ads"),
-    `get /tags/$tag/ads`.serverLogic { tag =>
-      tags.find(tag).map(TagAdsResponse(tag, _)).toOut
+    `get /tags/$tag/ads`.serverLogicF { tag =>
+      tags.find(tag).map(TagAdsResponse(tag, _))
     }.tag("ads")
   )

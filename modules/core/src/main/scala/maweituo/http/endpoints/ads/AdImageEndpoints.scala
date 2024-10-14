@@ -43,20 +43,17 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
     extends AdImageEndpointDefs[F] with Endpoints[F]:
 
   override val endpoints = List(
-    `get /ads/$adId/imgs/$imgId`.serverLogic { (_, imageId) =>
+    `get /ads/$adId/imgs/$imgId`.serverLogicF { (_, imageId) =>
       imageService
         .get(imageId)
         .map(x => (x.data, x.contentType.toRaw, x.dataSize))
-        .toOut
     },
-    `post /ads/$adId/imgs`.secure.serverLogic { authed => (adId, data, contentType, contentLength) =>
-      given Identity = Identity(authed.id)
-      val mediaType  = DomainMediaType.apply(contentType.mainType, contentType.subType)
-      val contents   = ImageContentsStream(data, mediaType, contentLength)
-      imageService.upload(adId, contents).map(CreateImageRequestDto.apply).toOut
+    `post /ads/$adId/imgs`.authedServerLogic { (adId, data, contentType, contentLength) =>
+      val mediaType = DomainMediaType.apply(contentType.mainType, contentType.subType)
+      val contents  = ImageContentsStream(data, mediaType, contentLength)
+      imageService.upload(adId, contents).map(CreateImageRequestDto.apply)
     },
-    `delete /ads/$adId/imgs/$imgId`.secure.serverLogic { authed => (_, imageId) =>
-      given Identity = Identity(authed.id)
-      imageService.delete(imageId).toOut
+    `delete /ads/$adId/imgs/$imgId`.authedServerLogic { (_, imageId) =>
+      imageService.delete(imageId)
     }
   ).map(_.tag("ads"))

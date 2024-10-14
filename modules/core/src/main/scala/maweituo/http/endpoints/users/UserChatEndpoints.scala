@@ -25,11 +25,9 @@ final class UserChatEndpoints[F[_]: MonadThrow](userChatsService: UserChatsServi
 ) extends UserChatEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /users/$userId/chats`.secure.serverLogic { authed => userId =>
-      given Identity = Identity(authed.id)
+    `get /users/$userId/chats`.authedServerLogic { userId =>
       userChatsService
         .getChats(userId)
         .map(UserChatsResponseDto.fromDomain(userId, _))
-        .toOut
     }
   ).map(_.tag("users"))

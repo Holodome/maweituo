@@ -38,18 +38,15 @@ final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using Endpoi
     extends AdTagEndpointDefs with Endpoints[F]:
 
   override val endpoints = List(
-    `get /ads/$adId/tags`.serverLogic { adId =>
+    `get /ads/$adId/tags`.serverLogicF { adId =>
       tags
         .adTags(adId)
         .map(AdTagsResponseDto(adId, _))
-        .toOut
     },
-    `post /ads/$adId/tags`.secure.serverLogic { authed => (adId, req) =>
-      given Identity = Identity(authed.id)
-      tags.addTag(adId, req.tag).toOut
+    `post /ads/$adId/tags`.authedServerLogic { (adId, req) =>
+      tags.addTag(adId, req.tag)
     },
-    `delete /ads/$adId/tags`.secure.serverLogic { authed => (adId, req) =>
-      given Identity = Identity(authed.id)
-      tags.removeTag(adId, req.tag).toOut
+    `delete /ads/$adId/tags`.authedServerLogic { (adId, req) =>
+      tags.removeTag(adId, req.tag)
     }
   ).map(_.tag("ads"))

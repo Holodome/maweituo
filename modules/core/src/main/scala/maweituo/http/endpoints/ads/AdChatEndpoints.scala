@@ -15,19 +15,19 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
 trait AdChatEndpointDefs(using builder: EndpointBuilderDefs):
-  val `get /ads/$adId/chats/$chatId` =
+  def `get /ads/$adId/chats/$chatId` =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats" / path[ChatId]("chat_id"))
       .out(jsonBody[ChatDto])
 
-  val `get /ads/$adId/chats` =
+  def `get /ads/$adId/chats` =
     builder.authed
       .get
       .in("ads" / path[AdId]("ad_id") / "chats")
       .out(jsonBody[AdChatsResponseDto])
 
-  val `post /ads/$adId/chats` =
+  def `post /ads/$adId/chats` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "chats")
@@ -37,7 +37,7 @@ trait AdChatEndpointDefs(using builder: EndpointBuilderDefs):
 final class AdChatEndpoints[F[_]: MonadThrow](chatService: ChatService[F])(using EndpointsBuilder[F])
     extends AdChatEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /ads/$adId/chats/$chatId`.authedServerLogic { (_, chatId) =>
       chatService
         .get(chatId)

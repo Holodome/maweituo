@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.ads
+package endpoints
+package ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -15,7 +16,7 @@ import sttp.tapir.json.circe.*
 
 trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
 
-  val `get /ads/$adId/imgs/$imgId` =
+  def `get /ads/$adId/imgs/$imgId` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -23,7 +24,7 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .out(header[String](HeaderNames.ContentType))
       .out(header[Long](HeaderNames.ContentLength))
 
-  val `post /ads/$adId/imgs` =
+  def `post /ads/$adId/imgs` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "imgs")
@@ -33,7 +34,7 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .out(jsonBody[CreateImageRequestDto])
       .out(statusCode(StatusCode.Created))
 
-  val `delete /ads/$adId/imgs/$imgId` =
+  def `delete /ads/$adId/imgs/$imgId` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "imgs" / path[ImageId]("image_id"))
@@ -42,7 +43,7 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
 final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(using EndpointsBuilder[F])
     extends AdImageEndpointDefs[F] with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /ads/$adId/imgs/$imgId`.serverLogicF { (_, imageId) =>
       imageService
         .get(imageId)

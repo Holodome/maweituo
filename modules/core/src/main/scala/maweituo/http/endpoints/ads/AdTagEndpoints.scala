@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.ads
+package endpoints
+package ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -14,20 +15,20 @@ import sttp.tapir.json.circe.*
 
 trait AdTagEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val `get /ads/$adId/tags` =
+  def `get /ads/$adId/tags` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id") / "tags")
       .out(jsonBody[AdTagsResponseDto])
 
-  val `post /ads/$adId/tags` =
+  def `post /ads/$adId/tags` =
     builder.authed
       .post
       .in("ads" / path[AdId]("ad_id") / "tags")
       .in(jsonBody[AddTagRequestDto])
       .out(statusCode(StatusCode.Created))
 
-  val `delete /ads/$adId/tags` =
+  def `delete /ads/$adId/tags` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id") / "tags")
@@ -37,7 +38,7 @@ trait AdTagEndpointDefs(using builder: EndpointBuilderDefs):
 final class AdTagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using EndpointsBuilder[F])
     extends AdTagEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /ads/$adId/tags`.serverLogicF { adId =>
       tags
         .adTags(adId)

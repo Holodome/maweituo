@@ -19,14 +19,14 @@ trait FeedEndpointDefs(using builder: EndpointBuilderDefs):
     query[Int]("page") and query[Option[Int]]("page_size") and query[Option[String]]("order") and
       query[Option[String]]("title") and query[Option[String]]("tags")
 
-  val `get /feed` =
+  def `get /feed` =
     builder.public
       .get
       .in("feed")
       .in(queryParams)
       .out(jsonBody[FeedResponseDto])
 
-  val `get /feed/$userId` =
+  def `get /feed/$userId` =
     builder.authed
       .get
       .in("feed" / path[UserId]("user_id"))
@@ -36,7 +36,7 @@ trait FeedEndpointDefs(using builder: EndpointBuilderDefs):
 final class FeedEndpoints[F[_]: MonadThrow](feed: FeedService[F])(using EndpointsBuilder[F])
     extends FeedEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /feed`.serverLogicF { t =>
       parseUnauthorizedAdSearch.tupled(t).flatMap { req =>
         feed.feed(req).map(FeedResponseDto.apply)

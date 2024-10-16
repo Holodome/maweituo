@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.users
+package endpoints
+package users
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -15,19 +16,19 @@ import sttp.tapir.server.ServerEndpoint
 
 trait UserEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val `get /users/$userId` =
+  def `get /users/$userId` =
     builder.public
       .get
       .in("users" / path[UserId]("user_id"))
       .out(jsonBody[UserPublicInfoDto])
 
-  val `delete /users/$userId` =
+  def `delete /users/$userId` =
     builder.authed
       .delete
       .in("users" / path[UserId]("user_id"))
       .out(statusCode(StatusCode.NoContent))
 
-  val `put /users/$userId` =
+  def `put /users/$userId` =
     builder.authed
       .put
       .in("users" / path[UserId]("user_id"))
@@ -37,7 +38,7 @@ trait UserEndpointDefs(using builder: EndpointBuilderDefs):
 final class UserEndpoints[F[_]: MonadThrow](userService: UserService[F])(using EndpointsBuilder[F])
     extends UserEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /users/$userId`.serverLogicF { userId =>
       userService
         .get(userId)

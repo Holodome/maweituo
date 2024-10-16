@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.users
+package endpoints
+package users
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -14,7 +15,7 @@ import sttp.tapir.json.circe.*
 
 trait UserChatEndpointDefs(using builder: EndpointBuilderDefs):
 
-  val `get /users/$userId/chats` =
+  def `get /users/$userId/chats` =
     builder.authed
       .get
       .in("users" / path[UserId]("user_id") / "chats")
@@ -24,7 +25,7 @@ final class UserChatEndpoints[F[_]: MonadThrow](userChatsService: UserChatsServi
     builder: EndpointsBuilder[F]
 ) extends UserChatEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /users/$userId/chats`.authedServerLogic { userId =>
       userChatsService
         .getChats(userId)

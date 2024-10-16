@@ -13,14 +13,14 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
 trait AuthEndpointDefs(using builder: EndpointBuilderDefs):
-  val `post /login` =
+  def `post /login` =
     builder.public
       .post
       .in("login")
       .in(jsonBody[LoginRequestDto])
       .out(jsonBody[LoginResponseDto])
 
-  val `post /logout` =
+  def `post /logout` =
     builder.authed
       .post
       .in("logout")
@@ -29,7 +29,7 @@ trait AuthEndpointDefs(using builder: EndpointBuilderDefs):
 final class AuthEndpoints[F[_]: MonadThrow](authService: AuthService[F])(using EndpointsBuilder[F])
     extends AuthEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `post /login`.serverLogicF { login =>
       authService
         .login(login.toDomain)

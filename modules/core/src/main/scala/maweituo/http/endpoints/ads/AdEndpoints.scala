@@ -1,6 +1,7 @@
 package maweituo
 package http
-package endpoints.ads
+package endpoints
+package ads
 
 import cats.MonadThrow
 import cats.syntax.all.*
@@ -13,14 +14,13 @@ import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 
 trait AdEndpointDefs(using builder: EndpointBuilderDefs):
-
-  val `get /ads/$adId` =
+  def `get /ads/$adId` =
     builder.public
       .get
       .in("ads" / path[AdId]("ad_id"))
       .out(jsonBody[AdResponseDto])
 
-  val `post /ads` =
+  def `post /ads` =
     builder.authed
       .post
       .in("ads")
@@ -28,7 +28,7 @@ trait AdEndpointDefs(using builder: EndpointBuilderDefs):
       .out(jsonBody[CreateAdResponseDto])
       .out(statusCode(StatusCode.Created))
 
-  val `delete /ads/$adId` =
+  def `delete /ads/$adId` =
     builder.authed
       .delete
       .in("ads" / path[AdId]("ad_id"))
@@ -44,7 +44,7 @@ trait AdEndpointDefs(using builder: EndpointBuilderDefs):
 final class AdEndpoints[F[_]: MonadThrow](adService: AdService[F])(using EndpointsBuilder[F])
     extends AdEndpointDefs with Endpoints[F]:
 
-  override val endpoints = List(
+  override def endpoints = List(
     `get /ads/$adId`.serverLogicF { adId =>
       adService
         .get(adId)

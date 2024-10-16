@@ -1,18 +1,38 @@
 version: "3.4"
 
 services:
-  web:
-    image: 'maweituo-web:latest'
-    container_name: maweituo-web
-    restart: always
+  proxy:
+    image: 'nginx'
+    container_name: maweituo-proxy
+    restart: always 
     ports:
-      - '3000:3000'
-    environment:
-      - ORIGIN=http://web:3000
-      - BACKEND=http://core:8080
-      - IMAGE_BASE=http://127.0.0.1:8080
+      - '80:80'
+    networks:
+      - backend 
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/usr/share/nginx/html:ro
+    depends_on:
+      core:
+        condition: service_started
+        
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    container_name: maweituo-pgadmin
+    restart: always 
     networks:
       - backend
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+       - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - '5050:5050'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root 
+      PGADMIN_LISTEN_PORT: 5050
 
   core:
     image: 'maweituo-core:0.1.0'
@@ -89,4 +109,6 @@ volumes:
   redis_data:
     driver: local
   postgres_data:
+    driver: local
+  pgadmin_data:
     driver: local

@@ -3,25 +3,30 @@ package modules
 
 import cats.effect.Async
 
+import maweituo.config.AppConfig
 import maweituo.http.*
 import maweituo.http.endpoints.all.*
 
 import org.http4s.HttpApp
 import org.http4s.implicits.*
 import org.typelevel.log4cats.LoggerFactory
+import sttp.apispec.openapi.Server
+import sttp.apispec.openapi.circe.yaml.*
 import sttp.tapir.*
+import sttp.tapir.docs.openapi.OpenAPIDocsInterpreter
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.circe.*
 import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.interceptor.cors.CORSInterceptor
 import sttp.tapir.server.model.ValuedEndpointOutput
-import sttp.tapir.swagger.bundle.SwaggerInterpreter
+import sttp.tapir.swagger.SwaggerUI
 
 object HttpApi:
-  def make[F[_]: Async: LoggerFactory](services: Services[F]): HttpApi[F] =
-    new HttpApi[F](services)
+  def make[F[_]: Async: LoggerFactory](cfg: AppConfig, services: Services[F]): HttpApi[F] =
+    new HttpApi[F](cfg, services)
 
 sealed class HttpApi[F[_]: Async: LoggerFactory](
+    cfg: AppConfig,
     services: Services[F]
 ):
 
@@ -43,8 +48,12 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
     ).map(_.endpoints).flatten
 
   private lazy val allEndpoints =
-    val swaggerEndpoints = SwaggerInterpreter().fromServerEndpoints[F](endpoints, "maweituo", "0.1")
-    endpoints ++ swaggerEndpoints
+    val swaggerEndpoints = OpenAPIDocsInterpreter().serverEndpointsToOpenAPI(endpoints, "My App", "1.0")
+      .servers(
+        List(Server(s"http://127.0.0.1:${cfg.httpServer.port}").description("Production server"))
+      )
+      .toYaml
+    endpoints ++ SwaggerUI[F](swaggerEndpoints)
 
   private val serverOptions: Http4sServerOptions[F] = Http4sServerOptions
     .customiseInterceptors[F]

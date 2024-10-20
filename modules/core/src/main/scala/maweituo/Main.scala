@@ -27,6 +27,7 @@ object Main extends IOApp.Simple:
               infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
               services = Services.make[IO](repositories, infrastructure)
               api = HttpApi.make[IO](
+                cfg,
                 services
               )
             yield cfg.httpServer -> api.httpApp

@@ -1,0 +1,206 @@
+version: "3.4"
+
+services:
+  proxy:
+    image: 'nginx'
+    container_name: maweituo-proxy
+    restart: always 
+    ports:
+      - '80:80'
+    networks:
+      - backend 
+    volumes:
+      - ./lab5-nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/usr/share/nginx/html:ro
+    depends_on:
+      core:
+        condition: service_started
+        
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    container_name: maweituo-pgadmin
+    restart: always 
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_started
+    volumes:
+       - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - '5050:5050'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root 
+      PGADMIN_LISTEN_PORT: 5050
+
+  core:
+    image: 'maweituo-core:0.1.0'
+    container_name: maweituo-core
+    volumes:
+      - ./maweituo-config.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8080:8080'
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+  
+  core-read1:
+    image: 'maweituo-core:0.1.0'
+    container_name: maweituo-core-read1
+    volumes:
+      - ./maweituo-config-read1.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8081:8080'
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+      
+  core-read2:
+    image: 'maweituo-core:0.1.0'
+    container_name: maweituo-core-read2
+    volumes:
+      - ./maweituo-config-read2.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8082:8080'
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+    
+  core-mirror:
+    image: 'maweituo-core:0.1.0'
+    container_name: maweituo-core-mirror
+    volumes:
+      - ./maweituo-config-mirror.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8083:8080'
+    networks:
+      - backend
+    depends_on:
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    environment:
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
+
+  redis:
+    image: 'redis:6.2-alpine'
+    container_name: maweituo-redis
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    restart: always
+    ports:
+      - '6379:6379'
+    networks:
+      - backend
+
+  minio:
+    image: 'minio/minio:RELEASE.2024-09-13T20-26-02Z'
+    container_name: maweituo-minio
+    command: 'minio server /local --console-address :9001'
+    restart: always
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    networks:
+      - backend
+    volumes:
+      - 'minio_data:/local'
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DEFAULT_BUCKETS=maweituo
+      
+  postgres:
+    build:
+      context: .
+      dockerfile: lab5-postgres.Dockerfile
+    container_name: maweituo-postgres
+    restart: always 
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repliaction_user
+      POSTGRESQL_REPLICATION_PASSWORD: repliaction_password
+      POSTGRESQL_POSTGRES_PASSWORD: postgres
+      POSTGRESQL_USERNAME: maweituo
+      POSTGRESQL_PASSWORD: maweituo
+      POSTGRESQL_DATABASE: maweituo
+      
+  postgres-slave:
+    build:
+      context: .
+      dockerfile: lab5-postgres.Dockerfile
+    container_name: postgres-slave
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_REPLICATION_USER: repliaction_user
+      POSTGRESQL_REPLICATION_PASSWORD: repliaction_password
+      POSTGRESQL_MASTER_HOST: postgres
+      POSTGRESQL_POSTGRES_PASSWORD: postgres
+      POSTGRESQL_USERNAME: maweituo
+      POSTGRESQL_PASSWORD: maweituo
+      POSTGRESQL_DATABASE: maweituo
+    volumes:
+      - postgres_slave_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  minio_data:
+    driver: local
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+  postgres_slave_data:
+    driver: local
+  pgadmin_data:
+    driver: local

@@ -2,13 +2,17 @@ package maweituo
 package modules
 
 import cats.effect.Async
+import cats.effect.kernel.Resource
+import cats.syntax.all.*
 
 import maweituo.config.AppConfig
 import maweituo.http.*
 import maweituo.http.endpoints.all.*
 
-import org.http4s.HttpApp
 import org.http4s.implicits.*
+import org.http4s.metrics.prometheus.{Prometheus, PrometheusExportService}
+import org.http4s.server.middleware.Metrics
+import org.http4s.{HttpApp, HttpRoutes, Request}
 import org.typelevel.log4cats.LoggerFactory
 import sttp.apispec.openapi.Server
 import sttp.apispec.openapi.circe.yaml.*
@@ -73,6 +77,17 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
     .corsInterceptor(CORSInterceptor.default[F])
     .options
 
-  private lazy val routes = Http4sServerInterpreter(serverOptions).toRoutes(allEndpoints)
+  def withMetrics(routes: HttpRoutes[F]): Resource[F, HttpRoutes[F]] =
+    for
+      metricsSvc <- PrometheusExportService.build[F]
+      metrics <- Prometheus.metricsOps[F](
+        metricsSvc.collectorRegistry,
+        "server"
+      )
+      router = metricsSvc.routes <+> Metrics[F](metrics, classifierF = (_: Request[F]) => Some("core"))(routes)
+    yield router
 
-  lazy val httpApp: HttpApp[F] = routes.orNotFound
+  def httpApp: Resource[F, HttpApp[F]] =
+    for
+      r <- withMetrics(Http4sServerInterpreter(serverOptions).toRoutes(allEndpoints))
+    yield r.orNotFound

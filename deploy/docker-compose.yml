@@ -1,6 +1,44 @@
 version: "3.4"
 
 services:
+  grafana:
+    image: grafana/grafana
+    container_name: maweituo-grafana
+    restart: "no"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/datasource/default.yaml:/etc/grafana/provisioning/datasources/default.yaml
+      - ./grafana/dashboard/default.yaml:/etc/grafana/provisioning/dashboards/default.yaml
+      - ./grafana/dashboard/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+    ports:
+      - "3000:3000"
+    networks:
+      - backend 
+    depends_on:
+      prometheus:
+        condition: service_started
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: maweituo-prometheus
+    restart: "no"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - backend 
+    depends_on:
+      core:
+        condition: service_started
+
   proxy:
     image: 'nginx'
     container_name: maweituo-proxy
@@ -16,23 +54,44 @@ services:
       core:
         condition: service_started
         
-  pgadmin:
-    image: 'dpage/pgadmin4'
-    container_name: maweituo-pgadmin
-    restart: always 
+  # pgadmin:
+  #   image: 'dpage/pgadmin4'
+  #   container_name: maweituo-pgadmin
+  #   restart: always 
+  #   networks:
+  #     - backend
+  #   depends_on:
+  #     postgres:
+  #       condition: service_started
+  #   volumes:
+  #      - pgadmin_data:/var/lib/pgadmin
+  #   ports:
+  #     - '5050:5050'
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: root 
+  #     PGADMIN_LISTEN_PORT: 5050
+  
+  core-zio:
+    image: 'maweituo-core-zio:0.1.0'
+    container_name: maweituo-core-zio
+    volumes:
+      - ./maweituo-config-zio.json:/etc/maweituo-config.json
+    restart: always
+    ports:
+      - '8081:8080'
     networks:
       - backend
     depends_on:
-      postgres:
+      redis:
         condition: service_started
-    volumes:
-       - pgadmin_data:/var/lib/pgadmin
-    ports:
-      - '5050:5050'
+      minio:
+        condition: service_started
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root 
-      PGADMIN_LISTEN_PORT: 5050
+      - MW_JWT_SECRET_KEY=123
+      - MW_MINIO_USER=minioadmin
+      - MW_MINIO_PASSWORD=minioadmin
+      - MW_CONFIG_PATH=/etc/maweituo-config.json
 
   core:
     image: 'maweituo-core:0.1.0'
@@ -112,3 +171,5 @@ volumes:
     driver: local
   pgadmin_data:
     driver: local
+  prometheus_data: {}
+  grafana-storage: {}

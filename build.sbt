@@ -22,7 +22,7 @@ lazy val commonSettings = Seq(
 val CatsVersion            = "2.9.0"
 val CatsEffectVersion      = "3.3.12"
 val Log4CatsVersion        = "2.6.0"
-val Http4sVersion          = "0.23.12"
+val Http4sVersion          = "0.23.26"
 val CirceVersion           = "0.14.1"
 val DerevoVersion          = "0.12.8"
 val CirisVersion           = "3.5.0"
@@ -50,7 +50,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, tests, it, e2e)
+  .aggregate(core, coreZio, tests, it, e2e)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
@@ -75,9 +75,9 @@ lazy val core = (project in file("modules/core"))
       "io.circe"                    %% "circe-parser"              % CirceVersion,
       "dev.profunktor"              %% "http4s-jwt-auth"           % Http4sJwtAuthVersion,
       "org.http4s"                  %% "http4s-ember-server"       % Http4sVersion,
-      "org.http4s"                  %% "http4s-ember-client"       % "0.23.19-RC3",
+      "org.http4s"                  %% "http4s-ember-client"       % Http4sVersion,
       "org.http4s"                  %% "http4s-circe"              % Http4sVersion,
-      "org.http4s"                  %% "http4s-prometheus-metrics" % Http4sVersion,
+      "org.http4s"                  %% "http4s-prometheus-metrics" % "0.24.6",
       "com.zaxxer"                   % "HikariCP"                  % HikariCPVersion,
       "org.lz4"                      % "lz4-java"                  % LZ4Version,
       "org.tpolecat"                %% "doobie-core"               % DoobieVersion,
@@ -114,6 +114,24 @@ lazy val tests = (project in file("modules/tests"))
       "com.dimafeng"                %% "testcontainers-scala-postgresql" % TestcontainersVersion,
       "com.dimafeng"                %% "testcontainers-scala-minio"      % TestcontainersVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-client"             % SttpVersion
+    )
+  )
+
+lazy val coreZio = (project in file("modules/core-zio"))
+  .dependsOn(core)
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .settings(
+    commonSettings,
+    name                 := "maweituo-core-zio",
+    Compile / run / fork := true,
+    scalafmtOnCompile    := true,
+    dockerExposedPorts ++= Seq(8081),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    libraryDependencies ++= Seq(
+      "dev.zio" %% "zio"              % "2.1.12",
+      "dev.zio" %% "zio-streams"      % "2.1.12",
+      "dev.zio" %% "zio-interop-cats" % "23.1.0.0"
     )
   )
 

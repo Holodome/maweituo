@@ -9,6 +9,7 @@ import maweituo.resources.MkHttpServer
 
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
+import cats.effect.kernel.Resource
 
 object Main extends IOApp.Simple:
 
@@ -21,16 +22,17 @@ object Main extends IOApp.Simple:
         given Supervisor[IO] = sp
         AppResources
           .make[IO](cfg)
-          .evalMap { res =>
+          .flatMap { res =>
             val repositories = Repositories.makePostgres[IO](res.postgres)
             for
-              infrastructure <- Infrastructure.make[IO](cfg, res.redis, res.minio)
+              infrastructure <- Resource.eval(Infrastructure.make[IO](cfg, res.redis, res.minio))
               services = Services.make[IO](repositories, infrastructure)
               api = HttpApi.make[IO](
                 cfg,
                 services
               )
-            yield cfg.httpServer -> api.httpApp
+              http <- api.httpApp
+            yield cfg.httpServer -> http
           }
           .flatMap { case (cfg, httpApp) =>
             MkHttpServer[IO].newClient(cfg, httpApp)

@@ -1,0 +1,31 @@
+pools:
+  - id: HTTP pool                    # pool name (for your choice)
+    gun:
+      type: http                     # gun type
+      target: 127.0.0.1:8081         # gun target
+    ammo:
+      type: uri                      # ammo format
+      file: ./ammo.uri               # ammo File
+    result:
+      type: phout                    # report format (phout is compatible with Yandex.Tank)
+      destination: ./phout.log       # report file name
+
+    rps-per-instance: false          # rps section is counted for each instance or for the whole test. false - for the whole test
+    discard_overflow: true           # strict adherence to the request schedule
+
+    rps:                             # shooting schedule
+      type: line                     # linear growth
+      from: 1500                        # from 1 response per second
+      to: 1500                          # to 5 responses per second
+      duration: 100s                  # for 60 seconds
+  
+    # rps:                             # shooting schedule
+    #   type: line                     # linear growth
+    #   from: 1                        # from 1 response per second
+    #   to: 1500                          # to 5 responses per second
+    #   duration: 100s                  # for 60 seconds
+
+
+    startup:                         # instances startup schedule
+      type: once                     # start 10 instances
+      times: 1000

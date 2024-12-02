@@ -4,9 +4,14 @@ on: [push]
 
 jobs:
   build:
-    runs-on: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        shell: bash
+        run: |
+          apt update && apt install sbt
 
       - name: 'Run server'
         shell: bash

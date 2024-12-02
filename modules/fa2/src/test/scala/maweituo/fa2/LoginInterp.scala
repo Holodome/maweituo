@@ -14,8 +14,8 @@ class LoginInterp extends ScalaDsl with EN:
     .build
     .map(AppClient(_))
 
-  val password = sys.env("TEST_PASSWORD")
-  val email    = sys.env("TEST_EMAIL")
+  val password = "admin" // sys.env("TEST_PASSWORD")
+  val email    = "admin@admin.com" // sys.env("TEST_EMAIL")
 
   var resp = ""
 

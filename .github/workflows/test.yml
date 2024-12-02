@@ -1,0 +1,18 @@
+name: E2E BDD tests
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 'Run server'
+        shell: bash
+        run: |
+          export TEST_PASSWORD=$TEST_PASSWORD
+          export TEST_EMAIL=$TEST_EMAIL
+          echo $ENV > .env
+          sbt fa2/run &        
+          sbt fa2/test

@@ -50,7 +50,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, coreZio, tests, it, e2e)
+  .aggregate(core, coreZio, tests, it, e2e, fa2)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)
@@ -149,6 +149,42 @@ lazy val e2e = (project in file("modules/e2e"))
     commonSettings,
     name           := "maweituo-e2e",
     publish / skip := true
+  )
+
+lazy val fa2 = (project in file("modules/fa2"))
+  .enablePlugins(JavaAppPackaging)
+  .enablePlugins(DockerPlugin)
+  .settings(
+    commonSettings,
+    name                 := "maweituo-fa2",
+    Compile / run / fork := true,
+    scalafmtOnCompile    := true,
+    dockerExposedPorts ++= Seq(8080),
+    dockerBaseImage := "openjdk:11-jre-slim-buster",
+    libraryDependencies ++= Seq(
+      "ch.qos.logback"      % "logback-classic"     % LogbackVersion,
+      "org.typelevel"      %% "cats-core"           % CatsVersion,
+      "org.typelevel"      %% "cats-effect"         % CatsEffectVersion,
+      "org.typelevel"      %% "log4cats-slf4j"      % Log4CatsVersion,
+      "dev.optics"         %% "monocle-core"        % MonocleVersion,
+      "dev.optics"         %% "monocle-macro"       % MonocleVersion,
+      "is.cir"             %% "ciris"               % CirisVersion,
+      "is.cir"             %% "ciris-http4s"        % CirisVersion,
+      "io.circe"           %% "circe-parser"        % CirceVersion,
+      "org.http4s"         %% "http4s-ember-server" % Http4sVersion,
+      "org.http4s"         %% "http4s-ember-client" % Http4sVersion,
+      "org.http4s"         %% "http4s-circe"        % Http4sVersion,
+      "org.http4s"         %% "http4s-dsl"          % Http4sVersion,
+      "com.zaxxer"          % "HikariCP"            % HikariCPVersion,
+      "org.lz4"             % "lz4-java"            % LZ4Version,
+      "io.github.iltotore" %% "iron"                % IronVersion,
+      "org.typelevel"      %% "kittens"             % KittensVersion,
+      "com.sun.mail"        % "javax.mail"          % "1.5.6",
+      "io.cucumber"        %% "cucumber-scala"      % "7.1.0" % Test,
+      "io.cucumber"         % "cucumber-junit"      % "7.1.0" % Test,
+      "junit"               % "junit"               % "4.13.2" % Test,
+      "com.novocode"        % "junit-interface"     % "0.11"   % Test
+    )
   )
 
 inThisBuild(

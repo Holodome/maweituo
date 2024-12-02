@@ -5,11 +5,11 @@ Scenario: User login with 2FA
   Then the response on /login code should be 200
   And the response on /login should match json:
       """
-      "Verification code sent to email"
+      Verification code sent to email
       """
   And user send "POST" request to /login_verify
   Then the response on /login_verify code should be 200
   And the response on /login_verify should match json:
       """
-      "Auth success!"
+      Auth success!
       """

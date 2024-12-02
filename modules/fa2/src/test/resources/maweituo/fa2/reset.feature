@@ -5,11 +5,11 @@ Scenario: User reset password with 2FA
   Then the response on /reset_password code should be 200
   And the response on /reset_password should match json:
       """
-      "Password reset code sent to email"
+      Password reset code sent to email
       """
   And user send "POST" request to /verify_reset_password
   Then the response on /verify_reset_password code should be 200
   And the response on /verify_reset_password should match json:
       """
-      "Password changed successfully!"
+      Password changed successfully!
       """

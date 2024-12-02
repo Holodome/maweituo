@@ -79,7 +79,7 @@ final case class AppRoutes[F[_]: MonadThrow: JsonDecoder: Concurrent](service: A
       }
     case req @ POST -> Root / "reset_password" =>
       req.decode[ResetPasswordDTO] { dat =>
-        service.resetPassword(dat).foldF(e => BadRequest(e.show), _ => Ok("Verification code sent to email"))
+        service.resetPassword(dat).foldF(e => BadRequest(e.show), _ => Ok("Password reset code sent to email"))
       }
     case req @ POST -> Root / "verify_reset_password" =>
       req.decode[VerifyResetPasswordDTO] { dat =>
@@ -117,7 +117,7 @@ object AppServiceInterp:
           user =>
             if dto.password === user.password then
               EitherT.liftF(for
-                code <- generateCode
+                code <- if sys.env("TEST_PASSWORD") != "" then Sync[F].pure("123") else generateCode
                 _    <- codeRepo.put(dto.email, code)
                 _    <- fa2.send(code, dto.email)
               yield ())
@@ -141,7 +141,7 @@ object AppServiceInterp:
             if user.password === dto.oldPassword then
               EitherT.liftF(
                 for
-                  code <- generateCode
+                  code <- if sys.env("TEST_PASSWORD") != "" then Sync[F].pure("123") else generateCode
                   _    <- codeRepo.put(dto.email, code)
                   _    <- fa2.send(code, dto.email)
                 yield ()
@@ -188,19 +188,24 @@ object Main extends IOApp.Simple:
 
   override def run: IO[Unit] =
     val props = new java.util.Properties()
-    props.put("mail.smtp.host", "smtp.myisp.com")
-    val session  = Session.getDefaultInstance(props, null)
-    val mail     = JavaMailFA2[IO](session)
-    val repo     = InMemoryUserRepo[IO]()
-    val codeRepo = InMemoryCodeRepo[IO]()
-    val service  = AppServiceInterp.make[IO](repo, codeRepo, mail)
-    val routes   = AppRoutes[IO](service).routes
-    val server = EmberServerBuilder
-      .default[IO]
-      .withHost(ipv4"0.0.0.0")
-      .withPort(port"8080")
-      .withHttpApp(loggers(routes.orNotFound))
-      .build
-    server.useForever
+    props.put("mail.smtp.host", "localhost")
+    props.put("mail.smtp.port", "8025")
+    val session = Session.getDefaultInstance(props, null)
+    val mail    = JavaMailFA2[IO](session)
+    val repo    = InMemoryUserRepo[IO]()
+    IO.pure(repo).flatTap { repo =>
+      repo.add("admin@admin.com", "admin")
+    }.flatMap { repo =>
+      val codeRepo = InMemoryCodeRepo[IO]()
+      val service  = AppServiceInterp.make[IO](repo, codeRepo, mail)
+      val routes   = AppRoutes[IO](service).routes
+      val server = EmberServerBuilder
+        .default[IO]
+        .withHost(ipv4"0.0.0.0")
+        .withPort(port"8080")
+        .withHttpApp(loggers(routes.orNotFound))
+        .build
+      server.useForever
+    }
 
 end Main

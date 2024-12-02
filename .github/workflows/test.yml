@@ -22,9 +22,11 @@ jobs:
 
       - name: 'Run server'
         shell: bash
+        env:
+          ENV: ${{ vars.ENV }}
         run: |
-          export TEST_PASSWORD=$TEST_PASSWORD
-          export TEST_EMAIL=$TEST_EMAIL
           echo $ENV > .env
+          echo $ENV > .env
+          nohup python3 -m aiosmtpd -l localhost:8025 &
           sbt fa2/run &        
           sbt fa2/test

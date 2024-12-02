@@ -28,6 +28,8 @@ import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.HttpApp
 import org.http4s.server.middleware.RequestLogger
 import org.http4s.server.middleware.ResponseLogger
+import scala.util.Random
+import scala.util.Try
 
 enum AppError extends NoStackTrace derives Show:
   case InvalidEmail(email: String)
@@ -109,7 +111,10 @@ end InMemoryCodeRepo
 
 object AppServiceInterp:
   def make[F[_]: Sync: MonadThrow](repo: UserRepo[F], codeRepo: CodeRepo[F], fa2: Fa2[F]): AppService[F] = new:
-    private def generateCode: F[String] = Sync[F].delay(UUID.randomUUID()).map(_.toString)
+    private val generateCode: F[String] = Sync[F].pure {
+      val uuid = UUID.randomUUID()
+      uuid.toString()
+    }
 
     def login(dto: LoginDTO): AppF[F, Unit] =
       EitherT.fromOptionF(repo.find(dto.email).value, AppError.InvalidEmail(dto.email))
@@ -117,7 +122,7 @@ object AppServiceInterp:
           user =>
             if dto.password === user.password then
               EitherT.liftF(for
-                code <- if sys.env("TEST_PASSWORD") != "" then Sync[F].pure("123") else generateCode
+                code <- if Try(sys.env("TEST_PASSWORD")).toOption.isDefined then Sync[F].pure("123") else generateCode
                 _    <- codeRepo.put(dto.email, code)
                 _    <- fa2.send(code, dto.email)
               yield ())
@@ -141,7 +146,7 @@ object AppServiceInterp:
             if user.password === dto.oldPassword then
               EitherT.liftF(
                 for
-                  code <- if sys.env("TEST_PASSWORD") != "" then Sync[F].pure("123") else generateCode
+                  code <- if Try(sys.env("TEST_PASSWORD")).toOption.isDefined then Sync[F].pure("123") else generateCode
                   _    <- codeRepo.put(dto.email, code)
                   _    <- fa2.send(code, dto.email)
                 yield ()
@@ -193,8 +198,8 @@ object Main extends IOApp.Simple:
     val session = Session.getDefaultInstance(props, null)
     val mail    = JavaMailFA2[IO](session)
     val repo    = InMemoryUserRepo[IO]()
-    IO.pure(repo).flatTap { repo =>
-      repo.add("admin@admin.com", "admin")
+    IO.pure(repo).flatMap { repo =>
+      repo.add("admin@admin.com", "admin").map(_ => repo)
     }.flatMap { repo =>
       val codeRepo = InMemoryCodeRepo[IO]()
       val service  = AppServiceInterp.make[IO](repo, codeRepo, mail)

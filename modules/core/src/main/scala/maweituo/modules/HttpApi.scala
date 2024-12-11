@@ -87,7 +87,5 @@ sealed class HttpApi[F[_]: Async: LoggerFactory](
       router = metricsSvc.routes <+> Metrics[F](metrics, classifierF = (_: Request[F]) => Some("core"))(routes)
     yield router
 
-  def httpApp: Resource[F, HttpApp[F]] =
-    for
-      r <- withMetrics(Http4sServerInterpreter(serverOptions).toRoutes(allEndpoints))
-    yield r.orNotFound
+  def httpApp: HttpApp[F] =
+    Http4sServerInterpreter(serverOptions).toRoutes(allEndpoints).orNotFound

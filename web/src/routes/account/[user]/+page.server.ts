@@ -1,18 +1,14 @@
-import * as api from '$lib/api.js';
+import { api, type UserId, type UserPublicInfoDto, type AdResponseDto } from '$lib/api';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
-import type { Advertisement, User } from '$lib/types';
 
-export const load = (async ({ locals, params }) => {
-  const userInfo: User = await api.get(
-    `users/${params.user}`,
-    locals.user?.token
-  );
-  const ads: Advertisement[] = await api
-    .get(`users/${params.user}/ads`, locals.user?.token)
-    .then((ids: string[]) =>
-      Promise.all(ids.map((id) => api.get(`ads/${id}`, locals.user?.token)))
-    );
+export const load = (async ({ params }) => {
+  const userId = params.user as UserId;
+  const userInfo: UserPublicInfoDto = await api.getUser(userId);
+  const ads: AdResponseDto[] = await api.getUserAds(userId)
+    .then((resp) => {
+      return Promise.all(resp.ads.map((id) => api.getAd(id)))
+    });
   return {
     userInfo,
     ads
@@ -21,7 +17,7 @@ export const load = (async ({ locals, params }) => {
 
 export const actions = {
   logout: async ({ locals, cookies }) => {
-    await api.post('logout', {}, locals.user?.token);
+    await api.logout(locals.user?.token);
     cookies.delete('jwt', { path: '/' });
     throw redirect(307, '/');
   }

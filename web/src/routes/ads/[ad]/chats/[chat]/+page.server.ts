@@ -1,16 +1,14 @@
-import * as api from '$lib/api.js';
+import { api, type AdId, type ChatId } from '$lib/api';
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import type { Advertisement, Message, User, Chat } from "$lib/types";
 
 export const load = (async ({ locals, params }) => {
-  const messages: { messages: Message[] } = await api.get(
-    `ads/${params.ad}/msg/${params.chat}`,
-    locals.user?.token
-  );
-  const adInfo: Advertisement = await api.get(`ads/${params.ad}`, locals.user?.token);
-  const authorInfo: User = await api.get(`users/${adInfo.authorId}`, locals.user?.token);
-  const chatInfo: Chat = await api.get(`ads/${adInfo.id}/chat/${params.chat}`, locals.user?.token)
+  const adId = params.ad as AdId;
+  const chatId = params.chat as ChatId;
+  const messages = await api.getChatHistory(adId, chatId, locals.user?.token);
+  const adInfo = await api.getAd(adId);
+  const authorInfo = await api.getUser(adInfo.authorId);
+  const chatInfo = await api.getChat(adId, chatId, locals.user?.token)
   return {
     messages: messages.messages,
     adInfo,
@@ -21,21 +19,19 @@ export const load = (async ({ locals, params }) => {
 
 export const actions = {
   send_message: async ({ locals, request, params }) => {
+    const adId = params.ad as AdId;
+    const chatId = params.chat as ChatId;
     const data = await request.formData();
-    await api.post(
-      `ads/${params.ad}/msg/${params.chat}`,
-      {
-        text: data.get('text')
-      },
+    await api.sendMessage(
+      adId, chatId, { text: data.get('text') as string },
       locals.user?.token
     );
     throw redirect(307, `/ads/${params.ad}/chats/${params.chat}`);
   },
-  resolved: async ({ locals, params, request }) => {
-    const data = await request.formData();
-    const body = await api.post(
-      `ads/${params.ad}/resolved`,
-      data.get("user_id") as string,
+  resolved: async ({ locals, params }) => {
+    const adId = params.ad as AdId;
+    const body = await api.updateAd(
+      adId, { resolved: true },
       locals.user?.token
     );
     body;

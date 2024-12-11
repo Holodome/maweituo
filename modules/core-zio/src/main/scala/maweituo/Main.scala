@@ -1,17 +1,16 @@
 package maweituo
 
+import cats.effect.kernel.Resource
 import cats.effect.std.Supervisor
 import cats.syntax.all.*
 
 import maweituo.config.Config
 import maweituo.modules.*
 import maweituo.resources.MkHttpServer
-import zio.*
 
 import org.typelevel.log4cats.LoggerFactory
 import org.typelevel.log4cats.slf4j.Slf4jFactory
-import cats.effect.kernel.Resource
-import zio.{RIO, Task, ZIO}
+import zio.*
 import zio.interop.catz.*
 
 object MainZio extends CatsApp:
@@ -33,8 +32,7 @@ object MainZio extends CatsApp:
                 cfg,
                 services
               )
-              http <- api.httpApp
-            yield cfg.httpServer -> http
+            yield cfg.httpServer -> api.httpApp
           }
           .flatMap { case (cfg, httpApp) =>
             MkHttpServer[Task].newClient(cfg, httpApp)

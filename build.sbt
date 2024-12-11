@@ -50,7 +50,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "maweituo"
   )
-  .aggregate(core, coreZio, tests, it, e2e, fa2)
+  .aggregate(core, tests, it, e2e)
 
 lazy val core = (project in file("modules/core"))
   .enablePlugins(JavaAppPackaging)

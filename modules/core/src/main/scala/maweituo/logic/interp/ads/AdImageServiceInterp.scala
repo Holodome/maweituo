@@ -60,3 +60,6 @@ object AdImageServiceInterp:
           .map(ImageContentsStream(_, image.mediaType, image.size))
           .getOrRaise(DomainError.InternalImageUnsync("Image object not found"))
       yield stream
+
+    def getAdImages(adId: AdId): F[List[ImageId]] =
+      imageRepo.findIdsByAd(adId)

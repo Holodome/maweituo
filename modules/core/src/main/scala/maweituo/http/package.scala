@@ -28,7 +28,7 @@ export maweituo.http.codecs.{*, given}
 type ErrorResponseData = (StatusCode, ErrorResponseDto)
 
 class EndpointBuilderDefs:
-  def base   = endpoint.errorOut(statusCode and jsonBody[ErrorResponseDto]).in("api" / "v1")
+  def base   = endpoint.errorOut(statusCode and jsonBody[ErrorResponseDto])
   def public = base
   def authed = base.securityIn(auth.bearer[JwtToken](WWWAuthenticateChallenge.bearer))
 

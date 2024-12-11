@@ -18,22 +18,22 @@ trait TagEndpointDefs(using builder: EndpointBuilderDefs):
     builder.public
       .get
       .in("tags")
-      .out(jsonBody[AllTagsResponse])
+      .out(jsonBody[AllTagsResponseDto])
 
   def `get /tags/$tag/ads` =
     builder.public
       .get
       .in("tags" / path[AdTag]("tag") / "ads")
-      .out(jsonBody[TagAdsResponse])
+      .out(jsonBody[TagAdsResponseDto])
 
 final class TagEndpoints[F[_]: MonadThrow](tags: AdTagService[F])(using EndpointsBuilder[F])
     extends TagEndpointDefs with Endpoints[F]:
 
   override def endpoints = List(
     `get /tags`.serverLogicF { _ =>
-      tags.all.map(AllTagsResponse.apply)
+      tags.all.map(AllTagsResponseDto.apply)
     }.tag("ads"),
     `get /tags/$tag/ads`.serverLogicF { tag =>
-      tags.find(tag).map(TagAdsResponse(tag, _))
+      tags.find(tag).map(TagAdsResponseDto(tag, _))
     }.tag("ads")
   )

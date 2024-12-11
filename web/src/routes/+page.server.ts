@@ -1,27 +1,28 @@
-import * as api from '$lib/api.js';
+import type { FeedResponseDTO } from '$lib/api';
+import * as api from '$lib/http';
+import { api as appApi } from '$lib/api';
 import type { PageServerLoad } from './$types';
-import type { Feed } from '$lib/types';
 
 export const load = (async ({ locals, url }) => {
-  let feed: Feed;
+  let feed: FeedResponseDTO;
   let pagination = url.searchParams.get('page');
   if (pagination) {
     pagination = `?page=${pagination.toString()}`;
   } else {
-    pagination = '';
+    pagination = '?page=0';
   }
   if (locals.user) {
-    feed = await api.get(`feed/${locals.user?.userId}` + pagination, locals.user?.token);
+    feed = await api.get(`feed/${locals.user?.userId}` + pagination, locals.user?.token) as FeedResponseDTO;
   } else {
-    feed = await api.get(`feed` + pagination);
+    feed = await api.get(`feed` + pagination) as FeedResponseDTO;
   }
 
   const ads = await Promise.all(
-    feed.ads.map((id) => api.get(`ads/${id}`, locals.user?.token))
+    feed.feed.items.map((id) => appApi.getAd(id))
   );
 
   return {
     ads,
-    total: feed.total
+    total: feed.feed.totalItems
   };
 }) satisfies PageServerLoad;

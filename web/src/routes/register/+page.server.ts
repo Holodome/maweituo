@@ -1,5 +1,5 @@
-import { fail, redirect } from '@sveltejs/kit';
-import * as api from '$lib/api.js';
+import { redirect } from '@sveltejs/kit';
+import { api } from '$lib/api';
 import type { PageServerLoad, Actions } from './$types';
 
 export const load = (async ({ parent }) => {
@@ -11,14 +11,11 @@ export const actions = {
   default: async ({ request }) => {
     const data = await request.formData();
 
-    const body = await api.post('register', {
-      name: data.get('name'),
-      email: data.get('email'),
-      password: data.get('password')
+    await api.register({
+      name: data.get('name') as string,
+      email: data.get('email') as string,
+      password: data.get('password') as string
     });
-    if (body.errors) {
-      return fail(401, body);
-    }
 
     throw redirect(307, '/login');
   }

@@ -60,7 +60,7 @@ object UserServiceInterp:
           .value
         salt <- PasswordHashing.genSalt[F]
         id   <- Id.make[F, UserId]
-        at   <- TimeSource[F].instant
+        at   <- TimeSource[F].instant   
         user = User(
           id,
           body.name,

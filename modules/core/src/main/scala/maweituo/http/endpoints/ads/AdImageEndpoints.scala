@@ -24,6 +24,12 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .out(header[String](HeaderNames.ContentType))
       .out(header[Long](HeaderNames.ContentLength))
 
+  def `get /ads/$adId/imgs` =
+    builder.public
+      .get
+      .in("ads" / path[AdId]("ad_id") / "imgs")
+      .out(jsonBody[AdImagesResponseDto])
+
   def `post /ads/$adId/imgs` =
     builder.authed
       .post
@@ -31,7 +37,7 @@ trait AdImageEndpointDefs[F[_]](using builder: EndpointBuilderDefs):
       .in(streamBinaryBody(Fs2Streams[F])(CodecFormat.OctetStream()))
       .in(header[MediaType](HeaderNames.ContentType))
       .in(header[Long](HeaderNames.ContentLength))
-      .out(jsonBody[CreateImageRequestDto])
+      .out(jsonBody[CreateImageResponseDto])
       .out(statusCode(StatusCode.Created))
 
   def `delete /ads/$adId/imgs/$imgId` =
@@ -49,10 +55,13 @@ final class AdImageEndpoints[F[_]: MonadThrow](imageService: AdImageService[F])(
         .get(imageId)
         .map(x => (x.data, x.contentType.toRaw, x.dataSize))
     },
+    `get /ads/$adId/imgs`.serverLogicF { (adId) =>
+      imageService.getAdImages(adId).map(x => AdImagesResponseDto(adId, x))
+    },
     `post /ads/$adId/imgs`.authedServerLogic { (adId, data, contentType, contentLength) =>
       val mediaType = DomainMediaType.apply(contentType.mainType, contentType.subType)
       val contents  = ImageContentsStream(data, mediaType, contentLength)
-      imageService.upload(adId, contents).map(CreateImageRequestDto.apply)
+      imageService.upload(adId, contents).map(CreateImageResponseDto.apply)
     },
     `delete /ads/$adId/imgs/$imgId`.authedServerLogic { (_, imageId) =>
       imageService.delete(imageId)

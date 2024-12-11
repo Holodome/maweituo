@@ -31,8 +31,7 @@ object Main extends IOApp.Simple:
                 cfg,
                 services
               )
-              http <- api.httpApp
-            yield cfg.httpServer -> http
+            yield cfg.httpServer -> api.httpApp
           }
           .flatMap { case (cfg, httpApp) =>
             MkHttpServer[IO].newClient(cfg, httpApp)

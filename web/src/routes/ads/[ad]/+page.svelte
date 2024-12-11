@@ -98,7 +98,7 @@
   <div class="container mb-8">
     <h2 class="text-lg leading-none mt-8 mb-4">Tags</h2>
     <ul class="list-disc list-inside mb-4">
-      {#each data.adInfo.tags as tag}
+      {#each data.adTags as tag}
         <li>
           {tag}
           {#if isAuthor}
@@ -137,7 +137,7 @@
         >Create chat</button
       >
     </form>
-  {:else if data.chat && !isAuthor && $page.data.chat}
+  <!-- {:else if data.chat && !isAuthor && $page.data.chat}
     <a class="btn btn-outline" href="/ads/{$page.params.ad}/chats/{data.chat}"
       >Open chat</a
     >
@@ -151,7 +151,7 @@
           >
         </p>
       {/each}
-    </div>
+    </div> -->
   {/if}
 
   

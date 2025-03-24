@@ -137,13 +137,13 @@
         >Create chat</button
       >
     </form>
-  <!-- {:else if data.chat && !isAuthor && $page.data.chat}
-    <a class="btn btn-outline" href="/ads/{$page.params.ad}/chats/{data.chat}"
+  {:else if data.chats !== undefined && !isAuthor && $page.data.chat}
+    <a class="btn btn-outline" href="/ads/{$page.params.ad}/chats/{data.chats.at(0)?.id}"
       >Open chat</a
     >
-  {:else if isAuthor}
+  {:else if isAuthor && data.chats !== undefined}
     <div>
-      {#each data.chatInfos as chat}
+      {#each data.chats as chat}
         <p>
           <a
             href="/ads/{$page.params.ad}/chats/{chat.id}"
@@ -151,7 +151,7 @@
           >
         </p>
       {/each}
-    </div> -->
+    </div>
   {/if}
 
   

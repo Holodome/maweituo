@@ -1,9 +1,9 @@
 import { buildImageUrl } from "$lib/http";
-import { api, type AdId, type ImageId } from '$lib/api';
+import { api, type AdId, type ChatDto, type ImageId } from '$lib/api';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load = (async ({ params }) => {
+export const load = (async ({ locals, params }) => {
   const adId = params.ad as AdId;
   const adInfo = await api.getAd(adId);
   const images = await api.getAdImages(adId).then(
@@ -17,11 +17,15 @@ export const load = (async ({ params }) => {
     });
   const adTags = await api.getAdTags(adId).then(x => x.tags);
   const authorName = await api.getUser(adInfo.authorId).then((u) => u.name);
+  const chats: null | ChatDto[] = locals.user?.token
+    ? await api.getAdChats(adId, locals.user?.token).then(x => x.chats)
+    : null;
   return {
     adInfo,
     authorName,
     images,
-    adTags
+    adTags,
+    chats
   };
 }) satisfies PageServerLoad;
 
@@ -55,7 +59,7 @@ export const actions = {
     const chatId = await api.createChat(
       adId,
       locals.user?.token
-    );
+    ).then(x => x.chatId);
     throw redirect(307, `/ads/${params.ad}/chats/${chatId}`);
   },
   delete_image: async ({ locals, request, params }) => {

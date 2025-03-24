@@ -2,7 +2,6 @@ import { expect, test, describe } from 'vitest'
 import { api } from '$lib/api';
 import * as http from '$lib/http';
 import { faker } from '@faker-js/faker';
-import { buildImageUrl } from './http';
 
 describe('e2e suite', () => {
   test('create ad with tag', async () => {
@@ -26,7 +25,6 @@ describe('e2e suite', () => {
     const token1 = await api.login({ name: name1, password: 'aboba' }).then(x => x.jwt.access_token);
     const adId = await api.createAd({ title: 'ad' }, token1).then(x => x.id);
     const token2 = await api.login({ name: name2, password: 'aboba' }).then(x => x.jwt.access_token);
-    console.log('her')
     const chatId = await api.createChat(adId, token2).then(x => x.chatId);
     await api.sendMessage(adId, chatId, { text: 'test' }, token2);
     const history = await api.getChatHistory(adId, chatId, token2).then(x => x.messages);

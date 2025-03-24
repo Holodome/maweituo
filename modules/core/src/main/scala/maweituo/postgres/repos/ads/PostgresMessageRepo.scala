@@ -20,7 +20,7 @@ object PostgresMessageRepo:
       val count = sql"select count(*) from messages where chat_id = $chatId::uuid".query[Int].unique.transact(xa)
       val msgs = sql"""select sender_id, chat_id, msg, at from messages 
             where chat_id = $chatId::uuid
-            order by at desc 
+            order by at asc 
             limit ${pag.limit} offset ${pag.offset}
       """.query[Message].to[List].transact(xa)
       (count, msgs).parMapN { (count, items) => PaginatedCollection(items, pag, count) }

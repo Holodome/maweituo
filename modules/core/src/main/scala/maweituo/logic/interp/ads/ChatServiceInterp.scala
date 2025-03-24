@@ -63,8 +63,11 @@ object ChatServiceInterp:
         }
 
     def findForAd(ad: AdId)(using maweituo.domain.Identity): F[List[Chat]] =
-      chatRepo
-        .findForAd(ad)
-        .flatTap { chats =>
-          chats.traverse_(chat => iam.authChatAccess(chat.id))
-        }
+      findForAdAndUser(ad)
+        .foldF(
+          chatRepo
+            .findForAd(ad)
+            .flatTap { chats =>
+              chats.traverse_(chat => iam.authChatAccess(chat.id))
+            }
+        )(chat => Applicative[F].pure(List(chat)))

@@ -182,6 +182,7 @@ export interface AppApi {
   addAdTag(adId: AdId, dto: AddTagRequestDto, auth: Token): Promise<null>;
   deleteAdTag(adId: AdId, dto: AddTagRequestDto, auth: Token): Promise<null>;
 
+  getAdChats(adId: AdId, auth: Token): Promise<AdChatsResponseDto>;
   getChatHistory(adId: AdId, chatId: ChatId, auth: Token): Promise<HistoryResponseDto>;
   sendMessage(adId: AdId, chatId: ChatId, dto: SendMessageRequestDto, auth: Token): Promise<null>;
 
@@ -255,6 +256,9 @@ export class AppApiImplementation implements AppApi {
     return http.del(`ads/${adId}/tags`, dto, auth).then(() => null);
   }
 
+  async getAdChats(adId: AdId, auth: Token): Promise<AdChatsResponseDto> {
+    return http.get(`ads/${adId}/chats`, auth).then(x => x as AdChatsResponseDto);
+  }
   async getChatHistory(adId: AdId, chatId: ChatId, auth: Token, page?: number): Promise<HistoryResponseDto> {
     const pagination = page !== undefined ? `?page=${page}` : "?page=0";
     return http.get(`ads/${adId}/chats/${chatId}/msgs` + pagination, auth).then(x => x as HistoryResponseDto);

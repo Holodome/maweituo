@@ -27,7 +27,7 @@
 
   {#if isAuthor && !data.adInfo.resolved}
     <form use:enhance method="POST" action="?/resolved" class="mt-4">
-      <input type="hidden" name="user_id" value={data.chatInfo.client} />
+      <input type="hidden" name="user_id" value={data.chatInfo.clientId} />
       <button type="submit" class="btn btn-outline btn-primary"
         >Mark as resolved</button
       >
@@ -39,7 +39,7 @@
 
   <div class="my-8">
     {#each data.messages as msg}
-      {#if msg.sender === myId}
+      {#if msg.senderId === myId}
         <div class="chat chat-end">
           <div class="chat-bubble">
             {msg.text}

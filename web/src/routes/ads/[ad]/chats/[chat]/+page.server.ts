@@ -8,9 +8,9 @@ export const load = (async ({ locals, params }) => {
   const messages = await api.getChatHistory(adId, chatId, locals.user?.token);
   const adInfo = await api.getAd(adId);
   const authorInfo = await api.getUser(adInfo.authorId);
-  const chatInfo = await api.getChat(adId, chatId, locals.user?.token)
+  const chatInfo = await api.getChat(adId, chatId, locals.user?.token);
   return {
-    messages: messages.messages,
+    messages: messages.messages.items,
     adInfo,
     authorInfo,
     chatInfo

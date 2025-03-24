@@ -38,7 +38,7 @@ object PostgresAdSearchRepo:
       (query, filteredAdCount).parMapN { (ads, count) =>
         PaginatedCollection(ads, pag, count)
       }
-      
+
     private def constructBase(filterTags: Option[NonEmptyList[AdTag]], nameLike: Option[String]): Fragment =
       (filterTags, nameLike) match
         case (Some(t), Some(n)) =>

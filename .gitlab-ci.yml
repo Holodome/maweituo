@@ -22,10 +22,6 @@ unit:
     - printenv
     - sbt tests/test
     - echo UNIT_SUCCESS=1 | tee >> $GITLAB_ENV
-  artifacts:
-    when: always
-    paths:
-      - modules/tests/target/test-reports
   rules:
     - when: always
   allow_failure: true
@@ -39,10 +35,6 @@ integration:
     - printenv
     - sbt it/test
     - echo INTEGRATION_SUCCESS=1 | tee >> $GITLAB_ENV
-  artifacts:
-    when: always
-    paths:
-      - modules/it/target/test-reports
   rules:
     - when: always
   allow_failure: true

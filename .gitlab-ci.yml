@@ -12,8 +12,6 @@ variables:
 stages:
   - unit-test
   - integration-test
-  - e2e-test
-  - report 
   
 unit:
   stage: unit-test
@@ -45,42 +43,6 @@ integration:
     when: always
     paths:
       - modules/it/target/test-reports
-  rules:
-    - when: always
-  allow_failure: true
-
-e2e:
-  stage: e2e-test
-  image: sbtscala/scala-sbt:eclipse-temurin-alpine-22_36_1.10.2_3.5.1
-  script: 
-    - apk add docker-compose
-    - sbt e2e/test
-  artifacts:
-    when: always
-    paths:
-      - modules/e2e/target/test-reports
-  rules:
-    - when: always
-  allow_failure: true
-
-report:
-  stage: report
-  image: holodome/my-allure:latest
-  script: 
-    - mkdir allure-results 
-    - echo $CI_COMMIT_BRANCH
-    - echo $REPORT_TOKEN
-    - 'curl --header "PRIVATE-TOKEN: $REPORT_TOKEN" --location "https://git.iu7.bmstu.ru/api/v4/projects/$CI_PROJECT_ID/jobs/artifacts/$CI_COMMIT_BRANCH/download?job=report" --output artifacts.zip || true' 
-    - unzip artifacts.zip || true
-    - cp -r ./allure-report/history ./allure-results || true
-    - rm -rf allure-report 
-    - cp modules/tests/target/test-reports/* allure-results || true
-    - cp modules/it/target/test-reports/* allure-results || true
-    - cp modules/e2e/target/test-reports/* allure-results || true
-    - allure generate allure-results -o allure-report 
-  artifacts:
-    paths:
-      - allure-report
   rules:
     - when: always
   allow_failure: true
